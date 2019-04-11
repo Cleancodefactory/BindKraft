@@ -1,0 +1,3 @@
+// Temporary hook for inclusion of unfinished Http API range
+
+//#using "./interfaces/IAjaxHttpRequest.js"

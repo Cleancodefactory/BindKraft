@@ -1,0 +1,35 @@
+function AutoUpdatingBindings() {
+    GenericViewBaseEx.apply(this, arguments);
+}
+
+AutoUpdatingBindings.Inherit(GenericViewBaseEx, "AutoUpdatingBindings");
+
+AutoUpdatingBindings.prototype.get_caption = function () {
+    return "Auto Updating Bindings";
+};
+
+AutoUpdatingBindings.ImplementActiveProperty("myData");
+
+AutoUpdatingBindings.prototype.OnBtnClick = function () {
+    /*  var firstname = this.child('firstname').val(); 
+      var lastname = this.child('lastname').val();
+      var age = this.age('age').val();
+      var arr = [];
+      arr.push(firstname);
+      arr.push(lastname);
+      arr.push(age);
+      arr.join(" ");
+      this.set_myData(arr); */
+    this.set_myData(
+        this.child("firstname").val()
+        + " " + this.child("lastname").val()
+        + " " + this.child("age").val()
+}
+
+AutoUpdatingBindings.ImplementActiveProperty("firstname");
+AutoUpdatingBindings.ImplementActiveProperty("lastname");
+AutoUpdatingBindings.ImplementActiveProperty("age");
+AutoUpdatingBindings.prototype.get_result = function () {
+    return "" + (this.get_firstname() || "") + " " + (this.get_lastname() || "") + " " + (this.get_age() || "");
+
+}

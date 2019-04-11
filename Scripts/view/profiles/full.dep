@@ -1,0 +1,25 @@
+////#using "../../core/profiles/full.dep"
+//#using "../DOMUtil.js"
+
+//#using "../enumerations/enumerations-full.dep"
+//#using "../interfaces/interfaces-full.dep"
+//#using "../implementors/implementors-full.dep"
+
+//#using "../ViewUtil.js"
+
+//#using "../base/base-full.dep"
+//#using "../jbtrace.js"
+//#using "../binding/binding-full.dep"
+//#using "../bindlib/bindlib-full.dep"
+//#using "../behaviors/behaviors-full.dep"
+//#using "../formatters/formatters-full.dep"
+//#using "../validators/validators-full.dep"
+//#using "../communication/communication-full.dep"
+//#using "../keyboard/keyboard-full.dep"
+////#using "../controls/keyboard/keyboard-full.dep" // Uncomment this only for non-production usage
+//#using "../queries/queries-full.dep"
+//#using "../lib/lib-full.dep"
+//#using "../misc/misc-full.dep"
+//#using "../controls/controls-full.dep"
+//#using "../controls/constructionkit/constructionkit-full.dep"
+//#using "../templatemng/templatemng-all.dep"

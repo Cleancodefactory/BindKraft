@@ -1,0 +1,12 @@
+ITemplateConsumer
+
+IItemTemplateConsumer
+
+
+IItemTemplateSource
+
+ITemplateSource
+
+
+
+ITemplateFetcher

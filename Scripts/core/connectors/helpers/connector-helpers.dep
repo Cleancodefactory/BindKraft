@@ -1,0 +1,15 @@
+//#using "../../interfaces/IConnectorPagingHelper.js"
+//#using "../../interfaces/IConnectorPrimaryKeyHelper.js"
+//#using "../../interfaces/IConnectorSingleFilteringHelper.js"
+//#using "BaseConnectorHelper.js"
+//#using "ConnectorHelperRegister.js"
+//#using "ConnectorPagingHelper.js"
+//#using "ConnectorPrimaryKeyHelper.js"
+//#using "ConnectorSingleFilteringHelper.js"
+
+/* Include this set to support connector helpers.
+
+    The set here contains:
+        a) classes to allow global regiustration of helpers - see ConnectorHelperRegister
+        b) Specific helpers interfaces and default implementations.
+*/

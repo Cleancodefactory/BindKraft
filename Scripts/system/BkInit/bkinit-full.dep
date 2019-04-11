@@ -1,0 +1,10 @@
+// Helpers for BK Init.js files. For more info check the documentation and comments in BkInit.js
+
+//#using "./BkInit.js"
+//#using "./BkInit_FSBase.js"
+//#using "./BkInit_Shortcuts.js"
+//#using "./BkInit_BootFS.js"
+//#using "./BkInit_Cmd.js"
+//#using "./BkInit_CommandUrlAliases.js"
+//#using "./BkInit_CommandUrlAlias.js"
+//#using "./BkInit_CommandUrlGlobal.js"

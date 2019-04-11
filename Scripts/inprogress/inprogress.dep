@@ -1,0 +1,15 @@
+/*
+ This file is refered by full.dep of the entire framework, 
+ however you should keep your work commented out when checking in ot avoid conflicts and activating unfinished stuff!!!
+ 
+ Comment your lines (above them) with a few words about the feature you are working on.
+ 
+ There is no need to follow any conventions in your code, but they must be applied before moving it in its permanent place when it is finished.
+*/
+
+// Chain processing - a mechanism for processing some data, executing operations that involves many objects continuing each other's work
+// State: pre-alpha
+
+////#using "chains/default-full.dep"
+
+//#using "dropper/dropper.dep"

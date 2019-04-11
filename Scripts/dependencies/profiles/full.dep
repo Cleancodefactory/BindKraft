@@ -1,0 +1,24 @@
+
+
+
+//#using "../globalize.js"
+//#using "../postmessage.js"
+
+//#using "../jquery.js"
+//#using "../jquery-ui.js"
+//#using "../jquery.ui.touch-punch.js"
+//#using "../jquery.iframe-transport.js"
+//#using "../jquery.fileupload.js"
+//#using "../jquery.qtip-1.0.0-rc3.js"
+//#using "../stacktrace.js"
+
+
+// The framework should replace this functionality by completely different means (pop windows of the toast/tooltip kind)
+//#using "../pnotify.js"  
+// We might want to remove these in the next servicing refactoring task
+//#using "../utilities.js"
+
+//#using "../DOMM/Module.dep"
+//#using "../perfectscrollbar.js"
+
+//#using "../localization/bahur.dep"

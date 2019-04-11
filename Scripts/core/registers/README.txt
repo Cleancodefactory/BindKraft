@@ -1,0 +1,3 @@
+This directory should be filled with the classes and system wide singletons implementing registers for all kind of stuff. 
+Some registers will migrate slowly - mostly the existing ones that store someting in properties of types, system objects and so on. OThers will begin replacing 
+things we currently do in unordered way...

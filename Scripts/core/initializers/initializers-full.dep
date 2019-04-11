@@ -1,0 +1,22 @@
+
+//#using "./Defaults.js"
+//#using "./Initialize.js"
+//#using "./InitializeArray.js"
+//#using "./InitializeCloneObject.js"
+//#using "./InitializeDelegatedProperty.js"
+//#using "./InitializeEvent.js"
+//#using "./InitializeMethodDelegate.js"
+//#using "./InitializeMethodTrigger.js"
+//#using "./InitializeObject.js"
+//#using "./InitializeParameter.js"
+//#using "./InitializeStringParameter.js"
+//#using "./InitializeNumericParameter.js"
+//#using "./InitializeBooleanParameter.js"
+//#using "./InitializeBindingParameter.js"
+//#using "./InitializeReadOnlyParameter.js"
+//#using "./InitializeCustomFormatter.js"
+
+//#using "./InitializeMethodCallback.js"
+
+//#using "./compiletimetasks.js"
+

@@ -1,0 +1,45 @@
+
+UNFINISHED STEP IDEA THAT GOT TOO COMPLEX AND WAS DEPRECTED
+
+/** DEPRECTED - too complex
+	Executes the next command. The next command could be anywhere depending on the routing logic (jumps, calls)
+	@returns {Operation} completes when the command completes. If the command does not support operations this method will create one internally and return it already completed.
+	@param {object} Optionalobject where additional state is reported and allows flexible execution control
+*/
+CommandExecutor.prototype.step_old = function(stateobject) {
+	var cl = this.get_cmdline();
+	var token = cl.next();
+	if (token == CommandLine.End) {
+		return null; // Cmd line complete
+	}
+	var op;
+	/* { token: <string>|<number>|<object>|<array>
+		meta: { type: one of the above types,
+		subtype: double | integer | identifier }*/
+	// Only identifiers can be commands
+	if (token.meta.type == "string" && token.meta.subtype == "identifier") {
+	} else {
+		// What are we going to do with these?
+		return this.completedOperation(false, "Not an identifier");
+	}
+	var cmd = this.findCommand(token.token, token.meta);
+	var act = null;
+	if (cmd != null) {
+		// Execute the command
+		act = cmd.get_action();
+		if (BaseObject.isCallback(act)) {
+			var cmdreturn = BaseObject.callCallback(act, this.get_currentcontext(), this.commandExecInterface());
+			if (BaseObject.is(cmdreturn, "Operation")) {
+				return cmdreturn;
+			} else {
+				return this.completedOperation(true, cmdreturn);
+			}
+		} else {
+			return this.completedOperation(false, "The command does not have an executable action.");
+		}
+	} else {
+		return this.completedOperation(false, "Token is not recognized as a command.");
+	}
+	// var cmdreturn = 
+	/////
+}

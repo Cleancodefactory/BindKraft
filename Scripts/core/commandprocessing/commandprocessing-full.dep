@@ -1,0 +1,19 @@
+//#using "./CommandProcessor.js"
+
+//#using "./commanddescriptor.js"
+//#using "./commandreg.js"
+//#using "./commandline.js"
+//#using "./commandcontext.js"
+//#using "./commandexecutor.js"
+//#using "./CommandBase.js"
+//#using "./ContinueOperation.js"
+//#using "./FinishOperation.js"
+//#using "./resultsstack.js"
+//#using "./commander.js"
+//#using "./commandexecutorinterface.js"
+
+//#using "./ISupportsEnvironmentContextImpl.js"
+//#using "./ISupportsCommandRegisterImpl.js"
+//#using "./ISupportsCommandRegisterExDefImpl.js"
+//#using "./ISupportsCommandContextImpl.js"
+

@@ -1,0 +1,6 @@
+
+
+//#using "./IAppManagerImpl.js"
+//#using "./IUsingLocalAPIImpl.js"
+//#using "./IImplementsLocalAPIImpl.js"
+//#using "./IAppHistorySupportImpl.js"

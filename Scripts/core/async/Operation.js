@@ -1,0 +1,133 @@
+/*
+	This one is intended for massive usage, additional derivatives with separate methods for success/failure, evnets and others may be added later.
+	
+	Operation is basically a promise-like construct.
+	
+	Operation class is for non-foreign operations, ForeignOperation inherits it and is used internally by Proxy/stubs and transports
+	
+	Usage of then():
+		the callback is called with a single parameter - the operation itself, named op below:
+		in the callback you usually:
+			op.isOperationComplete() - to determine if the operaiton is complete (it should be - usually this is not needed)
+			op.isOperationSuccessful() - to determine if the operation was successful
+				not successful:
+					op.getOperationErrorInfo()
+				successful:
+					op.getOperationResult()
+				// Prepare for reuse - not typical, needs the code perfoming the operation to support it and provide appropriate interface routines
+					For instance - routine for starting operation accepting and using optional existing Opration object and producing a new one if non is supplied.
+					This is only one example, many approaches are possible, but this is rarely convenient, thus most APIs that use operation - produce a new one each time they are called.
+				op.OperationReset() - to reset the operation for reuse with the same callback
+				op.Clear() - to reset operation and clear the callback as well
+				
+	Usage of the callback argument in the constructor:
+		The purpose of Operation is to avoid passing callbacks back and forth, but sometimes the interface may have a dual approach - allow clients to use operations directly or just 
+		pass callbacks the old way. Ability to easilly pass a callback to a new operation makes it easy to serve both approaches through operation based implementation.
+
+	Usage of whencomplete():
+		IF you need to advise multiple handlers then() is notenough because it will work only once - if you
+		chain more then() calls, none of them (except the first one) will do anything.
+		In this case you need something to spread the call to many handlers and you can use:
+		var sd = new SugaryDispatcher()
+		op.then(sd)
+		sd.tell(handler1).tell(handler2) .... and so on.
+		This is not pretty enough syntactically, so there comes the whencomplete method which creates a
+		SugaryDispatcher object itselg, passes it as a callback to the operation and returns it. So the syntax
+		to advise multiple handlers for the operation completion will be:
+		op.whencomplete().tell(handler1).tell(handler2) .... and so on.
+		Each handler is like the handler for then - see details about it above.
+
+*/
+
+/*Class*/
+/* V: 2.10 - this has been changed and the completion callback previously supported as constructor argument is no longer supported (it can hardly do any good)
+	Motives: There is only one scenario in which this can be better than then(completioncallback) - when a code prepares an operation configured with completion handler only to
+	pass the so constructed object to a routine/code supposed to use that operation to singnal completion and pass result. This is good, but very limited use and a source of human mistakes in all other cases.
+	
+	Instead the constructor is redesigned in a different manner and can accept a callback when someone wants to use the Operation in Promise-like manner - not as signaling and synchronization tool shared among
+	several parties, but as task one would want to complete and be notified when this happens. In the taskproc(operation, optionalargument1, optionalargumen2,...) you have access to the operation and you MUST complete it one way or another -
+	using operation.completeOperation(true/false, result or error info); The task is always started as a scheduled asynchronous task with normal priority and default options.
+*/
+function Operation(taskproc /*args*/, timeout) {
+	BaseObject.apply(this, arguments);
+	if (BaseObject.isCallback(taskproc)) {
+		
+		// V: 2.10 this.set_completionroutine(callback);
+		// new usage: V: 2.10
+		//
+		//
+		// TODO: This call seems wrong! This should be a callback behavior
+		var taskargs = [this].concat(Array.createCopyOf(arguments,2));
+		this.async(function() { BaseObject.applyCallback(taskproc,taskargs); });
+	}
+	// Corrected bug on 2018-09-12: timeout not honoured when no task procedure is passed to the constructor (which is the main case)
+	if (typeof timeout == "number" && timeout > 0) {
+		this.expire(timeout);
+	}
+}
+Operation.Inherit(BaseObject, "Operation");
+Operation.Implement(IOperationHandlingCallbackImpl);
+Operation.prototype.$expiration = function() {
+	if (!this.isOperationComplete()) {
+		this.CompleteOperation(false,"Operation timed out");
+		jbTrace.log("An operation timed out");
+	}
+}
+Operation.prototype.expire = function(milliseconds) {
+	this.discardAsync("OperationTimeOut"); // Remove any previous timeout tracker.
+	this.async(this.$expiration).after(milliseconds).key("OperationTimeOut").apply(this);
+}
+
+Operation.prototype.onBeforeOperationCompleted = function() {
+	this.discardAsync("OperationTimeOut"); // Unschedule the time out tracker
+}
+// Operation.CompletedOperation = function (ture/false, result/error-string,object) {}
+
+Operation.prototype.then = function(callback) {
+	if (BaseObject.isCallback(callback)) {
+		var old = this.get_completionroutine();
+		if (BaseObject.is(old,"SugarryDispatcher")) {
+			old.tell(callback);
+		} else {
+			this.set_completionroutine(callback);
+		}
+	}
+	if (!this.$handlingdone && this.isOperationComplete()) {
+		this.$invokeHandling();
+	}
+	return this;
+}.Description("Handles both success and failure through inspectionof the passed operation");
+Operation.prototype.whencomplete = function() {
+	if (arguments.length != 0) throw "oncomplete takes 0 arguments and returns SugarryDispatcher that can notify multiple handlers by calling tell(handler) on it";
+	var wrapper = this.get_completionroutine();
+	if (BaseObject.is(wrapper,"SugaryDispatcher")) {
+		// All is fine in this case
+	} else {
+		wrapper = new SugaryDispatcher(); // new one
+		oldhandler = this.get_completionroutine();
+		this.set_completionroutine(wrapper);
+		if (BaseObject.isCallback(oldhandler) && !this.$handlingdone) {
+			// Attach it to the wrapper
+			wrapper.tell(oldhandler);
+		}
+	}
+	if (!this.$handlingdone && this.isOperationComplete()) {
+		this.$invokeHandling();
+	}
+	return wrapper;
+}.Description("Creates an event dispatcher tuned to advise newcomers and returns it - multiple handlers can be advised - see");
+
+// HELPERS ////////////////////////////////////////////////////
+/**
+	Packs the argument in an Operation if it isn't an Operation itself. If the argument is an Operation it is directly returned.
+	@param x {any} - the argument
+*/
+Operation.From = function(x) {
+	if (BaseObject.is(x, "Operation")) {
+		return x;
+	} else {
+		var op = new Operation();
+		op.CompletedOperation(true, x);
+		return op;
+	}
+}

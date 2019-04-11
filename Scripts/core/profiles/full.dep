@@ -1,0 +1,51 @@
+//#using "../configuration.js"
+//#using "../equalize.js"
+//#using "../CompileTime.js"
+//#using "../selfdoc.js"
+//#using "../Class.js"
+//#using "../oop.js"
+//#using "../diagnostics.js"
+//#using "../registrators.js"
+//#using "../diagnostics.js"
+//#using "../obliteration.js"
+//#using "../CompileMisc.js"
+//#using "../BaseObject.js"
+//#using "../Array.js"
+//#using "../String.js"
+//#using "../Date.js"
+//#using "../Term.js"
+
+//#using "../mappath.js"
+
+//#using "../enumerations/enumerations-full.dep"
+//#using "../interfaces/interfaces-full.dep"
+//#using "../initializers/initializers-full.dep"
+//#using "../registers/registers-full.dep"
+//#using "../delegation/delegation-full.dep"
+//#using "../implementors/implementors-full.dep"
+//#using "../interfacing/interfacing-full.dep"
+
+
+//#using "../DataHolder.js"
+//#using "../InterfaceObject.js"
+//#using "../InterfaceObjectTemplate.js"
+//#using "../async/async-full.dep"
+//#using "../cache/cache-full.dep"
+//#using "../env/env-full.dep"
+//#using "../commandprocessing/commandprocessing-full.dep"
+//#using "../connectors/connectors-full.dep"
+//#using "../delegation/delegation-full.dep"
+//#using "../math/math-full.dep"
+//#using "../messaging/messaging-full.dep"
+//#using "../misc/misc-full.dep"
+//#using "../bkurl/bkurl-full.dep"
+//#using "../memfs/memfs-full.dep"
+//#using "../settingspersistence/settingspersistence-full.dep"
+
+//#using "../formatters/formatters-full.dep"
+//#using "../treestates/treestates-full.dep"
+//#using "../interfaces/interfaces-full-post.dep"
+
+
+
+

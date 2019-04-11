@@ -1,0 +1,40 @@
+# Cross-App feature usage.
+
+This article aims to point out to the various techniques through which features implemented by an app or a daemon can be used from other code (e.g. another app/daemon).
+
+Generally speaking there are 3 approaches to the problem, differentiated not so much by the functionality, but mainly by the assumptions one has to accept. We will call the code that uses the functionality `client` and the app that implements and exposes it in some way - `server`. These terms are for this article only. And here are the techniques described by the assumptions under which each of them is usable:
+
+- **Direct** - the `client` and the `server` are in the same workspace (browser page/tab) and can call each other directly (Javascript calls). The `server` in these scenarios is an app or a daemon which is known to the `client`. So, the client can find and obtain reference to the app or a daemon and call it directly. This is obviously the chosen approach for private of functionality used from outside the app - e.g. indicators for an app state in the shell UI, integration between apps from the same or closely related projects and so on.
+- **Local** - again the `client` and the `server` are in the same workspace (browser page/tab) and can call each other directly (Javascript calls). However, in contrast with the Direct scenario, the `client` does not know the `server`, hence an abstract layer between them exposes the communication as a general feature (in BK this is called Local API) and at least theoretically the implementation of the server may vary. Some system features are also exposed that way and all in all from the client's point it is not known if this is something exposed by an app, daemon or the system itself.
+- **Remote** - the `client` and the `server` may be in different workspaces. The communication between them has to include a transport layer when they are indeed remote and keep all the characteristics of a remote communication even if it happens to be local (in the same workspace) - it is by design remote, but can be used locally when necessary. Obviously this kind of communication involves additional "players". There is the transport, then there needs to be a way the server and the client to find each other and so on. One of the important results of these assumptions is that all calls are actually asynchronous and no simple calls fit the abstraction in which the server can be somewhere else (at least potentially).
+
+BindKraftJS provides functionality for the different cases in different ways. There is some similarity and even duplication between some of the mechanisms - especially the **Direct** and the **Local**, but this is to be expected as the difference between a direct and local communication is mostly a matter of perception - is the feature something commonly used by other apps or is it specific for the `server` app and a client/clients very specifically related to it. Thus the difference often boils down to how public this is. Local API is exactly for that purpose - to expose something for others to use as they wish, while direct communication is a closed approach available only if the `client` "knows well" the `server` and while BindKraft provides classes and API for that purpose, it leaves most of the details to the implementer unlike the Local API, which involves special registration process (for the `server`) and declaration of "what's used" (by the `client`). Many system features are exposed as Local API to make them easily accessible and writing apps/daemons that use it actually extends the system with additional features.
+
+Remote/remotable communication is something vastly different even if it happen to be involved in local workspace communication in some cases. The idea here is that the `client` is prepared and written in manner that assumes remote `server`. The involved machinery is more complex and heterogenous - not all transports can connect all clients and servers, there can and most often are additional elements involved - to deal with finding the server, lookup for available one, determining how to transport the calls and even manage life-cycles (mostly of servers). The life-cycle management is not foreign concept for local communication (Local API to fire up the local server app for instance), but it is not assumed to be an integral part of the communication process.
+
+In conclusion it is important to underscore the fact that the supplied aPI by BindKraft is different for the different cases in order to a) cover the needs of the scenario and b) to provide its services in simple form - as simple as possible for the given scenario. If you do not see immediately the importance of this, just think how it is theoretically possible to expose everything as Remote API. However, even the smallest of the consequences - the need all the calls to be asynchronous will make its usage way harder - too hard for many scenarios that do not really need this for any actual reason. This is why this separation exists - to establish standards or at least patterns (in the case of the Direct communication) that do not overburden the client with requirements that can be avoided.
+
+## Direct communication techniques and API
+
+## Local API communications - API
+
+## Remote communications - where to start and what is what
+
+    sdf
+    `sdfsdf`
+    sfdsdf
+
+```
+as `sdfsdsdf`
+```
+
+- Asda `sdfsd` fg dfgd
+    - Seconf line
+
+* fsd sdf sdf `sdf` sdf
+    * sdfs sdfsdfsd
+
+> sdfsdf 
+sdffdsdf
+sdf sdf
+

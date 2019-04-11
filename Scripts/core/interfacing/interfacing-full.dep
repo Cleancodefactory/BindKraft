@@ -1,0 +1,8 @@
+
+
+// Interfacing - classes related to intefacing different parties:
+//	- proxy builders
+//  - communication protocols etc.
+
+//#using "ProxyInterfaceBuilderBase.js"
+//#using "DummyProxyInterfaceBuilder.js"

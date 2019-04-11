@@ -1,0 +1,17 @@
+//#using "./TemplateRegister.js"
+
+////+DEPRACTION Suggested:
+/* Reasoning:
+
+	1.These are too concrete and require either a wrapping class(es) to support different back ends or redesign of the classes that use them
+	2. SimpleTemplateFetcher tries to deal with that but involves syntax we can avoid
+	Suggested change is implemented in a class named  DefaultTemplateFetcher (see its source for details)
+*/
+
+//#using "./SimpleTemplateFetcher.js"
+//#using "./TemplateFetcherBase.js"
+//#using "./RegisterTemplateFetcher.js"
+
+////-DEPRACTION Suggested
+
+//#using "./TemplateFetcher.js"

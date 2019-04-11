@@ -1,0 +1,14 @@
+
+
+//#using "./IActionRuleContextConstructorImpl.js"
+//#using "./IActionRuleRegisterImpl.js"
+//#using "./IConnectorToItemsContentImpl.js"
+//#using "./IConnectorToItemsCountImpl.js"
+//#using "./IDataItemsConnectorImpl.js"
+//#using "./IParametersObjectImpl.js"
+//#using "./ITemplateSourceImpl.js"
+//#using "./IViewContainerEventsSinkImpl.js"
+//#using "./IOpenCloseFunctionalityImpl.js"
+//#using "./IDisplayDataSupplierImpl.js"
+//#using "./ICustomParameterizationStdImpl.js"
+//#using "./IAppCommandsImpl.js"

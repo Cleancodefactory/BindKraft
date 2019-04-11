@@ -1,0 +1,37 @@
+
+//#using "../LocalAPI.js"
+//#using "../LocalAPIClient.js"
+
+
+//#using "../interfaces/interfaces-full.dep"
+//#using "../implementors/implementors-full.dep"
+//#using "../messenger/messenger-full.dep"
+//#using "../enumerations/enumerations-full.dep"
+//#using "../historyapi/historyapi-full.dep"
+//#using "../urlactions/urlactions-full.dep"
+
+//#using "../AppBase.js"
+//#using "../AppBaseEx.js"
+//#using "../System.js"
+//#using "../SysShell.js"
+//#using "../SysShellQueryBack.js"
+//#using "../CLMemoryFSHelper.js"
+//#using "../CLGlobalCmdHelper.js"
+//#using "../CLGlobalEnvHelper.js"
+//#using "../CLShortcutsHelper.js"
+//#using "../CLRecentShortcuts.js"
+//#using "../AppIndicatorSlot.js"
+
+
+//#using "../globalcommands.js"
+
+//#using "../BkInit/bkinit-full.dep"
+
+// This must be the last file to include
+//#using "../sysconfig.js"
+//#using "../sysstartup.js"
+
+
+
+// Deprecated 
+////#using "../SysBoot.js"

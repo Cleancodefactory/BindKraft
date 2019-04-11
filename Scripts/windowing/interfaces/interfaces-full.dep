@@ -1,0 +1,8 @@
+
+//#using "./IViewHostWindow.js"
+//#using "./IInfoDisplayPanel.js"
+//#using "./IWindowTemplate.js"
+//#using "./IWorkspaceWindow.js"
+//#using "./IDialogView.js"
+//#using "./IAttachedWindowBehaviors.js"
+//#using "./IWindowBehavior.js"

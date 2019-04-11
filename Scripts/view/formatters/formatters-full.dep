@@ -1,0 +1,7 @@
+// This directory is deprecated. All the formatters have been moved to the core/formatters.
+// This decision may be a bit strange considering that they are usually used in the UI, but
+// in fact they are abstract enough for the core and can be used programmaticaly, in which
+// case certain UI related parameters can just be skipped. 
+// Now, we are going to add some utility functions to support that better.
+
+//  //#using "oldformatters.js"

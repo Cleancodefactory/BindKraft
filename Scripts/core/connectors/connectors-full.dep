@@ -1,0 +1,13 @@
+//#using "Connector.js"
+//#using "DOMConnector.js"
+//#using "FastArrayConnector.js"
+//#using "FastProcConnector.js"
+//#using "AjaxXmlConnector.js"
+//#using "ArrayConnector.js"
+//#using "RawAjaxJsonConnector.js"
+//#using "RawCORSAjaxJsonConnector.js"
+//#using "StringConnector.js"
+
+//#using "helpers/connector-helpers.dep"
+//#using "RegisterTemplateConnector.js"
+//#using "TemplateConnector.js"

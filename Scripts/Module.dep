@@ -1,0 +1,9 @@
+/*
+	In any environment that supports bundling files with the using directive start with this file.
+	For future thinning and leaning of the BindKraftJS code in contexts where this can be of use
+	the dep files for all sections and subsections is put in profile directories. The files ending
+	with  -full.dep are for the full profile (the only one at the moment of wtiting this). When and if
+	other profiles are defined the directive below could be changed to one of them when desired.
+*/
+
+//#using "./profiles/full.dep"

@@ -1,0 +1,8 @@
+
+
+// Temporary!!!
+// Do not try to improve this too much. We want to define OOP kind of adapter base classes and migrate the adapter(s) implementation over them.
+// generic.conf is more or less an example of some traits of the technique we aim to apply in future versions.
+
+//#using "./conf.js"
+//#using "./generic.conf.js"

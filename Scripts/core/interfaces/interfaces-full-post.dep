@@ -1,0 +1,3 @@
+// Interfaces that has to be defined later - after the core is included
+
+//#using "./IExposeCommands.js"

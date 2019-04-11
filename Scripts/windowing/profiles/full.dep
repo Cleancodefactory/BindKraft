@@ -1,0 +1,31 @@
+
+
+
+//#using "../enumerations/enumerations-full.dep"
+//#using "../interfaces/interfaces-full.dep"
+//#using "../implementors/implementors-full.dep"
+
+//#using "../base/base-full.dep"
+//#using "../windowbehaviors/windowbehaviors-full.dep"
+//#using "../BaseWindow.js"
+//#using "../MainWindow.js"
+//#using "../PanelWindow.js"
+//#using "../SimpleInfoDisplay.js"
+//#using "../SimpleViewWindow.js"
+//#using "../WindowInfoDisplay.js"
+//#using "../WindowingMessage.js"
+//#using "../WindowingParentNotifyMessage.js"
+//#using "../WindowManagement.js"
+//#using "../lib/lib-full.dep"
+
+//#using "../compiletimetasks.js"
+
+// May be we shold throw this out into the project specific stuff or make possible to use different class and use this as a fallback.
+//#using "../WorkspaceWindow.js"
+//#using "../dialogs/dialogs-full.dep"
+//#using "../tools/tools-full.dep"
+
+
+
+
+

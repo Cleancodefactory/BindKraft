@@ -1,0 +1,23 @@
+Commander.Script - a command line for (shell) scripting the BindKraft client side.
+==================================================================================
+
+This is the documentation and reference of the command line based engine.
+
+The engine structure and definitions
+------------------------------------
+
+RESULT 					- Return stack by default the top ellement is pulled for 
+						usage as parameter and pushed when result is returned.
+						Commands must define which of their arguments are taken
+						from the RESULT and which are literal or expression
+
+ENVIRONMENT				- Environment variables, global env. is the default...
+
+
+?LITERAL PARAMETER		- arguments consumed as literals from the command line. 
+						They cannot be replaced by command or expression.
+?RESULT PARAMETER		- a command argument taken from the result. //details!!!//
+
+
+Special environment variables:
+------------------------------

@@ -1,0 +1,84 @@
+This file throws some light over the purposes of the directories in the source 
+and will be updated with any changes in the structure. 
+
+1. Standard directories
+
+core/
+	Contains all the non-visual base parts of BK - root class, delegates, 
+	asynchronous scheduled tasks, events, CL scripts and so on and so forth
+	There is a small number of code that has some visual aspects in it and it is
+	an ongoing effort (although wiht secondary importance) to separate it into 
+	visual and non-visual parts without losing anything.
+	
+view/
+	The visual part of BindKraft - bindings, templates, views, components, 
+	validators etc.
+	These are all dependent on the core/ part.
+	
+windowing/
+	The logical windows support - window classes, window management and related.
+	Depends on view and there is a little cross-dependency with system (limted
+	to the need the windows to "know" sometimes what app is).
+	
+system/
+	Features that form the system - the workspace (desktop) app management, the 
+	system (the whole construction) access to various API and features that workspace
+	on system level.
+	
+trashbox/
+	A place for storing code that is never included, never runs - place where pack-rats
+	can put whatever they can't make themselves just delete ;) - well there are such
+	people around. Well, forget the jokes, sometimes pieces of code are kept as a 
+	reminder by people who reimplement old features and need to check back pieces of old
+	implementations in order to maintain compatibility and so on. Any code put here 
+	must be passive and never included anythere.
+	
+inprogress/	
+	This directory is for new fewatures that need many files, but are still in 
+	early stages of development. Features that are stable enough to never break
+	the system, but not mature enough to be documented and offered to BK users
+	are often developed there and after completion moved where they belong. Each 
+	feature must be in separate subfolder and during its development it can be
+	structured incorrectly. Note that these features, because of their stage will
+	lag behind in master.
+	
+
+2. Directories that will probably change soon
+
+genericpattern/	
+	This directory was created to contain classes following the so called "Generic
+	pattern". This was a set of conventions used with precursors of BindKraft 
+	internally in Clean Code Factory. Whatever remains here will be integrated into
+	the appropriate parts of the framework and the directory probably removed.
+	
+http/
+	Initial stage of the new ajax infrastructure. It will remain there when finished.
+	There is a notion that it should be renamed to net/ or comm/, because other 
+	communication oriented code will also go there.
+	
+
+
+
+
+
+3. Directories that will disappear sooner or later
+
+adapters/
+	adapter scripts adapting the BK to certain environment specifics. This is old 
+	style solution and will be phased out together with the directory. The new ajax
+	infrastructure will render the last pieces of code in this directory obsolete.
+	
+dependencies/
+
+	Bundled in versions of external libraries.
+	It is planned to phase out them all (2019 end) except the globalize, which will 
+	take a little more time - the BK own globalization/localization low level features, 
+	needed for localization suport are planned for 2020.
+	
+	The directory will be kept anyway.
+	
+dommanagement/
+
+	About to be removed - the functionality there will be replaced and will go into 
+	view/	
+

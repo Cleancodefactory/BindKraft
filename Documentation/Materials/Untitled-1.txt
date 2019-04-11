@@ -1,0 +1,66 @@
+// FYI
+
+Processing of a window message
+
+1. wnd.$handleWindowEvent(e) -> Implemented in BaseWindow
+1.1. preprocessWindowEvent -> theoretically overridable (*return result*)
+    if .handled -> END
+1.2. if exists wnd.on_{EventType} - call it function(msg)
+1.3. handleWindowEvent -> overridable (*return result*)
+    ex:
+        MyClass.prototype.handleWindowEvent = function(msg, cr) {
+            var result = cr;
+            switch (msg.type) {
+                case WindowEventEnum.pageDeactivating:
+                    ....
+                    msg.handled = true;
+                    result = neshtodrugo;
+                break;
+            }
+            return this.handleWindowEventDefault(evnt, result);
+        }
+1.3.1 handleWindowEventDefault
+1.3.1.1 - call external handlers*
+1.3.1.2 - advise behaviors
+1.3.1.3 - default msg handling
+
+
+* 
+    a) new WindowX(
+        { 
+            on_{EventType}: callback
+
+        }
+    )
+    b)
+        wnd.registerExternalHandler(type, callback)
+        wnd.unregisterExternalHandler(type, callback)
+
+///////////////////// Another thing ////////////////
+
+// When pageDeactivating
+
+MyClass.prototype.ViewDeactivating = function(msg) {
+    if (this.get_isdirty()) {
+        if (BaseObject.is(msg,"WindowingMessage")) {
+            if(BaseObject.is(msg.newWindow,"BaseWindow")) {
+                // Save it *somewhere* from msg.data.newWindow
+            }
+        }
+        // initiate ask dialog
+        // idea (optional)
+            this.callAsync("$openAskDialog",a,b,c);
+        //
+        return false;
+    }
+}
+MyClass.prototype.$openAskDialog =  function(a,b,c) {
+    // open it and then get target tab from *somewhere* - switch to it
+}
+
+
+// Dirty state
+<span data-bind-elementvisible="{read source=__view path=$isDirty readdata=$viewdirtystatechanged}" style="color: red; font-weight: bold;">Dirty!</span>	
+
+<input type="text" data-bind-val="{bind path=alalabala.name checkstate=input,keydown }" />
+<div data-class="VirtualDropDown" .... data-bind-$value="{bind ... checkstate=$selectionchanged }" />

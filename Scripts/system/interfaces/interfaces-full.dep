@@ -1,0 +1,21 @@
+
+// Moved to core/interfaces
+//   //#using "./IPlatformUtility.js"
+//   //#using "./IPlatformUrlMapper.js"
+
+//#using "./IAppManager.js"
+//#using "./IAppManager2.js"
+
+// Moved to core/env
+//  IAppEnvironment -> IEnvironmentContext // Considered more general than application/daemon
+
+//#using "./ISimpleAppManager.js"
+//#using "./IServiceFactory.js"
+//#using "./IOneInstanceApp.js"
+//#using "./ILauncherQueryBack.js"
+//#using "./IAppIndicator.js"
+//#using "./IUsingLocalAPI.js"
+//#using "./IImplementsLocalAPI.js"
+//#using "./IAppHistorySupport.js"
+//#using "./IHistoryTracker.js"
+//#using "./IApplicationState.js"
