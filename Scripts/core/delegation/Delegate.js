@@ -125,3 +125,34 @@ Delegate.prototype.applyArguments = function (argsArray) {
 
 // Use this one to determine if the above feature works
 Delegate.prototype.supportsArguments = function () { return true; };
+
+// Various stuff using delegation, but not part of the Delegate implementation
+Delegate.stubAProperty = function(stubbedInstance, stubbedPropertyName, toInstance, toPropertyName,modes) {
+	if (!BaseObject.is(stubbedInstance, "BaseObject") || !BaseObject.is(toInstance,"BaseObject")) {
+		BaseObject.LASTERROR(-1, "Both the instance of the stubbed property and the instance to which the stub property will be redirected are required (can't be null)");
+		return false; // Can't do it
+	}
+	if (typeof stubbedPropertyName !== "string" || typeof toPropertyName !== "string") {
+		BaseObject.LASTERROR(-1, "Both property names are required");
+		return false; 
+	}
+	if (modes != null && typeof modes !== "string") {
+		BaseObject.LASTERROR(-1, "Incorrect mode must be 'get,set' or just one of the both");
+		return false; 
+	}
+	var _modes = modes || "get"; // use "get,set"
+	var arr = _modes.split(",");
+	var result = false;
+	if (arr != null) {
+		for (var i = 0; i < arr.length;i++) {
+			if (arr[i] == "get") {
+				stubbedInstance["get_" + stubbedPropertyName] = Delegate.createWrapper(toInstance, "get_" + toPropertyName);
+				result = true;
+			} else if (arr[i] == "set") {
+				stubbedInstance["set_" + stubbedPropertyName] = Delegate.createWrapper(toInstance, "set_" + toPropertyName);
+				result = true;
+			}
+		}
+	}
+	return result;	
+}

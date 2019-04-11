@@ -94,6 +94,7 @@ BaseObject.lastError = (function() {
 		
 	};
 })();
+
 BaseObject.prototype.LASTERROR = function(code, text, method) {
 	if (arguments.length == 0) {
 		return BaseObject.lastError;
@@ -101,7 +102,13 @@ BaseObject.prototype.LASTERROR = function(code, text, method) {
 		return BaseObject.lastError.report(code, text, this.classType(), method);
 	}
 }
-
+BaseObject.LASTERROR = function(code, text, method) {
+	if (arguments.length == 0) {
+		return BaseObject.lastError;
+	} else {
+		return BaseObject.lastError.report(code, text, "static", method);
+	}
+};
 
 // HINT: When implementing your own Obliterator call the parent after your specific code, this way problems are much less likely to occur
 BaseObject.prototype.obliterate = function (bFull) { // Destructor
