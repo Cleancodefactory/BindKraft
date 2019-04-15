@@ -1,20 +1,22 @@
 /**
-	The logical BindKraft windows are heavy construct inteded as a container. The windows may be designed to host specific content - like SimpleViewWindow/ViewWindow or
-	other windows. Thus they are responsible for the cosntruction of the skeleton of the UI in relatively bigger pieces which can typicall be arranged in different ways to
-	some extent (depends on the implementation, of course).
+	The logical BindKraft windows are heavy constructs inteded as a containers. The windows may be designed to host specific content - 
+	like SimpleViewWindow/ViewWindow or	other windows. Thus they are responsible for the cosntruction of the skeleton of the UI in 
+	relatively bigger pieces which can typically be arranged in different ways to some extent (depends on the implementation, of course).
 	
-	0. Windows inherit from ViewBase, but for the most part one should forget this and consider mostly their "container" nature. Inheriting from ViewBase gives us freely extras
-	like - using the same techniques and components when designing their system parts (captions/toolbars/other UI control elements), but not much else.
+	0. Windows inherit from ViewBase, but for the most part one should forget this and consider mostly their "container" nature. Inheriting 
+	from ViewBase gives us free extras like - using the same techniques and components when designing their system parts (captions/toolbars
+	/other UI control elements), but not much else.
 	
-	1. Templates. Unlike the components designed to be views or reside inside views, windows attach to their templates and can exist detached (but invisible). They are actually used 
-	only when they are attached, but unlike the view components they are not lifetime-bound to their places.
-	Thus the templates are critically important for the windows even more than they are for their view bound counterparts. The template is determined while the window is constructed in
-	this fashion until one is found:
+	1. Templates. Unlike the components designed to be views or reside inside views, windows attach to their templates and can exist detached 
+	(but invisible). They are actually used only when they are attached, but unlike the view components they are not lifetime-bound to their places.
+	Thus the templates are critically important for the windows even more than they are for their view bound counterparts. The template is 
+	determined while the window is constructed in this fashion until one is found:
 		a. Connector object is passesd as paramter to the constructor. It is expected to return string (html)
 		b. A field templateSource
 	
 
-
+	Persistence with a passed Persister
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	Persisted keys:
 	visible,
 	sizable,
@@ -361,7 +363,29 @@ BaseWindow.prototype.attachInDOM = function (domEl) { // Only the top level wind
 };
 // Override to extract references to elements of the template before it gets polluted with dynamically created elements
 // Extract the client slot(s) for example
+/**
+	Form version 2.17.6
+	Main slot is contained in:
+	this.$clientSlotElement 
+	Additional slots are recorded in:
+	this.$clientSlotElements = {}
+	
+	The notationfor the default finder (during OnDOMAttached)
+	Main slot:
+	data-key="_client"
+	Other slots:
+	data-key="<slotname>" data-sys-client="true"
+	
+	data-sys-client="true" without data-key are searched only of the main slot is not already set
+*/
+BaseWindow.prototype.$defaultSlotFinder = function() {
+	var slot = null; slots = {};
+	//DOMUtil.findElements
+}
 BaseWindow.prototype.OnDOMAttached = function () {
+	// Try single (main) slot
+	var mainslot
+	
     this.$clientSlotElement = $(this.root).find('[data-key="_client"]');
     if (this.$clientSlotElement.length == 0) {
         // try marking

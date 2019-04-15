@@ -278,7 +278,11 @@ DOMUtil.filterElements = function(dom,selector) {
 	
 	@param dom {HTMLElement|NodeList|HTMLCollection|Array<HTMLElement>}
 	@param selector {string} - CSS selector
-	@param callback {callback} - callback(node) that can return false to stop the recursion
+	@param callback {callback} - callback(node) that can return:
+				false - to stop the recursion before processing the node
+				true  - to stop the recurstion after processing the node
+				undefined - permit further processing
+	@param _result  {accumulator} - usually not passed from outside - recursion accumulator
 	
 	@returns {Array<HTMLElement>} - an array of the found elements
 */
@@ -301,6 +305,28 @@ DOMUtil.findElements = function(dom,selector,callback, _result) { // callback(no
 		}
 	}
 	return result;
+}
+DOMUtil.findElement = function(dom,selector,callback) { // callback(node) -> false => stop
+	var el;
+	var b;
+	if (dom instanceof HTMLElement) {
+		b = null;
+		if (callback != null && (b = callback(dom[i])) === false) return result; // Skip this branch
+		if (dom.matches(selector)) {
+			return dom;
+		}
+		if (b === true) return null;
+		if (dom.children != null && dom.children.length > 0) {
+			return DOMUtil.findElement(dom.children,selector,callback);
+		}
+		return null;
+	} else if (dom instanceof HTMLCollection || dom instanceof NodeList || BaseObject.is(dom, "Array")) {
+		for (var i = 0; i < dom.length; i++) {
+			el = DOMUtil.findElement(dom[i],selector,callback);
+			if (el != null) return el;
+		}
+	}
+	return null;
 }
 DOMUtil.findParent = function(dom, selector, callback) {
 	var b;
@@ -340,6 +366,43 @@ DOMUtil.fragmentFromHTML = function(html) {
 	return r;
 }
 
+// Ready to call for frequent scenarios
+
+DOMUtil.queryAllByDataKey = function(node, datakey) {
+	return DOMUtil.findElements(node, '[data-key="' + datakey + '"]',DOMUtil.BorderCallbacks.DataKeysInViewIn);
+}
+DOMUtil.parentByDataKey = function(node, datakey) {
+	return DOMUtil.findParent(node, '[data-key="' + datakey + '"]',DOMUtil.BorderCallbacks.DataKeysInViewOut);
+}
+DOMUtil.queryForMainSlot = function(node) {
+	return DOMUtil.findElement(node, '[data-key="_client"]',DOMUtil.BorderCallbacks.DataKeysInViewOut);
+}
+DOMUtil.querySlots = function(node) {
+	/////////////////////////////////////
+	var arr = DOMUtil.findElements(node, '[data-sys-client="true"]',DOMUtil.BorderCallbacks.WindowSlotsIn);
+	var result = {
+		main: null,
+		named: {}
+	};
+	var n;
+	for (var i = 0; i < arr.length; i++) {
+		if (arr[i].matches('[data-key]')) {
+			n = arr[i].getAttribute("data-key");
+			if (typeof n == "string") {
+				result.named[n] = arr[i];
+			}
+		} else {
+			if (result.main == null) { // First found only
+				result.main  = arr[i];
+			}			
+			
+		}
+	}
+	
+}
+
+
+
 // Border callbacks
 /*
 	Borders
@@ -363,14 +426,44 @@ DOMUtil.fragmentFromHTML = function(html) {
 	dom.
 
 */
+DOMUtil.BorderIndicator = {
+	templateRoot: function(node) {
+		if (JBUtil.isTemplateRoot(node)) return true;
+	},
+	controlRoot: function(node) {
+		return BaseObject(node.activeClass, "IUIControl");
+	},
+	dataContextRoot: function(node) {
+		return (he.dataContext != null || he.hasDataContext);
+	}
+};
+
 // DOMUtil.findElements callbacks
-/*
+/* UNDER CONSTRUCTION
 	They return 
 	undefined - no opinion
 	false - stop without processing the node
 	true  - process this node and stop
 */
 DOMUtil.BorderCallbacks = {
+	WindowSlotsIn: function(node) { // window template from root, do not enter template borders and IUIControl-s
+		var indicator = DOMUtil.BorderIndicator;
+		if (indicator.templateRoot(node)) return false; // Templates are put in slots - they are not ours
+		if (indicator.controlRoot(node)) return false; // Enclosed controls are not enclosed :)
+		// undefined - permitted.
+	},
+	DataKeysInViewIn: function(node) {
+		var indicator = DOMUtil.BorderIndicator;
+		if (indicator.templateRoot(node)) return true; // Templates are put in slots - they are not ours
+		if (indicator.controlRoot(node)) return true; // Enclosed controls are not enclosed :)
+	},
+	DataKeysInViewOut: function(node) {
+		var indicator = DOMUtil.BorderIndicator;
+		if (indicator.templateRoot(node)) return true; // Templates are put in slots - they are not ours
+		if (indicator.controlRoot(node)) return true; // Enclosed controls are not enclosed :)
+	}
+	// The commented code below is for conversation purposes - will be removed when the standard set is completed
+	/*
 	templateRoot: function(node) {
 		if (JBUtil.isTemplateRoot(node)) return false;
 	},
@@ -397,6 +490,7 @@ DOMUtil.BorderCallbacks = {
 	},
 	childKeyBorder: function(node) {
 	}
+	*/
 	/*
 	,
 	workBorder: function(node) {
