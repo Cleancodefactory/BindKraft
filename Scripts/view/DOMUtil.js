@@ -233,6 +233,7 @@ DOMUtil.obliterateDom = function(dom, bAndSelf) { // public, recursive
 	}
 }
 // Node functionality (search etc.)
+/* Should not be used - does not honor BK borders
 DOMUtil.closestParent = function(dom, selector, bAndSelf) {
 	if (dom instanceof HTMLElement) {
 		if (bAndSelf) {
@@ -248,6 +249,7 @@ DOMUtil.closestParent = function(dom, selector, bAndSelf) {
 	}
 	return null;
 }
+*/
 /**
 	@param dom* {NodeList|HTMLCollection|Array<HTMLElement>}	- set of elements - only HTMLElement-s are processed, the others will never pass.
 	@param dom** {HTMLElement} - Single element.
@@ -291,7 +293,7 @@ DOMUtil.findElements = function(dom,selector,callback, _result) { // callback(no
 	var b;
 	if (dom instanceof HTMLElement) {
 		b = null;
-		if (callback != null && (b = callback(dom[i])) === false) return result; // Skip this branch
+		if (callback != null && (b = callback(dom)) === false) return result; // Skip this branch
 		if (dom.matches(selector)) {
 			result.push(dom);
 		}
@@ -311,7 +313,7 @@ DOMUtil.findElement = function(dom,selector,callback) { // callback(node) -> fal
 	var b;
 	if (dom instanceof HTMLElement) {
 		b = null;
-		if (callback != null && (b = callback(dom[i])) === false) return result; // Skip this branch
+		if (callback != null && (b = callback(dom)) === false) return result; // Skip this branch
 		if (dom.matches(selector)) {
 			return dom;
 		}
@@ -348,6 +350,7 @@ DOMUtil.findParent = function(dom, selector, callback) {
 	}
 	return null;
 }
+DOMUtil.hasChildren
 DOMUtil.fragmentFromHTML = function(html) {
 	var fr = document.createDocumentFragment();
 	var div = document.createElement("div");
@@ -377,27 +380,43 @@ DOMUtil.parentByDataKey = function(node, datakey) {
 DOMUtil.queryForMainSlot = function(node) {
 	return DOMUtil.findElement(node, '[data-key="_client"]',DOMUtil.BorderCallbacks.DataKeysInViewOut);
 }
+/**
+	Combined "standard" search for slots in a window template
+	data-key=_client -> main slot
+*/
 DOMUtil.querySlots = function(node) {
-	/////////////////////////////////////
-	var arr = DOMUtil.findElements(node, '[data-sys-client="true"]',DOMUtil.BorderCallbacks.WindowSlotsIn);
 	var result = {
 		main: null,
-		named: {}
+		named: {},
+		nonamed: true // helps to check fast if there are any named slots found
 	};
+	// Lookup the main slot
+	var el = DOMUtil.findElement(node, '[data-key="_client"]',DOMUtil.BorderCallbacks.DataKeysInViewOut);
+	if (el != null) result.main = el;
+	// Find the rest
+	var arr = DOMUtil.findElements(node, '[data-sys-client="true"]',DOMUtil.BorderCallbacks.WindowSlotsIn);
 	var n;
+	// set in el the first found
+	el = null;
 	for (var i = 0; i < arr.length; i++) {
+		el = arr[i];
 		if (arr[i].matches('[data-key]')) {
 			n = arr[i].getAttribute("data-key");
 			if (typeof n == "string") {
-				result.named[n] = arr[i];
+				if (n != "_client") { // This one should be found already if it exists and put in the main slot
+					result.nonamed = false;
+					result.named[n] = arr[i];
+				}
 			}
-		} else {
+		} else { // has no name - if there is no main slot already - put it there
 			if (result.main == null) { // First found only
 				result.main  = arr[i];
 			}			
-			
 		}
 	}
+	// if after all this we have not found main slot use the first found
+	if (result.main == null) result.main = el;
+	return result;
 	
 }
 
@@ -431,7 +450,7 @@ DOMUtil.BorderIndicator = {
 		if (JBUtil.isTemplateRoot(node)) return true;
 	},
 	controlRoot: function(node) {
-		return BaseObject(node.activeClass, "IUIControl");
+		return BaseObject.is(node.activeClass, "IUIControl");
 	},
 	dataContextRoot: function(node) {
 		return (he.dataContext != null || he.hasDataContext);

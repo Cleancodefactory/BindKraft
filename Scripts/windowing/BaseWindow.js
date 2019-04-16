@@ -364,7 +364,10 @@ BaseWindow.prototype.attachInDOM = function (domEl) { // Only the top level wind
 // Override to extract references to elements of the template before it gets polluted with dynamically created elements
 // Extract the client slot(s) for example
 /**
-	Form version 2.17.6
+	Form version 2.17.6 the OnDOMAttached is reworked to find the slots in more elaborate fashion that can be useful
+	for the most inheriting classes - enough to avoid the need to override it.
+	
+	
 	Main slot is contained in:
 	this.$clientSlotElement 
 	Additional slots are recorded in:
@@ -378,14 +381,34 @@ BaseWindow.prototype.attachInDOM = function (domEl) { // Only the top level wind
 	
 	data-sys-client="true" without data-key are searched only of the main slot is not already set
 */
-BaseWindow.prototype.$defaultSlotFinder = function() {
-	var slot = null; slots = {};
-	//DOMUtil.findElements
-}
+// Initial values
+BaseWindow.prototype.$clientSlotElement = null;
+BaseWindow.prototype.$clientSlotElements = null;
 BaseWindow.prototype.OnDOMAttached = function () {
 	// Try single (main) slot
-	var mainslot
-	
+	var slots = DOMUtil.querySlots(this.root);
+	if (slots.main != null) {
+		this.$clientSlotElement = slots.main;
+	} else {
+		// No main slot
+		if (slots.nonamed) {// no slots at all
+			if (this.root.children.length == 0) {
+				// Empty elements can serve as main slot
+				this.$clientSlotElement = this.root;
+			}
+		} 
+	}
+	// Named slots
+	if (!slots.nonamed) {
+		// Transfer the named slots
+		this.$clientSlotElements = result.named; 
+	}
+	/* TODO: It is possible to have only named slots without main, but
+		our CURRENT LOGIC PUTS AS MAIN THE FIRST FOUND (a duplicate).
+		This might be a problem ... or not?
+	*/
+	// +DEPRECATED
+	/* 
     this.$clientSlotElement = $(this.root).find('[data-key="_client"]');
     if (this.$clientSlotElement.length == 0) {
         // try marking
@@ -396,7 +419,13 @@ BaseWindow.prototype.OnDOMAttached = function () {
 			this.$clientSlotElement = $(this.root);
 		}
     }
-    this.$heightimpactelements = $(this.root).find('[data-sys-height="true"]');
+	*/
+	// -DEPRECATED
+	
+	this.$heightimpactelements = DOMUtil.findElements(this.root,'[data-sys-height="true"]',DOMUtil.BorderCallbacks.DataKeysInViewIn);
+    // this.$heightimpactelements = $(this.root).find('[data-sys-height="true"]');
+	
+	// TODO: Change to non-jq when we get there
     var handles = $(this.root).find('[data-sys-draghandle="true"]');
     this.$draghandles = (handles != null && handles.length > 0) ? handles : null;
 };
@@ -1238,20 +1267,49 @@ BaseWindow.prototype.$autoCalcClientHeight = function () {
     var els = this.get_heightimpactelements();
     var winHeight = parseFloat(this.root.clientHeight);
     var sysHeight = 0;
-    if (els != null) {
+    if (BaseObject.is(els,"Array")) {
         for (var i = 0; i < els.length; i++) {
-            var el = $(els[i]);
+            var el = els[i];
+			if (el.offsetParent != null) {
+				sysHeight += el.offsetHeight;
+			}
+			/*
             if (el.is(":visible")) {
                 sysHeight += el.outerHeight(); //parseFloat(el.css('height'));
             }
+			*/
         }
     }
     return winHeight - sysHeight;
 };
-/*protected*/BaseWindow.prototype.$adjustClient = function () {
-    var c = this.get_clientcontainer(); // The default behaviour deals with single client area only
+/**
+	Adjusts the height of the main client (name = null) or another client (name = string)
+	The hight is adjusted as if all elements are block elements atacked one over the other 
+	and the client is one of them.
+	
+	BaseWindow only adjust the clients as if they are one stack, any other adjustments have to be
+	made by an inheriting window knowing its job and what should be where.
+	
+	If the main client is used as a container for other clients this is safe to be called only
+	on the main client (name = null). If the named clients have specific placement and behavior it
+	is again not wise to call this method for them - do adjustments yourself.
+*/
+/*protected*/BaseWindow.prototype.$adjustClient = function (name) {
+    var c = this.get_clientcontainer(name); // The default behaviour deals with single client area only
+	if (BaseObject.isJQuery(c)) {
+		if (c.length > 0) { c = c.get(0); } else { c = null; }
+	}
     if (c != null) {
-        var clnt = $(c);
+		
+        // var clnt = $(c);
+		if (c.offsetParent != null) {
+			var h = this.$autoCalcClientHeight();
+			if (h > 0) {
+				c.style.height = h + "px";
+				return true;
+			}
+		}
+		/*
         if (clnt.is(':visible')) {
             var h = this.$autoCalcClientHeight();
             if (h > 0) {
@@ -1259,6 +1317,7 @@ BaseWindow.prototype.$autoCalcClientHeight = function () {
                 return true;
             }
         }
+		*/
     }
     return false;
 };
