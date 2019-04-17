@@ -3,10 +3,19 @@ IAttachedWindowBehaviorsImpl.InterfaceImpl(IAttachedWindowBehaviors);
 IAttachedWindowBehaviorsImpl.RequiredTypes("BaseWindow");
 IAttachedWindowBehaviorsImpl.classInitialize = function(cls) {
 	cls.prototype.$attachedBehaviors = new InitializeArray("Registerd behaviors");
-	cls.prototype.attachBehavior = function(/*IWindowBehavior*/ wb) { 
+	cls.prototype.$attachedNamedBehaviors = new InitializeObject("Registerd behaviors with name");
+	cls.prototype.attachBehavior = function(/*IWindowBehavior*/ wb, /*optional, string*/ name) { 
 		var result = null;
 		if (BaseObject.is(wb, "IWindowBehavior")) {
+			var ucb = wb.get_uniquecallback();
+			if (BaseObject.isCallback(ucb) && this.attachedBehavior(ucb) != null) return null;
 			this.$attachedBehaviors.push(wb);
+			if (typeof name === "string" && name.length > 0) {
+				if (BaseObject.is(this.$attachedNamedBehaviors[name], "BaseObject")) {
+					throw "Attempt to attach a named behavior with a name that is already used. The existing behavior under the name " + name + " is of type " + this.$attachedNamedBehaviors[name].classType();
+				}
+				this.$attachedNamedBehaviors[name] = wb;
+			}
 			wb.init(this);
 			result = wb;
 		}
@@ -14,10 +23,16 @@ IAttachedWindowBehaviorsImpl.classInitialize = function(cls) {
 	}
 	cls.prototype.detachBehavior = function(/*IWindowBehavior*/ wb) { 
 		var result = null;
+		var me = this;
 		if (BaseObject.is(wb, "IWindowBehavior")) {
 			this.$attachedBehaviors.Delete(function(idx, itm) {
 				if (itm == wb) {
 					wb.uninit(this);
+					for (var k in me.$attachedNamedBehaviors) {
+						if (me.$attachedNamedBehaviors[k] == wb) {
+							me.$attachedNamedBehaviors[k] = null;
+						}
+					}
 					result = wb;
 					return true;
 				}
@@ -26,10 +41,11 @@ IAttachedWindowBehaviorsImpl.classInitialize = function(cls) {
 		}
 		return result;
 	}
-	function $recurseBehaviors(arr, forward_or_backwards, callback, action) {
+	function $recurseBehaviors(_arr, forward_or_backwards, callback, action) {
 		var i, stopnow = false;
+		var arr = Array.createCopyOf(_arr);
 		function _ifdo(idx) {
-			if (callback == null || BaseObject.callCallback(callback,beh)) {
+			if (callback == null || BaseObject.callCallback(callback,arr[i])) {
 				stopnow = action(arr, idx);
 			}
 		}
@@ -54,10 +70,19 @@ IAttachedWindowBehaviorsImpl.classInitialize = function(cls) {
 	}
 	cls.prototype.attachedBehavior = function(callback) {
 		var result = null;
-		$recurseBehaviors(this.$attachedBehaviors, true, callback, function (arr, idx) {
-			result = arr[idx];
-			return true;
-		});
+		if (typeof callback == "string") {
+			if (BaseObject.is(this.$attachedNamedBehaviors[callback],"IWindowBehavior")) {
+				return this.$attachedNamedBehaviors[callback];
+			}
+		} else if (BaseObject.isCallback(callback)) {
+			$recurseBehaviors(this.$attachedBehaviors, true, callback, function (arr, idx) {
+				result = arr[idx];
+				return true;
+			});
+		} else {
+			return null; // Nothing to do.
+		}
+		
 		return result;
 	}
 	cls.prototype.detachAllBehaviors = function(callback) { 

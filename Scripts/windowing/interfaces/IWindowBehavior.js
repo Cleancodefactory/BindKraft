@@ -13,10 +13,10 @@ IWindowBehavior.prototype.uninit = function(/*BaseWindow*/ wnd) { throw "Not imp
 /**
  * Optionally supported pause/resume by the behavior
  */
-IWindowBehavior.prototype.pause = function() {}
+IWindowBehavior.prototype.pause = function() { throw "not implemented"; }
 /**
  * Optionally supported pause/resume by the behavior
  */
-IWindowBehavior.prototype.resume = function() {}
-IWindowBehavior.prototype.isPaused = function() { return false;}
-
+IWindowBehavior.prototype.resume = function() { throw "not implemented";}
+IWindowBehavior.prototype.isPaused = function() { throw "not implemented";}
+IWindowBehavior.prototype.get_uniquecallback = function() { throw "not implemented"; }

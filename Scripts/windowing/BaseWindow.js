@@ -1181,15 +1181,22 @@ BaseWindow.prototype.destroy = function () {
 } .Description("Imperative destruction.");
 // Standard instance methods
 BaseWindow.prototype.get_clientcontainer = function (param) {
-    if (this.$clientSlotElement != null) {
-		if (BaseObject.isJQuery(this.$clientSlotElement)) {
-			if (this.$clientSlotElement.length > 0) return this.$clientSlotElement.get(0);
-			return null;
+	if (param == null) {
+		if (this.$clientSlotElement != null) {
+			if (BaseObject.isJQuery(this.$clientSlotElement)) {
+				if (this.$clientSlotElement.length > 0) return this.$clientSlotElement.get(0);
+				return null;
+			}
+			return this.$clientSlotElement;
 		}
-		return this.$clientSlotElement;
+	} else {
+		if (this.$clientSlotElements != null) {
+			return this.$clientSlotElements[param];
+		}
 	}
-    var c = this.childElement("_client");
-    return (c == null) ? this.root : c;
+	return null;
+    //var c = this.childElement("_client");
+    //return (c == null) ? this.root : c;
 } .Description("Returns the element which contains the internals of the window - mostly children. Override to return selective elements in specialized windows.");
 BaseWindow.prototype.get_windowelement = function () {
     return this.root;

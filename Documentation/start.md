@@ -17,7 +17,7 @@ Additional overviews of specific features are listed in the "References" section
 
 ## Tutorials
 
-## References
+## References and thematic articles
 
 [OOP Conventions](OOPConventions.md) | [OOP Helpers](OOPHelpers.md) | [Runtime documentation and annotation](RuntimeSelfDoc.md)
 
@@ -36,6 +36,9 @@ Additional overviews of specific features are listed in the "References" section
 
 
 [Windowing classes and interfaces](WindowingClasses.md) - The classes forming the windowing subsystem.
+
+>[Window behaviors](Windowing/WindowBehaviors.md) | 
+[Window message handling](Windowing/WindowMessagesHandling.md)
 
 [System classes and interfaces](SystemClasses.md) - The system, app, daemon and API forming elements of the OOP.
 
