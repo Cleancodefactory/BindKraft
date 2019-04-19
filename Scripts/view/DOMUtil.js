@@ -522,7 +522,6 @@ DOMUtil.BorderCallbacks = {
 };
 
 
-
 // Convertors
 DOMUtil.toDOMElement = function(inp) {
 	var i;

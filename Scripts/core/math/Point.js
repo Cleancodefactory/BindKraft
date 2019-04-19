@@ -79,14 +79,17 @@ Point.prototype.mapRelativeFromTo = function(ptBaseCurrent,ptBaseNew) {
 	newBase = _rp(ptBaseNew);
 	return new Point(curBase.x + this.x - newBase.x, curBase.y + this.y - newBase.y);
 }.Description("Maps this point from one base to another given by arguments");
+Point.prototype.mapTo = function(pt) {
+	return mapRelativeFromTo(null,pt);
+}
 Point.prototype.mapFromToElements = function(el1, el2) {
 	var ref1 = new Point(0,0), ref2 = new Point(0,0);
 	var rect;
-	if (el1 != null) {
+	if (el1 != null && el1 instanceof HTMLElement) {
 		rect = el1.getBoundingClientRect();
 		ref1 = new Point(rect.left,rect.top);
 	}
-	if (el2 != null) {
+	if (el2 != null && el1 instanceof HTMLElement) {
 		rect = el2.getBoundingClientRect();
 		ref2 = new Point(rect.left,rect.top);
 	}

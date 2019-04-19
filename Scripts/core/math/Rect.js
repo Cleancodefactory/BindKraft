@@ -61,21 +61,50 @@ Rect.prototype.individualizeInstance = function(v) {
 Rect.fromArray = function (a) {
     return new Rect(a[0], a[1], a[2], a[3]);
 };
-Rect.fromDOMElement = function (el) {
+Rect.empty = function() {
+	return new Rect(0,0,0,0);
+}
+Rect.fromDOMElement = function (_el) {
+	var el = DOMUtil.toDOMElement(_el);
+	if (el != null) {
+		if (el.offsetParent != null) {
+			return new Rect(el.offsetLeft, el.offsetTop, el.offsetWidth, el.offsetHeight);
+		}
+	}
+	return null;
+	/*
     var p = $(el).position();
     return new Rect(p.left, p.top, $(el).width(), $(el).height());
+	*/
 };
-Rect.fromDOMElementOffset = function (el) {
+Rect.fromDOMElementOffset = function (_el) {
+	var el = DOMUtil.toDOMElement(_el);
+	if (el != null && el instanceof HTMLElement) {
+		var brc = Rect.fromBoundingClientRectangle(document.body);
+		if (brc == null) return null;
+		var rc = Rect.fromBoundingClientRectangle(el);
+	}
+	return null;
+	/*
     var off = $(el).offset();
     return new Rect(off.left, off.top, $(el).width(), $(el).height());
+	*/
 };
-Rect.fromBoundingClientRectangle = function(el) {
+Rect.fromBoundingClientRectangle = function(_el) {
+	var el = DOMUtil.toDOMElement(_el);
+	if (el != null && el instanceof HTMLElement) {
+		var rc = el.getBoundingClientRect();
+		return new Rect(rc.left,rc.top,rc.right - rc.left,rc.bottom - rc.top);
+	}
+	return null;
+	/*
 	var e = $(el);
 	if (e.length > 0) {
 		var rc = e.get(0).getBoundingClientRect();
 		return new Rect(rc.left,rc.top,rc.right - rc.left,rc.bottom - rc.top);
 	}
 	return null;
+	*/
 }.Description("Returns browser's viewport coordinates");
 Rect.fromDOMElementInner = function (el) {
     var off = $(el).offset();
@@ -93,6 +122,11 @@ Rect.fromDOMElementInner = function (el) {
         return new Rect(off.left, off.top, $(el).width(), $(el).height());
     }
 };
+
+Rect.prototype.isEmpty = function() {
+	if (this.w == 0 && this.h == 0) return true;
+	return false;
+}
 Rect.prototype.isValid = function() {
 	if (Point.prototype.isValid.call(this)) {
 		if (typeof this.w == "number" && typeof this.h == "number" &&

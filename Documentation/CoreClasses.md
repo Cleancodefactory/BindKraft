@@ -11,25 +11,25 @@
 
 ### Delegation and events
 
-Classes
+**Classes**
 
 >[Delegate class](CoreClasses/Delegate.md) |
 [EventDispatcher class](CoreClasses/EventDispatcher.md) |
 [PropertyDelegate class](CoreClasses/PropertyDelegate.md) |
 [SugaryDispatcher] (CoreClasses/SugaryDispatcher.md)
 
-Interfaces
+**Interfaces**
 
 >[IInvoke](CoreClasses/IInvoke.md) |
 [IInvocationWithArrayArgs](CoreClasses/IInvocationWithArrayArgs.md) 
 
 ### Asynchronous execution and synchronization
 
-Classes
+**Classes**
 
 [Operation](CoreClasses/Operation.md) | OperationAll | OperationAggregate | ChunkedOperation | ControllableAsyncResult | Dispatchable | SpringTrigger | TaskDispenser | Ticker
 
-Interfaces
+**Interfaces**
 
 [IOperation](CoreClasses/IOperation.md) | 
 [IOperationHandling](CoreClasses/IOperationHandling.md) | 
@@ -42,3 +42,7 @@ Interfaces
 [IDispatchable](CoreClasses/IDispatchable.md) |
 [IFreezable](CoreClasses/IFreezable.md) |
 [IAsyncResult](CoreClasses/IAsyncResult.md)
+
+## Geometry helpers
+
+[Point](CoreClasses/Point.md) | [Rect](CoreClasses/Rect.md) | [Size](CoreClasses/Size.md) | [SizeLimits](CoreClasses/SizeLimits.md)

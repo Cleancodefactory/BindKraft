@@ -80,6 +80,9 @@ DockerSlotsWindowBehavior.prototype.showdock = function(name) {
 	if (this.$slots.hasOwnProperty(name) &&  typeof this.$slots == "string") {
 		var slot_el = this.get_slot(name);
 		if (slot_el != null) {
+			var persistent = this.get_dockprop("persistent", name);
+			var ispercentage = this.get_docprop("percents", name);
+			var _width = this.get_docprop("width", name);
 			
 		}
 	}		
