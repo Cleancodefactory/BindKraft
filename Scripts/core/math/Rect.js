@@ -77,12 +77,14 @@ Rect.fromDOMElement = function (_el) {
     return new Rect(p.left, p.top, $(el).width(), $(el).height());
 	*/
 };
-Rect.fromDOMElementOffset = function (_el) {
+Rect.fromDOMElementOffset = function (_el) { 
 	var el = DOMUtil.toDOMElement(_el);
 	if (el != null && el instanceof HTMLElement) {
-		var brc = Rect.fromBoundingClientRectangle(document.body);
-		if (brc == null) return null;
+		//var brc = Rect.fromBoundingClientRectangle(document.body);
+		//if (brc == null) return null;
 		var rc = Rect.fromBoundingClientRectangle(el);
+		rc.mapFromToElements(null, document.body);
+		return rc;
 	}
 	return null;
 	/*
@@ -94,7 +96,7 @@ Rect.fromBoundingClientRectangle = function(_el) {
 	var el = DOMUtil.toDOMElement(_el);
 	if (el != null && el instanceof HTMLElement) {
 		var rc = el.getBoundingClientRect();
-		return new Rect(rc.left,rc.top,rc.right - rc.left,rc.bottom - rc.top);
+		return new Rect(Math.floor(rc.left),Math.floor(rc.top),Math.floor(rc.right - rc.left),Math.floor(rc.bottom - rc.top));
 	}
 	return null;
 	/*
@@ -106,7 +108,18 @@ Rect.fromBoundingClientRectangle = function(_el) {
 	return null;
 	*/
 }.Description("Returns browser's viewport coordinates");
-Rect.fromDOMElementInner = function (el) {
+Rect.fromDOMElementInner = function(_el) { // jq like - client offset from the body + border and RTL scrollbar (if any)
+	var el = DOMUtil.toDOMElement(_el);
+	if (el != null && el instanceof HTMLElement) {
+		var rc = Rect.fromDOMElementOffset(el);
+		if (rc == null) return null;
+		var crc = new Rect(rc.x + el.clientLeft,rc.y + el.clientTop,el.clientWidth, el.clientHeight);
+		return crc;
+	}
+	return null;
+}
+/*
+Rect.fromDOMElementInner_old = function (el) {
     var off = $(el).offset();
     if ($(el).length > 0) {
         var raw = $(el).get(0);
@@ -122,6 +135,7 @@ Rect.fromDOMElementInner = function (el) {
         return new Rect(off.left, off.top, $(el).width(), $(el).height());
     }
 };
+*/
 
 Rect.prototype.isEmpty = function() {
 	if (this.w == 0 && this.h == 0) return true;

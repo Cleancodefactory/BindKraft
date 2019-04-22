@@ -89,7 +89,7 @@ Point.prototype.mapFromToElements = function(el1, el2) {
 		rect = el1.getBoundingClientRect();
 		ref1 = new Point(rect.left,rect.top);
 	}
-	if (el2 != null && el1 instanceof HTMLElement) {
+	if (el2 != null && el2 instanceof HTMLElement) {
 		rect = el2.getBoundingClientRect();
 		ref2 = new Point(rect.left,rect.top);
 	}
