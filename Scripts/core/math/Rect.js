@@ -184,7 +184,15 @@ Rect.prototype.mapFromToElements = function(el1, el2) { // Overrides the one fro
 	var pt = Point.prototype.mapFromToElements.call(this,el1,el2);
 	return new Rect(pt.x, pt.y,this.w, this.h);
 }.Description("maps the rectangle coordinates from el1 space to el2 space, if any of them is null, it is considered to be the viewport (client coordinates of the browser window)")
-Rect.prototype.toDOMElement = function (domEl) {
+Rect.prototype.toDOMElement = function (_el) {
+	var el = DOMUtil.toDOMElement(_el);
+	if (el != null && el instanceof HTMLElement) {
+		el.style.left = this.x + "px";
+		el.style.top = this.y + "px";
+		el.style.width = this.w + "px";
+		el.style.height = this.h + "px";
+	}
+	/*
     var el = $(domEl);
     if (el.length > 0) {
         if (this.x != null) el.css("left", this.x + "px");
@@ -192,6 +200,7 @@ Rect.prototype.toDOMElement = function (domEl) {
         if (this.w != null) el.css("width", this.w + "px");
         if (this.h != null) el.css("height", this.h + "px");
     }
+	*/
 };
 Rect.prototype.clearPos = function () {
     this.x = this.y = null;
