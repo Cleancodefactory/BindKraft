@@ -43,6 +43,12 @@
 [IFreezable](CoreClasses/IFreezable.md) |
 [IAsyncResult](CoreClasses/IAsyncResult.md)
 
+## Connectors
+
+**Classes**
+
+[TemplateConnector](CoreClasses/TemplateConnector.md)
+
 ## Geometry helpers
 
 [Point](CoreClasses/Point.md) | [Rect](CoreClasses/Rect.md) | [Size](CoreClasses/Size.md) | [SizeLimits](CoreClasses/SizeLimits.md)
