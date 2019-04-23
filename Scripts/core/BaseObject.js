@@ -508,19 +508,19 @@ BaseObject.DeepClone.PlainOnly = function(node, type) {
  BaseObject.DeepCloneData = function(o) {
 	 return BaseObject.DeepClone(o, function(v,t) {
 		 if (t == "function" || t == "BaseObject") return false;
-		 return truel
+		 return true;
 	 });
  }
  BaseObject.DeepCloneFunc = function(o) {
 	 return BaseObject.DeepClone(o, function(v,t) {
 		 if (t == "BaseObject") return false;
-		 return truel
+		 return true;
 	 });
  }
  BaseObject.DeepCloneDataObject = function(o) {
 	 return BaseObject.DeepClone(o, function(v,t) {
 		 if (t == "function" || t == "BaseObject" || t == "Array") return false;
-		 return truel
+		 return true;
 	 });
  }
 

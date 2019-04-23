@@ -107,6 +107,27 @@ System.DefaultCommands = {
 	"grunscript": function(ctx,api) {
 		Commander.RunGlobal(api.pullNextToken());
 	},
+	// +V 2.17.6
+	"set": function(ctx, api) {
+		var varname = api.pullNextToken();
+		var varval = api.pullNextToken();
+		if (typeof varname === "string") {
+			var env = ctx.get_environment();
+			if (env != null) {
+				env.setEnv(varname,varval);
+			}
+		}
+	},
+	"unset": function(ctx, api) {
+		var varname = api.pullNextToken();
+		if (typeof varname === "string") {
+			var env = ctx.get_environment();
+			if (env != null) {
+				env.unsetEnv(varname);
+			}
+		}
+	},
+	// -V 2.17.6
 	"clean_boottime_environment": function(ctx,api) {
 		var gc = CommandReg.Global();
 		gc.unregister("initframework");
@@ -211,6 +232,8 @@ System.DefaultCommands = {
 	gc.register("clean_boottime_environment", null, null,
 							 defs.clean_boottime_environment, "Unregisters commands and environment settings no longer needed after boot, but leaves the global context otherwise intact - other settings will remain there.");
 	gc.register("runurlcommands", null, null, defs.runurlcommands, "Inspects the initial URL's query string for command lines according to the configured prefix and registerd aliases");
-							 
-	
+	// +V 2.17.6
+	gc.register("set", null, null, defs["set"], "Sets a variable in the current environment context: set varname varvalue");
+	gc.register("unset", null, null, defs["set"], "Unsets a variable in the current environment context: unset varname");
+	// -V 2.17.6
 })();
