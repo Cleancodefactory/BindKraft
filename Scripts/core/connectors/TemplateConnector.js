@@ -20,7 +20,4 @@ TemplateConnector.prototype.resolve = function(callback) {
 	} else {
 		return false;
 	}
-	
-	
 }
-//Inherit(Connector, "TemplateConnector");

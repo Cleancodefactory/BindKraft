@@ -350,7 +350,9 @@ DOMUtil.findParent = function(dom, selector, callback) {
 	}
 	return null;
 }
-DOMUtil.hasChildren
+/**
+	Creates a DocumentFragment from the HTML text. Only the root level HTMLElement-s are included.
+*/
 DOMUtil.fragmentFromHTML = function(html) {
 	var fr = document.createDocumentFragment();
 	var div = document.createElement("div");
@@ -360,13 +362,33 @@ DOMUtil.fragmentFromHTML = function(html) {
 	// The original may contain text nodes, so we copy at Node level
 	var n;
 	while (n = div.firstChild) {
-		if (n instanceof Node) {
+		if (n instanceof HTMLElement) {
 			r.appendChild(n);
 		} else {
-			div.removeChild(n);
+			div.removeChild(n); // In order the cycle to progress further
 		}
 	}
 	return r;
+}
+/**
+	Cleans the given fragment from root level non HTMLElement nodes.
+*/
+DOMUtil.cleanupDOMFragment = function(frg) {
+	var i;
+	if (frg instanceof DocumentFragment) {
+		var nodes = [];
+		for (i=0; i<frg.childNodes.length;i++) nodes.push(frg.childNodes[i]);
+		for (i=0; i < nodes.length; i++) {
+			if (!(nodes[i] instanceof HTMLElement)) {
+				try {
+					frg.removeChild(nodes[i]);
+				} catch(ex) {
+					// Just skipping potential errors
+				}
+			}
+		}
+	}
+	return frg;
 }
 
 // Ready to call for frequent scenarios
