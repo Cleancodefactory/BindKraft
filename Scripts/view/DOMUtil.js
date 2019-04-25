@@ -313,7 +313,7 @@ DOMUtil.findElement = function(dom,selector,callback) { // callback(node) -> fal
 	var b;
 	if (dom instanceof HTMLElement) {
 		b = null;
-		if (callback != null && (b = callback(dom)) === false) return result; // Skip this branch
+		if (callback != null && (b = callback(dom)) === false) return null; // Skip this branch
 		if (dom.matches(selector)) {
 			return dom;
 		}
@@ -353,22 +353,40 @@ DOMUtil.findParent = function(dom, selector, callback) {
 /**
 	Creates a DocumentFragment from the HTML text. Only the root level HTMLElement-s are included.
 */
-DOMUtil.fragmentFromHTML = function(html) {
+DOMUtil.fragmentFromHTML = function(html,bNoFilter) {
 	var fr = document.createDocumentFragment();
 	var div = document.createElement("div");
-	fr.appendChild(document.createElement("div"));
+	// We keep the div in a fragment that will be forgotten later
+	// this is a little precaution for suspected bugs in some older browsers
+	fr.appendChild(div);
 	div.innerHTML = html;
 	var r = document.createDocumentFragment();
 	// The original may contain text nodes, so we copy at Node level
 	var n;
 	while (n = div.firstChild) {
-		if (n instanceof HTMLElement) {
+		if (n instanceof HTMLElement || bNoFilter) {
 			r.appendChild(n);
 		} else {
 			div.removeChild(n); // In order the cycle to progress further
 		}
 	}
 	return r;
+}
+DOMUtil.fragmentFromCollection = function(coll,bClone) {
+	if (coll instanceof HTMLCollection || coll instanceof NodeList || BaseObject.is(coll, "Array")) {
+		var fr = document.createDocumentFragment();
+		for (var i = coll.lenght; i >= 0; i--) {
+			if (coll[i] instanceof HTMLElement) {
+				if (bClone) {
+					fr.insertBefore(coll[i].cloneNode(true), fr.firstChild);
+				} else {
+					fr.insertBefore(coll[i], fr.firstChild);
+				}
+			}
+		}
+		return fr;
+	}
+	return null;
 }
 /**
 	Cleans the given fragment from root level non HTMLElement nodes.
@@ -395,6 +413,15 @@ DOMUtil.cleanupDOMFragment = function(frg) {
 
 DOMUtil.queryAllByDataKey = function(node, datakey) {
 	return DOMUtil.findElements(node, '[data-key="' + datakey + '"]',DOMUtil.BorderCallbacks.DataKeysInViewIn);
+}
+DOMUtil.queryOneByDataKey = function(node, datakey) {
+	return DOMUtil.findElement(node, '[data-key="' + datakey + '"]',DOMUtil.BorderCallbacks.DataKeysInViewIn);
+}
+DOMUtil.queryOne = function(node, selector) {
+	return DOMUtil.findElement(node, selector,DOMUtil.BorderCallbacks.DataKeysInViewIn);
+}
+DOMUtil.queryAll = function(node, selector) {
+	return DOMUtil.findElements(node, selector,DOMUtil.BorderCallbacks.DataKeysInViewIn);
 }
 DOMUtil.parentByDataKey = function(node, datakey) {
 	return DOMUtil.findParent(node, '[data-key="' + datakey + '"]',DOMUtil.BorderCallbacks.DataKeysInViewOut);

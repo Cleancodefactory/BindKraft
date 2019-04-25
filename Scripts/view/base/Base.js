@@ -76,6 +76,33 @@ Base.prototype.getAsyncInstruction = function (kind) {
     }
     return 0; // Just in case some change above breaks it up
 }
+// Work in progress - replacing core jquery dependent stuff gradually. Adding some other DOM management members too.
+// +V: 2.17.7
+Base.prototype.$ = function(selector) {
+	if (typeof selector == "string") {
+		try {
+			var el = DOMUtil.queryOne(this.root, selector);
+			if (el != null) {
+				return new DOMUtilElement(el);
+			}
+			return null
+		} catch (ex) {
+			return null;
+		}
+	} else if (selector instanceof HTMLElement) {
+		return new DOMUtilElement(selector);
+	} else if (BaseObject.isJQuery(selector)) { 
+		if (selector.length > 0) {
+			return this.$(selector.get(0));
+		}
+	} else if (window.DOMMNode && selector instanceof DOMMNode) {
+		if (selector._node != null) return this.$(selector._node);
+	} else {
+		return new DOMUtilElement(this.root);
+	}
+	return null;
+}
+// -V: 2.17.7
 Base.prototype.isLive = function () { // True if the element is in the dom
     return ($(this.root).closest("html").length > 0);
 };
@@ -408,9 +435,13 @@ Base.prototype.getRelatedObjects = function (patt, types) {
 	arr.unshift(this.root);
     return JBUtil.getRelatedObjects.apply(JBUtil, arr);
 };
+// +V: 2.17.7 Removed (added different one under the same name - see above)
+/*
 Base.prototype.$ = function (sel) {
     return $(this.root).find(sel);
 };
+*/
+// -V: 2.17.7
 Base.prototype.get_datakey = function() {
     var root = $(this.root);
     return root.attr("data-key");

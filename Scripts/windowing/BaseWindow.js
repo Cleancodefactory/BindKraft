@@ -245,7 +245,6 @@ BaseWindow.prototype.$finishCreatingForReal = function (viewString) {
         this.$staticCaption = args.data.caption;
     }
 	// Now viewString has to be here
-    
     if (this.createParameters.parent) {
         this.set_windowparent(this.createParameters.parent);
     }
@@ -277,14 +276,27 @@ BaseWindow.prototype.$ensureCreated = function (viewString) {
         var pc = null;
         if (p != null) pc = p.get_clientcontainer(this.$clientSlot);
         var tml = viewString;
+		// +V:2.17.7
+		var frg = new DOMUtilFragment(tml);
+		if (!frg.get_isempty()) {
+			this.root = frg.get_root();
+			this.OnDOMAttached();
+			this.root.activeClass = this;
+		}
+		/*
         var el = $(tml);
         if (el.length > 0) {
             this.root = el.get(0);
             this.OnDOMAttached();
             this.root.activeClass = this;
         }
+		*/
+		// -V:2.17.7
+		//###
         if (pc != null) {
-            if (!this.$isAttachedToDom()) $(pc).append(el);
+            if (!this.$isAttachedToDom()) {
+				this.$(pc).append(el);
+			}
         }
         this.initialize();
         this.$applyStyleFlags();
@@ -358,7 +370,7 @@ BaseWindow.prototype.attachInDOM = function (domEl) { // Only the top level wind
             this.isDirectlyAttachedToDom = true;
         }
     } else {
-		throw "This method must be used only by root windows (usually workspace window).";
+		throw "This method must be used only by root windows (usually workspace window). A window having a parent is obviously not a top window.";
 	}
 };
 // Override to extract references to elements of the template before it gets polluted with dynamically created elements
@@ -1219,12 +1231,21 @@ BaseWindow.prototype.set_windowrect = function (rect) {
 };
 BaseWindow.prototype.get_zorder = function () {
     var w = this.get_windowelement();
-    if (w != null) return parseInt($(w).css("z-index"), 10);
+    if (w != null) {
+		var r = parseInt(window.getComputedStyle(w).getPropertyValue("z-index"), 10);
+		if (!isNaN(r)) return r;
+	}
     return 0;
 };
 BaseWindow.prototype.set_zorder = function (ord) {
     var w = this.get_windowelement();
-    if (w != null) $(w).css("z-index", ord);
+    if (w != null) {
+		if (typeof ord === "number") {
+			w.style.zIndex = ord;
+		} else {
+			w.style.zIndex = "auto";
+		}
+	}
 };
 BaseWindow.prototype.maximizeWindow = function () {
     this.setWindowStyles(WindowStyleFlags.fillparent, "set");
