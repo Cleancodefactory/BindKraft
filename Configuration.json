@@ -1,0 +1,27 @@
+﻿{
+    "KraftModuleConfigurationSettings": {
+        "NodeSetSettings": {
+            "SourceLoaderMapping": {
+                "NodesDataIterator": {
+                    "NodesDataIteratorConf": {
+                        "Name": "DefaultNodeTreeIterator",
+                        "ImplementationAsString": "Ccf.Ck.SysPlugins.Iterators.DataNodes.DataNodesImp, Ccf.Ck.SysPlugins.Iterators.DataNodes",
+                        "InterfaceAsString": "Ccf.Ck.SysPlugins.Interfaces.IDataIteratorPlugin, Ccf.Ck.SysPlugins.Interfaces",
+                        "Default": true,
+                        "CustomSettings": {
+                            "MyCustomsetting": "Iterator"
+                        }
+                    },
+                    "NodesDataLoader": [
+                    ]
+                },
+                "ViewLoader": [
+                ],
+                "LookupLoader": [
+                ],
+                "ResourceLoader": [
+                ]
+            }
+        }
+    }
+}
