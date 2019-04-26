@@ -14,7 +14,7 @@ The documentation is maintained in the Documentation directory.
 
 [Changelog](Documentation/CHANGELOG.md) - Changes log, started in April 2019 (see more details in the document)
 
-[BindKraft.io](http://BindKraft.io) - Demo site
+[BindKraft.io](http://bindkraft.io) - Demo site
 
 [Roadmap](Documentation/ROADMAP.md) - Future plans
 
