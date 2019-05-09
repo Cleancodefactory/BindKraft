@@ -17,6 +17,7 @@ UploadBase.ImplementProperty("submitbutton", new Initialize("Template's submit b
 UploadBase.ImplementProperty("ismultiple", new InitializeBooleanParameter("Making available to upload multiple files.", false));
 UploadBase.ImplementProperty("accept", new InitializeStringParameter("The types of files that the control will upload.", ""));
 UploadBase.ImplementProperty("autosubmit", new InitializeBooleanParameter("Should the upload start immedietely after the file is selected", true));
+UploadBase.ImplementProperty("maxsize", new InitializeNumericParameter("The max possible upload file size(in MB).", 20));
 
 //Url properties
 UploadBase.ImplementProperty("moduleName", new InitializeStringParameter("", ""));
@@ -27,6 +28,8 @@ UploadBase.prototype.uploadstarted = new InitializeEvent("Fires when the upload 
 UploadBase.prototype.uploadonprogress = new InitializeEvent("Fires constantly while the upload is uploading.");
 UploadBase.prototype.uploadsuccess = new InitializeEvent("Fired every time when the upload is completed successfully.");
 UploadBase.prototype.uploadfailed = new InitializeEvent("Fired every time when the upload is failed.");
+UploadBase.prototype.onerror = new InitializeEvent("");
+
 
 UploadBase.prototype.init = function () {
     if ($$(this.root).first().getChildren().length = 0) {
@@ -58,9 +61,7 @@ UploadBase.prototype.finalinit = function() {
 }
 
 UploadBase.prototype.$mappedUrl = function() {
-    var url = IPlatformUrlMapper.mapModuleUrl(this.get_url(), this.get_moduleName());
-
-    return url;
+    return IPlatformUrlMapper.mapModuleUrl(this.get_url(), this.get_moduleName());
 }
 
 UploadBase.prototype.OnFilesSelected = function () {
@@ -72,15 +73,22 @@ UploadBase.prototype.OnFilesSelected = function () {
 UploadBase.prototype.SubmitFiles = function () {
     var files = this.get_filesfield().files;
     var formData = new FormData();
+    var hasFiles = false;
 
     for (var i = 0; i < files.length; i++){
         var currFile = files[i];
+        if (this.get_maxsize() < currFile.size / 1000000) {
+            this.onerror.invoke("The file " + currFile.name + " exceeds the size limit of " + this.$maxsize + "MB.");
+            continue;
+        }
+
         var simplifiedName = this.SimplifyFileName(currFile.name);
         var fileName = i + "file" + simplifiedName;
         formData.append(fileName, currFile);
+        hasFiles = true;
     }
 
-    this.SendRequest(formData);
+    if (hasFiles) this.SendRequest(formData);
 }
 
 UploadBase.prototype.SendRequest = function(formData){
@@ -111,11 +119,12 @@ UploadBase.prototype.SendRequest = function(formData){
             }
 
             var data = JSON.parse(request.response.getElementsByTagName("data")[0].childNodes[0].data);
-
             self.uploadsuccess.invoke(self, data);
         }else{
             self.uploadfailed.invoke(self, request.response);
         }
+
+        self.get_filesfield().value = "";
     };
     
     request.send(formData);
