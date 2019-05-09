@@ -28,7 +28,7 @@ UploadBase.prototype.uploadstarted = new InitializeEvent("Fires when the upload 
 UploadBase.prototype.uploadonprogress = new InitializeEvent("Fires constantly while the upload is uploading.");
 UploadBase.prototype.uploadsuccess = new InitializeEvent("Fired every time when the upload is completed successfully.");
 UploadBase.prototype.uploadfailed = new InitializeEvent("Fired every time when the upload is failed.");
-UploadArea.prototype.onerror = new InitializeEvent("");
+UploadBase.prototype.onerror = new InitializeEvent("");
 
 
 UploadBase.prototype.init = function () {
