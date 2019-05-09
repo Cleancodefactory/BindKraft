@@ -61,9 +61,7 @@ UploadBase.prototype.finalinit = function() {
 }
 
 UploadBase.prototype.$mappedUrl = function() {
-    var url = IPlatformUrlMapper.mapModuleUrl(this.get_url(), this.get_moduleName());
-
-    return url;
+    return IPlatformUrlMapper.mapModuleUrl(this.get_url(), this.get_moduleName());
 }
 
 UploadBase.prototype.OnFilesSelected = function () {
@@ -75,6 +73,7 @@ UploadBase.prototype.OnFilesSelected = function () {
 UploadBase.prototype.SubmitFiles = function () {
     var files = this.get_filesfield().files;
     var formData = new FormData();
+    var hasFiles = false;
 
     for (var i = 0; i < files.length; i++){
         var currFile = files[i];
@@ -86,9 +85,10 @@ UploadBase.prototype.SubmitFiles = function () {
         var simplifiedName = this.SimplifyFileName(currFile.name);
         var fileName = i + "file" + simplifiedName;
         formData.append(fileName, currFile);
+        hasFiles = true;
     }
 
-    this.SendRequest(formData);
+    if (hasFiles) this.SendRequest(formData);
 }
 
 UploadBase.prototype.SendRequest = function(formData){
