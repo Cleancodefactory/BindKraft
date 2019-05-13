@@ -89,6 +89,7 @@ UploadBase.prototype.SubmitFiles = function () {
     }
 
     if (hasFiles) this.SendRequest(formData);
+    this.get_filesfield().files = "";
 }
 
 UploadBase.prototype.SendRequest = function(formData){
