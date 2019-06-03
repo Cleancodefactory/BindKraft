@@ -6,7 +6,70 @@ It is possible for the rest of the code to cooperate with the window behaviors, 
 
 If you want to read about implementing behaviors you can skip to [Inner workings](#inner-workings).
 
-## Using existing behaviors
+## Using window behaviors
+
+All windows, starting with `BaseWindow`, implement the `IAttachedWindowBehaviors` interface. This interface enables attaching/detaching and accessing (previously attached) behaviors to a particular window (_the behaviors are attached to instances and not to classes_).
+
+This is the interface (see its [page](../WindowClasses/IAttachedWindowBehaviors.md)):
+```Javascript
+function IAttachedWindowBehaviors() {}
+IAttachedWindowBehaviors.Interface("IAttachedWindowBehaviors");
+IAttachedWindowBehaviors.RequiredTypes("BaseWindow");
+IAttachedWindowBehaviors.prototype.attachBehavior = function(wb);
+IAttachedWindowBehaviors.prototype.detachBehavior = function(wb);
+IAttachedWindowBehaviors.prototype.attachedBehaviors = function(callback);
+IAttachedWindowBehaviors.prototype.detachAllBehaviors = function(callback);
+IAttachedWindowBehaviors.prototype.adviseAttachedBehaviors = function(msg);
+IAttachedWindowBehaviors.prototype.attachedBehavior = function(callback_or_name)
+```
+
+The interface has methods that are accessible and useful for both - the window itself and another code (usually the code that attached the behavior to this window). Below the methods are grouped by typical usage.
+
+**Methods typically called by application code:**
+
+### attachBehavior(/* IWindowBehavior */ wb[, /*string*/ name])
+    - wb - A behavior instance. Must suport `IWindowBehavior` interface.
+	- name - optional name for the attached behavior. A reference to the behavior can be obtained later by using the name with the attachedBehavior method 
+
+Checks if the interface is supported and then registers the behavior with the window and initializes it (calls its `init` method).
+
+If `name` is specified and non-empty string it has to be unique for all the attached behaviors to that window.
+
+Returns the behavior (the `wb` argument) if it is successful and `null` otherwise.
+
+Example:
+```Javascript
+var wnd = new SimpleViewWindow(/*arguments are skipped for brevity*/);
+var beh = new MyWindowBehavior();
+if (wnd.attachBehavior(beh) != null) {
+	// all ok
+}
+```
+_Remarks:_
+
+>Multiple instances of the same behavior class can be attached to the same window if the behavior implementation _allows it_ (see `IWindowBehavior.get_uniquecallback` below). However, the uniqueness of the attached behavior is a two sided concern - for the behavior itself (it may be incapable to function in more than one instance) and for the code that attaches the behavior(s)
+
+
+### detachBehavior(/* IWindowBehavior */ wb)
+    - wb - A behavior instance. Must support `IWindowBehavior` interface.
+
+Detaches the behavior specified if it is already attached.
+
+Returns the behavior if it has been detached and null otherwise (i.e. was not attached, not a behavior)
+
+### attachedBehaviors(/* f(wb) */ callback)
+    callback - optional callback that will be called for each behavior and can return true or false in order to include or exclude it from the result - i.e. can filter the result.
+
+Returns an array of all the behaviors or only of those the callback permits.
+
+### detachAllBehaviors(/* f(wb) */ callback)
+    callback - optional callback that will be called for each behavior and can return true or false in order to include or exclude it.
+
+Detaches all the behaviors or if callback is used only those permitted by the callback.
+
+
+
+
 
 If you take a look at the interface you will notice that the designed usage pattern requires one to keep a reference to the behavior they attach to a window. If the behavior is attached for the entire life cycle of the window, but there are additional reasons that can make keeping the reference useful.
 
@@ -33,29 +96,7 @@ As mentioned all windows already have it implemented. The `adviseAttachedBehavio
 
 The rest of the methods manage the behaviors and are needed by any application that needs to adjust the behavior of some of its windows through behaviors:
 
-### attachBehavior(/* IWindowBehavior */ wb)
-    - wb - A behavior instance. Must suport `IWindowBehavior` interface.
 
-Checks if the interface is supported and then registers the behavior and initializes it (calls its `init` method).
-
-Returns the behavior (the `wb` argument) if it is an `IWindowBehavior` and null otherwise.
-
-### detachBehavior(/* IWindowBehavior */ wb)
-    - wb - A behavior instance. Must suport `IWindowBehavior` interface.
-
-Detaches the behavior specified if it is already attached.
-
-Returns the behavior if it has been detached and null otherwise (i.e. was not attached, not a behavior)
-
-### attachedBehaviors(/* f(wb) */ callback)
-    callback - optional callback that will be called for each behavior and can return true or false in order to include or exclude it from the result - i.e. can filter the result.
-
-Returns an array of all the behaviors or only of those the callback permits.
-
-### detachAllBehaviors(/* f(wb) */ callback)
-    callback - optional callback that will be called for each behavior and can return true or false in order to include or exclude it.
-
-Detaches all the behaviors or if callback is used only those permitted by the callback.
 
 ## Creating a window bewhavior
 
