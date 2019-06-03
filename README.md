@@ -24,6 +24,7 @@ BindKraft as a whole is a philosophy and a combination of several pieces in its 
 
 ### It is a different platform and not a framework
 
+
 **BindKraftJS is the path most other Javascript creations did not take**. In the beginning it happened by accident, but the benefits it brought were many - much more than even the initial creators expected. This resulted in intentional further development of the platform, first for internal use and then publicly as open source.
 
 **What is so different?**
