@@ -131,3 +131,8 @@ Operation.From = function(x) {
 		return op;
 	}
 }
+Operation.Failed = function(desc) {
+	var op = new Operation();
+	op.CompletedOperation(false, desc);
+	return op;
+}
