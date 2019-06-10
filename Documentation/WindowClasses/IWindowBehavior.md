@@ -41,7 +41,7 @@ IWindowBehavior.prototype.get_unique = function();
 
 **get_uniquecallback**
 
-    This is implemented in `WindowBehaviorBase` by default as a callback that compares behaviors by their class.
+    This is implemented in `WindowBehaviorBase` by default as a callback that compares behaviors by their class. The callback is of the kind accepted by the methods of IAttachedWindowBehaviors
 
 ## Remarks
 

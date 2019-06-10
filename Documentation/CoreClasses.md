@@ -52,3 +52,13 @@
 ## Geometry helpers
 
 [Point](CoreClasses/Point.md) | [Rect](CoreClasses/Rect.md) | [Size](CoreClasses/Size.md) | [SizeLimits](CoreClasses/SizeLimits.md)
+
+## Miscellaneous
+
+**Classes**
+
+[TypeChecker](CoreClasses/TypeChecker.md) | [PatternChecker](CoreClasses/PatternChecker.md)
+
+**Interfaces**
+
+[IValueChecker](CoreClasses/IValueChecker.md)

@@ -9,6 +9,7 @@ function EventDispatcher(targetObject) {
 EventDispatcher.Inherit(BaseObject, "EventDispatcher");
 EventDispatcher.Implement(IInvocationWithArrayArgs);
 EventDispatcher.Implement(IInvoke);
+EventDispatcher.Implement(IEventDispatcher);
 EventDispatcher.prototype.obliterate = function (bFull) {
     if (this.handlers != null)
     {

@@ -20,6 +20,7 @@
 //#using "./IFreezableHelper.js"
 //#using "./IInvocationWithArrayArgs.js"
 //#using "./IInvoke.js"
+//#using "./IEventDispatcher.js"
 //#using "./IIterator.js"
 //#using "./IMessageSink.js"
 //#using "./IParameters.js"
