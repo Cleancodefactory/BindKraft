@@ -3,6 +3,8 @@
 // Interfacing - classes related to intefacing different parties:
 //	- proxy builders
 //  - communication protocols etc.
-
+//#using "BaseProxyClass.js"
+//#using "BaseStubClass.js"
+//#using "ProxyStubBuildingRoutines.js"
 //#using "ProxyInterfaceBuilderBase.js"
 //#using "DummyProxyInterfaceBuilder.js"

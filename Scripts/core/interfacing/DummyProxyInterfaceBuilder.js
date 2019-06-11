@@ -14,7 +14,7 @@ DummyInterfaceProxyBuilder.prototype.buildProxy = function (instnce, interfaceDe
 		if (instanceClass == null) {
 			this.LASTERROR(-1,"Instance class cannot be determined or is not BaseObject.");
 		} else {
-			var proxycls = IRequestInterface.buildProxyClass(null, instanceClass, Class.getInterfaceDef(interfaceDef),DummyInterfaceProxyBuilder.proxyMethodBody);
+			var proxycls = ProxyStubBuildingRoutines.buildProxyClass(null, instanceClass, Class.getInterfaceDef(interfaceDef),DummyInterfaceProxyBuilder.proxyMethodBody);
 			if (proxycls == null) {
 				this.LASTERROR(-1,"Cannot create proxy class definition");
 			} else {
