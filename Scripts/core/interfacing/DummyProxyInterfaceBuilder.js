@@ -18,7 +18,7 @@ DummyInterfaceProxyBuilder.prototype.buildProxy = function (instnce, interfaceDe
 			if (proxycls == null) {
 				this.LASTERROR(-1,"Cannot create proxy class definition");
 			} else {
-				var prxy = new proxycls(instnce,null); // Null transport
+				var prxy = new proxycls(instnce,null,this); // Null transport
 				return prxy;
 			}
 		}
