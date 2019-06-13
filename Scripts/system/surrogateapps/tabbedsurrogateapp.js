@@ -8,7 +8,14 @@ TabbedSurrogateApp.Implement(ISupportsCommandRegisterExDefImpl,[
 	{ name: "view",alias: null,
 		regexp: null,
 		action: function(context, api) {
-			alert("aaa");
+			var arg = api.pullNextToken();
+			if (typeof arg == "string") {
+				var arr = arg.split("/");
+				
+				IPlatformUrlMapper.mapResourceUrl(arg.slice(arg.indexOf("/") + 1),arg.slice(0,arg.indexOf("/")))
+			} else {
+				throw "The parameter to the TabbedSurrogateApp's view command needs to be a string";
+			}
 			return null;
 		},
 		help: "loads a view"
@@ -28,6 +35,7 @@ TabbedSurrogateApp.prototype.initialize = function ( args) {
 	this.root = Shell.createStdAppWindow();
 	this.placeWindow(this.root);
 	this.root.updateTargets();
+	this.root.set_windowrect(new Rect(50,50,600,500));
 	
 	// Add a tabset 
 	this.tabs = new TabSetWindow(WindowStyleFlags.fillparent | WindowStyleFlags.adjustclient | WindowStyleFlags.visible | WindowStyleFlags.parentnotify,
@@ -68,6 +76,7 @@ TabbedSurrogateApp.prototype.$homeView = function() {
 			}
 		}
 	);
+	this.tabs.addPage(view, true);
 	return op;
 }
 
