@@ -7,4 +7,4 @@
 function $Root_BaseProxy() {
 	BaseObject.apply(this, arguments);
 }
-$Root_BaseProxy.Inherit(BaseClass,"$Root_BaseProxy");
+$Root_BaseProxy.Inherit(BaseObject,"$Root_BaseProxy");

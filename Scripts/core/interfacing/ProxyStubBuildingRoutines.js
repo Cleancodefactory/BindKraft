@@ -38,7 +38,7 @@ var ProxyStubBuildingRoutines = {
 				// The exceptions:
 				//	constructor - does not need changes
 				//	Release and GetInterface are implemented in the base $Managed_BaseProxy class.
-				if (key != "constructor" && key != "Release" && != "GetInterface") {
+				if (key != "constructor" && key != "Release" && key != "GetInterface") {
 					if (typeof ifaceDef.prototype[key] == "function") {
 						cls.prototype[key] = BaseObject.callCallback(methodBody,key); // Generate the proxy method
 					} else if (BaseObject.is(ifaceDef.prototype[key], "InitializeEvent")) {

@@ -46,7 +46,7 @@ Additional overviews of specific features are listed in the "References" section
 [Local API](LocalAPIs.md) | 
 [List of system Local API](LocalAPIList.md) | 
 [System settings](SystemSettings.md) |
-[BKInit - instance configuration](BKInit.md)
+[BKInit - instance configuration](BkInit.md)
 
 [Others](OtherClasses.md) - Specific classes and interfaces that do not fit into other categories.
 >[Settings, Persistence, State and shared data pieces](Settings,Persistence,State_and_shared_data_pieces.md)

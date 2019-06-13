@@ -21,6 +21,7 @@
 //#using "../CLShortcutsHelper.js"
 //#using "../CLRecentShortcuts.js"
 //#using "../AppIndicatorSlot.js"
+//#using "../surrogateapps/surrogateapps.dep"
 
 
 //#using "../globalcommands.js"
