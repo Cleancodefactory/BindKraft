@@ -86,6 +86,7 @@ Internal standard data structure
 		?title: <string>,
 		// TODO: What to do with accumulative messages until we come with something wise?
 		// ?messages: [<string>] // Deprecate!
+		headers: { all or some headers depending on the request config (where available)}
 	},
 	views: {
 		<viename1>: <sring>,

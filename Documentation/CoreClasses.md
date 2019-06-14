@@ -27,7 +27,7 @@
 
 **Classes**
 
-[Operation](CoreClasses/Operation.md) | OperationAll | OperationAggregate | ChunkedOperation | ControllableAsyncResult | Dispatchable | SpringTrigger | TaskDispenser | Ticker
+[Operation](CoreClasses/Operation.md) | OperationAll | OperationAggregate | ChunkedOperation | ControllableAsyncResult | Dispatchable | SpringTrigger | TaskDispenser | Ticker | [ControllableAsyncResult](CoreClasses/ControllableAsyncResult.md)
 
 **Interfaces**
 
