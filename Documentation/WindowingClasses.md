@@ -14,6 +14,8 @@
 
 ## Window classes
 
+[BaseWindow](WindowClasses/BaseWindow.md) - base class of all BK windows.
+
 [PageSetWindow](WindowClasses/PageSetWindow.md)
 
 [MainWindow](WindowClasses/MainWindow.md)

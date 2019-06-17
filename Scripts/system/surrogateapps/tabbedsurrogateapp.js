@@ -10,15 +10,26 @@ TabbedSurrogateApp.Implement(ISupportsCommandRegisterExDefImpl,[
 		action: function(context, api) {
 			var arg = api.pullNextToken();
 			if (typeof arg == "string") {
-				var arr = arg.split("/");
-				
-				IPlatformUrlMapper.mapResourceUrl(arg.slice(arg.indexOf("/") + 1),arg.slice(0,arg.indexOf("/")))
+				var rurl = IPlatformUrlMapper.mapResourceUrl(arg.slice(arg.indexOf("/") + 1),arg.slice(0,arg.indexOf("/")));
+				throw "Under construction";
 			} else {
 				throw "The parameter to the TabbedSurrogateApp's view command needs to be a string";
 			}
 			return null;
 		},
 		help: "loads a view"
+	},
+	{ name: "loadview", alias: "lv",
+		regexp: null,
+		action: function(context, api) {
+			var arg = api.pullNextToken();
+			if (typeof arg == "string") {
+				return this.loadView(arg);
+			} else {
+				throw "loadview needs a string argument";
+			}
+		},
+		help: "Loads a view through nodeset request - the url should point a correct node in a nodeset"
 	}
 ]);
 TabbedSurrogateApp.Implement(ISupportsCommandContextImpl,"single");
@@ -77,6 +88,21 @@ TabbedSurrogateApp.prototype.$homeView = function() {
 		}
 	);
 	this.tabs.addPage(view, true);
+	return op;
+}
+TabbedSurrogateApp.prototype.loadView = function(arg) {
+	var op = new Operation(null, 10000);
+	var view = new SimpleViewWindow(
+		WindowStyleFlags.fillparent | WindowStyleFlags.visible | WindowStyleFlags.adjustclient,
+		{
+			url: IPlatformUrlMapper.mapModuleUrl(arg.slice(arg.indexOf(":") + 1),arg.slice(0,arg.indexOf(":"))),
+			on_ViewLoaded: function() {
+				op.CompleteOperation(true, null);
+			}
+		}
+	);
+	this.tabs.addPage(view, true);
+	this.root.activateWindow();
 	return op;
 }
 
