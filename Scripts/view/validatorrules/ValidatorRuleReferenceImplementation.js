@@ -359,8 +359,11 @@ LengthValidatorControl.prototype.validateValue = function (validator, value, bin
 	var min = this.get_minChar();
 	var max = this.get_maxChar();
 	
-	if (!this.get_allowEmptySpaces())
-		value = value.trim();
+    if (!this.get_allowEmptySpaces())
+        value = value.trim();
+        //set actual value in binding
+        binding.$set_sourceValue(value);
+        binding.updateTarget();
 	
 	if (!IsNull(value) && (!IsNull(min)) && (!IsNull(max))) {
 		if ((value.length < min) || (max < value.length)) {
