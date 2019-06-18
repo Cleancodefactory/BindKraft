@@ -42,6 +42,8 @@
 //#using "../memfs/memfs-full.dep"
 //#using "../settingspersistence/settingspersistence-full.dep"
 
+//#using "../lightfetchhttp/LightFetchHttp.dep"
+
 //#using "../formatters/formatters-full.dep"
 //#using "../treestates/treestates-full.dep"
 //#using "../interfaces/interfaces-full-post.dep"

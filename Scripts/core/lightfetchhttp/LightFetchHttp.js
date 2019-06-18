@@ -3,6 +3,9 @@
 	string 		- responseText => string to result.data
 	view   		- responseText => string to result.views.normal
 	json|data   - responseText => JSON.parse => result.data
+	raw			- responseText => result
+	active		- xhr		   <= result(manager)
+	
 	
 	
 	Following the philosophy of XHR this wraps it for reuse, but allows more settings to be preserved and reused for subsequential requests.
@@ -10,23 +13,36 @@
 	Multiple patterns of usage are envisioned, basically we can try to categorize them as:
 	- use properties for everything except post data, then just say "go"
 	- use single call with arguments that change the URL and some others, but remember them so if we have to repeat - just say "go"
+	
+	Remarks:
+		Dual timeout protection is implemented relying on the fact that the XHR timeout will occur before the timeout based on the system EventPump 
+		which is involved as ultimate precaution. TODO: Consider removing the EventPump usage if no problems are detected long enough.
 */
 function LightFetchHttp(type, bFillResponseHeaders) {
 	BaseObject.apply(this, arguments);
 	this.$expectedContent = type;
-	this.$xhr = new XMLHttpRequest();
+	var xhr = this.$xhr = new XMLHttpRequest();
 	// Connect handlers permanently
 	xhr.onreadystatechange = Delegate.createWrapper(this, this.onReadyStateChange);
 	xhr.ontimeout = Delegate.createWrapper(this, this.onTimeout);
 }
 LightFetchHttp.Inherit(BaseObject, "LightFetchHttp");
+LightFetchHttp.prototype.obliterate = function() {
+	this.$xhr.onreadystatechange = null;
+	this.$xhr.ontimeout = null;
+	this.releaseActiveResult();
+	this.$xhr = null;
+	BaseObject.prototype.obliterate.call(this,null);
+}
+
 LightFetchHttp.$ultimateTimeLimit = 600;
 LightFetchHttp.ImplementProperty("httpuser", new InitializeStringParameter("The user name for http std header", null));
 LightFetchHttp.ImplementProperty("httppass", new InitializeStringParameter("The password for http std header", null));
 
 LightFetchHttp.ImplementProperty("timelimit", new InitializeNumericParameter("The maximum time permitted for the request to complete in seconds, default is 60 seconds", 60));
 LightFetchHttp.ImplementProperty("fillResponseHeaders", new InitializeNumericParameter("Include the response headers in the result", 60));
-LightFetchHttp.ImplementProperty("expectedContent", new InitializeStringParameter("Hoe to process/check the response", ""));
+LightFetchHttp.ImplementProperty("expectedContent", new InitializeStringParameter("How to process/check the response", ""));
+LightFetchHttp.ImplementProperty("withCredentials", new InitializeStringParameter("Send cookies for cors", false));
 
 LightFetchHttp.prototype.$url = null;
 LightFetchHttp.prototype.get_url = function() {
@@ -37,14 +53,29 @@ LightFetchHttp.prototype.set_url = function(/*string,BkUrl*/url) {
 	if (typeof url == "string") {
 		// Convert to BkUrl
 		bkurl = new BKUrl(url); // Defaults for BKUrl are assummed
-		// if (bkurl
-		/////////////////////
-	} else if (BaseObject.is(url, "BkUrl")) {
-		// Whole url
+	} else if (BaseObject.is(url, "BKUrl")) {
+		bkurl = url;
+	} else if (url == null) { // Clean up case
+		this.$url = null;
+		return true;
 	} else {
 		throw "Unsupported incorrect URL";
 	}
-	this.$url = url;
+	if (BaseObject.is(this.$url,"BKUrl")) {
+		return this.$url.set_nav(bkurl);
+	} else {
+		this.$url = bkurl;
+		return true;
+	}
+	return false;	
+}
+LightFetchHttp.prototype.url = function(v) {
+	if (arguments.length > 0) {
+		this.set_url(v);
+	}
+	return this.get_url();
+}
+LightFetchHttp.prototype.dataToUrl = function(data) {
 }
 
 
@@ -54,7 +85,7 @@ LightFetchHttp.prototype.done = new InitializeEvent("Fired when the request fini
 LightFetchHttp.prototype.sent = new InitializeEvent("Fired when the request was sent");
 LightFetchHttp.prototype.progressed = new InitializeEvent("Fired during request to indicate progress");
 
-LightFetchHttp.ValueArray.$valueProc = function() {
+LightFetchHttp.$valueProc = function() {
 	var v = "";
 	for (var i = 0;i < this.length;i++) {
 		if (v.length > 0) v += ", ";
@@ -63,17 +94,10 @@ LightFetchHttp.ValueArray.$valueProc = function() {
 	return v;
 }
 LightFetchHttp.ValueArray = function(v) {
-	if (BaseObject.is(v, "Array") && typeof v.Value == "function") return v;
+	if (BaseObject.is(v, "Array") && v.Value == LightFetchHttp.$valueProc) return v;
 	var va = [];
-	va.Value = LightFetchHttp.ValueArray.$valueProc;
+	va.Value = LightFetchHttp.$valueProc;
 	return va;
-}
-
-LightFetchHttp.prototype.url = function(v) {
-	if (arguments.length > 0) {
-		this.set_url(v);
-	}
-	return this.get_url();
 }
 LightFetchHttp.prototype.$method = "GET";
 LightFetchHttp.prototype.get_method = function() {
@@ -86,6 +110,7 @@ LightFetchHttp.prototype.set_method = function(v) {
 		this.$method = (v + "").toUpperCase();
 	}
 }
+// +Request headers
 LightFetchHttp.prototype.$headers = new InitializeObject("Headers");
 LightFetchHttp.prototype.setHeader = function(header, content) {
 		this.$headers[header] = content;
@@ -94,16 +119,8 @@ LightFetchHttp.prototype.setHeader = function(header, content) {
 LightFetchHttp.prototype.getHeader = function(header) {
 		return this.$headers[header];
 }
-LightFetchHttp.prototype.responseHeader = function(header) {
-	if (this.$xhr != null) {
-		if (header == null) {
-			if (this.$xhr.readyState
-		} else {
-			/////
-		}
-	}
-	return null;
-}
+// -Request headers
+
 
 // +INTERNAL XHR HANDLERS
 LightFetchHttp.prototype.onReadyStateChange = function() {
@@ -111,9 +128,13 @@ LightFetchHttp.prototype.onReadyStateChange = function() {
 		if (this.$xhr.readyState == 4) {
 			// Finished
 			if (this.$xhr.status == 200) {
-				//////////
+				if (this.$op != null && !this.$op.isOperationComplete()) {
+					this.$op.CompleteOperation(true, this.getResponse());
+				}
 			} else {
-				// Some error
+				if (this.$op != null && !this.$op.isOperationComplete()) {
+					this.$op.CompleteOperation(false, "Communication error, status=" + this.$xhr.status);
+				}
 			}
 		} else if (this.$xhr.readyState == 2) {
 		} else if (this.$xhr.readyState == 3) {
@@ -121,7 +142,9 @@ LightFetchHttp.prototype.onReadyStateChange = function() {
 	}
 }
 LightFetchHttp.prototype.onTimeout = function() {
-	
+	if (this.$op != null && !this.$op.isOperationComplete()) {
+		this.$op.CompleteOperation(false, "Timeout");
+	}
 }
 // -INTERNAL XHR HANDLERS
 
@@ -129,8 +152,17 @@ LightFetchHttp.prototype.onTimeout = function() {
 LightFetchHttp.prototype.$xhr = null;
 LightFetchHttp.prototype.$op = null;
 // -Internally maintained XHR and Operation
+// +Currently connected active result
+LightFetchHttp.prototype.$activeresult = null;
+// -Currently connected active result
 
 // +State query
+LightFetchHttp.prototype.releaseActiveResult = function() {
+	if (BaseObject.is(this.$activeresult, "LightFetchHttpActiveResult")) {
+		this.$activeresult.release();
+	}
+	this.$activeresult = null;
+}
 LightFetchHttp.prototype.isOpened = function() {
 	if (this.$xhr && this.$xhr.readyState >= 1) return true;
 	return false;
@@ -161,7 +193,7 @@ LightFetchHttp.prototype.getResponse = function() {
 				break;
 				case "view":
 					res.views = {
-						normal: this.$xhr.responseText;
+						normal: this.$xhr.responseText
 					};
 				break;
 				case "data":
@@ -169,22 +201,46 @@ LightFetchHttp.prototype.getResponse = function() {
 					res.data = JSON.parse(this.$xhr.responseText);
 					res.datas = { "default": res.data }; // Link it here also for compatibility with both 0.9 and 1.0
 				break;
+				case "raw":
+					res = this.$xhr.responseText;
+				break;
+				case "active":
+					res = new LightFetchHttpActiveResult(this);
+					this.$activeresult = res;
+					return res;
+				break;
 				default:
 					res.status.issuccessful = false;
 					res.status.message = "Unknown request type";
 			}
 		}
 		if (this.get_fillResponseHeaders()) {
-			var headers = String.reGroups2(s,/([A-Za-z0-9\-]+)\:\s+(.*)/,"header","value");
-			var headerVal;
-			for (var i = 0; i < headers.length;i++) {
-				headerVal = LightFetchHttp.ValueArray(res.status.headers[headers[i].header]);
-				headerVal.push(headers[i].value);
-				res.status.headers[headers[i].header] = headerVal;
-			}
+			res.status.headers = this.getAllResponseHeaders();
 		}
+		return res;
 	}
 	return null;
+}
+/**
+	Like the same named method of XHR gets all the response headers, but in more manageable form:
+	def(
+		Object<header>
+		header := HArray<string>
+		HArray := 
+					Array<string>
+						.Value() => Array<string.join(". ");
+	)
+*/
+LightFetchHttp.prototype.getAllResponseHeaders = function() {
+	var /*string*/ headers = String.reGroups2(this.$xhr.getAllResponseHeaders(),/([A-Za-z0-9\-]+)\:\s+(.*)/,"header","value");
+	var result = {};
+	var /*ValueArray*/ headerVal;
+	for (var i = 0; i < headers.length;i++) {
+		headerVal = LightFetchHttp.ValueArray(result[headers[i].header]);
+		headerVal.push(headers[i].value);
+		result[headers[i].header] = headerVal;
+	}
+	return result;
 }
 // - Response reading
 
@@ -198,17 +254,18 @@ LightFetchHttp.prototype.$settimelimit = function() {
 }
 LightFetchHttp.prototype.$requestReset = function() {
 	if (this.$xhr != null) {
-			this.$xhr.abort();
-			if (this.$op != null) {
-				var op = this.$op;
-				this.$op = null;
-				if (!op.isOperationComplete()) {
-					op.CompleteOperation(false,"aborted");
-				}
+		this.$xhr.abort();
+		this.releaseActiveResult();
+		if (this.$op != null) {
+			var op = this.$op;
+			this.$op = null;
+			if (!op.isOperationComplete()) {
+				op.CompleteOperation(false,"aborted");
 			}
 		}
 	}
 }
+
 // -Internal 
 
 // The fetch (go) procedure
@@ -220,9 +277,15 @@ LightFetchHttp.prototype.$fetch = function(body) {
 		this.$op = new Operation();
 		
 		try {
-			
+			var urlString = null;
+			// TODO: Analysis of the URL requires some url comparison features in BkUrl
+			//			The analysis should be based on needs not completely defined yet.
+			if (BaseObject.is(this.$url,"BKUrl")) {
+				urlString = this.$url.composeAsString();
+			}
 			xhr = this.$xhr = new XMLHttpRequest();
-			xhr.open(this.$method, this.$url, true, this.$httpuser, this.$httppass);
+			xhr.open(this.$method, urlString, true, this.$httpuser, this.$httppass);
+			xhr.withCredentials = this.get_withCredentials();
 			for (var h in this.$headers) {
 				if (this.$headers.hasOwnProperty(h)) {
 					xhr.setRequestHeader(h, this.$headers[h]);
@@ -230,8 +293,9 @@ LightFetchHttp.prototype.$fetch = function(body) {
 			}
 			// Set timeout (allowed between open and send)
 			var tl = this.get_timelimit();
-			xhr.timeout = tl;
-			// Connect handlers
+			if (typeof tl == "number" && tl > 0) {
+				xhr.timeout = tl;
+			}
 			
 			xhr.send(body);
 			// Add time limit callback (if needed)
@@ -247,5 +311,6 @@ LightFetchHttp.prototype.$fetch = function(body) {
 }
 
 // Fetch variants
-LightFetchHttp.prototype.get = function(url) {
+LightFetchHttp.prototype.get = function(url, data) {
+	
 }

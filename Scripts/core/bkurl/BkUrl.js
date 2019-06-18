@@ -479,3 +479,47 @@ BKUrl.baseURL = function() {
 BKUrl.startURL = function() {
 	return window.g_ApplicationStartUrl;
 }
+
+BKUrl.dataToURL = function(_url, data, useFragment) {
+	var url;
+	var rmode = null;
+	var v;
+	if (BaseObject.is(url, "BKUrl")) {
+		url = _url;
+		rmode = "BKUrl";
+	} else if (typeof _url == "string") {
+		rmode = "string";
+		url = new BKUrl();
+		if (!url.readAsString(_url)) {
+			return null;
+		}
+	}
+	if (!BaseObject.is(url, "BKUrl")) return null;;
+	var query = useFragment?url.get_fragment():url.get_query();
+	if (BaseObject.is(query, "BKUrlQuery")) {
+		if (typeof data == "object") { // Work it as plain object, but not require it to be plain too much
+			for (var k in data) {
+				if (data.hasOwnProperty(k)) {
+					v = data[k];
+					if (BaseObject.is(v, "number")) {
+						query.add(k,v.toString(10));
+					} else if (BaseObject.is(v, "string")) {
+						query.add(k,v);
+					} else if (BaseObject.is(v, "boolean")) {
+						query.add(k,v?"true":"false");
+					} else if (BaseObject.is(v, "Date")) {
+						query.add(k,v.toISOString());
+					}
+				}
+			}
+		}
+		if (rmode == "string") {
+			return url.composeAsString();
+		} else {
+			return url;
+		}
+	} else {
+		return null; // Don't know how to encode the data
+	}
+	return null;
+}
