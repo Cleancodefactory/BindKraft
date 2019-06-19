@@ -133,6 +133,6 @@ Operation.From = function(x) {
 }
 Operation.Failed = function(desc) {
 	var op = new Operation();
-	op.CompletedOperation(false, desc);
+	op.CompleteOperation(false, desc);
 	return op;
 }

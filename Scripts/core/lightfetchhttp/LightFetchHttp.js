@@ -20,7 +20,9 @@
 */
 function LightFetchHttp(type, bFillResponseHeaders) {
 	BaseObject.apply(this, arguments);
-	this.$expectedContent = type;
+	if (typeof type == "string") {
+		this.$expectedContent = type;
+	}
 	var xhr = this.$xhr = new XMLHttpRequest();
 	// Connect handlers permanently
 	xhr.onreadystatechange = Delegate.createWrapper(this, this.onReadyStateChange);
@@ -43,6 +45,9 @@ LightFetchHttp.ImplementProperty("timelimit", new InitializeNumericParameter("Th
 LightFetchHttp.ImplementProperty("fillResponseHeaders", new InitializeNumericParameter("Include the response headers in the result", 60));
 LightFetchHttp.ImplementProperty("expectedContent", new InitializeStringParameter("How to process/check the response", ""));
 LightFetchHttp.ImplementProperty("withCredentials", new InitializeStringParameter("Send cookies for cors", false));
+LightFetchHttp.ImplementProperty("queryBoolAsNumber", new InitializeBooleanParameter("When encoding data in query string, if set to true (default) booleans are sent as 0 and 1, otherwise as true/false", true));
+LightFetchHttp.ImplementProperty("queryMaxDepth", new InitializeNumericParameter("When encoding data in query string, sets the max depth for object traversal, 0 is default", 0));
+LightFetchHttp.ImplementProperty("postDataEncode", new InitializeStringParameter("Specifies how to encode the data for POST, PUT", "json"));
 
 LightFetchHttp.prototype.$url = null;
 LightFetchHttp.prototype.get_url = function() {
@@ -75,9 +80,25 @@ LightFetchHttp.prototype.url = function(v) {
 	}
 	return this.get_url();
 }
-LightFetchHttp.prototype.dataToUrl = function(data) {
+// Encodings
+// Into query string (only this is supported)
+LightFetchHttp.prototype.dataToUrl = function(url, data) {
+	return BKUrl.dataToUrl(url, data, false, this.get_queryMaxDepth(), this.get_queryBoolAsNumber());
 }
-
+// Into body
+LightFetchHttp.prototype.bodyEncoders = {
+	json: function(data) {
+		return JSON.stringify(data);
+	},
+	raw: function(data) {
+		return data;
+	},
+	form: function(data) {
+		var url = new BKUrl();
+		BKUrl.dataToUrl(url, data, false, this.get_queryMaxDepth(), this.get_queryBoolAsNumber());
+		return url.get_query();		
+	}
+};
 
 // Events
 LightFetchHttp.prototype.finished = new InitializeEvent("Fired when the request finishes");
@@ -268,8 +289,14 @@ LightFetchHttp.prototype.$requestReset = function() {
 
 // -Internal 
 
-// The fetch (go) procedure
-LightFetchHttp.prototype.$fetch = function(body) {
+/** The fetch (go) internal procedure
+	@param url {BKUrl}
+	@param reqdata {any} data to encode into the query string
+	@param bodydata {any?} Data to encode into the body
+	
+	The data is encoded into the url if the method is GET, HEAD
+*/
+LightFetchHttp.prototype.$fetch = function(url, /*encoded*/ reqdata, bodydata) {
 	if (this.$xhr != null) {
 		if (this.isOpened()) return Operation.Failed("busy - reset needed");
 		
@@ -280,10 +307,17 @@ LightFetchHttp.prototype.$fetch = function(body) {
 			var urlString = null;
 			// TODO: Analysis of the URL requires some url comparison features in BkUrl
 			//			The analysis should be based on needs not completely defined yet.
-			if (BaseObject.is(this.$url,"BKUrl")) {
-				urlString = this.$url.composeAsString();
+			
+			if (BaseObject.is(url,"BKUrl")) {
+				// Encode any query string data
+				if (reqdata != null) {
+					this.dataToUrl(url, reqdata);
+				}
+				urlString = url.composeAsString();
+			} else {
+				throw "The url is not processed";
 			}
-			xhr = this.$xhr = new XMLHttpRequest();
+			xhr = this.$xhr;
 			xhr.open(this.$method, urlString, true, this.$httpuser, this.$httppass);
 			xhr.withCredentials = this.get_withCredentials();
 			for (var h in this.$headers) {
@@ -296,7 +330,21 @@ LightFetchHttp.prototype.$fetch = function(body) {
 			if (typeof tl == "number" && tl > 0) {
 				xhr.timeout = tl;
 			}
-			
+			var body = null;
+			if (bodydata != null) {
+				var benc = this.get_postDataEncode(); // Body encoding
+				if (typeof benc == "string") {
+					if (typeof this.bodyEncoders[benc] == "function") {
+						body = this.bodyEncoders[benc].call(this, bodydata);
+					} else {
+						throw "Unknown body data encoding " + benc;
+					}
+				} else if (BaseObject.isCallback(benc)) {
+					body = BaseObject.callCallback(benc);
+				} else {
+					throw "Unknown value time in postDataEncode. Specify either predefined string encoding name or a callback";
+				}
+			}
 			xhr.send(body);
 			// Add time limit callback (if needed)
 			this.$settimelimit();
@@ -311,6 +359,28 @@ LightFetchHttp.prototype.$fetch = function(body) {
 }
 
 // Fetch variants
-LightFetchHttp.prototype.get = function(url, data) {
-	
+LightFetchHttp.prototype.get = function(url, data, exptype) {
+	if (url != null) this.set_url(url);
+	if (typeof exptype == "string") this.set_expectedContent(exptype);
+	return this.$fetch(this.get_url(), data);
+}
+LightFetchHttp.prototype.post = function(url, data, enctype, exptype) {
+	if (url != null) this.set_url(url);
+	if (typeof exptype == "string") this.set_expectedContent(exptype);
+	if (enctype != null) this.set_postDataEncode(enctype);
+	return this.$fetch(this.get_url(), null, data);
+}
+LightFetchHttp.prototype.postEx = function(url, reqdata, data, enctype, exptype) {
+	if (url != null) this.set_url(url);
+	if (typeof exptype == "string") this.set_expectedContent(exptype);
+	if (enctype != null) this.set_postDataEncode(enctype);
+	return this.$fetch(this.get_url(), reqdata, data);
+}
+
+// Other publics
+LightFetchHttp.prototype.reset = function(exptype) {
+	this.$requestReset();
+	if (typeof exptype == "string") {
+		this.set_expectedContent(exptype);
+	}
 }

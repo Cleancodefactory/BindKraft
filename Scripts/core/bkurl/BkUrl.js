@@ -480,10 +480,49 @@ BKUrl.startURL = function() {
 	return window.g_ApplicationStartUrl;
 }
 
-BKUrl.dataToURL = function(_url, data, useFragment) {
+BKUrl.dataToURL = function(_url, data, useFragment, _depth, booleanAsNumbers) {
 	var url;
 	var rmode = null;
+	var depth = _depth || 0;
 	var v;
+	function _cycleObject(prefix, obj, qry, level) {
+		if (level > depth) return;
+		var kname;
+		if (typeof obj == "object" && obj != null) { // Work it as plain object, but not require it to be plain too much
+			for (var k in obj) {
+				if (prefix.length > 0) {
+					kname = prefix + "." + k;
+				} else {
+					kname = k;
+				}
+				// Unsupported values are skipped
+				if (obj.hasOwnProperty(k)) {
+					v = obj[k];
+					if (BaseObject.is(v, "number")) {
+						query.add(kname,v.toString(10));
+					} else if (BaseObject.is(v, "string")) {
+						query.add(kname,v);
+					} else if (BaseObject.is(v, "boolean")) {
+						if (booleanAsNumbers) {
+							query.add(kname,v?"1":"0");
+						} else {
+							query.add(kname,v?"true":"false");
+						}
+					} else if (BaseObject.is(v, "Date")) {
+						// TODO: Perhaps this should go through the formatter (ConvertDateTime) and follow some settings.
+						//		However, it seems logical to have separate settings for home and other servers, per-server even.
+						//		Furthermore the settings are more aligned with the expected date encoding in JSON and it is not
+						//		written in stone that query string parameters should follow the same ones. If more clues for such 
+						//		a decision are found, this should be changed or the method refactored a little to allow external decision to take over.
+						query.add(kname,v.toISOString());
+					} else if (BaseObject.is(v,"object")) {
+						_cycleObject(kname, v, qry, level + 1);
+
+					}
+				}
+			}
+		}
+	}
 	if (BaseObject.is(url, "BKUrl")) {
 		url = _url;
 		rmode = "BKUrl";
@@ -497,21 +536,8 @@ BKUrl.dataToURL = function(_url, data, useFragment) {
 	if (!BaseObject.is(url, "BKUrl")) return null;;
 	var query = useFragment?url.get_fragment():url.get_query();
 	if (BaseObject.is(query, "BKUrlQuery")) {
-		if (typeof data == "object") { // Work it as plain object, but not require it to be plain too much
-			for (var k in data) {
-				if (data.hasOwnProperty(k)) {
-					v = data[k];
-					if (BaseObject.is(v, "number")) {
-						query.add(k,v.toString(10));
-					} else if (BaseObject.is(v, "string")) {
-						query.add(k,v);
-					} else if (BaseObject.is(v, "boolean")) {
-						query.add(k,v?"true":"false");
-					} else if (BaseObject.is(v, "Date")) {
-						query.add(k,v.toISOString());
-					}
-				}
-			}
+		if (typeof data == "object" && data != null) { // Work it as plain object, but not require it to be plain too much
+			_cycleObject("", data,query,0);
 		}
 		if (rmode == "string") {
 			return url.composeAsString();

@@ -880,6 +880,7 @@ BaseWindow.prototype.windowmaxminchanged = new InitializeEvent("Fired when minim
 					if (w1.getWindowStyles() & WindowStyleFlags.topmost) {
 						if (w2.getWindowStyles() & WindowStyleFlags.topmost) {
 							if (evnt.data.child == w1) return 1;
+							if (evnt.data.child == w2) return -1; // If the second is being activated - it is bigger and w1 is smaller no matter what.
 							return (w1.get_zorder() - w2.get_zorder());
 						} else { // not topmost
 							return 1;
