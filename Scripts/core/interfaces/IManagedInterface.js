@@ -13,6 +13,5 @@
 */
 function IManagedInterface() {}
 IManagedInterface.Interface("IManagedInterface");
-
 IManagedInterface.prototype.GetInterface = function(iface) { throw "not implemented"; }
 IManagedInterface.prototype.Release = function() { };

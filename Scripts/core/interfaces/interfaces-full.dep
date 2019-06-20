@@ -1,5 +1,7 @@
 //#using "./IChainedResultAndValue.js"
 //#using "./IManagedInterface.js"
+//#using "./IManagedInterfaceStrict.js"
+//#using "./IManagedInterfaceNonstrict.js"
 //#using "./IRequestInterface.js"
 //#using "./IRegister.js"
 //#using "./IRegisters.js"

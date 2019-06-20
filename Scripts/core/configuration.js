@@ -39,7 +39,8 @@ var JBFrameworkVersion = {
 		CollectDiagnostics: false,
 		CompileTimeValidationTasks: true, // Better disable this for production. If true additional compile time validation checks are runned to log (mostly warnings) information for discovered problems.
 		AlwaysCalcBasePath: false, // Always set g_ApplicationBasePath to the base path calculated from the initial load URL, if false this will happen only if the variable is missing.
-		DontSetPageBase: false	  // Do not create/replace the base element of the workspoace page and its href.
+		DontSetPageBase: false,	  // Do not create/replace the base element of the workspoace page and its href.
+		StrictLocalProxies: true
 	};
 	
 	for (var k in defaults) {
