@@ -42,7 +42,7 @@ LightFetchHttp.ImplementProperty("httpuser", new InitializeStringParameter("The 
 LightFetchHttp.ImplementProperty("httppass", new InitializeStringParameter("The password for http std header", null));
 
 LightFetchHttp.ImplementProperty("timelimit", new InitializeNumericParameter("The maximum time permitted for the request to complete in seconds, default is 60 seconds", 60));
-LightFetchHttp.ImplementProperty("fillResponseHeaders", new InitializeNumericParameter("Include the response headers in the result", 60));
+LightFetchHttp.ImplementProperty("fillResponseHeaders", new InitializeNumericParameter("Include the response headers in the result", false));
 LightFetchHttp.ImplementProperty("expectedContent", new InitializeStringParameter("How to process/check the response", ""));
 LightFetchHttp.ImplementProperty("withCredentials", new InitializeStringParameter("Send cookies for cors", false));
 LightFetchHttp.ImplementProperty("queryBoolAsNumber", new InitializeBooleanParameter("When encoding data in query string, if set to true (default) booleans are sent as 0 and 1, otherwise as true/false", true));
@@ -96,7 +96,7 @@ LightFetchHttp.prototype.bodyEncoders = {
 	form: function(data) {
 		var url = new BKUrl();
 		BKUrl.dataToUrl(url, data, false, this.get_queryMaxDepth(), this.get_queryBoolAsNumber());
-		return url.get_query();		
+		return url.get_query().composeAsString();		
 	}
 };
 
