@@ -15,6 +15,7 @@
 //#using "../System.js"
 //#using "../SysShell.js"
 //#using "../SysShellQueryBack.js"
+//#using "../AppGate.js"
 //#using "../CLMemoryFSHelper.js"
 //#using "../CLGlobalCmdHelper.js"
 //#using "../CLGlobalEnvHelper.js"

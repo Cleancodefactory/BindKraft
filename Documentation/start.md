@@ -56,3 +56,9 @@ Additional overviews of specific features are listed in the "References" section
 ## Integration
 
 [Platform utility](PlatformUtility.md) - A module where implementations of a tiny set of integration routines is placed. This module provides the glue needed to put BindKraftJS on top of the specific server side software and technology. Optional set of additional integration conveniences is also placed there. The module has to exist in any BindKraft setup.
+
+## Advanced topics
+
+These articles require intimate knowledge of BindKraftJS architecture.
+
+[Local (Managed) proxy building](Advanced/ManagedProxies.md)

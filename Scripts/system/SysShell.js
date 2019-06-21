@@ -315,8 +315,8 @@ SysShell.prototype.launchOne = function(_appClass, /* callset of arguments */ ap
 SysShell.prototype.launchEx = function(_appClass, _options,/* callset of arguments */ appArgs) {
 	var options = _options || {};
 	var op = new Operation(null , 20000); // TODO: We should make this timeout configurable
-	var apiHubs = [LocalAPI.Default()];
-	var apiHubsServe = [LocalAPI.Default()];
+	var apiHubs = [LocalAPI.Default()]; // hubs for the api client
+	var apiHubsServe = [LocalAPI.Default()]; // hubs to register in
 	// TODO: (done?) There is a bug in after for the AsyncResult - correct it to make the timeout work
     var _shell = this;
     //var _wndClassName = wndClassName || "BaseWindow";
@@ -366,7 +366,15 @@ SysShell.prototype.launchEx = function(_appClass, _options,/* callset of argumen
 			op.CompleteOperation(false,"SysShell::launch: The appClass is not registered or does not support IApp : " + appClass);
             return op;
         }
+		prepareAPIHubs(); // Create the list of the API hubs - for API exposers
+		
+		if (Class.is(appClass,"IRequiresAppGate")) {
+		} else {
+		}
+		
 		var querybackiface = new SysShellQueryBack(this,appClass);
+		
+		
 		var app = new appClass(querybackiface);
 		var shuttingdownOp = null; // set to true when shutdown is first called to prevent recursion
 		// Inner tools ===========
@@ -459,6 +467,7 @@ SysShell.prototype.launchEx = function(_appClass, _options,/* callset of argumen
 			}			
 		}
 		// 5. Push local API client if requested
+		// DEPRECATED - still supported, but you should duse AppGate from BK 2.18
 		function plugLocalAPIs() {
 			if (app.is("IUsingLocalAPI")) {
 				lapiclient = new LocalAPIClient(app.getLocalAPIImportDefinition(),apiHubs);
@@ -466,8 +475,9 @@ SysShell.prototype.launchEx = function(_appClass, _options,/* callset of argumen
 			}
 		}
 		
+		// Moving this up
 		// Preparations for various actions that will be performed over the app
-		prepareAPIHubs(); // Create the list of the API hubs - for API exposers
+		// prepareAPIHubs(); // Create the list of the API hubs - for API exposers
 		
 		// Plug the procedures.
 		args.unshift(function (result) { // Callback caled when appinitialize thinks it is finished (alternatively sync inits are handled immediately after the call - see later in this proc body)

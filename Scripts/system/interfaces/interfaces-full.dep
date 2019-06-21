@@ -13,6 +13,7 @@
 //#using "./IServiceFactory.js"
 //#using "./IOneInstanceApp.js"
 //#using "./ILauncherQueryBack.js"
+//#using "./IRequiresAppGate.js"
 //#using "./IAppIndicator.js"
 //#using "./IUsingLocalAPI.js"
 //#using "./IImplementsLocalAPI.js"

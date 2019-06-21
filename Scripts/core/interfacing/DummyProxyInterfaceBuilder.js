@@ -10,6 +10,7 @@ function DummyInterfaceProxyBuilder(bStrict) {
 	} else if (bStrict === false) {
 		this.proxyMethodBody = DummyInterfaceProxyBuilder.$nonStrictMethodBody;
 	}
+	this.$strictMode = bStrict;
 	// the Dummy ignores the transport
 }
 DummyInterfaceProxyBuilder.Inherit(ProxyInterfaceBuilderBase,"DummyInterfaceProxyBuilder");
@@ -31,6 +32,12 @@ DummyInterfaceProxyBuilder.prototype.buildProxy = function (instnce, interfaceDe
 			this.LASTERROR(-1,"Instance class cannot be determined or is not BaseObject.");
 		} else {
 			var _ifaceDef = Class.getInterfaceDef(interfaceDef); // Make sure we have the definition and not the name
+			if (this.$strictMode) {
+				if (!Class.doesextend(interfaceDef, "IManagedInterface")) {
+					this.LASTERROR(-1,"The interface does not extend IManagedInterface.");
+					return null;
+				}
+			}
 			var proxycls = null;
 			// Select the proxy policy first by explicit requirement - a base interface and then by global policy
 			if (Class.doesextend(_ifaceDef, "IManagedInterfaceStrict")) {
@@ -62,3 +69,11 @@ DummyInterfaceProxyBuilder.Default = (function() {
 		return pbinstance;
 	}
 })();
+
+DummyInterfaceProxyBuilder.Dereferece = function(p) {
+	var result = p;
+	while (BaseObject.is(result, "$Managed_BaseProxy")) {
+		result = o.$instance;
+	}
+	return result;
+}

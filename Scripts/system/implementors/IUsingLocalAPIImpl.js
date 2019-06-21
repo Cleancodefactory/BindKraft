@@ -53,6 +53,7 @@ IUsingLocalAPIImpl.inheritorInitialize = function(cls, parentCls) {
 	}
 }
 IUsingLocalAPIImpl.classInitialize = function(cls, apiimports) {
+	CompileTime.warn("IUsingLocalAPIImpl is obsolete from BK 2.18, please use AppGate to access and record local API refs. Compiling: " + Class.getClassName(cls));
 	var clientFieldName = "__$localAPIClient";
 	// if (!(typeof fieldName == "string") || !PatternChecker.IdentName.checkValue(fieldName)) {
 		// throw "IUsingLocalAPIImpl requires fieldName argument in the Implement(IUsingLocalAPIImpl, ...) statement and it needs to be valid identifier name";
