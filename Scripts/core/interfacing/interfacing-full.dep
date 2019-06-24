@@ -9,3 +9,4 @@
 //#using "ProxyStubBuildingRoutines.js"
 //#using "ProxyInterfaceBuilderBase.js"
 //#using "DummyProxyInterfaceBuilder.js"
+//#using "LocalProxyContainer.js"

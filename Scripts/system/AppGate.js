@@ -38,6 +38,12 @@ AppGate.$arrayRelease = function() {
 		}
 	}
 }
+/**
+	Wraps a single reference with a proxy for the given interface
+	@param iface {string|interfacedef}	The interface for which to generate a proxy
+	@param p	 {BaseObject*}			A reference to the instance implementing the interface
+	@returns 	 {LocalProxy}			The proxy. Must be released after use (call Release() in it)
+*/
 AppGate.prototype.wrap = function(iface, p) {
 	if (BaseObject.is(p,"BaseObject")) {
 		var v = DummyInterfaceProxyBuilder.Default().buildProxy(p, iface);
