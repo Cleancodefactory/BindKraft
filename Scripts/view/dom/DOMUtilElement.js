@@ -12,7 +12,7 @@ DOMUtilElement.prototype.clone = function() {
 }
 DOMUtilElement.prototype.reInit = function(el, bClone) {
 	if (el != null && el instanceof HTMLElement) {
-		if (bclone) {
+		if (bClone) {
 			this.$element = el.cloneNode(true);
 		} else {
 			this.$element = el;
@@ -91,4 +91,20 @@ DOMUtilElement.prototype.append = function(content) {
 }
 DOMUtilElement.prototype.prepend = function(content) {
 	return this.add(content,"prepend");
+}
+
+// Statics
+DOMUtilElement.appendIn = function(el, content) {
+	var domel = new DOMUtilElement(el);
+	if (!domel.get_isempty()) {
+		return domel.append(content);
+	}
+	return false;
+}
+DOMUtilElement.prependIn = function(el, content) {
+	var domel = new DOMUtilElement(el);
+	if (!domel.get_isempty()) {
+		return domel.prepend(content);
+	}
+	return false;
 }

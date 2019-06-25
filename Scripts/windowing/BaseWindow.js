@@ -282,6 +282,8 @@ BaseWindow.prototype.$ensureCreated = function (viewString) {
 			this.root = frg.get_root();
 			this.OnDOMAttached();
 			this.root.activeClass = this;
+		} else {
+			throw "Empty window template";
 		}
 		/*
         var el = $(tml);
@@ -295,7 +297,8 @@ BaseWindow.prototype.$ensureCreated = function (viewString) {
 		//###
         if (pc != null) {
             if (!this.$isAttachedToDom()) {
-				this.$(pc).append(el);
+				var _pc = new DOMUtilElement(pc);
+				_pc.append(this.root);
 			}
         }
         this.initialize();
@@ -1022,9 +1025,11 @@ BaseWindow.prototype.on_ChildAdded = function (evnt) {
 
 };
 BaseWindow.prototype.$isAttachedToDom = function () {
-    var w = $(this.get_windowelement());
-    var p = w.parent();
-    if (p.length > 0) return true;
+    var w = this.get_windowelement();
+	if (w instanceof HTMLElement) {
+		var p = w.parentElement;
+		if (p != null) return true;
+	}
     return false;
 };
 // Children/Parents
