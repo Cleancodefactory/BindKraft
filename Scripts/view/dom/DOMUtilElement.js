@@ -4,12 +4,7 @@ function DOMUtilElement(el, bclone) {
 }
 DOMUtilElement.Inherit(BaseObject, "DOMUtilElement");
 DOMUtilElement.prototype.$element = null;
-DOMUtilElement.prototype.clone = function() {
-	if (this.$element != null) {
-		return new DOMUtilElement(this.$element.cloneNode(true));
-	}
-	return new DOMUtilElement();
-}
+// Init/reinit, basics
 DOMUtilElement.prototype.reInit = function(el, bClone) {
 	if (el != null && el instanceof HTMLElement) {
 		if (bClone) {
@@ -49,6 +44,51 @@ DOMUtilElement.prototype.get_isempty = function() {
 DOMUtilElement.prototype.get_element = function() {
 	return this.$element;
 }
+// CSS Classes
+DOMUtilElement.prototype.get_classes = function() {
+	if (this.$element instanceof HTMLElement) {
+		return this.$element.className;
+	}
+	return null;
+}
+DOMUtilElement.prototype.set_classes = function(v) {
+	if (this.$element instanceof HTMLElement) {
+		this.$element.className = v;
+	}
+	return null;
+}
+DOMUtilElement.prototype.addClass = function(cls) {
+	if (this.$element instanceof HTMLElement) {
+		return DOMUtil.addClass(this.$element, cls);
+	}
+	return null;
+}
+DOMUtilElement.prototype.removeClass = function(cls) {
+	if (this.$element instanceof HTMLElement) {
+		return DOMUtil.removeClass(this.$element, cls);
+	}
+	return null;
+}
+DOMUtilElement.prototype.toggleClass = function(cls) {
+	if (this.$element instanceof HTMLElement) {
+		return DOMUtil.toggleClass(this.$element, cls);
+	}
+	return null;
+}
+DOMUtilElement.prototype.countClass = function(cls) {
+	if (this.$element instanceof HTMLElement) {
+		return DOMUtil.countClass(this.$element, cls);
+	}
+	return 0;
+}
+// Clonning
+DOMUtilElement.prototype.clone = function() {
+	if (this.$element != null) {
+		return new DOMUtilElement(this.$element.cloneNode(true));
+	}
+	return new DOMUtilElement();
+}
+// DOM management
 DOMUtilElement.prototype.add = function(content, how) {
 	if (this.$element == null) return false;
 	// Inner code
@@ -92,6 +132,90 @@ DOMUtilElement.prototype.append = function(content) {
 DOMUtilElement.prototype.prepend = function(content) {
 	return this.add(content,"prepend");
 }
+DOMUtilElement.prototype.detach = function() {
+	DOMUtil.detach(this.$element);
+}
+// Query selector
+// 	 Low level - return packed elements or null
+DOMUtilElement.prototype.findElements = function(selector, callback) {
+	var arr = DOMUtil.findElements(this.$element,selector,callback);
+	for (var i = 0; i < arr.length; i++) {
+		if (arr[i] instanceof HTMLElement) {
+			arr[i] = new DOMUtilElement(arr[i]);
+		}
+	}
+	return arr;
+}
+DOMUtilElement.prototype.findElement = function(selector, callback) {
+	var el = DOMUtil.findElement(this.$element, selector, callback);
+	if (el instanceof HTMLElement) {
+		return new DOMUtilElement(el);
+	}
+	return null;
+}
+DOMUtilElement.prototype.findParent = function(selector, callback) {
+	var pel = DOMUtil.findParent(this.$element, selector, callback);
+	if (pel instanceof HTMLElement) {
+		return new DOMUtilElement(pel);
+	}
+	return null;
+}
+// High level - return packed elements
+DOMUtilElement.prototype.queryAllByDataKey = function(datakey) {
+	var arr = DOMUtil.queryAllByDataKey(ths.$element, datakey);
+	if (arr != null) {
+		for (var i = 0; i < arr.length; i++) {
+			if (arr[i] instanceof HTMLElement) {
+				arr[i] = new DOMUtilElement(arr[i]);
+			}
+		}
+		return arr;
+	}
+	return [];
+}
+DOMUtilElement.prototype.queryOneByDataKey = function(datakey) {
+	var el = DOMUtil.queryOneByDataKey(this.$element, datakey);
+	return new DOMUtilElement(el);
+}
+DOMUtilElement.prototype.queryOne = function(selector) {
+	var el = DOMUtil.queryOne(this.$element, selector);
+	return new DOMUtilElement(el);
+}
+DOMUtilElement.prototype.queryAll = function(selector) {
+	var arr = DOMUtil.queryAll(this.$element, selector);
+	if (arr != null) {
+		for (var i = 0; i < arr.length; i++) {
+			if (arr[i] instanceof HTMLElement) {
+				arr[i] = new DOMUtilElement(arr[i]);
+			}
+		}
+		return arr;
+	}
+	return [];
+}
+DOMUtilElement.prototype.parentByDataKey = function(datakey) {
+	var pel = DOMUtil.parentByDataKey(this.$element, datakey);
+	return new DOMUtilElement(pel);
+}
+
+// BindKraft special
+DOMUtilElement.prototype.obliterateDOM = function(bSelfToo) {
+	DOMUtil.obliterateDom(this.$element, bSelfToo);
+}
+DOMUtilElement.prototype.Empty = function() {
+	DOMUtil.Empty(this.$element);
+}
+DOMUtilElement.prototype.Remove = function() {
+	DOMUtil.Remove(this.$element);
+}
+DOMUtilElement.prototype.activeclass = function(typereq) { // Incorrect classes are not returned
+	var t = typereq || "Base";
+	if (Class.is(t, "Base")) {
+		if (BaseObject.is(this.$element.activeClass,t)) return this.$element.activeClass;
+	}
+	return null;
+}
+
 
 // Statics
 DOMUtilElement.appendIn = function(el, content) {

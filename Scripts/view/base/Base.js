@@ -78,16 +78,14 @@ Base.prototype.getAsyncInstruction = function (kind) {
 }
 // Work in progress - replacing core jquery dependent stuff gradually. Adding some other DOM management members too.
 // +V: 2.17.7
+//  V: 2.17.10 - will not return null, but non-initialized DOMUtilElement inetead - check DOMUtilElement.prototype.get_isepty().
 Base.prototype.$ = function(selector) {
 	if (typeof selector == "string") {
 		try {
 			var el = DOMUtil.queryOne(this.root, selector);
-			if (el != null) {
-				return new DOMUtilElement(el);
-			}
-			return null
+			return new DOMUtilElement(el);
 		} catch (ex) {
-			return null;
+			return new DOMUtilElement();
 		}
 	} else if (selector instanceof HTMLElement) {
 		return new DOMUtilElement(selector);
@@ -100,11 +98,12 @@ Base.prototype.$ = function(selector) {
 	} else {
 		return new DOMUtilElement(this.root);
 	}
-	return null;
+	return new DOMUtilElement();
 }
 // -V: 2.17.7
 Base.prototype.isLive = function () { // True if the element is in the dom
-    return ($(this.root).closest("html").length > 0);
+	return (this.$().findParent("html") != null);
+    // return ($(this.root).closest("html").length > 0);
 };
 Base.prototype.get_liveelement = function () { // Returns a jquery wrapped element if the element is live (attached to DOM)
     if (this.root != null) {

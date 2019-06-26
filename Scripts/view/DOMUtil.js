@@ -232,6 +232,37 @@ DOMUtil.obliterateDom = function(dom, bAndSelf) { // public, recursive
 		}		
 	}
 }
+DOMUtil.empty = function(dom) {
+	if (dom instanceof HTMLElement) {
+		while (dom.firstChild) {
+			dom.removeChild(dom.firstChild);
+		}
+	} else if (dom instanceof HTMLCollection || dom instanceof NodeList) {
+		var arr = Array.createCopyOf(dom);
+		for (i = 0; i < arr.length; i++) {
+			DOMUtil.empty(arr[i]);
+		}		
+	}
+}
+DOMUtil.Empty = function(dom) {
+	DOMUtil.obliterateDom(dom);
+	DOMUtil.empty(dom);
+}
+DOMUtil.remove = function(dom) {
+	DOMUtil.empty(dom);
+	if (dom instanceof HTMLElement) {
+		DOMUtil.detach(dom);
+	} else if (dom instanceof HTMLCollection || dom instanceof NodeList) {
+		var arr = Array.createCopyOf(dom);
+		for (i = 0; i < arr.length; i++) {
+			DOMUtil.remove(arr[i]);
+		}		
+	}
+}
+DOMUtil.Remove = function(dom) {
+	DOMUtil.obliterateDom(dom);
+	DOMUtil.remove(dom);
+}
 // Node functionality (search etc.)
 /* Should not be used - does not honor BK borders
 DOMUtil.closestParent = function(dom, selector, bAndSelf) {
