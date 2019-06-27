@@ -40,7 +40,8 @@ var JBFrameworkVersion = {
 		CompileTimeValidationTasks: true, // Better disable this for production. If true additional compile time validation checks are runned to log (mostly warnings) information for discovered problems.
 		AlwaysCalcBasePath: false, // Always set g_ApplicationBasePath to the base path calculated from the initial load URL, if false this will happen only if the variable is missing.
 		DontSetPageBase: false,	  // Do not create/replace the base element of the workspoace page and its href.
-		StrictLocalProxies: true
+		StrictLocalProxies: true,
+		JQFallBack: true // where available use the JQuery fallbacks. This will be removed when all dependencies on jquery are removed.
 	};
 	
 	for (var k in defaults) {

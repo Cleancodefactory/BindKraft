@@ -24,7 +24,9 @@ $Managed_BaseProxy.prototype.$initializeProxy = function() { // Called by the co
 	}
 }
 $Managed_BaseProxy.prototype.GetInterface = function(iface) {
-	var ifc = this.$instance.GetInterface(iface);
+	if (this.__obliterated) return null;
+	if (this.$instance == null) return null;
+	var ifc = this.$instance.GetInterface(iface); // No more checks to save performance
 	if (BaseObject,is(ifc, iface)) {
 		// The implementations provide a referene to an instance implementing the interface being asked for.
 		// If by chance we get another proxy it is not a critical problem, but it will slow hte performance a little bit (should be noticed in scenarios where this matters)
@@ -32,20 +34,23 @@ $Managed_BaseProxy.prototype.GetInterface = function(iface) {
 			var proxiedInstance = this.$builder.buildProxy(ifc, iface);
 			return proxiedInstance;
 		} else {
-			throw "Cannot build a proxy for the queried interface becuase no proxy builder ws supplied to the proxy marshalling the call";
+			throw "Cannot build a proxy for the queried interface becuase no proxy builder was supplied to the proxy marshalling the call";
 		}
 	}
 	return null;
 }
 $Managed_BaseProxy.prototype.Release = function() {
+	if (this.__obliterated) return;
 	var instance = this.$instance;
 	this.$instance = null;
-	for (var key in this) {
-		if (this.hasOwnProperty(key) && 
-			BaseObject.is(this[key], "IEventDispatcher") &&
-			BaseObject.is(instance[key], "IEventDispatcher")
-			) {
-			instance[key].remove(this[key]); // Detach from the original dispatcher.
+	if (instance != null) {
+		for (var key in this) {
+			if (this.hasOwnProperty(key) && 
+				BaseObject.is(this[key], "IEventDispatcher") &&
+				BaseObject.is(instance[key], "IEventDispatcher")
+				) {
+				instance[key].remove(this[key]); // Detach from the original dispatcher.
+			}
 		}
 	}
 	this.obliterate(); // TODO: Check if this is going too far (not critical, but checking will not hurt)

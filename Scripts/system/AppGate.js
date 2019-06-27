@@ -26,10 +26,12 @@ function AppGate(shell, lapiclient, appClass) {
 	this.$shell = shell;
 	this.$api = lapiclient;
 	this.$appClass = appClass;
+	this.$container = new LocalProxyContainer();
 }
 AppGate.Inherit(BaseObject, "AppGate");
 // Proxy wrapper
 AppGate.$arrayRelease = function() {
+	
 	if (BaseObject.is(this, "Array")) {
 		for (var i = 0; i < this.length; i++) {
 			if (BaseObject.is(this[i],"IManagedInterface")) {
@@ -39,10 +41,16 @@ AppGate.$arrayRelease = function() {
 	}
 }
 /**
-	Wraps a single reference with a proxy for the given interface
+	A localProxyContainer - all returned proxies are registered here
+*/
+AppGate.prototype.$container = null;
+/**
+	Wraps a single reference or an array of same-interface references with a proxy/ies for the given interface
 	@param iface {string|interfacedef}	The interface for which to generate a proxy
 	@param p	 {BaseObject*}			A reference to the instance implementing the interface
 	@returns 	 {LocalProxy}			The proxy. Must be released after use (call Release() in it)
+	
+	@remarks
 */
 AppGate.prototype.wrap = function(iface, p) {
 	if (BaseObject.is(p,"BaseObject")) {
@@ -52,6 +60,9 @@ AppGate.prototype.wrap = function(iface, p) {
 		}
 		return v;
 	} else if (BaseObject.is(p, "Array")) {
+		// Here we actually allow proxies to be chain-wrapped.
+		// This is intentional - the proxies are considered created outside of the control of the code that calls wrap
+		// Thus passing them further is considered passind a proxy to a new client, hence a new proxy is needed.
 		var arr = Array.createCopyOf(p);
 		for (var i = 0; i < arr.length; i++) {
 			if (BaseObject.is(arr[i],"BaseObject")) {
@@ -63,12 +74,25 @@ AppGate.prototype.wrap = function(iface, p) {
 	}
 	return p;
 }
-
+//
+AppGate.prototype.release = function(p) {
+	this.$container.release(p);
+}
 
 // Shell interface - similar to old query back
-AppGate.prototype.runningInstance = function() {
-	return this.wrap(IManagedInterface, this.$shell.getAppByClassName(this.$appClass.classType));
+AppGate.prototype.runningInstance = function(_iface) {
+	var iface = _iface || "IManagedInterface";
+	return this.$container.registerByTarget(this.wrap(iface, this.$shell.getAppByClassName(this.$appClass.classType)));
 }
-AppGate.prototype.runningInstances = function() {
-	return this.wrap(IManagedInterface,this.$shell.getAppsByClassNames(this.$appClass.classType));
+AppGate.prototype.runningInstances = function(_iface) {
+	var iface = _iface || "IManagedInterface";
+	return this.$container.registerByTarget(this.wrap(iface,this.$shell.getAppsByClassNames(this.$appClass.classType)));
+}
+AppGate.prototype.bindAppByClassName = function(className, iface) {
+	var _iface = iface || "IManagedInterface";
+	var app = this.$shell.getAppByClassName(className);
+	if (app != null) {
+		return this.$container.registerByTarget(this.wrap(_iface, app));
+	}
+	return null;
 }

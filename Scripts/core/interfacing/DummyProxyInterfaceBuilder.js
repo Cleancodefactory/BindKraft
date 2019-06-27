@@ -56,7 +56,7 @@ DummyInterfaceProxyBuilder.prototype.buildProxy = function (instnce, interfaceDe
 			}
 		}
     } else {
-		this.LASTERROR(-1,"The instance does not support the interface.");
+		this.LASTERROR(-1,"The instance does not support the requested interface.");
     }
 	return null;
 };

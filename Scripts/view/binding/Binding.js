@@ -2011,6 +2011,7 @@ Binding.prototype.$set_targetValue = function (vin) {
                         this.$actualTarget["set_" + this.$targetAction.slice(1)].call(this.$actualTarget, v);
                     }
                 } else {
+					// TODO: This branch does not make much sense
                     if (this.$targetIndex != null) { // TO DO: see if it makes sense to create objects in this case
                         $(this.$actualTarget)[this.$targetAction] = v; //this.$target[this.$targetAction] = v;
                     } else {
@@ -2027,17 +2028,9 @@ Binding.prototype.$set_targetValue = function (vin) {
                     }
                 } else {
                     if (this.$targetIndex != null) {
-                        if (this.bindingParameter != null) {
-                            $(this.$target)[this.$targetAction](this.$targetIndex, v, this.bindingParameter);
-                        } else {
-                            $(this.$target)[this.$targetAction](this.$targetIndex, v); //this.$target[this.$targetAction] = v;
-                        }
+						Binding.TargetOperations.$callwriteindexed(this.$targetAction, this.$target, this.$targetIndex, v, this);
                     } else {
-                        if (this.bindingParameter != null) {
-                            $(this.$target)[this.$targetAction](v, this.bindingParameter);
-                        } else {
-                            $(this.$target)[this.$targetAction](v); //this.$target[this.$targetAction] = v;
-                        }
+						Binding.TargetOperations.$callwrite(this.$targetAction, this.$target, v, this);
                     }
                 }
             }
@@ -2077,7 +2070,7 @@ Binding.prototype.$get_targetValue = function (bRaw) { // if bRaw is present and
                         r = this.$actualTarget["get_" + this.$targetAction.slice(1)].call(this.$actualTarget);
                     }
                 } else {
-                    // TO DO: Check if supporting array makes sense here
+                    // TO DO: This branch does not make sense
                     r = $(this.$actualTarget)[this.$targetAction];
                 }
                 this.$traceBinding("get", r);
@@ -2092,9 +2085,10 @@ Binding.prototype.$get_targetValue = function (bRaw) { // if bRaw is present and
                     }
                 } else {
                     if (this.$targetIndex != null) {
-                        r = $(this.$target)[this.$targetAction](this.$targetIndex);
+						r = Binding.TargetOperations.$callreadindexed(this.$targetAction,this.$target,this.$targetIndex, this);
+                        
                     } else {
-                        r = $(this.$target)[this.$targetAction]();
+						r = Binding.TargetOperations.$callread(this.$targetAction,this.$target, this);
                     }
                 }
                 this.$traceBinding("get", r);
