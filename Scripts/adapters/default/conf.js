@@ -665,10 +665,11 @@ function jb_initFramework(globalProvider) { // The global provider is being aske
 					return o;
 				}
             }
-            else if ( o.status.httpStatus == 401)  {
-                //make a full request to the main domain
-                window.location.href = mapPath('/');
-			}
+            else if (o.status.httpStatus == 401) {
+                //make a full request to the build in method in CoreKraft
+                window.location.href = mapPath('/account/signin') + '?returnUrl=/';
+                settings.AbortAllProcessing = true;
+            }
         }
 		if ((o != null && o.status != null && !o.status.issuccessful) && (o.status.httpStatus == 0)) {
 			if (core_ajaxReportProblem(this, settings, "zerostatus", "Request returned incorrect status 0", null)) {

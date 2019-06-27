@@ -32,7 +32,7 @@ function CacheManager(branchesAndFlags, cacheHandlers) {
     this.objBranchesAndFlags = branchesAndFlags;
     this.cacheHandlers = cacheHandlers;
     this.$noCacheFlagsGet = 0x0000FFFF; // Defaults passed down whenever caching is impossible
-    this.$noCacheFlagsPost = 0;
+    this.$noCacheFlagsPost = 0x0000FFFF;
     for (var branch in this.objBranchesAndFlags) {
         this.disableCacheBranches[branch] = false;
     }
