@@ -21,6 +21,10 @@ IAppBase.prototype.get_instancename = function() { return this.$instancename; }
 IAppBase.prototype.set_instancename = function(v) { this.$instancename = v; }
 
 /**
+	DPERECATED
+	WAS NEVER USED
+	REPLACED BY USAGE OF IManagedInterface::GetInterface(iface);
+
 	Gets and interface that enables controlling some aspect of the application.
 	Apps that expose services supply access to this feature by exposing through GetAppInterface the IServiceHub interface.
 	This is a special method, because from the caller's view the app is a monolith object, but the internal implementation may span through many objects and the interface requested is not neccessariy supported on the main application's object.

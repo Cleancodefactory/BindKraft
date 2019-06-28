@@ -28,7 +28,12 @@ Binding.TargetOperations = {
 			}
         } else if (JBCoreConstants.JQFallBack) {
             var n = $(rawnode);
-            return n[name].apply(n, Array.createCopyOf(arguments,2));
+			var p = BaseObject.getProperty(arg1,"bindingParameter");
+			if (p != null) {
+				return n[name].call(n, p);
+			} else {
+				return n[name].call(n);
+			}
         }
     },
 	$callreadindexed: function(name, rawnode, arg1, arg2) { // index, binding
@@ -46,7 +51,7 @@ Binding.TargetOperations = {
 			}
         } else if (JBCoreConstants.JQFallBack) {
             var n = $(rawnode);
-            return n[name].apply(n, Array.createCopyOf(arguments,2));
+            return n[name].call(n, arg1);
         }
     },
     $callwrite: function(name, rawnode, arg1, arg2) { // value, binding
@@ -65,7 +70,8 @@ Binding.TargetOperations = {
 			}
         } else if (JBCoreConstants.JQFallBack) {
             var n = $(rawnode);
-            return n[name].apply(n, Array.createCopyOf(arguments,2));
+			var p = BaseObject.getProperty(arg1,"bindingParameter");
+            return n[name].call(n, arg1,p);
         }
     },
 	$callwriteindexed: function(name, rawnode, arg1, arg2,arg3) { // index, value, binding
@@ -84,7 +90,7 @@ Binding.TargetOperations = {
 			}
         } else if (JBCoreConstants.JQFallBack) {
             var n = $(rawnode);
-            return n[name].apply(n, Array.createCopyOf(arguments,2));
+            return n[name].call(n, arg1,arg2);
         }
     },
 

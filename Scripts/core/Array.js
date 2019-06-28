@@ -468,19 +468,36 @@ Array.prototype.All = function(callback) {
     for (var i = 0; i < this.length; i++) {
         el = this[i];
         if (BaseObject.is(callback, "Delegate")) {
-            if (!callback.invoke(i, this[i])) return false;;
+            if (!callback.invoke(i, el)) return false;
         } else if (typeof callback == "function") {
             if (!callback.call(this,i,el)) return false;
         } else if (BaseObject.is(callback, "BaseObject")) {
-            if (!BaseObject.equals(this[i], callback)) {
+            if (!BaseObject.equals(el, callback)) {
                 return false;
             }
         } else if (callback != null) {
-            if (this[i] != callback) return false;
+            if (el != callback) return false;
         }
-        if (el != null) arr.push(el);
     };
     return true;
+}
+Array.prototype.Any = function(callback) {
+    var el;
+    for (var i = 0; i < this.length; i++) {
+        el = this[i];
+        if (BaseObject.is(callback, "Delegate")) {
+            if (callback.invoke(i, el)) return true;
+        } else if (typeof callback == "function") {
+            if (callback.call(this,i,el)) return true;
+        } else if (BaseObject.is(callback, "BaseObject")) {
+            if (BaseObject.equals(el, callback)) {
+                return true;
+            }
+        } else if (callback != null) {
+            if (el == callback) return true;
+        }
+    };
+    return false;
 }
 Array.prototype.FirstOrDefault = function (callback) {
     var o;

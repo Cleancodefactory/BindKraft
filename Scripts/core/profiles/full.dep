@@ -14,6 +14,7 @@
 //#using "../String.js"
 //#using "../Date.js"
 //#using "../Term.js"
+//#using "../util/util-full.dep"
 
 //#using "../mappath.js"
 

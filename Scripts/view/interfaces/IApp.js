@@ -1,8 +1,6 @@
-
-
-
-
 /*
+	
+
 In a typical windowed environment we have apps working in the system. The class below is the core class which should be inherited by app implementations.
 We are trying to find ways to design this class in such a way that definition of a new one nheriting it can be avoided in many cases. When possible the standard app
 should be usable by attaching a run function to it. 

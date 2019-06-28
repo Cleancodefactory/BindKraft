@@ -59,6 +59,7 @@
 //#using "./IOperationDescription.js"
 //#using "./IUsingValueCheckers.js"
 //#using "./IProxyInterfaceBuilder.js"
+//#using "./IAppInstance.js"
 //#using "./IAppBase.js"
 //#using "./ISupportsCommandRegister.js"
 //#using "./ISupportsEnvironmentContext.js"

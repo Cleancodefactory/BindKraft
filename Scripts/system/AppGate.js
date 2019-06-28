@@ -30,12 +30,14 @@ function AppGate(shell, lapiclient, appClass) {
 }
 AppGate.Inherit(BaseObject, "AppGate");
 // Proxy wrapper
-AppGate.$arrayRelease = function() {
-	
-	if (BaseObject.is(this, "Array")) {
-		for (var i = 0; i < this.length; i++) {
-			if (BaseObject.is(this[i],"IManagedInterface")) {
-				this[i].Release();
+AppGate.prototype.$arrayRelease = function() {
+	var cont = this.$container;
+	return function() {
+		if (BaseObject.is(this, "Array")) {
+			for (var i = 0; i < this.length; i++) {
+				if (BaseObject.is(this[i],"IManagedInterface")) {
+					cont.release(this[i]);
+				}
 			}
 		}
 	}
@@ -52,6 +54,28 @@ AppGate.prototype.$container = null;
 	
 	@remarks
 */
+AppGate.prototype.$wrap = function(iface, p) {
+	if (BaseObject.is(p,"BaseObject")) {
+		var v = DummyInterfaceProxyBuilder.Default().buildProxy(p, iface);
+		if (this.LASTERROR().iserror()) {
+			throw "Cannot wrap: " + this.LASTERROR().text();
+		}
+		return v;
+	} else if (BaseObject.is(p, "Array")) {
+		// Here we actually allow proxies to be chain-wrapped.
+		// This is intentional - the proxies are considered created outside of the control of the code that calls wrap
+		// Thus passing them further is considered passind a proxy to a new client, hence a new proxy is needed.
+		var arr = Array.createCopyOf(p);
+		for (var i = 0; i < arr.length; i++) {
+			if (BaseObject.is(arr[i],"BaseObject")) {
+				arr[i] = this.wrap(iface,arr[i]);
+			}
+		}
+		arr.Release = this.$arrayRelease();
+		return arr;
+	}
+	return p;
+}
 AppGate.prototype.wrap = function(iface, p) {
 	if (BaseObject.is(p,"BaseObject")) {
 		var v = DummyInterfaceProxyBuilder.Default().buildProxy(p, iface);
@@ -69,7 +93,6 @@ AppGate.prototype.wrap = function(iface, p) {
 				arr[i] = this.wrap(iface,arr[i]);
 			}
 		}
-		arr.Release = AppGate.$arrayRelease;
 		return arr;
 	}
 	return p;
@@ -80,19 +103,44 @@ AppGate.prototype.release = function(p) {
 }
 
 // Shell interface - similar to old query back
-AppGate.prototype.runningInstance = function(_iface) {
-	var iface = _iface || "IManagedInterface";
-	return this.$container.registerByTarget(this.wrap(iface, this.$shell.getAppByClassName(this.$appClass.classType)));
+AppGate.prototype.runningInstance = function() {
+	return this.$container.registerByTarget(this.$wrap(IManagedInterface, this.$shell.getAppByClassName(this.$appClass.classType)));
 }
-AppGate.prototype.runningInstances = function(_iface) {
-	var iface = _iface || "IManagedInterface";
-	return this.$container.registerByTarget(this.wrap(iface,this.$shell.getAppsByClassNames(this.$appClass.classType)));
+AppGate.prototype.runningInstances = function() {
+	return this.$container.registerByTarget(this.$wrap(IManagedInterface,this.$shell.getAppsByClassNames(this.$appClass.classType)));
 }
-AppGate.prototype.bindAppByClassName = function(className, iface) {
-	var _iface = iface || "IManagedInterface";
+AppGate.prototype.bindAppByClassName = function(className) {
 	var app = this.$shell.getAppByClassName(className);
 	if (app != null) {
-		return this.$container.registerByTarget(this.wrap(_iface, app));
+		return this.$container.registerByTarget(this.$wrap(IManagedInterface, app));
 	}
 	return null;
 }
+AppGate.prototype.bindAppsByClassNames = function(className1, className2, className3) {
+	var classNames = Array.createCopyOf(arguments,1);
+	var apps = this.$shell.getAppsByFilter(function(app) {
+		if (classNames.length > 0 && !classNames.Any(Predicates.TypeIs(app))) return false;
+		if (BaseObject.is(app,iface)) return true;
+		return false;
+	});
+	return this.$container.registerByTarget(this.$wrap(IManagedInterface, apps));
+}
+AppGate.prototype.bindAppByInstanceId = function(instanceId) {
+	var app = this.$shell.getAppByInstanceId(instanceId);
+	if (BaseObject.is(app,"IAppBase")) {
+		return this.$container.registerByTarget(this.$wrap(IManagedInterface,app));
+	}
+	return null;
+}
+AppGate.prototype.bindAppByInstanceName = function(instanceName) {
+	var apps = this.$shell.getAppsByInstanceName(instanceName);
+	return this.$container.registerByTarget(this.$wrap(IManagedInterface,apps));
+}
+AppGate.prototype.activateApp = function(appproxy) {
+	var inst = DummyInterfaceProxyBuilder.Dereferece(appproxy);
+	if (BaseObject.is(inst,"IApp")) {
+		return this.$shell.activateApp(inst);
+	}
+	return false;
+}
+

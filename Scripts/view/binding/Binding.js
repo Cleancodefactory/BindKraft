@@ -2046,7 +2046,7 @@ Binding.prototype.$set_targetValue = function (vin) {
 					this.$expression + "<br/>\nHTML Extract: " + this.$get_htmlExtractForErrorInfo());
         } else {
             var msg = new InfoMessageQuery(ex + "<br/>\n ERROR in Binding.prototype.$set_targetValue of " + this.$expression + "<br/>\nHTML Extract: " + this.$get_htmlExtractForErrorInfo());
-            throw (ex + "<br/>\n ERROR in Binding.prototype.$set_sourceValue of " + this.$expression + "<br/>\n HTML extract: " + this.$get_htmlExtractForErrorInfo());
+            throw (ex + "<br/>\n ERROR in Binding.prototype.$set_targetValue of " + this.$expression + "<br/>\n HTML extract: " + this.$get_htmlExtractForErrorInfo());
             JBUtil.throwStructuralQuery(this.$target, msg);
             // InfoMessageQuery.emit(this,
         }
