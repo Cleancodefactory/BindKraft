@@ -1,7 +1,39 @@
-//include this file after binding.js
-////#using "Binding.js"
+/**
+	include this file after binding.js
+	This file contains all the DOM level target binding actions. These were previously directed to jquery simple extensions, 
+	which are still supported as fall-back for a time (will be completely removed in Aug 2019).
+	
+	To implement target action/operation:
+	
+	1) add entry in Binding.TargetOperations.ops:
+	1.a) non-indexed
+	 myaction: {
+		 read: function(binding) {
+			 // Return the value from the target element
+		 },
+		 write: function(value, binding) {
+			 //Set the value to the target
+		 }
+	 }
+	1.b) indexed
+	 myaction: {
+		 indexed: true,
+		 read: function(index, binding) {
+			 // Return the n-the (index determined) value from the target element
+		 },
+		 write: function(index, value, binding) {
+			 // Set the value determined by the index to the target
+		 }
+	 } 
+	
+	-> Target index is denoted as data-bind-[<theindex>]="{.... the binding ....}"
+	-> The binding argument gives the binding that calls the method and can be used if access to 
+		binding details is necessary (usually this is the bindingParameter, but other details can
+		be used as well)
+	
 
-//this = current element
+
+*/
 Binding.TargetOperations = {
     $getread: function(name){
         if (this[name]) {
@@ -108,52 +140,45 @@ Binding.TargetOperations = {
 		},
 		elementdisabled: {
 			indexed: false,
-			read: function(){
-				return $$(this).first().properties('disabled');
+			read: function() {
+				if (BaseObject.is(this.activeClass,"IDisablable")) {
+					return this.activeClass.get_disabled();
+				} else {
+					return this.disabled;
+				}
 			},
-			write: function(v, b){
-				if (v != null) {
+			write: function(v, b) {
+				if (BaseObject.is(this.activeClass,"IDisablable")) {
+					this.activeClass.set_disabled(v?true:false);
+				} else {
 					if (v) {
 						this.disabled = true; 
-						if(b == null || b != "noopacity"){
-							this.styles.opacity = "0.5"; 
+						if (b == null || b.bindingParameter != "noopacity"){
+							this.style.opacity = 0.5; 
 						}
 					} else {
-						this.properties("disabled",false);
-						el.styles("opacity","1.0"); 
-					}
-					if (el.getNative() != null && BaseObject.is(el.getNative().activeClass,"IDisablable")) {
-						el.getNative().activeClass.set_disabled(v ? true: false);
+						this.disabled = false; 
+						this.style.opacity = 1.0; 
 					}
 				}
 			}
 		},
 		datacontext: {
-			read: function(){
-				var el = this;
-				if (el.dataContext != null) {
-					return el.dataContext;
+			read: function() {
+				if (this.dataContext != null || this.hasDataContext) {
+					return this.dataContext;
 				}
 			},
-			write:function(v){
-				if (this.length == 0) {
-					return null;
-				}
-				var el = this;
-				if (el != null) {
-					if (arguments.length > 0) el.dataContext = v;
-				}
+			write: function(v) {
+				this.dataContext = v;
 			}
 		},
 		elementtitle:{
-			read: function(){
-				var el = this;
-				if (el == null) return null;
-				if (el != null && el.title != null) return el.title;
+			read: function() {
+				return this.title;
 			},
 			write: function (v) {
-				var el = this;
-				if (el != null && v != null) el.title = v;
+				this.title = v;
 			}
 		}
 	}
