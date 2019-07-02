@@ -1036,4 +1036,27 @@ Function.prototype.Defaults = function(object_or_name, optvalue) {
 	.Param("optvalue", "When object_or_name is string this is the value for that setting, otherwise it is ignored")
 	.Returns("The DefaultsMgr for this class.");
 
+Function.prototype.ClassData = function(dataType, object_or_name, optvalue) {
+	if (typeof dataType != "string") {
+		CompileTime.warn("ClassData requires a string dataType parameter. dataType is not a string while declaring ClassData on " + this.classType + ".");
+	}
+	var cdm = new ClassDataMgr(this, dataType);
+	if (arguments.length > 0) {
+		cdm.set(object_or_name,optvalue);
+	}
+	return this;
+}
 
+Function.prototype.InterfaceData = function(iface, object_or_name, optvalue) {
+	var iface_name = Class.getInterfaceName(iface);
+	if (iface_name == null) {
+		CompileTime.warn("InterfaceData cannot find the specified interface while setting InterfaceData on " + this.classType + ". Check if the interface is defined before trying to set data for it.");
+		return this;
+	}
+	if (Class.is(this, iface)) {
+		return this.ClassData(iface_name,object_or_name,optvalue);
+	} else {
+		CompileTime.warn("InterfaceData cannot be set becase the class " + this.classType + " does not support the specified interface " + iface_name + ".");
+		return this;
+	}
+}

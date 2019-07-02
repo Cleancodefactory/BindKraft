@@ -1,7 +1,8 @@
 /**
-	This is a kind of proxy for a very specific purpose (not to be mistaken with the proxies for IRequestable and RequestInterface cases)
-	InterfaceObject is intended for "interfaces" - set of methods that has to be called on a specific insance like normal instance methods, but
-	not visible (and usually not even implemented) on it.
+	This is a kind of proxy for specific purposes. It is available for API implementations that need to pass "safe" instances to components/code that is highly pluggable.
+	
+	Unlike the local proxies generated through LocalAPI and/or appGate this mechanism is AdHoc and intended for specific internal purposes.
+	Any code that receives InterfaceObjects is not aware of this fact and does not need to release it or do anything else special. 
 	
 	FYI: This can be seen the other way around - the interface object is a public interface for an object which is never seen directly. We considered an OOP approach along these line, but
 	we don't want such radiacl changes in such an advanced phase of the framework development, so this technique is likely to remain the only trace of this approach in BindKraft.

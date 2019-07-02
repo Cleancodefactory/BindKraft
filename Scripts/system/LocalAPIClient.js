@@ -1,5 +1,7 @@
 /**
 	LocalAPIClient - attaches references to LocalAPI interfaces.
+	Changes are made in the behavior in BK 2.18! The text below needs some changes. The compatibility should not be broken - the behavior becomes 
+	more liberal.
 	
 	In Depth
 	~~~~~~~~
@@ -12,6 +14,14 @@
 			their methods as async ones (returning Operation-s) which would be extremely frustrating for APIs dealing with local concerns, resources etc.
 		- Similar separation between supplier and consumer of an API - a proxy sits between them and doesn't allow calling non-declared methods. Stub is not
 			needed, because no (direct) remoting is allowed, so the proxy acts as both in a way.
+			
+	What else looks like a candidate for LocalAPI, but should not be exposed by it
+		- App/daemon provided services. These usually fail to fit the "global" characteristic, because they openly belong to an app/daemon and all their
+			clients know and expect that.
+		- App/(sometimes may be even daemon) UI bound services. Accessible in the same way, but involve UI changes on the server app while proceeding.
+			Exposed though local API these will make the wrong impression that they are like system UI, while the better abstraction is app automation.
+			
+	
 			
 	Using
 	~~~~~
@@ -105,15 +115,32 @@ LocalAPIClient.Inherit(BaseObject, "LocalAPIClient");
 LocalAPIClient.prototype.$localapis = null;
 LocalAPIClient.prototype.$objapis = null;
 LocalAPIClient.prototype.API = new InitializeObject("API proxies go here under their interface names."); // APIs attach here
+/**
+	From V.2.18. getAPI is more liberal and will auto attach default versions of API even if it is not pre-configured.
+	However using non-default variations still requires configuration.
+*/
 LocalAPIClient.prototype.getAPI = function (ifacedef_or_name) {
-	if (!BaseObject.is(this.API[ifacedef_or_name], ifacedef_or_name)) {
-		this.attachAPIConf(ifacedef_or_name);
+	var ifacename = Class.getInterfaceName(ifacedef_or_name);
+	if (ifacename == null) {
+		this.LASTERROR(-1, "The argument did not resolve to an interface", "getAPI");
+		return null; // Incorrect call - argument did not resolve to an interface
 	}
-	if (BaseObject.is(this.API[ifacedef_or_name], ifacedef_or_name)) {
+	if (!BaseObject.is(this.API[ifacename], ifacedef_or_name)) { // f(IFace) - try from conf if it isn't bound yet
+		if (this.attachAPIConf(ifacedef_or_name)) {
+			return this.API[ifacename];
+		}
+	}
+	if (BaseObject.is(this.API[ifacename], ifacedef_or_name)) { // Check if we have it and return 
 		return this.API[ifacedef_or_name];
-	} else {
-		return null;
 	}
+	// Attempt to attach the default one
+	this.attachAPI(ifacedef_or_name);
+	if (BaseObject.is(this.API[ifacename], ifacedef_or_name)) { // Check if we have it and return 
+		return this.API[ifacename];
+	}
+	this.LASTERROR(-1,"Cannot find the requested interface in the configured LocalAPI hubs");
+	return null;
+	//this.attachAPI
 }
 LocalAPIClient.prototype.attachAPIConf = function (ifacedef_or_name) {
 	var ifacename = Class.getInterfaceName(ifacedef_or_name);

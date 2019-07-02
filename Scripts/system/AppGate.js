@@ -19,7 +19,11 @@
 	Provided features:
 	2.18
 		- LocalAPIClient
-		- Shell query
+		- Shell (query) API
+	
+	The shell API is rather limited in this version, but will be extended in 2.19, some other frequently needed stuff will be added to AppGate
+	as well - even if it is easilly accessible from elsewhere, AppGate is supposed to become a hub giving the app access to the majority of the
+	API and services an app usually needs.
 */
 function AppGate(shell, lapiclient, appClass) {
 	BaseObject.apply(this, arguments);
@@ -76,6 +80,33 @@ AppGate.prototype.$wrap = function(iface, p) {
 	}
 	return p;
 }
+/**
+	For use by the app when needed.
+	
+	When implementing methods of service interfaces which return BaseObject derived instances
+	you have to generate a local proxy yourself.
+	
+	Example: 
+		var inst = this.myObject;
+		return this.appgate.wrap(IMyInterface,inst);
+		
+	In the example we assume the AppGate passed to the app constructor is saved in the appgate field (can be anywhere - up to the programmer).
+	We also assume IMyInterface extends IManagedInterface and inst supports IMyInterface.
+	
+	Workspace exposed app services are typically supported through GetInterface on the app's main class. They can return any object that supports the requested
+	interface. However this is not enough if certain service (available this way) maintains varying number of instances of some class(es) - created and further
+	managed through it. I.e. the service manages some items and direct interface reference to one or more of them can be obtained by a client throuhg a method call
+	on the service. In this case the local proxy is responsibility of the implementation.
+	
+	Why? It is possible to intercept the return values, hence the returned references, but as we do not want to introduce strict method typing just for this reason
+	there is no sure way in which to determine what is the interface expected by the client. That interface is assumed according to the services's server documentation
+	and not available to the system. Any information about the return result will require more work than the mere wrapping it, which includes the needed information anyway.
+	So this makes the proxy generation by the server simple and preferable compared to a clumsy return type declaration system or returning description object that carries both
+	the interface definition/name and the reference - the proxy is built from this knowledge and is ready for use without the need of an additional and (frankly) redundant step.
+	If you have any doubts - please consider the fact that this is for local (workspace/page) usage only - not remote.
+	
+	
+*/
 AppGate.prototype.wrap = function(iface, p) {
 	if (BaseObject.is(p,"BaseObject")) {
 		var v = DummyInterfaceProxyBuilder.Default().buildProxy(p, iface);
@@ -100,6 +131,13 @@ AppGate.prototype.wrap = function(iface, p) {
 //
 AppGate.prototype.release = function(p) {
 	this.$container.release(p);
+}
+// LocalAPI usage
+AppGate.prototype.api = function(iface) {
+	return this.$api.getAPI(iface);
+}
+AppGate.prototype.attachAPI = function(iface, variation) {
+	return this.$api.attachAPI(iface, variation);
 }
 
 // Shell interface - similar to old query back

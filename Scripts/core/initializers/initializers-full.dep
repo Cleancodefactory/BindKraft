@@ -1,5 +1,6 @@
 
 //#using "./Defaults.js"
+//#using "./ClassData.js"
 //#using "./Initialize.js"
 //#using "./InitializeArray.js"
 //#using "./InitializeCloneObject.js"

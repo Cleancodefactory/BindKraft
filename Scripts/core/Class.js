@@ -193,6 +193,31 @@ var Class = {
 			throw "Cannot find class definition";
 		},
 	// -V: 2.7.3
+	// +V: 2.18.0
+		classDataOf: function(cls, dataType) {
+			if (typeof dataType == "string") {
+				var c = this.getClassDef(cls);
+				if (c != null) {
+					return new ClassDataMgr(c);
+				}
+				throw "Cannot find class definition";
+			} else {
+				return null; // This is not a fatal mistake
+			}
+		},
+		interfaceDataOf: function(cls, iface) { // Intended for direct use without checks
+			var iface_name = Class.getInterfaceName(iface);
+			if (iface_name != null) {
+				if (Class.is(cls, iface)) {
+					return Class.classDataOf(cls,iface_name);
+				} else {
+					return null;
+				}
+			} else {
+				return null;
+			}
+		},
+	// -V: 2.18.0
 	// +V: 2.15.1
 		// Ways to obtain some info available fromother places from the Class - for future encapsulation
 		classes: function(filterproc) {

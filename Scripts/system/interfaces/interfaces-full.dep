@@ -13,10 +13,14 @@
 //#using "./IServiceFactory.js"
 //#using "./IOneInstanceApp.js"
 //#using "./ILauncherQueryBack.js"
-//#using "./IRequiresAppGate.js"
 //#using "./IAppIndicator.js"
 //#using "./IUsingLocalAPI.js"
 //#using "./IImplementsLocalAPI.js"
 //#using "./IAppHistorySupport.js"
 //#using "./IHistoryTracker.js"
 //#using "./IApplicationState.js"
+//#using "./ILocalAPIImports.js"
+
+// Backward compatibility temporary interface markers
+
+//#using "./IRequiresQueryBack.js"

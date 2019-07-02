@@ -176,7 +176,7 @@ SysShell.prototype.activateApp = function(appinst) {
 // BEGIN weak dispatcher API
 SysShell.prototype.$dispatcherLeasing = null;
 // END weak dispatcher API
-
+/*
 SysShell.prototype.launchApp = function (cls, params) {
     var appClass = cls;
     if (BaseObject.is(cls, "string")) {
@@ -284,6 +284,7 @@ SysShell.prototype.launchAppWindow = function (appClass, wndClassName, params) {
 	return op;
 }.Description("starts an app with a single main window. Count this function deprecated. It could be reworked, but the need of that seems very limited.")
 	.Deprecated();
+*/
 // IAppManager2 //////////////////////////////////////////////////
 SysShell.prototype.launch = function(_appClass, /* callset of arguments */ appArgs) {
 	var arr = [_appClass, {}];
@@ -368,14 +369,23 @@ SysShell.prototype.launchEx = function(_appClass, _options,/* callset of argumen
         }
 		prepareAPIHubs(); // Create the list of the API hubs - for API exposers
 		
-		if (Class.is(appClass,"IRequiresAppGate")) {
+		var app;
+		if (Class.is(appClass,"IRequiresQueryBack")) {
+			// 2.18 - 2.20 (or a bit later) temporary backward compatibility
+			var querybackiface = new SysShellQueryBack(this,appClass);
+			app = new appClass(querybackiface);
 		} else {
+			// Create a LocalAPIClient the new way (V: 2.18)
+			var appgate = new AppGate(this,createLocalAPIClient(),appClass);
+			app = new appClass(appgate);
+			// We need to $init the AppGate further
+			//if (BaseObject.is(app,"I
 		}
 		
-		var querybackiface = new SysShellQueryBack(this,appClass);
 		
 		
-		var app = new appClass(querybackiface);
+		
+		
 		var shuttingdownOp = null; // set to true when shutdown is first called to prevent recursion
 		// Inner tools ===========
 		// 1.Performs the right call to the app's windowDisplaced
@@ -466,13 +476,21 @@ SysShell.prototype.launchEx = function(_appClass, _options,/* callset of argumen
 				}
 			}			
 		}
-		// 5. Push local API client if requested
-		// DEPRECATED - still supported, but you should duse AppGate from BK 2.18
+		// 5. DEPRECATED. Push local API client if requested (will be removed around V:2.20)
+		// DEPRECATED - still supported, but you should use AppGate from BK 2.18
+		// Having both will be confusing to say the least ...
 		function plugLocalAPIs() {
 			if (app.is("IUsingLocalAPI")) {
 				lapiclient = new LocalAPIClient(app.getLocalAPIImportDefinition(),apiHubs);
 				app.setLocalAPIClient(lapiclient);
 			}
+		}
+		// 6.Create LocalAPI for the AppGate - call after prepareAPIHubs
+		function createLocalAPIClient() {
+			var idata = Class.interfaceDataOf(appClass,ILocalAPIImports);
+			var importTable = null;
+			if (idata != null) importTable = idata.get();
+			return new LocalAPIClient(importTable,apiHubs);
 		}
 		
 		// Moving this up
