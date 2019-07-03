@@ -73,7 +73,7 @@ DummyInterfaceProxyBuilder.Default = (function() {
 DummyInterfaceProxyBuilder.Dereferece = function(p) {
 	var result = p;
 	while (BaseObject.is(result, "$Managed_BaseProxy")) {
-		result = o.$instance;
+		result = result.$instance;
 	}
 	return result;
 }

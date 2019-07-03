@@ -27,7 +27,7 @@ $Managed_BaseProxy.prototype.GetInterface = function(iface) {
 	if (this.__obliterated) return null;
 	if (this.$instance == null) return null;
 	var ifc = this.$instance.GetInterface(iface); // No more checks to save performance
-	if (BaseObject,is(ifc, iface)) {
+	if (BaseObject.is(ifc, iface)) {
 		// The implementations provide a referene to an instance implementing the interface being asked for.
 		// If by chance we get another proxy it is not a critical problem, but it will slow hte performance a little bit (should be noticed in scenarios where this matters)
 		if (BaseObject.is(this.$builder,"IProxyInterfaceBuilder")) {

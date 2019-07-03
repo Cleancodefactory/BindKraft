@@ -78,7 +78,7 @@ BaseWindow.Implement(IStructuralQueryEmiterImpl, "windows", function () { return
 BaseWindow.Implement(IAppletStorage); // Implemented but provided as service only if this.provideAsService=["IAppletStorage"];
 BaseWindow.Implement(IAjaxContextParameters);
 BaseWindow.Implement(IAjaxReportSinkImpl);
-BaseWindow.Implement(IAppElement);
+BaseWindow.Implement(IAppElementImpl);
 BaseWindow.Implement(IInfoDisplayWindowImpl);
 BaseWindow.Implement(IUserData);
 BaseWindow.Implement(IAttachedWindowBehaviorsImpl);

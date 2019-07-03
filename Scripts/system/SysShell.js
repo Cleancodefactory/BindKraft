@@ -369,14 +369,15 @@ SysShell.prototype.launchEx = function(_appClass, _options,/* callset of argumen
         }
 		prepareAPIHubs(); // Create the list of the API hubs - for API exposers
 		
-		var app;
+		var app, appgate, querybackiface;
+		
 		if (Class.is(appClass,"IRequiresQueryBack")) {
 			// 2.18 - 2.20 (or a bit later) temporary backward compatibility
-			var querybackiface = new SysShellQueryBack(this,appClass);
+			querybackiface = new SysShellQueryBack(this,appClass);
 			app = new appClass(querybackiface);
 		} else {
 			// Create a LocalAPIClient the new way (V: 2.18)
-			var appgate = new AppGate(this,createLocalAPIClient(),appClass);
+			appgate = new AppGate(this,createLocalAPIClient(),appClass);
 			app = new appClass(appgate);
 			// We need to $init the AppGate further
 			//if (BaseObject.is(app,"I
@@ -410,7 +411,8 @@ SysShell.prototype.launchEx = function(_appClass, _options,/* callset of argumen
 			// Call app's appshutdown
 			var shutdownsuccess = app.appshutdown.call(app,function(success) {
 				// Async return
-				_shell.$dispatcherLeasing.clearInst(app);
+				appgate.releaseAll();
+				_shell.$dispatcherLeasing.clearInst(app); // Deprecated
 				// no matter the success - remove this from the running apps
 				// If we add a register for kranked zombies (apps) we can add it there n this step if it returns failure
 			  _shell.get_runningapps().removeElement(app);
@@ -418,12 +420,14 @@ SysShell.prototype.launchEx = function(_appClass, _options,/* callset of argumen
 			});
 			// Sync return - requires true or false explicitly
 			if (shutdownsuccess === false) {
-				_shell.$dispatcherLeasing.clearInst(app);
+				appgate.releaseAll();
+				_shell.$dispatcherLeasing.clearInst(app); // Deprecated
 				// If we add a register for kranked zombies (apps) we can add it there in this step
 				_shell.get_runningapps().removeElement(app);
 				sop.CompleteOperation(false,"The app reported shutdown failure.");
 			} else if (shutdownsuccess === true) {
-				_shell.$dispatcherLeasing.clearInst(app);
+				appgate.releaseAll();
+				_shell.$dispatcherLeasing.clearInst(app); // Deprecated
 				_shell.get_runningapps().removeElement(app);
 				sop.CompleteOperation(true,null);
 			}

@@ -15,13 +15,24 @@ AppBase.Implement(IStructuralQueryEmiterImpl, "app", function () { return (this.
 AppBase.Implement(IAppletStorage); // Self implementing Interface
 AppBase.Implement(IAjaxContextParameters); // See: IAjaxContextParameters implementation 
 AppBase.Implement(IAjaxReportSinkImpl); // See: IAjaxReportSinkImpl implementation
-AppBase.Implement(IAppElement); // Being an app element enables the application to be part of other applications - no need to declare explicitly a parent application
+AppBase.Implement(IAppElementImpl); // Being an app element enables the application to be part of other applications - no need to declare explicitly a parent application
 
 // Service providing
 AppBase.prototype.provideAsServices = new InitializeArray("Assign an array of strings - names of supported interfaces by your class to enable those to be provided as services", ["IAppletStorage"]);
 AppBase.onStructuralQuery("FindServiceQuery", function (query, opts) {
     if (FindServiceQuery.handle(this, query, this.provideAsServices)) return true;
 });
+// IManagedInterface
+AppBase.prototype.GetInterface = function(iface) {
+	var ifname = Class.getInterfaceName(iface);
+	switch (ifname) {
+		case "IAppInstance":
+		case "IManagedInterface":
+			return this;
+	}
+	return null;
+}
+
 
 AppBase.prototype.appinitialize = function(callback, args) {
 	alert("appinitialize is not implemented in " + this.classType());

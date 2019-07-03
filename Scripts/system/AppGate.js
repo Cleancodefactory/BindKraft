@@ -132,6 +132,10 @@ AppGate.prototype.wrap = function(iface, p) {
 AppGate.prototype.release = function(p) {
 	this.$container.release(p);
 }
+AppGate.prototype.releaseAll = function() {
+	this.$container.releaseAll();
+}
+
 // LocalAPI usage
 AppGate.prototype.api = function(iface) {
 	return this.$api.getAPI(iface);

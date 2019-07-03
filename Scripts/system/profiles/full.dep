@@ -22,7 +22,8 @@
 //#using "../CLShortcutsHelper.js"
 //#using "../CLRecentShortcuts.js"
 //#using "../AppIndicatorSlot.js"
-//#using "../surrogateapps/surrogateapps.dep"
+//#using "../surrogateapps/surrogateapps-full.dep"
+//#using "../base/base-full.dep"
 
 
 //#using "../globalcommands.js"

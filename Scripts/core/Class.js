@@ -107,6 +107,7 @@ var Class = {
 		},
 		doesextend: function(inspected, iface) { // We avoid using the reserved word "extends" in case we run in something that gets crazy regardless of the context (there are known javascript machines and transpilers having this problem).
 			var def = this.getInterfaceDef(inspected);
+			if (Class.getInterfaceName(inspected) == Class.getInterfaceName(iface)) return true;
 			if (def.extendsInterfaces) {
 				if (Class.getInterfaceName(iface) in def.extendsInterfaces) return true;
 			}

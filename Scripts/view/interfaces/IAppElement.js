@@ -12,4 +12,5 @@
 /*INTERFACE*/
 function IAppElement() { }
 IAppElement.Interface("IAppElement");
-IAppElement.ImplementProperty("approot", new Initialize("Only the root windows of the application should have this set to the AppBase object of the application"));
+IAppElement.prototype.get_approot = function() { throw "not impl";}
+IAppElement.prototype.set_approot = function(v) { throw "not impl";}
