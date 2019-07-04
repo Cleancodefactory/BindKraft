@@ -9,7 +9,17 @@ var ProxyStubBuildingRoutines = {
 	isProxy: function(inst) {
 		return BaseObject.is(inst, "$Root_BaseProxy");
 	},
-
+	valMethod: function(key) {
+		return new Function('$Managed_BaseProxy.$notRefs.apply($Managed_BaseProxy,arguments);\
+							var r = this.$instance.' + key + '.apply(this.$instance, arguments);\
+							$Managed_BaseProxy.$notRef(r);\
+							return r;');
+	},
+	retMethod: function(key) {
+		return new Function('$Managed_BaseProxy.$notRefs.apply($Managed_BaseProxy,arguments);\
+							var r = this.$instance.' + key + '.apply(this.$instance, arguments);\
+							return this.$wrapResult(r);');
+	},
 	// These are designed for local proxy generation first. The future implementation of remoting proxies may need separate implementation
 
 	trivialMethodProxy: function(key) { return new Function('return this.$instance.' + key + '.apply(this.$instance, arguments);'); },
@@ -22,7 +32,7 @@ var ProxyStubBuildingRoutines = {
 		if (_methodBody != null && !BaseObject.isCallback(_methodBody)) {
 			return null;
 		}
-		var methodBody = _methodBody || IRequestInterface.trivialMethodProxy;
+		var methodBody = _methodBody || ProxyStubBuildingRoutines.trivialMethodProxy;
 		var className = classDef.classType;
 		var proxyName = baseProxyDef.classType;
 		var ifaceName = ifaceDef.classType;
@@ -30,8 +40,8 @@ var ProxyStubBuildingRoutines = {
 		var cls = Class.getClassDef(proxyClassName);
 		if (cls == null) {
 			// Not created yet - create it now
-			cls = new Function("instance","transport","builder",
-			'$Managed_BaseProxy.call(this,instance,transport,builder); this.$initializeProxy();');
+			cls = new Function("instance","transport","builder","container",
+			'$Managed_BaseProxy.call(this,instance,transport,builder,container); this.$initializeProxy();');
 			cls.Inherit(baseProxyDef, proxyClassName);
 			cls.Implement(ifaceDef);
 			for (var key in ifaceDef.prototype) {

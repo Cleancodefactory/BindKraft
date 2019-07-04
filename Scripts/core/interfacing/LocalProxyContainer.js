@@ -20,6 +20,7 @@ function LocalProxyContainer(recursionLevel) {
 	this.$maxRecursion = recursionLevel || 10;
 }
 LocalProxyContainer.Inherit(BaseObject,"LocalProxyContainer");
+LocalProxyContainer.Implement(IManagedInterfaceContainer);
 LocalProxyContainer.prototype.obliterate = function() {
 	if (!this.__obliterated) {
 		this.releaseAll();
@@ -38,14 +39,81 @@ LocalProxyContainer.prototype.obliterate = function() {
 */
 LocalProxyContainer.prototype.$proxies = new InitializeObject("Proxies register");
 
-// +Internal API
-//LocalProxyContainer.prototype.$get
-// -Internal API
+// +IManagedInterfaceContainer
+LocalProxyContainer.prototype.register = function(proxy) {
+	return this.registerByTarget(proxy);
+}
+/**
+	Releases all the proxies registered with the container
+	@param 	prxy_or_prxyclass	{$Managed_BaseProxy|string} OPTIONAL. If present releases only the proxies of that kind
+*/
+LocalProxyContainer.prototype.releaseAll = function(prxy_or_prxyclass) {
+	var k,kk;
+	if (prxy_or_prxyclass == null) {
+		// Obliterate everything
+		for (k in this.$proxies) {
+			if (this.$proxies.hasOwnProperty(k)) {
+				for (kk in this.$proxies[k]) {
+					if (this.$proxies[k].hasOwnProperty(kk)) {
+						if (BaseObject.is(this.$proxies[k][kk], "IManagedInterface")) {
+							this.$proxies[k][kk].Release(true);
+						}
+						delete this.$proxies[k][kk];
+					}
+				}
+				delete this.$proxies[k];
+			}
+		}
+	} else {
+		// Release only the branch in question
+		var prxyclass = Class.getClassName(prxy_or_prxyclass);
+		var proxyClassBranch = this.$proxies[prxyclass];
+		if (proxyClassBranch != null) {
+			for (k in proxyClassBranch) {
+				if (proxyClassBranch.hasOwnProperty(k)) { // Prevent unwanted protos
+					if (BaseObject.is(proxyClassBranch[k], "IManagedInterface")) {
+						proxyClassBranch[k].Release();
+					}
+				}
+			}
+			delete this.$proxies[prxyclass]; // Remove the whole branch
+		}
+	}
+}
+/**
+	Release a specific proxy
+*/
+LocalProxyContainer.prototype.release = function(prxy) {
+	var i;
+	if (BaseObject.is(prxy, "$Managed_BaseProxy")) {
+		var proxyClassName = prxy.classType();
+		var proxyClassBranch = this.$proxies[proxyClassName];
+		if (proxyClassBranch != null) {
+			if (BaseObject.is(proxyClassBranch[prxy.$__instanceId], "$Managed_BaseProxy")) {
+				proxyClassBranch[prxy.$__instanceId].Release(true);
+				delete proxyClassBranch[prxy.$__instanceId];
+				return;
+			}
+		}
+		prxy.Release(); // If it is not in the container, release it anyway
+	} else if (BaseObject.is(prxy, "Array")) {
+		for (i = 0; i < prxy.length;i++) {
+			this.release(prxy[i]);
+		}
+	} else if (BaseObject.is(prxy, "object")) {
+		for (i in prxy) {
+			if (prxy.hasOwnProperty(i)) {
+				this.release(prxy[i]);
+			}
+		}
+	}
+}
+// -IManagedInterfaceContainer
 
 /**
 	Registers a proxy non-conditionally
 */
-LocalProxyContainer.prototype.register = function(prxy) {
+LocalProxyContainer.prototype.registerProxy = function(prxy) {
 	if (BaseObject.is(prxy, "$Managed_BaseProxy")) {
 		var proxyClassName = prxy.classType();
 		var proxyClassBranch = this.$proxies[proxyClassName];
@@ -124,73 +192,6 @@ LocalProxyContainer.prototype.registerByTarget = function(prxy,_level) {
 	}
 	return null;
 }
-
-
-/**
-	Releases all the proxies registered with the container
-	@param 	prxy_or_prxyclass	{$Managed_BaseProxy|string} OPTIONAL. If present releases only the proxies of that kind
-*/
-LocalProxyContainer.prototype.releaseAll = function(prxy_or_prxyclass) {
-	var k,kk;
-	if (prxy_or_prxyclass == null) {
-		// Obliterate everything
-		for (k in this.$proxies) {
-			if (this.$proxies.hasOwnProperty(k)) {
-				for (kk in this.$proxies[k]) {
-					if (this.$proxies[k].hasOwnProperty(kk)) {
-						if (BaseObject.is(this.$proxies[k][kk], "IManagedInterface")) {
-							this.$proxies[k][kk].Release();
-						}
-						delete this.$proxies[k][kk];
-					}
-				}
-				delete this.$proxies[k];
-			}
-		}
-	} else {
-		// Release only the branch in question
-		var prxyclass = Class.getClassName(prxy_or_prxyclass);
-		var proxyClassBranch = this.$proxies[prxyclass];
-		if (proxyClassBranch != null) {
-			for (k in proxyClassBranch) {
-				if (proxyClassBranch.hasOwnProperty(k)) { // Prevent unwanted protos
-					if (BaseObject.is(proxyClassBranch[k], "IManagedInterface")) {
-						proxyClassBranch[k].Release();
-					}
-				}
-			}
-			delete this.$proxies[prxyclass]; // Remove the whole branch
-		}
-	}
-}
-/**
-	Release a specific proxy
-*/
-LocalProxyContainer.prototype.release = function(prxy) {
-	var i;
-	if (BaseObject.is(prxy, "$Managed_BaseProxy")) {
-		var proxyClassName = prxy.classType();
-		var proxyClassBranch = this.$proxies[proxyClassName];
-		if (proxyClassBranch != null) {
-			if (BaseObject.is(proxyClassBranch[prxy.$__instanceId], "$Managed_BaseProxy")) {
-				proxyClassBranch[prxy.$__instanceId].Release();
-				delete proxyClassBranch[prxy.$__instanceId];
-				return;
-			}
-		}
-		prxy.Release(); // If it is not in the container, release it anyway
-	} else if (BaseObject.is(prxy, "Array")) {
-		for (i = 0; i < prxy.length;i++) {
-			this.release(prxy[i]);
-		}
-	} else if (BaseObject.is(prxy, "object")) {
-		for (i in prxy) {
-			if (prxy.hasOwnProperty(i)) {
-				this.release(prxy[i]);
-			}
-		}
-	}
-}
 /**
 	Removes all proxies pointing to a specific target. This is relatively slow, but it is not likely
 	to be called in any intensive segment of code.
@@ -211,7 +212,7 @@ LocalProxyContainer.prototype.releaseTarget = function(target_proxy) {
 							//
 							_target = DummyInterfaceProxyBuilder.Dereferece(this.$proxies[k][kk])
 							if (_target == target) {
-								this.$proxies[k][kk].Release();
+								this.$proxies[k][kk].Release(true);
 								delete this.$proxies[k][kk];
 							}
 						}

@@ -30,6 +30,10 @@ Function.prototype.Returns = function(s) {
     this.$returns = s;
     return this;
 }.Hide();
+Function.prototype.ReturnType = function(iface) {
+	this.$returnType = Class.getInterfaceName(iface);
+    return this;
+}.Hide();
 Function.prototype.Virtual = function(isvirt) {
 	// Because all methods are de facto virtual this mostly signifies that the method can be overriden optionally.
     var b = (arguments.length > 0)?(isvirt?true:false):true;

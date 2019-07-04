@@ -24,7 +24,7 @@ DummyInterfaceProxyBuilder.$strictMethodBody = function(key) {
 				};
 DummyInterfaceProxyBuilder.$nonStrictMethodBody = function(key) { return new Function('return this.$instance.' + key + '.apply(this.$instance, arguments);'); };
 DummyInterfaceProxyBuilder.prototype.proxyMethodBody = DummyInterfaceProxyBuilder.$strictMethodBody;
-DummyInterfaceProxyBuilder.prototype.buildProxy = function (instnce, interfaceDef) {
+DummyInterfaceProxyBuilder.prototype.buildProxy = function (instnce, interfaceDef,container) {
 	this.LASTERROR().clear();
     if (BaseObject.is(instnce, interfaceDef)) {
 		var instanceClass = Class.getClassDef(instnce);
@@ -51,7 +51,7 @@ DummyInterfaceProxyBuilder.prototype.buildProxy = function (instnce, interfaceDe
 			if (proxycls == null) {
 				this.LASTERROR(-1,"Cannot create proxy class definition");
 			} else {
-				var prxy = new proxycls(instnce,null,this); // Null transport
+				var prxy = new proxycls(instnce,null,this,container); // Null transport
 				return prxy;
 			}
 		}
