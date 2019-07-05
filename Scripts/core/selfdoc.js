@@ -30,10 +30,18 @@ Function.prototype.Returns = function(s) {
     this.$returns = s;
     return this;
 }.Hide();
+
+// Used or planned for future use by the system
 Function.prototype.ReturnType = function(iface) {
-	this.$returnType = Class.getInterfaceName(iface);
+	this.$returnType = Class.getType(iface);
     return this;
 }.Hide();
+Function.prototype.Arguments = function() {
+	var args = Array.createCopyOf(arguments);
+	var arg;
+	this.$argumentTypes = args; // Verified when used (To support forward declarations we cannot verify them here
+	return this;
+}
 Function.prototype.Virtual = function(isvirt) {
 	// Because all methods are de facto virtual this mostly signifies that the method can be overriden optionally.
     var b = (arguments.length > 0)?(isvirt?true:false):true;

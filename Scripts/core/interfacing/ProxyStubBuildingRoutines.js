@@ -44,11 +44,12 @@ var ProxyStubBuildingRoutines = {
 			'$Managed_BaseProxy.call(this,instance,transport,builder,container); this.$initializeProxy();');
 			cls.Inherit(baseProxyDef, proxyClassName);
 			cls.Implement(ifaceDef);
+			cls.$proxiedInterface = ifaceDef;
 			for (var key in ifaceDef.prototype) {
 				// The exceptions:
 				//	constructor - does not need changes
 				//	Release and GetInterface are implemented in the base $Managed_BaseProxy class.
-				if (key != "constructor" && key != "Release" && key != "GetInterface") {
+				if (key != "constructor" && key != "Release" && key != "GetInterface" && key != "Dereference" && key.charAt(0) != "$") {
 					if (typeof ifaceDef.prototype[key] == "function") {
 						if (typeof classDef.prototype[key] != "function") {
 							throw "The " + ifaceName + "." + key + " is not implemented as function in " + className + " and a local proxy cannot be created.";

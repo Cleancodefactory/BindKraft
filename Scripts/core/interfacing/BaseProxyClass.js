@@ -12,6 +12,7 @@ function $Managed_BaseProxy(instance, transport, builder, managedContainer) {
 }
 $Managed_BaseProxy.Inherit($Root_BaseProxy, "$Managed_BaseProxy");
 $Managed_BaseProxy.Implement(IManagedInterface);
+$Managed_BaseProxy.Implement(IDereference);
 $Managed_BaseProxy.$maxRecursion = 10;
 $Managed_BaseProxy.$notRef = function(arg, _level) {
 	var level = _level || 1;
@@ -34,9 +35,66 @@ $Managed_BaseProxy.$notRefs = function(args) {
 		this.$notRef(args[i]);
 	}
 }
-$Managed_BaseProxy.prototype.$wrapResult = function(r) {
+$Managed_BaseProxy.prototype.$buildProxyFromAnother = function(proxy, container) {
+	var original = proxy.Dereference();
+	if (original == null) throw "Dereferencing a proxy of type " + proxy.classType() + " produced null result.";
+	if (this.$builder == null) throw "The proxy (" + this.classType() + ") does not have a builder set and cannot wrap references.";
+	return this.$builder.buildProxy(original, proxy.proxiedInterface, container);
+}
+
+$Managed_BaseProxy.prototype.$wrapResult = function(r, method) {
 	// Use ReturnType or if r is a proxy use it as a template
-	// if (BaseObject.is(r,
+	// Register in the local release container, ignore the one in the comming proxy
+	var ridef = r.$proxiedInterface;
+	if (BaseObject.is(r, "$Managed_BaseProxy")) {
+		// Extract info from the proxy
+		return this.$buildProxyFromAnother(r,this.$container);
+	} else if (BaseObject.is(r, "BaseObject")) {
+		// Use the $returnType from interface definition
+		var rt = Class.returnTypeOf(this.$proxiedInterface,method);
+		if (Class.typeKind(rt) == "interface") {
+			if (BaseObject.is(r, rt)) {
+				if (Class.doesextend(rt, "IManagedInterface")) {
+					if (this.$builder != null) {
+						return this.$builder.buildProxy(r, rt, this.$container);
+					} else {
+						throw "The proxy (" + this.classType() + ") does not have a builder set and cannot wrap the return result of " + method;
+					}
+				} else {
+					throw "The declared return type by " + this.$proxiedInterface.classType + "." + method + " is not IManagedInterface and cannot be wrapped into a local proxy.";
+				}
+			} else {
+				throw "The returned value is not " + rt.classType + " as declared in " + this.$proxiedInterface.classType + "." + method;
+			}
+		} else {
+			throw "The return type declared for " + this.$proxiedInterface.classType + "." + method + " is not an interface and cannot be wrapped in a local proxy.";
+		}
+	} else { // Everything else return without changes as long as it does not contain BK instances
+		this.$notRef(r);
+		return r;
+	}
+}
+$Managed_BaseProxy.prototype.$wrapArgument = function(v, method, index) {
+	var origin;
+	if (BaseObject.is(v, "$Managed_BaseProxy")) {
+		origin = this.Dereference();
+		var container = null;
+		if (BaseObject.is(origin,"IHasLocalProxyContainer")) {
+			container = origin.get_localproxycontainer();
+		}
+		return this.$buildProxyFromAnother(v, container);
+	} else if (BaseObject.is(v, "BaseObject")) {
+		var arg_type = Class.argumentOf(this.$proxiedInterface, method, index);
+		if (arg_type == null) {
+			this.notRef(v);
+			return v;
+		}
+		//////////////
+	} else {
+		this.$notRef(v);
+		return v;
+	}
+	
 }
 $Managed_BaseProxy.prototype.$initializeProxy = function() { // Called by the constructor of the generated class inheriting the base proxy.
 	// Connect to instance
@@ -49,7 +107,15 @@ $Managed_BaseProxy.prototype.$initializeProxy = function() { // Called by the co
 		}
 	}
 }
-
+// IDereference
+$Managed_BaseProxy.prototype.Dereference = function() {
+	if (BaseObject.is(this.$instance, this.classType())) {
+		return this.$instance.Dereference();
+	} else {
+		return this.$instance;
+	}
+}
+// IManagedInterface
 $Managed_BaseProxy.prototype.GetInterface = function(iface) {
 	if (this.__obliterated) return null;
 	if (this.$instance == null) return null;

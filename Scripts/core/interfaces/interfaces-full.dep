@@ -3,6 +3,7 @@
 //#using "./IManagedInterfaceStrict.js"
 //#using "./IManagedInterfaceNonstrict.js"
 //#using "./IManagedInterfaceContainer.js"
+//#using "./IDereference.js"
 //#using "./IRequestInterface.js"
 //#using "./IRegister.js"
 //#using "./IRegisters.js"

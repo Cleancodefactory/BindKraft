@@ -142,6 +142,14 @@ var Class = {
 			// TODO: Extend the logic - all of the extended interfaces also have to be requestable
 		},
 		// -V: 2.7.1
+		// + V: 2.18.0
+		typeKind: function(def) {
+			var d = Class.getClassDef(def);
+			if (d != null) return "class";
+			d = Class.getInterfaceDef(def);
+			if (d != null) return "interface";
+			return null;
+		},// -V: 2.18.0
 		getClassDef: function(cls) {
 			if (BaseObject.is(cls, "BaseObject")) {
 				var o = Function.classes[cls.classType()];
@@ -229,8 +237,47 @@ var Class = {
 				}
 			}
 			return result;
-		}
+		},
 	// -V: 2.15.1
+	// +V: 2.18.0
+		// selfdoc runtime systeminfo (non-doc)
+		returnTypeOf: function(def, method) {
+			var t = this.getType(def);
+			if (t != null) {
+				if (t.prototype && typeof t.prototype[method] == "function") {
+					return Class.getType(t.prototype[method].$returnType);
+				}
+			}
+			return null;
+		},
+		// Array of the declared with Arguments argument types, only BK types are returned, the rest are nulls (no matter how declared).
+		argumentsOf: function(def, method) {
+			var t = this.getType(def);
+			if (t != null) {
+				if (t.prototype && typeof t.prototype[method] == "function") {
+					var argtypes = t.prototype[method].$argumentTypes;
+					if (BaseObject.is(argtypes, "Array")) {
+						argtypes = Array.createCopyOf(argtypes);
+						for (var i = 0; i < argtypes.length; i++) {
+							var arg = Class.getType(argtypes[i]);
+							if (arg != null) {
+								argtypes[i] = arg;
+							} else {
+								argtypes[i] = null; // Any but not class
+							}
+						}
+						return argtypes;
+					}
+				}
+			}
+			return null; // No definition
+		},
+		argumentOf: function(def, method, index) {
+			var args = Class.argumentsOf(def, method);
+			if (args != null) return args[index];
+			return null; // No definition
+		}
+	// -V: 2.18.0
 	
 };
 // +V: 2.7.1
