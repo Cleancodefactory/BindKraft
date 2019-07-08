@@ -33,6 +33,10 @@ function AppGate(shell, lapiclient, appClass) {
 	this.$container = new LocalProxyContainer();
 }
 AppGate.Inherit(BaseObject, "AppGate");
+AppGate.Implement(IHasManagedInterfaceContainer);
+AppGate.prototype.get_managedinterfacecontainer = function() {
+	return this.$container;
+}
 // Proxy wrapper
 AppGate.prototype.$arrayRelease = function() {
 	var cont = this.$container;
@@ -107,9 +111,9 @@ AppGate.prototype.$wrap = function(iface, p) {
 	
 	
 */
-AppGate.prototype.wrap = function(iface, p) {
+AppGate.prototype.wrap = function(iface, p, container) {
 	if (BaseObject.is(p,"BaseObject")) {
-		var v = DummyInterfaceProxyBuilder.Default().buildProxy(p, iface);
+		var v = DummyInterfaceProxyBuilder.Default().buildProxy(p, iface, container);
 		if (this.LASTERROR().iserror()) {
 			throw "Cannot wrap: " + this.LASTERROR().text();
 		}
@@ -121,7 +125,7 @@ AppGate.prototype.wrap = function(iface, p) {
 		var arr = Array.createCopyOf(p);
 		for (var i = 0; i < arr.length; i++) {
 			if (BaseObject.is(arr[i],"BaseObject")) {
-				arr[i] = this.wrap(iface,arr[i]);
+				arr[i] = this.wrap(iface,arr[i], container);
 			}
 		}
 		return arr;
@@ -146,15 +150,15 @@ AppGate.prototype.attachAPI = function(iface, variation) {
 
 // Shell interface - similar to old query back
 AppGate.prototype.runningInstance = function() {
-	return this.$container.registerByTarget(this.$wrap(IManagedInterface, this.$shell.getAppByClassName(this.$appClass.classType)));
+	return this.$container.register(this.$wrap(IManagedInterface, this.$shell.getAppByClassName(this.$appClass.classType)));
 }
 AppGate.prototype.runningInstances = function() {
-	return this.$container.registerByTarget(this.$wrap(IManagedInterface,this.$shell.getAppsByClassNames(this.$appClass.classType)));
+	return this.$container.register(this.$wrap(IManagedInterface,this.$shell.getAppsByClassNames(this.$appClass.classType)));
 }
 AppGate.prototype.bindAppByClassName = function(className) {
 	var app = this.$shell.getAppByClassName(className);
 	if (app != null) {
-		return this.$container.registerByTarget(this.$wrap(IManagedInterface, app));
+		return this.$container.register(this.$wrap(IManagedInterface, app));
 	}
 	return null;
 }
@@ -165,18 +169,18 @@ AppGate.prototype.bindAppsByClassNames = function(className1, className2, classN
 		if (BaseObject.is(app,iface)) return true;
 		return false;
 	});
-	return this.$container.registerByTarget(this.$wrap(IManagedInterface, apps));
+	return this.$container.register(this.$wrap(IManagedInterface, apps));
 }
 AppGate.prototype.bindAppByInstanceId = function(instanceId) {
 	var app = this.$shell.getAppByInstanceId(instanceId);
 	if (BaseObject.is(app,"IAppBase")) {
-		return this.$container.registerByTarget(this.$wrap(IManagedInterface,app));
+		return this.$container.register(this.$wrap(IManagedInterface,app));
 	}
 	return null;
 }
 AppGate.prototype.bindAppByInstanceName = function(instanceName) {
 	var apps = this.$shell.getAppsByInstanceName(instanceName);
-	return this.$container.registerByTarget(this.$wrap(IManagedInterface,apps));
+	return this.$container.register(this.$wrap(IManagedInterface,apps));
 }
 AppGate.prototype.activateApp = function(appproxy) {
 	var inst = DummyInterfaceProxyBuilder.Dereferece(appproxy);

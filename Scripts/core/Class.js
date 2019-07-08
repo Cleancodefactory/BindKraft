@@ -168,12 +168,12 @@ var Class = {
 		},
 		supportsMember: function(type, member) {
 			var def = this.getType(type);
-			if (def != null && def[member] != null) return true;
+			if (def != null && def.prototype[member] != null) return true;
 			return false;
 		},
 		supportsMethod: function(type, member) {
 			var def = this.getType(type);
-			if (def != null && typeof def[member] == "function") return true;
+			if (def != null && typeof def.prototype[member] == "function") return true;
 			return false;
 		},
 	// +V: 2.16.3

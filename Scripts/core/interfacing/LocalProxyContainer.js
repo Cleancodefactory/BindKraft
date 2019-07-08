@@ -121,6 +121,7 @@ LocalProxyContainer.prototype.registerProxy = function(prxy) {
 			proxyClassBranch = this.$proxies[proxyClassName] = {};
 		}
 		proxyClassBranch[prxy.$__instanceId] = prxy;
+		prxy.$container = this;
 		return prxy;
 	}
 	return null;
@@ -159,6 +160,7 @@ LocalProxyContainer.prototype.registerByTarget = function(prxy,_level) {
 			// No other proxies like this one exist - register it and return
 			proxyClassBranch = this.$proxies[proxyClassName] = {};
 			proxyClassBranch[prxy.$__instanceId] = prxy;
+			prxy.$container = this;
 			return prxy;
 		}
 		for (var k in proxyClassBranch) {

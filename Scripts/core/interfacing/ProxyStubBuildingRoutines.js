@@ -9,15 +9,9 @@ var ProxyStubBuildingRoutines = {
 	isProxy: function(inst) {
 		return BaseObject.is(inst, "$Root_BaseProxy");
 	},
-	valMethod: function(key) {
-		return new Function('$Managed_BaseProxy.$notRefs.apply($Managed_BaseProxy,arguments);\
-							var r = this.$instance.' + key + '.apply(this.$instance, arguments);\
-							$Managed_BaseProxy.$notRef(r);\
-							return r;');
-	},
-	retMethod: function(key) {
-		return new Function('$Managed_BaseProxy.$notRefs.apply($Managed_BaseProxy,arguments);\
-							var r = this.$instance.' + key + '.apply(this.$instance, arguments);\
+	refMethod: function(key) {
+		return new Function('if (this.$instance == null) throw "The proxy is no longer connected";\
+							var r = this.$instance.' + key + '.apply(this.$instance, this.$wrapArguments(arguments,"' + key + '"));\
 							return this.$wrapResult(r);');
 	},
 	// These are designed for local proxy generation first. The future implementation of remoting proxies may need separate implementation
@@ -30,9 +24,9 @@ var ProxyStubBuildingRoutines = {
 				throw "buildProxyClass requires all its parameters to be non null and of the correct types: $Managed_BaseProxy, class implementing the interface from the next parameter, requestable interface definition";
 		}
 		if (_methodBody != null && !BaseObject.isCallback(_methodBody)) {
-			return null;
+			throw "A custom method body argument is passed to the buildProxyClass, but it is not a callback";
 		}
-		var methodBody = _methodBody || ProxyStubBuildingRoutines.trivialMethodProxy;
+		var methodBody = _methodBody || ProxyStubBuildingRoutines.refMethod;
 		var className = classDef.classType;
 		var proxyName = baseProxyDef.classType;
 		var ifaceName = ifaceDef.classType;
@@ -43,7 +37,7 @@ var ProxyStubBuildingRoutines = {
 			cls = new Function("instance","transport","builder","container",
 			'$Managed_BaseProxy.call(this,instance,transport,builder,container); this.$initializeProxy();');
 			cls.Inherit(baseProxyDef, proxyClassName);
-			cls.Implement(ifaceDef);
+			cls.ImplementEx(ifaceDef);
 			cls.$proxiedInterface = ifaceDef;
 			for (var key in ifaceDef.prototype) {
 				// The exceptions:

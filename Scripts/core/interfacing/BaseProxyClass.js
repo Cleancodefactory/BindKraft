@@ -11,9 +11,11 @@ function $Managed_BaseProxy(instance, transport, builder, managedContainer) {
 	// TODO: Knowing the transport is not that important here - registering with the transport is the important part (interface for that purpose is not prototyped yet)
 }
 $Managed_BaseProxy.Inherit($Root_BaseProxy, "$Managed_BaseProxy");
-$Managed_BaseProxy.Implement(IManagedInterface);
-$Managed_BaseProxy.Implement(IDereference);
+$Managed_BaseProxy.ImplementEx(IManagedInterface);
+$Managed_BaseProxy.ImplementEx(IDereference);
 $Managed_BaseProxy.$maxRecursion = 10;
+
+// +Internals
 $Managed_BaseProxy.$notRef = function(arg, _level) {
 	var level = _level || 1;
 	if (level > this.$maxRecursion) return;
@@ -22,11 +24,11 @@ $Managed_BaseProxy.$notRef = function(arg, _level) {
 		throw "References to BK objects not allowed. To enable references mark your interface method appropriately.";
 	} else if (BaseObject.is(arg,"Array")) {
 		for (i = 0; i < arg.length;i++) {
-			this.$notRef(arg[i]);
+			this.$notRef(arg[i], level + 1);
 		}
 	} else if (BaseObject.is(arg, "object")) {
 		for (i in arg) {
-			this.$notRef(arg[i]);
+			this.$notRef(arg[i], level + 1);
 		}
 	}
 }
@@ -40,6 +42,23 @@ $Managed_BaseProxy.prototype.$buildProxyFromAnother = function(proxy, container)
 	if (original == null) throw "Dereferencing a proxy of type " + proxy.classType() + " produced null result.";
 	if (this.$builder == null) throw "The proxy (" + this.classType() + ") does not have a builder set and cannot wrap references.";
 	return this.$builder.buildProxy(original, proxy.proxiedInterface, container);
+}
+$Managed_BaseProxy.prototype.$buildProxyFrom = function(instance, iface, container) {
+	if (BaseObject.is(instance, "BaseObject")) {
+		if (BaseObject.is(instance, iface)) {
+			if (Class.doesextend(iface, "IManagedInterface")) {
+				if (this.$builder == null) throw "The proxy (" + this.classType() + ") does not have a builder set and cannot wrap references.";
+				return this.$builder.buildProxy(instance, iface, container);
+			} else {
+				throw "The declared interface " + Class.getInterfaceName(iface) + " does not extend IManagedInterface.";
+			}
+		} else {
+			throw "The instance does not support the declared interface: " + Class.getInterfaceName(iface);
+		}
+	} else { // Non-BaseObject
+		$Managed_BaseProxy.$notRef(instance);
+		return instance;
+	}
 }
 
 $Managed_BaseProxy.prototype.$wrapResult = function(r, method) {
@@ -70,41 +89,86 @@ $Managed_BaseProxy.prototype.$wrapResult = function(r, method) {
 			throw "The return type declared for " + this.$proxiedInterface.classType + "." + method + " is not an interface and cannot be wrapped in a local proxy.";
 		}
 	} else { // Everything else return without changes as long as it does not contain BK instances
-		this.$notRef(r);
+		$Managed_BaseProxy.$notRef(r);
 		return r;
 	}
 }
+/* May be unneeded, wrote it by mistake, if redundant - remove.
 $Managed_BaseProxy.prototype.$wrapArgument = function(v, method, index) {
-	var origin;
+	var origin = null, container = null;
 	if (BaseObject.is(v, "$Managed_BaseProxy")) {
+		// Use the passed proxy as a template - overrides any Arguments specified for the function.
 		origin = this.Dereference();
-		var container = null;
-		if (BaseObject.is(origin,"IHasLocalProxyContainer")) {
-			container = origin.get_localproxycontainer();
+		container = null;
+		if (BaseObject.is(origin,"IHasManagedInterfaceContainer")) {
+			container = origin.get_managedinterfacecontainer();
+			// No need to check the result - a null will still be ok, but the proxy will not register with a container.
 		}
 		return this.$buildProxyFromAnother(v, container);
 	} else if (BaseObject.is(v, "BaseObject")) {
+		// Use the Arguments configuration for the function (availability is crucial
 		var arg_type = Class.argumentOf(this.$proxiedInterface, method, index);
 		if (arg_type == null) {
-			this.notRef(v);
-			return v;
+			// No type info - no way to wrap the argument
+			throw "Cannot wrap the argument " + index + " of " + method + " because .Arguments describer is not used or does not declare interface for the argument. The type being passed as argument is: " + c.classType();
 		}
-		//////////////
+		origin = this.Dereference();
+		if (BaseObject.is(origin,"IHasManagedInterfaceContainer")) {
+			container = origin.get_managedinterfacecontainer();
+		}
+		return this.$buildProxyFrom(v, arg_type, container);
 	} else {
 		this.$notRef(v);
 		return v;
 	}
-	
 }
+*/
+$Managed_BaseProxy.prototype.$wrapArguments = function(args, method) {
+	var origin = null, container = null, v;
+	var result = [];
+	origin = this.Dereference();
+	if (BaseObject.is(origin,"IHasManagedInterfaceContainer")) {
+		container = origin.get_managedinterfacecontainer();
+		// No need to check the result - a null will still be ok, but the proxy will not register with a container.
+	}
+	for (var i = 0; i < args.length; i++) {
+		v = args[i];
+		if (BaseObject.is(v, "$Managed_BaseProxy")) {
+			// Use the passed proxy as a template - overrides any Arguments specified for the function.
+			result.push(this.$buildProxyFromAnother(v, container));
+		} else if (BaseObject.is(v, "BaseObject")) {
+			// Use the Arguments configuration for the function (availability is crucial
+			var arg_type = Class.argumentOf(this.$proxiedInterface, method, i);
+			if (arg_type == null) {
+				// No type info - no way to wrap the argument
+				throw "Cannot wrap the argument " + i + " of " + method + " because .Arguments describer is not used or does not declare interface for the argument. The type being passed as argument is: " + v.classType();
+			}
+			result.push(this.$buildProxyFrom(v, arg_type, container));
+		} else {
+			$Managed_BaseProxy.$notRef(v);
+			result.push(v);
+		}
+	}
+}
+// -Internals
 $Managed_BaseProxy.prototype.$initializeProxy = function() { // Called by the constructor of the generated class inheriting the base proxy.
 	// Connect to instance
-	for (var key in this) {
-		if (this.hasOwnProperty(key) && 
-			BaseObject.is(this[key], "IEventDispatcher") &&
-			BaseObject.is(this.$instance[key], "IEventDispatcher")
-			) {
-			this.$instance[key].add(this[key]); // Attach to the original dispatcher
+	var original = this.Dereference();
+	if (original != null) {
+		for (var key in this) {
+			if (this.hasOwnProperty(key) && 
+				BaseObject.is(this[key], "IEventDispatcher") &&
+				BaseObject.is(original[key], "IEventDispatcher")
+				) {
+				original[key].add(this[key]); // Attach to the original dispatcher
+			}
 		}
+	} else {
+		// TODO: Log
+	}
+	// Register in the container if set
+	if (BaseObject.is(this.$container, "IManagedInterfaceContainer")) {
+		this.$container.register(this);
 	}
 }
 // IDereference

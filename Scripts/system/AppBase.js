@@ -2,8 +2,12 @@
 
 
 /*CLASS*/
-function AppBase() {
+function AppBase(appGate) {
     DataHolder.apply(this, arguments);
+	if (BaseObject.is(appGate,"IHasManagedInterfaceContainer")) {
+		this.$managed_container = appGate.get_managedinterfacecontainer();
+	}
+	
     this.set_instancename("AppBase derived application");
 }
 AppBase.Inherit(DataHolder, "AppBase");
@@ -16,12 +20,17 @@ AppBase.Implement(IAppletStorage); // Self implementing Interface
 AppBase.Implement(IAjaxContextParameters); // See: IAjaxContextParameters implementation 
 AppBase.Implement(IAjaxReportSinkImpl); // See: IAjaxReportSinkImpl implementation
 AppBase.Implement(IAppElementImpl); // Being an app element enables the application to be part of other applications - no need to declare explicitly a parent application
+AppBase.Implement(IHasManagedInterfaceContainer);
 
 // Service providing
 AppBase.prototype.provideAsServices = new InitializeArray("Assign an array of strings - names of supported interfaces by your class to enable those to be provided as services", ["IAppletStorage"]);
 AppBase.onStructuralQuery("FindServiceQuery", function (query, opts) {
     if (FindServiceQuery.handle(this, query, this.provideAsServices)) return true;
 });
+// IHasManagedInterfaceContainer
+AppBase.prototype.get_managedinterfacecontainer = function() {
+	return this.$managed_container;
+}
 // IManagedInterface
 AppBase.prototype.GetInterface = function(iface) {
 	var ifname = Class.getInterfaceName(iface);
@@ -47,6 +56,7 @@ AppBase.prototype.windowDisplaced = function(w) {
 }
 	
 /**
+	Deprecated
 	Override this, call parent implementation and when it returns null add code for more interfaces.
 */
 AppBase.prototype.GetAppInterface = function(iface /* name or def */) { 

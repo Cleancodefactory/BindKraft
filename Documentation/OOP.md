@@ -4,6 +4,12 @@ BindKraft Javascript (BindKRaftJS) is OOP platform. Basically it defines a huge 
 
 Why BindKraft is made this way? Read about it in this article - [OOP - the inconvenient questions](OOP-Questions.md)
 
+Runtime type information and type checking is avalable:
+
+- in [BaseObject](CoreClasses/BaseObject.md);
+- in [Class](CoreClasses/Class.md) static set of methods.
+
+
 ## OOP basics
 
 BindKraft is basing its OOP on the `prototype` Javascript feature and not on ECMA 6 classes. This may look old-fashioned to some, but it gives more control over the class definitions and option to go beyond simple single inheritance.

@@ -15,6 +15,7 @@ function DummyInterfaceProxyBuilder(bStrict) {
 }
 DummyInterfaceProxyBuilder.Inherit(ProxyInterfaceBuilderBase,"DummyInterfaceProxyBuilder");
 DummyInterfaceProxyBuilder.Implement(IProxyInterfaceBuilder);
+/* strict/nonstrict modes are deprecated during alpha development of the feature
 DummyInterfaceProxyBuilder.prototype.$strictMode = false;
 DummyInterfaceProxyBuilder.$strictMethodBody = function(key) { 
 	return new Function('var r = this.$instance.' + 
@@ -24,6 +25,7 @@ DummyInterfaceProxyBuilder.$strictMethodBody = function(key) {
 				};
 DummyInterfaceProxyBuilder.$nonStrictMethodBody = function(key) { return new Function('return this.$instance.' + key + '.apply(this.$instance, arguments);'); };
 DummyInterfaceProxyBuilder.prototype.proxyMethodBody = DummyInterfaceProxyBuilder.$strictMethodBody;
+*/
 DummyInterfaceProxyBuilder.prototype.buildProxy = function (instnce, interfaceDef,container) {
 	this.LASTERROR().clear();
     if (BaseObject.is(instnce, interfaceDef)) {
@@ -39,14 +41,17 @@ DummyInterfaceProxyBuilder.prototype.buildProxy = function (instnce, interfaceDe
 				}
 			}
 			var proxycls = null;
+			proxycls = ProxyStubBuildingRoutines.buildProxyClass(null, instanceClass, _ifaceDef);
+			/*
 			// Select the proxy policy first by explicit requirement - a base interface and then by global policy
 			if (Class.doesextend(_ifaceDef, "IManagedInterfaceStrict")) {
 				proxycls = ProxyStubBuildingRoutines.buildProxyClass(null, instanceClass, _ifaceDef,DummyInterfaceProxyBuilder.$strictMethodBody);
 			} else if (Class.doesextend(_ifaceDef, "IManagedInterfaceNonstrict")) {
 				proxycls = ProxyStubBuildingRoutines.buildProxyClass(null, instanceClass, _ifaceDef,DummyInterfaceProxyBuilder.$nonStrictMethodBody);
 			} else {
-				proxycls = ProxyStubBuildingRoutines.buildProxyClass(null, instanceClass, _ifaceDef,this.proxyMethodBody);
+				
 			}
+			*/
 			
 			if (proxycls == null) {
 				this.LASTERROR(-1,"Cannot create proxy class definition");
