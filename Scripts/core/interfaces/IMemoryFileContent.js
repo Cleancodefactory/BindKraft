@@ -18,6 +18,8 @@ IMemoryFileContent.prototype.set_content = function(v) { throw "not implemented"
 IMemoryFileContent.prototype.get_contenttype = function() { throw "not implemented"; }
 IMemoryFileContent.prototype.set_contenttype = function(v) { throw "not implemented"; }
 
+
+
 /*
 	Ideas - mode encapsulator wrapper may be a good thing!
 */

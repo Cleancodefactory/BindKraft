@@ -65,6 +65,30 @@ BaseObject.lastError = (function() {
 	var _text = null;
 	var _className = null;
 	var _method = null;
+	var _subscribers = {};
+	function _checkcodes(code, subscription) {
+		if (subscription.codes != null) {
+			if (!subscription.codes.Any(function(idx, itm) {
+				return (itm == code)?true:null;
+			})) {
+				return false;
+			}
+			
+		}
+		return true; // All
+	}
+	function _advise(le) {
+		for (var k in _subscribers) {
+			if (_subscribers.hasOwnProperty(k) && _subscribers[k] != null) {
+				var subs = _subscribers[k];
+				if (BaseObject.isCallback(subs.callback)) {
+					if (_checkcodes(_code,subs)) {
+						BaseObject.callCallback(subs.callback, le); 
+					}
+				}
+			}
+		}
+	}
 	return {
 		clear: function() {
 			_code = 0;
@@ -79,6 +103,7 @@ BaseObject.lastError = (function() {
 			_text = text;
 			_className = cls;
 			_method = method;
+			_advise(this)
 			return this;
 		},
 		none: function() {
@@ -90,7 +115,25 @@ BaseObject.lastError = (function() {
 		code: function() { return _code; },
 		text: function() { return _text; },
 		className: function() { return _className; },
-		method: function() { return _method; }
+		method: function() { return _method; },
+		subscribe: function(callback,codes) {
+			if (!BaseObject.isCallback(callback)) return null;
+			var id = BaseObject.genInstanceId();
+			var c = null;
+			if (BaseObject.is(codes,"Array")) {
+				c = codes;
+			} else if (typeof codes == "number") {
+				c = [codes];
+			}
+			_subscribers[id] = { 
+				callback: callback,
+				
+			};
+			return id;
+		},
+		unsubscribe: function(id) {
+			delete _subscribers[id];
+		}
 		
 	};
 })();

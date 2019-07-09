@@ -78,7 +78,7 @@ LocalAPI.prototype.registerAPI = function(iface, instance, variation, bdefault) 
 		var reg = { proxy: null, cookie: LocalAPI.genCookie(ifname) };
 		var pxy = this.$proxybuilder.buildProxy(instance, Class.getInterfaceDef(iface));
 		if (pxy == null) {
-			this.LASTERROR(-1,"Failed to build a proxy.");
+			this.LASTERROR(-1,"Failed to build a proxy. The Local API registration failed for " + ifname);
 			return null;
 		}
 		reg.proxy = pxy;

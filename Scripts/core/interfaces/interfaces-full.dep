@@ -74,6 +74,7 @@
 //#using "./IMemoryFile.js"
 //#using "./IMemoryDirectory.js"
 //#using "./IValueChecker.js"
+//#using "./IMemoryFilePersistable.js"
 //#using "./IMemoryFileContent.js"
 
 //#using "./IFormatter.js"

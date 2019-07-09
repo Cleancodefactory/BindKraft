@@ -18,6 +18,7 @@ var JBFrameworkVersion = {
 	// Add new constants here and describe them.
 	// Copy the list in the settings example file 
 	var defaults = {
+		LastErrorConsoleLog: true,
 		CheckTypeDuplicates: true, // Enforces a number of checks for defined types - duplicate type names, method names (when implementing interfaces) etc. Will throw exceptions (not all at once)
 		SystemSchedulerFreq: 25, // 25 milliseconds for the system task scheduler
 		ClientViewTasksMaxAge: 120000, // 2 minutes max life of visual asynchronous tasks. Lower is recommended, but this is good for debugging and other dev.

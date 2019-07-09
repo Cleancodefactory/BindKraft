@@ -14,3 +14,5 @@ IMemoryFile.prototype.setMemFileFlags = function(fs) { throw "not impl";}
 IMemoryFile.prototype.resetMemFileFlags = function(fs) { throw "not impl";}
 IMemoryFile.prototype.getMemFileFlags = function() { throw "not impl";}
 IMemoryFile.prototype.checkMemFileFlags = function(fs) { throw "not impl";}
+
+

@@ -142,7 +142,15 @@ AppGate.prototype.releaseAll = function() {
 
 // LocalAPI usage
 AppGate.prototype.api = function(iface) {
-	return this.$api.getAPI(iface);
+	var api = this.$api.getAPI(iface);
+	if (api != null) {
+		// This is a proxy - get a clone
+		api = api.GetInterface();
+		this.$container.register(api);
+	} else {
+		this.LASTERROR(-1,"Cannot find API " + Class.getInterfaceName(iface) + " in AppGate of " + Class.getClassName(this.$appClass));
+	}
+	return api;
 }
 AppGate.prototype.attachAPI = function(iface, variation) {
 	return this.$api.attachAPI(iface, variation);

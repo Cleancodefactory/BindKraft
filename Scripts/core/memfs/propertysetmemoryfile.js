@@ -95,10 +95,11 @@ PropertySetMemoryFile.prototype.getPropNames = function() {
 }
 
 // Static helpers for easy collection of property settings from files
-PropertySetMemoryFile.ReadPropertiesInto = function(inobject,file,keycheck,valcheck) {
+PropertySetMemoryFile.ReadPropertiesInto = function(_inobject,file,keycheck,valcheck) {
 	if (!BaseObject.is(file,"PropertySetMemoryFile")) return false;
 	var _keycheck = BaseObject.is(keycheck,"IValueChecker")?keycheck:null;
 	var _valcheck = BaseObject.is(keycheck,"IValueChecker")?valcheck:null;
+	var inpobject = _inobject || {};
 	if (inobject != null && typeof inobject == "object") {
 		var props = file.getProps();
 		return BaseObject.CombineObjects(inobject, props, function(key, left, right) {

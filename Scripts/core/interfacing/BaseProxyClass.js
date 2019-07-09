@@ -183,15 +183,20 @@ $Managed_BaseProxy.prototype.Dereference = function() {
 $Managed_BaseProxy.prototype.GetInterface = function(iface) {
 	if (this.__obliterated) return null;
 	if (this.$instance == null) return null;
-	var ifc = this.$instance.GetInterface(iface); // No more checks to save performance
-	if (BaseObject.is(ifc, iface)) {
-		// The implementations provide a referene to an instance implementing the interface being asked for.
-		// If by chance we get another proxy it is not a critical problem, but it will slow hte performance a little bit (should be noticed in scenarios where this matters)
-		if (BaseObject.is(this.$builder,"IProxyInterfaceBuilder")) {
-			var proxiedInstance = this.$builder.buildProxy(ifc, iface, this.$container);
-			return proxiedInstance;
-		} else {
-			throw "Cannot build a proxy for the queried interface becuase no proxy builder was supplied to the proxy marshalling the call";
+	if (arguments.length == 0) {
+		// Clone self, but not register in any container. If this is desired the caller should do it or Release the clone explicitly
+		return this.$buildProxyFromAnother(this);
+	} else {
+		var ifc = this.$instance.GetInterface(iface); // No more checks to save performance
+		if (BaseObject.is(ifc, iface)) {
+			// The implementations provide a referene to an instance implementing the interface being asked for.
+			// If by chance we get another proxy it is not a critical problem, but it will slow hte performance a little bit (should be noticed in scenarios where this matters)
+			if (BaseObject.is(this.$builder,"IProxyInterfaceBuilder")) {
+				var proxiedInstance = this.$builder.buildProxy(ifc, iface, this.$container);
+				return proxiedInstance;
+			} else {
+				throw "Cannot build a proxy for the queried interface becuase no proxy builder was supplied to the proxy marshalling the call";
+			}
 		}
 	}
 	return null;

@@ -38,7 +38,7 @@ var ProxyStubBuildingRoutines = {
 			'$Managed_BaseProxy.call(this,instance,transport,builder,container); this.$initializeProxy();');
 			cls.Inherit(baseProxyDef, proxyClassName);
 			cls.ImplementEx(ifaceDef);
-			cls.$proxiedInterface = ifaceDef;
+			cls.prototype.$proxiedInterface = ifaceDef;
 			for (var key in ifaceDef.prototype) {
 				// The exceptions:
 				//	constructor - does not need changes

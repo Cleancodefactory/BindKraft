@@ -49,6 +49,7 @@
 	if (!Registers.Default().registerExists("appfs")) {
 		Registers.Default().addRegister( new MemoryFSDirectory("appfs"));
 		var fs = Registers.Default().getRegister("appfs");
+		// Some system entries (more to come in the future)
 		var system = fs.mkdir("system"); // TODO Implement protection with read-only marking and use it here		
 		
 		// Buit in system data files - create them with defaults that can be changed/reloaded a bit later (in module init.js files mostly
