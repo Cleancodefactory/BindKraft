@@ -3,7 +3,7 @@ function ForeignOperation() {
 }
 ForeignOperation.Inherit(Operation,"ForeignOperation");
 ForeignOperation.prototype.Complete = function(errorcode, data, description) {
-	if (IsSuccess(errorcode)) {
+	if (ForeignCodesFlags.IsSuccess(errorcode)) {
 		if (typeof data == "object" && typeof data[method] == "string" && typeof result in data && (BaseObject.is(data[args], "Array")) || args == null) {
 			this.CompleteOperation(true,data);
 		} else {

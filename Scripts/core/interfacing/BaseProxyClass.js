@@ -41,7 +41,7 @@ $Managed_BaseProxy.prototype.$buildProxyFromAnother = function(proxy, container)
 	var original = proxy.Dereference();
 	if (original == null) throw "Dereferencing a proxy of type " + proxy.classType() + " produced null result.";
 	if (this.$builder == null) throw "The proxy (" + this.classType() + ") does not have a builder set and cannot wrap references.";
-	return this.$builder.buildProxy(original, proxy.proxiedInterface, container);
+	return this.$builder.buildProxy(original, proxy.$proxiedInterface, container);
 }
 $Managed_BaseProxy.prototype.$buildProxyFrom = function(instance, iface, container) {
 	if (BaseObject.is(instance, "BaseObject")) {
@@ -64,7 +64,6 @@ $Managed_BaseProxy.prototype.$buildProxyFrom = function(instance, iface, contain
 $Managed_BaseProxy.prototype.$wrapResult = function(r, method) {
 	// Use ReturnType or if r is a proxy use it as a template
 	// Register in the local release container, ignore the one in the comming proxy
-	var ridef = r.$proxiedInterface;
 	if (BaseObject.is(r, "$Managed_BaseProxy")) {
 		// Extract info from the proxy
 		return this.$buildProxyFromAnother(r,this.$container);
@@ -149,6 +148,7 @@ $Managed_BaseProxy.prototype.$wrapArguments = function(args, method) {
 			result.push(v);
 		}
 	}
+	return result;
 }
 // -Internals
 $Managed_BaseProxy.prototype.$initializeProxy = function() { // Called by the constructor of the generated class inheriting the base proxy.

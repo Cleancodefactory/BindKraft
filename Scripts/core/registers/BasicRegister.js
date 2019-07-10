@@ -18,7 +18,7 @@ BasicRegister.prototype.$collection = new InitializeObject("Stored items");
 BasicRegister.prototype.$allowOverrWrite = true;
 BasicRegister.prototype.$checkKey = function(key) { 
 	if (typeof key != "string" || key.length == 0) {
-		this.LASTERROR(-1, "Items cannog have empty keys.");
+		this.LASTERROR(_Errors.compose(), "Items cannog have empty keys.");
 		return false;
 	}
 	return true; 
@@ -36,7 +36,7 @@ BasicRegister.prototype.get_registername = function() {
 BasicRegister.prototype.register = function(key, item) { 
 	if (!this.$checkItem(item) || !this.$checkKey(key)) return false;
 	if (this.$collection[key]  != null && !this.$allowOverrWrite) {
-		this.LASTERROR(-1, "There is an item already registered with the same key " + key);
+		this.LASTERROR(_Errors.compose(), "There is an item already registered with the same key " + key);
 		return false;
 	}
 	this.$collection[key] = item;

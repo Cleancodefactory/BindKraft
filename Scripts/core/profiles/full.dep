@@ -1,5 +1,6 @@
 //#using "../configuration.js"
 //#using "../equalize.js"
+//#using "../errors.js"
 //#using "../CompileTime.js"
 //#using "../selfdoc.js"
 //#using "../Class.js"

@@ -49,7 +49,7 @@ IImplementsLocalAPIImpl.classInitialize = function(cls) {
 			this.__$registeredLocalAPI[hub.get_name()] = {}
 		} else {
 			// Already registered
-			this.LASTERROR(-1,"This API is already registered with this hub. This is strong indication of a problem that can lead to unexpected early API revocation.");
+			this.LASTERROR(_Errors.compose(),"This API is already registered with this hub. This is strong indication of a problem that can lead to unexpected early API revocation.");
 			return 0;
 		}
 		var list = this.OnGetExposedLocalAPI();

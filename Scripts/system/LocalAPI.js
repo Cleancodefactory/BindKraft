@@ -78,13 +78,13 @@ LocalAPI.prototype.registerAPI = function(iface, instance, variation, bdefault) 
 		var reg = { proxy: null, cookie: LocalAPI.genCookie(ifname) };
 		var pxy = this.$proxybuilder.buildProxy(instance, Class.getInterfaceDef(iface));
 		if (pxy == null) {
-			this.LASTERROR(-1,"Failed to build a proxy. The Local API registration failed for " + ifname);
+			this.LASTERROR(_Errors.compose(),"Failed to build a proxy. The Local API registration failed for " + ifname);
 			return null;
 		}
 		reg.proxy = pxy;
 		if (typeof variation == "string") {
 			if (this.$apis[ifname][variation] != null) {
-				this.LASTERROR(-1,"this variation is already registered");
+				this.LASTERROR(_Errors.compose(),"this variation is already registered");
 				return null;
 			} else {
 				this.$apis[ifname][variation] = reg;
@@ -96,16 +96,16 @@ LocalAPI.prototype.registerAPI = function(iface, instance, variation, bdefault) 
 			if (this.$apis[ifname]["__$default"] == null) {
 				this.$apis[ifname]["__$default"] = reg;
 			} else {
-				this.LASTERROR(-1,"API is already registered as default with this interface.");
+				this.LASTERROR(_Errors.compose(),"API is already registered as default with this interface.");
 				return null;
 			}
 		} else {
-			this.LASTERROR(-1,"Unsupported variation type - string or null are accepted only");
+			this.LASTERROR(_Errors.compose(),"Unsupported variation type - string or null are accepted only");
 			return null;
 		}
 		return reg.cookie;
 	}
-	this.LASTERROR(-1,"Cannot find the interface");
+	this.LASTERROR(_Errors.compose(false,null,GeneralCodesFlags.NotFound),"Cannot find the interface");
 	return null;
 }
 /*
@@ -150,7 +150,7 @@ LocalAPI.prototype.getAPI = function(iface, variation) {
 			}
 		}
 	}
-	this.LASTERROR(-1,"API not found");
+	this.LASTERROR(_Errors.compose(),"API not found");
 	return null;
 }
 

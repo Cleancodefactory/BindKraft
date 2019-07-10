@@ -31,12 +31,12 @@ DummyInterfaceProxyBuilder.prototype.buildProxy = function (instnce, interfaceDe
     if (BaseObject.is(instnce, interfaceDef)) {
 		var instanceClass = Class.getClassDef(instnce);
 		if (instanceClass == null) {
-			this.LASTERROR(-1,"Instance class cannot be determined or is not BaseObject.");
+			this.LASTERROR(_Errors.compose(),"Instance class cannot be determined or is not BaseObject.");
 		} else {
 			var _ifaceDef = Class.getInterfaceDef(interfaceDef); // Make sure we have the definition and not the name
 			if (this.$strictMode) {
 				if (!Class.doesextend(interfaceDef, "IManagedInterface")) {
-					this.LASTERROR(-1,"The interface does not extend IManagedInterface.");
+					this.LASTERROR(_Errors.compose(),"The interface does not extend IManagedInterface.");
 					return null;
 				}
 			}
@@ -54,14 +54,14 @@ DummyInterfaceProxyBuilder.prototype.buildProxy = function (instnce, interfaceDe
 			*/
 			
 			if (proxycls == null) {
-				this.LASTERROR(-1,"Cannot create proxy class definition");
+				this.LASTERROR(_Errors.compose(),"Cannot create proxy class definition");
 			} else {
 				var prxy = new proxycls(instnce,null,this,container); // Null transport
 				return prxy;
 			}
 		}
     } else {
-		this.LASTERROR(-1,"The instance does not support the requested interface.");
+		this.LASTERROR(_Errors.compose(),"The instance does not support the requested interface.");
     }
 	return null;
 };

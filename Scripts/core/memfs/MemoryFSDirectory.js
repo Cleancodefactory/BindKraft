@@ -22,7 +22,7 @@ MemoryFSDirectory.prototype.changedevent = new InitializeEvent("Fired when direc
 MemoryFSDirectory.prototype.$tasks = new InitializeObject("Place for registered tasks")
 MemoryFSDirectory.prototype.registerTask = function(taskname, eventname, callback) {
 	if (!PatternChecker.IdentName.checkValue(taskname)) {
-		this.LASTERROR(-1,"task name not allowed");
+		this.LASTERROR(_Errors.compose(),"task name not allowed");
 		return false;
 	}
 	if (BaseObject.isCallback(callback)) {
@@ -33,7 +33,7 @@ MemoryFSDirectory.prototype.registerTask = function(taskname, eventname, callbac
 				event: eventname
 			}
 		} else {
-			this.LASTERROR(-1,"name in use");
+			this.LASTERROR(_Errors.compose(),"name in use");
 		}
 	}
 	return false;
@@ -241,17 +241,22 @@ MemoryFSDirectory.prototype.register = function(key, item) {
 					if (BaseObject.is(item, "MemoryFSDirectory")) {
 						item.set_parentdirectory(dir);
 					}
+					return true;
 				} else {
-					throw "The item saved in memory FS has to implement IMemoryFile, but this one doesn't";
+					this.LASTERROR(_Errors.compose(false,1,GeneralCodesFlags.NotAllowed),"The item saved in memory FS has to implement IMemoryFile, but this one doesn't", "register");
+					// throw "The item saved in memory FS has to implement IMemoryFile, but this one doesn't";
 				}
 			} else {
-				throw "Cannot find the specified path " + parts.join("/");
+				this.LASTERROR(_Errors.compose(false,1,GeneralCodesFlags.NotFound),"Cannot find the specified path " + parts.join("/"), "register");
+				// throw "Cannot find the specified path " + parts.join("/");
 			}
 		} else {
-			throw "Cannot determine new object's name from the specified path";
+			this.LASTERROR(_Errors.compose(false,1,GeneralCodesFlags.Argument),"Cannot determine new object's name from the specified path", "register");
+			// throw "Cannot determine new object's name from the specified path";
 		}
 	} else {
-		throw "key has to be a string";
+		this.LASTERROR(_Errors.compose(false,1,GeneralCodesFlags.Argument),"key has to be a string", "register");
+		// throw "key has to be a string";
 	}
 };
 MemoryFSDirectory.prototype.unregister = function(key, /*optional*/ item) { 
@@ -279,14 +284,18 @@ MemoryFSDirectory.prototype.item = function(key, /*optional*/ aspect) {
 					// throw "The requested item has not been found";
 				}
 			} else {
-				throw "Cannot find the specified path " + parts.join("/");
+				this.LASTERROR(_Errors.compose(false,1,GeneralCodesFlags.NotFound),"Cannot find the specified path " + parts.join("/"), "item");
+				// throw "Cannot find the specified path " + parts.join("/");
 			}
 		} else {
-			throw "Cannot determine new object's name from the specified path";
+			this.LASTERROR(_Errors.compose(false,1,GeneralCodesFlags.Argument),"Cannot determine new object's name from the specified path", "item");
+			// throw "Cannot determine new object's name from the specified path";
 		}
 	} else {
-		throw "key has to be a string";
+		this.LASTERROR(_Errors.compose(false,1,GeneralCodesFlags.Argument),"key has to be a string", "item");
+		// throw "key has to be a string";
 	}
+	return null;
 };
 MemoryFSDirectory.prototype.exists = function(key) { 
 	// TODO: Implplement it more efficiently

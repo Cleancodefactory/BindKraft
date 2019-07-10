@@ -43,6 +43,31 @@ LocalProxyContainer.prototype.$proxies = new InitializeObject("Proxies register"
 LocalProxyContainer.prototype.register = function(proxy) {
 	return this.registerByTarget(proxy);
 }
+LocalProxyContainer.prototype.unregister = function(proxy) {
+	var i, result = true;
+	if (BaseObject.is(prxy, "$Managed_BaseProxy")) {
+		var proxyClassName = prxy.classType();
+		var proxyClassBranch = this.$proxies[proxyClassName];
+		if (proxyClassBranch != null) {
+			if (BaseObject.is(proxyClassBranch[prxy.$__instanceId], "$Managed_BaseProxy")) {
+				delete proxyClassBranch[prxy.$__instanceId];
+				return true;
+			}
+		}
+		return false;
+	} else if (BaseObject.is(prxy, "Array")) {
+		for (i = 0; i < prxy.length;i++) {
+			if (!this.release(prxy[i])) result = false;
+		}
+	} else if (BaseObject.is(prxy, "object")) {
+		for (i in prxy) {
+			if (prxy.hasOwnProperty(i)) {
+				if (!this.release(prxy[i])) result = false;
+			}
+		}
+	}
+	return result;
+}
 /**
 	Releases all the proxies registered with the container
 	@param 	prxy_or_prxyclass	{$Managed_BaseProxy|string} OPTIONAL. If present releases only the proxies of that kind

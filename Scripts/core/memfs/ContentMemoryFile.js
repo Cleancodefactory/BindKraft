@@ -24,7 +24,7 @@ ContentMemoryFile.prototype.get_content = function() { return this.$content; }
 ContentMemoryFile.prototype.set_content = function(v) { 
 	if (!this.$restoremode) this.touch();
 	this.$content = v;
-	this.set_avalable(true);
+	this.set_available(true);
 }
 ContentMemoryFile.prototype.$contenttype = null;
 ContentMemoryFile.prototype.get_contenttype = function() { return this.$contenttype; }

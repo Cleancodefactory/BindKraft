@@ -11,4 +11,8 @@ IManagedInterfaceContainer.prototype.register = function(proxy) { throw "not imp
 	container. If the proxy is not in the container no error will occur and it will be released anyway.
 */
 IManagedInterfaceContainer.prototype.release = function(proxy) { throw "not impl"; }
+/**
+	Unregister without releasing the proxy - useful when transferring the proxy from one comntainer to another
+*/
+IManagedInterfaceContainer.prototype.unregister = function(proxy) { throw "not impl"; }
 IManagedInterfaceContainer.prototype.releaseAll = function() { throw "not impl"; }

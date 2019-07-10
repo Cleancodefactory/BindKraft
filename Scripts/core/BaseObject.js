@@ -113,6 +113,7 @@ BaseObject.lastError = (function() {
 			return (!this.none());
 		},
 		code: function() { return _code; },
+		codeHex: function() { return _code.toString(16); },
 		text: function() { return _text; },
 		className: function() { return _className; },
 		method: function() { return _method; },
@@ -1054,64 +1055,6 @@ BaseObject.prototype.ajaxPostJson = function (url, data, callback) {
  .Param("data","Data object to be sent")
  .Param("callback","Method / function to be executed on success");
 
-// property setters static versions
-// Example: var v = BaseObject.getProperty(someObject, "subobj1.subobj2.prop"[,default]);
-//          BaseObject.setProperty(someObject, "subobj1.subobj2.prop", v);
-BaseObject.setProperty = function (obj, propPath, v) {
-    if (obj != null && propPath != null && propPath.length > 0) {
-        var arr = propPath.split(".");
-        if (arr != null) {
-            var o = obj;
-            for (var i = 0; i < arr.length; i++) {
-                if (i < arr.length - 1) {
-                    if (typeof (o["get_" + arr[i]]) == "function") {
-                        o = o["get_" + arr[i]]();
-                    } else if (o[arr[i]] == null) {
-                        o[arr[i]] = {};
-                        o = o[arr[i]];
-                    } else {
-                        o = o[arr[i]];
-                    }
-                } else {
-                    if (typeof (o["set_" + arr[i]]) == "function") {
-                        o["set_" + arr[i]](v);
-                    } else {
-                        o[arr[i]] = v;
-                    }
-                }
-            }
-        }
-    }
-}.Description("...")
- .Param("obj","...")
- .Param("propPath","...")
- .Param("v","...");
-
-BaseObject.getProperty = function (obj, propPath, defVal) {
-    var defaultResult = ((defVal == null) ? null : defVal);
-    if (obj != null && propPath != null && propPath.length > 0) {
-        var arr = propPath.split(".");
-        if (arr != null) {
-            var o = obj;
-            for (var i = 0; i < arr.length; i++) {
-                if (o == null) return defaultResult;
-                if (typeof (o["get_" + arr[i]]) == "function") {
-                    o = o["get_" + arr[i]]();
-                } else if (typeof (o[arr[i]]) == "undefined") {
-                    return defaultResult;
-                } else {
-                    o = o[arr[i]];
-                }
-            }
-            return o;
-        }
-    }
-    return defaultResult;
-}.Description("...")
- .Param("obj","...")
- .Param("propPath","...")
- .Param("defVal","Default result value")
- .Returns("...");
 
 BaseObject.prototype.getDelegatedProperty = function (proppath, calcCallback) {
     return new PropertyDelegate(this, proppath, calcCallback);
@@ -1119,108 +1062,6 @@ BaseObject.prototype.getDelegatedProperty = function (proppath, calcCallback) {
  .Param("proppath","...")
  .Param("calcCallback","...")
  .Returns("...");
-
-BaseObject.CombineObjects = function () {
-    var o = {};
-	var cbcontroller = null;
-	var cnt = arguments.length;
-	if (BaseObject.isCallback(arguments[arguments.length - 1])) {
-		cbcontroller = arguments[arguments.length - 1];
-		cnt = cnt - 1;
-	}
-    for (var i = 0; i < cnt; i++) {
-        if (arguments[i] != null) {
-            if (typeof arguments[i] == "object") {
-                for (var j in arguments[i]) {
-					if (cbcontroller != null) {
-						if (BaseObject.callCallback(cbcontroller,j, o[j], arguments[i][j])) {
-							o[j] = arguments[i][j];
-						}
-					} else {
-						o[j] = arguments[i][j];
-					}
-                }
-            }
-        }
-    }
-    return o;
-}.Description("Combines each object passed as parameter into single object, property by property, overriding existing ones")
- .Param("last", "If the last param is a callback it is called for each assignment wtih cb(key, leftval, rightval) to permit the transfer and potentially replacement")
- .Returns("The resulting object");
-BaseObject.CombineObjectsProcessed = function () {
-    var o = {};
-	var cbcontroller = null;
-	var cnt = arguments.length;
-	if (BaseObject.isCallback(arguments[arguments.length - 1])) {
-		cbcontroller = arguments[arguments.length - 1];
-		cnt = cnt - 1;
-	}
-    for (var i = 0; i < arguments.length; i++) {
-        if (arguments[i] != null) {
-            if (typeof arguments[i] == "object") {
-                for (var j in arguments[i]) {
-					if (cbcontroller != null) {
-						var x = BaseObject.callCallback(cbcontroller,j, o[j], arguments[i][j]);
-						if (typeof x != "unefined") {
-							o[j] = x;
-						}
-					} else {
-						o[j] = arguments[i][j];
-					}
-                }
-            }
-        }
-    }
-    return o;
-}.Description("Combines each object passed as parameter into single object, property by property, overriding existing ones")
- .Param("last", "If the last param is a callback it is called for each assignment wtih cb(key, leftval, rightval) to process the property value")
- .Returns("The resulting object");
-
-BaseObject.CombineObjectsDeep = function () {
-    var level = -1; // Default: Go to the bottom of the object tree
-    if (arguments.length > 0 && typeof arguments[0] === "number") {
-        level = arguments[0];
-    }
-    var o = {};
-    for (var i = level == -1 ? 0 : 1; i < arguments.length; i++) {
-        if (arguments[i] != null) {
-            if (typeof arguments[i] == "object") {
-                for (var j in arguments[i]) {
-                    if (BaseObject.is(arguments[i][j],"object") && level != 0) {
-                        o[j] = BaseObject.CombineObjectsDeep(level - 1, o[j], arguments[i][j]);
-                    } else {
-                        o[j] = arguments[i][j];
-                    }
-                }
-            }
-        }
-    }
-    return o;
-}.Description("...")
- .Returns("object");
-
-BaseObject.CombineObjectsDeepSelectively = function () {
-    var deepClones = null;
-    if (arguments.length > 0 && (Array.isArray(arguments[0]) || Object.prototype.toString.call(arguments[0]) === "[object Array]")) {
-        deepClones = arguments[0];
-    }
-    var o = {};    
-    for (var i = IsNull(deepClones) ? 0 : 1; i < arguments.length; i++) {
-        if (arguments[i] != null) {
-            if (typeof arguments[i] == "object") {
-                for (var j in arguments[i]) {
-                    if (typeof arguments[i][j] == "object" && (IsNull(deepClones) || deepClones.indexOf(j) >= 0)) {
-                        o[j] = BaseObject.CombineObjectsDeep(o[j], arguments[i][j]);
-                    } else {
-                        o[j] = arguments[i][j];
-                    }
-                }
-            }
-        }
-    }
-    return o;
-}.Description("...")
- .Returns("object");
 
 // Asynch support at its deepest
 BaseObject.prototype.callAsync = function (method /*args*/) { // Blind simple execution (without dependencies and fine control
@@ -1338,3 +1179,183 @@ BaseObject.prototype.discardAsync = function (callback) {
     }
 }.Description("Discards async results by key or by selection by callback.")
  .Param("callback","...");
+ 
+ // Non-related to the OOP static method anchored over BaseObject (as general tools)
+ 
+ BaseObject.CombineObjects = function () {
+    var o = {};
+	var cbcontroller = null;
+	var cnt = arguments.length;
+	if (BaseObject.isCallback(arguments[arguments.length - 1])) {
+		cbcontroller = arguments[arguments.length - 1];
+		cnt = cnt - 1;
+	}
+    for (var i = 0; i < cnt; i++) {
+        if (arguments[i] != null) {
+            if (typeof arguments[i] == "object") {
+                for (var j in arguments[i]) {
+					if (cbcontroller != null) {
+						if (BaseObject.callCallback(cbcontroller,j, o[j], arguments[i][j])) {
+							o[j] = arguments[i][j];
+						}
+					} else {
+						o[j] = arguments[i][j];
+					}
+                }
+            }
+        }
+    }
+    return o;
+}.Description("Combines each object passed as parameter into single object, property by property, overriding existing ones")
+ .Param("last", "If the last param is a callback it is called for each assignment wtih cb(key, leftval, rightval) to permit the transfer and potentially replacement")
+ .Returns("The resulting object");
+BaseObject.CombineObjectsProcessed = function () {
+    var o = {};
+	var cbcontroller = null;
+	var cnt = arguments.length;
+	if (BaseObject.isCallback(arguments[arguments.length - 1])) {
+		cbcontroller = arguments[arguments.length - 1];
+		cnt = cnt - 1;
+	}
+    for (var i = 0; i < arguments.length; i++) {
+        if (arguments[i] != null) {
+            if (typeof arguments[i] == "object") {
+                for (var j in arguments[i]) {
+					if (cbcontroller != null) {
+						var x = BaseObject.callCallback(cbcontroller,j, o[j], arguments[i][j]);
+						if (typeof x != "unefined") {
+							o[j] = x;
+						}
+					} else {
+						o[j] = arguments[i][j];
+					}
+                }
+            }
+        }
+    }
+    return o;
+}.Description("Combines each object passed as parameter into single object, property by property, overriding existing ones")
+ .Param("last", "If the last param is a callback it is called for each assignment wtih cb(key, leftval, rightval) to process the property value")
+ .Returns("The resulting object");
+
+BaseObject.CombineObjectsDeep = function () {
+    var level = -1; // Default: Go to the bottom of the object tree
+    if (arguments.length > 0 && typeof arguments[0] === "number") {
+        level = arguments[0];
+    }
+    var o = {};
+    for (var i = level == -1 ? 0 : 1; i < arguments.length; i++) {
+        if (arguments[i] != null) {
+            if (typeof arguments[i] == "object") {
+                for (var j in arguments[i]) {
+                    if (BaseObject.is(arguments[i][j],"object") && level != 0) {
+                        o[j] = BaseObject.CombineObjectsDeep(level - 1, o[j], arguments[i][j]);
+                    } else {
+                        o[j] = arguments[i][j];
+                    }
+                }
+            }
+        }
+    }
+    return o;
+}.Description("...")
+ .Returns("object");
+
+BaseObject.CombineObjectsDeepSelectively = function () {
+    var deepClones = null;
+    if (arguments.length > 1 && BaseObject.is(arguments[0],"Array")) {
+        deepClones = arguments[0];
+    }
+    var o = {};    
+    for (var i = IsNull(deepClones) ? 0 : 1; i < arguments.length; i++) {
+        if (arguments[i] != null) {
+            if (typeof arguments[i] == "object") {
+                for (var j in arguments[i]) {
+                    if (typeof arguments[i][j] == "object" && (IsNull(deepClones) || deepClones.findElement(j) >= 0)) {
+                        o[j] = BaseObject.CombineObjectsDeep(o[j], arguments[i][j]);
+                    } else {
+                        o[j] = arguments[i][j];
+                    }
+                }
+            }
+        }
+    }
+    return o;
+}.Description("...")
+ .Returns("object");
+ 
+ // property setters static versions
+// Example: var v = BaseObject.getProperty(someObject, "subobj1.subobj2.prop"[,default]);
+//          BaseObject.setProperty(someObject, "subobj1.subobj2.prop", v);
+BaseObject.setProperty = function (obj, propPath, v) {
+    if (obj != null && propPath != null && propPath.length > 0) {
+        var arr = propPath.split(".");
+        if (arr != null) {
+            var o = obj;
+            for (var i = 0; i < arr.length; i++) {
+                if (i < arr.length - 1) {
+                    if (typeof (o["get_" + arr[i]]) == "function") {
+                        o = o["get_" + arr[i]]();
+                    } else if (o[arr[i]] == null) {
+                        o[arr[i]] = {};
+                        o = o[arr[i]];
+                    } else {
+                        o = o[arr[i]];
+                    }
+                } else {
+                    if (typeof (o["set_" + arr[i]]) == "function") {
+                        o["set_" + arr[i]](v);
+                    } else {
+                        o[arr[i]] = v;
+                    }
+                }
+            }
+        }
+    }
+}.Description("...")
+ .Param("obj","...")
+ .Param("propPath","...")
+ .Param("v","...");
+
+BaseObject.getProperty = function (obj, propPath, defVal) {
+    var defaultResult = ((defVal == null) ? null : defVal);
+    if (obj != null && propPath != null && propPath.length > 0) {
+        var arr = propPath.split(".");
+        if (arr != null) {
+            var o = obj;
+            for (var i = 0; i < arr.length; i++) {
+                if (o == null) return defaultResult;
+                if (typeof (o["get_" + arr[i]]) == "function") {
+                    o = o["get_" + arr[i]]();
+                } else if (typeof (o[arr[i]]) == "undefined") {
+                    return defaultResult;
+                } else {
+                    o = o[arr[i]];
+                }
+            }
+            return o;
+        }
+    }
+    return defaultResult;
+}.Description("...")
+ .Param("obj","...")
+ .Param("propPath","...")
+ .Param("defVal","Default result value")
+ .Returns("...");
+ 
+ BaseObject.ClearObject = function(params_obj) {
+	 var n = 0;
+	 for (var i = 0;i < arguments.length; i++) {
+		 var obj = arguments[i];
+		 if (BaseObject.is(obj,"object")) {
+			 n++;
+			 for (var k in obj) {
+				 if (obj.hasOwnProperty(k)) {
+					 delete obj[k];
+				 }
+			 }
+		 }
+	 }
+	 return n;
+ }.Description("Clears all the own properties of one or more passed objects - each as a separate argument")
+  .Returns("The number of objects cleared");

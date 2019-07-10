@@ -48,13 +48,13 @@ GenerateCommandUrlAPI.prototype.getCommandURLGenerator = function(aliasname, opt
 	// Get the alias
 	var alias = this.$getAlias(aliasname,options && options.app, options && options.id);
 	if (alias == null) {
-		this.LASTERROR(-1,"alias not found or not a PropertySetMemoryFile");
+		this.LASTERROR(_Errors.compose(),"alias not found or not a PropertySetMemoryFile");
 		return null;
 	}
 	// Get the global settings
 	var globals = this.$getGlobals();
 	if (globals == null) {
-		this.LASTERROR(-1,"general settings for URLCommands not found or not a PropertySetMemoryFile.");
+		this.LASTERROR(_Errors.compose(),"general settings for URLCommands not found or not a PropertySetMemoryFile.");
 		return null;
 	}
 	var generator = {

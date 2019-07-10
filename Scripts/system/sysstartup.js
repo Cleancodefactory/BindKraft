@@ -70,9 +70,9 @@
 		console.log("Enabling logging to console of the LASTERROR");
 		BaseObject.LASTERROR().subscribe(function(le) {
 			if (le.code() != 0) {
-				console.warn("LastError set to:" + le.code() + ", " + le.text());
+				console.warn("LastError set to:" + le.codeHex() + ", " + le.text());
 			} else {
-				console.log("LastError set to:" + le.code() + ", " + le.text());
+				console.log("LastError set to:" + le.codeHex() + ", " + le.text());
 			}
 		});
 	}

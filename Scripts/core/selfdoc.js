@@ -34,6 +34,9 @@ Function.prototype.Returns = function(s) {
 // Used or planned for future use by the system
 Function.prototype.ReturnType = function(iface) {
 	this.$returnType = Class.getType(iface);
+	if (this.$returnType == null) {
+		CompileTime.err("Cannot resolve the specified type in a ReturnType method decoration. The type specified: " + (typeof iface == "string")?iface + ", check if the type is declared prior to using it in ReturnType decorator.":"not specified as string - check if you have parasitic definition");
+	}
     return this;
 }.Hide();
 Function.prototype.Arguments = function() {

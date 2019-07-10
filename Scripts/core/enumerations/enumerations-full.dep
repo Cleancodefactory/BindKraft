@@ -1,4 +1,5 @@
 //#using "ProcessSchedulleOptionsEnum.js"
+//#using "ErrorCodes.js"
 //#using "ForeignCodes.js"
 //#using "OperationStandardErrorsEnum.js"
 //#using "MemFileFlags.js"

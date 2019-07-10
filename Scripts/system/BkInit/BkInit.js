@@ -39,11 +39,11 @@ var BkInit = {
 		fn(new BkInit_CommandUrlGlobal());
 		return this;
 	},
-	appData: function(appClass, fn) {
+	AppData: function(appClass, fn) {
 		if (!Class.is(appClass, "IApp")) {
 			throw "The class is not an app";
 		}
-		var appname = Class.geClassName(appClass);
+		var appname = Class.getClassName(appClass);
 		if (appname == null) throw "Cannot find class name";
 		fn(new BkInit_AppData(appname));
 		return this;

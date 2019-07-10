@@ -12,7 +12,7 @@ var ProxyStubBuildingRoutines = {
 	refMethod: function(key) {
 		return new Function('if (this.$instance == null) throw "The proxy is no longer connected";\
 							var r = this.$instance.' + key + '.apply(this.$instance, this.$wrapArguments(arguments,"' + key + '"));\
-							return this.$wrapResult(r);');
+							return this.$wrapResult(r,"' + key + '");');
 	},
 	// These are designed for local proxy generation first. The future implementation of remoting proxies may need separate implementation
 

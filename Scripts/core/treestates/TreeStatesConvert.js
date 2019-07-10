@@ -56,7 +56,7 @@ TreeStatesConvert.prototype.linearize = function(/*array of state objects*/ stat
 TreeStatesConvert.prototype.linearize = function(arrStates) {
 	var r = TreeStatesConvert.LinearizeTSM(this.$map, arrStates);
 	if (TreeStatesConvert.isError(r)) {
-		this.LASTERROR(-1,r.text);
+		this.LASTERROR(_Errors.compose(),r.text);
 		return null;
 	}
 	return r;

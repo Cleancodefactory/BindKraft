@@ -6,7 +6,6 @@ function AppDataApiContentReader(AppClass) {
 	this.$dir = this.$fs.mkdir(appname);
 }
 AppDataApiContentReader.Inherit(BaseObject, "AppDataApiContentReader");
-
 AppDataApiContentReader.ImplementEx(IAppDataApiContentReader);
 AppDataApiContentReader.prototype.content = function(filename, requiredContentType) { 
 	var f;
@@ -18,7 +17,7 @@ AppDataApiContentReader.prototype.content = function(filename, requiredContentTy
 	if (f != null) {
 		if (BaseObject.is(f, "IMemoryFileContent")) {
 			// Ignores the availability
-			if (typeof requiredContentType == null || f.get_contenttype() == requiredContentType) {
+			if (requiredContentType == null || f.get_contenttype() == requiredContentType) {
 				return f.get_content();
 			}
 		}

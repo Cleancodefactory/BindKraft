@@ -25,11 +25,12 @@
 	as well - even if it is easilly accessible from elsewhere, AppGate is supposed to become a hub giving the app access to the majority of the
 	API and services an app usually needs.
 */
-function AppGate(shell, lapiclient, appClass) {
+function AppGate(shell, lapiclient, appClass,apiHub) {
 	BaseObject.apply(this, arguments);
 	this.$shell = shell;
 	this.$api = lapiclient;
 	this.$appClass = appClass;
+	this.$lapiHub = apiHub;
 	this.$container = new LocalProxyContainer();
 }
 AppGate.Inherit(BaseObject, "AppGate");
@@ -138,22 +139,54 @@ AppGate.prototype.release = function(p) {
 }
 AppGate.prototype.releaseAll = function() {
 	this.$container.releaseAll();
+	this.$api.releaseAll();
 }
 
 // LocalAPI usage
 AppGate.prototype.api = function(iface) {
 	var api = this.$api.getAPI(iface);
 	if (api != null) {
-		// This is a proxy - get a clone
-		api = api.GetInterface();
-		this.$container.register(api);
+		return api;
 	} else {
-		this.LASTERROR(-1,"Cannot find API " + Class.getInterfaceName(iface) + " in AppGate of " + Class.getClassName(this.$appClass));
+		this.LASTERROR(_Errors.compose(),"Cannot find API " + Class.getInterfaceName(iface) + " in AppGate of " + Class.getClassName(this.$appClass));
 	}
-	return api;
+	return null;
 }
+/**
+	No need to use this method for now
+*/
 AppGate.prototype.attachAPI = function(iface, variation) {
 	return this.$api.attachAPI(iface, variation);
+}
+// LocalAPI exposure/implementation
+AppGate.prototype.$registeredLocalAPI = new InitializeArray("Array of API registration cookies for revokation on shutdown");
+AppGate.prototype.registerLocalAPI = function(iface, instance, variation, bdefault) {
+	if (BaseObject.is(this.$lapiHub,"LocalAPI")) {
+		var cookie = this.$lapiHub.registerAPI(iface, instance, variation, bdefault);
+		if (cookie != null) {
+			this.$registeredLocalAPI.push({iface: Class.getInterfaceName(iface), cookie: cookie});
+		}
+	}
+}
+AppGate.prototype.revokeAllLocalAPI = function() {
+	if (BaseObject.is(this.$lapiHub,"LocalAPI")) {
+		while (this.$registeredLocalAPI.length > 0) {
+			var entry = this.$registeredLocalAPI.pop();
+			this.$lapiHub.revokeAPI(entry.iface,entry.cookie);
+		}
+	}
+}
+AppGate.prototype.revokeLocalAPI = function(iface) {
+	var entry,ifname = Class.getInterfaceName(iface);
+	if (BaseObject.is(this.$lapiHub,"LocalAPI")) {
+		for (var i = this.$registeredLocalAPI.length - 1; i >= 0; i--) {
+			entry = this.$registeredLocalAPI[i];
+			if (entry.iface == ifname) {
+				this.$lapiHub.revokeAPI(entry.iface,entry.cookie);
+				this.$registeredLocalAPI.splice(i,1);
+			}
+		}
+	}
 }
 
 // Shell interface - similar to old query back

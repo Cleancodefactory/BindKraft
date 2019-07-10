@@ -6,4 +6,4 @@ IAppDataApi.Interface("IAppDataApi", "IManagedInterface");
 /**
 	Returns a new reader for content files IContentMemoryFile
 */
-IAppDataApi.prototype.getContentReader = function(appClass) { throw "not  impl"; }
+IAppDataApi.prototype.getContentReader = function(appClass) { throw "not  impl"; }.ReturnType("IAppDataApiContentReader");

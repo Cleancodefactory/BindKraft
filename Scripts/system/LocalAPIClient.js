@@ -104,17 +104,36 @@ function LocalAPIClient(objapis, lapi, lapi1, lapiN) {
 		}
 		this.$localapis.push(LocalAPI.Default());
 	}
+	this.$objapis = {};
 	if (objapis != null && typeof objapis == "object" && !BaseObject.is(objapis,"LocalAPI")) {
 		for (var k in objapis) {
 			this.attachAPI(k, objapis[k]);
 		}
 		this.$objapis = objapis;
 	}
+	// Create own LocalProxyContainer
+	this.$container = new LocalProxyContainer();
 }
 LocalAPIClient.Inherit(BaseObject, "LocalAPIClient");
+LocalAPIClient.prototype.obliterate = function() {
+	this.releaseAll();
+	BaseObject.prototype.obliterate.apply(this,arguments);
+}
 LocalAPIClient.prototype.$localapis = null;
 LocalAPIClient.prototype.$objapis = null;
 LocalAPIClient.prototype.API = new InitializeObject("API proxies go here under their interface names."); // APIs attach here
+LocalAPIClient.prototype.$container = null;
+/*
+	Sets LocalProxyContainer - the attached API proxies will be clonned and registered there if one is set
+	TODO: We have to carefuly consider this - the idea changed a little
+*/
+/*
+LocalAPIClient.prototype.set_container = function(v) {
+}
+LocalAPIClient.prototype.get_container = function(v) {
+}
+*/
+
 /**
 	From V.2.18. getAPI is more liberal and will auto attach default versions of API even if it is not pre-configured.
 	However using non-default variations still requires configuration.
@@ -122,7 +141,7 @@ LocalAPIClient.prototype.API = new InitializeObject("API proxies go here under t
 LocalAPIClient.prototype.getAPI = function (ifacedef_or_name) {
 	var ifacename = Class.getInterfaceName(ifacedef_or_name);
 	if (ifacename == null) {
-		this.LASTERROR(-1, "The argument did not resolve to an interface", "getAPI");
+		this.LASTERROR(_Errors.compose(), "The argument did not resolve to an interface", "getAPI");
 		return null; // Incorrect call - argument did not resolve to an interface
 	}
 	if (!BaseObject.is(this.API[ifacename], ifacedef_or_name)) { // f(IFace) - try from conf if it isn't bound yet
@@ -138,7 +157,7 @@ LocalAPIClient.prototype.getAPI = function (ifacedef_or_name) {
 	if (BaseObject.is(this.API[ifacename], ifacedef_or_name)) { // Check if we have it and return 
 		return this.API[ifacename];
 	}
-	this.LASTERROR(-1,"Cannot find the requested interface in the configured LocalAPI hubs");
+	this.LASTERROR(_Errors.compose(),"Cannot find the requested interface in the configured LocalAPI hubs");
 	return null;
 	//this.attachAPI
 }
@@ -157,18 +176,29 @@ LocalAPIClient.prototype.attachAPIConf = function (ifacedef_or_name) {
 }
 LocalAPIClient.prototype.attachAPI = function (iface, variation) {
 	if (BaseObject.is(this.$localapis, "Array")) {
-		var pxy = null;
+		var pxy = null, lpxy = null;
 		for (var i = 0; i < this.$localapis.length; i++) {
 			var la = this.$localapis[i];
 			if (BaseObject.is(la, "LocalAPI")) {
 				pxy = la.getAPI(iface, variation);
 				if (pxy != null) {
-					this.API[Class.getInterfaceName(iface)] = pxy;
-					return true;
+					// Get a clone and register it in the $container
+					lpxy = pxy.GetInterface();
+					if (lpxy != null) {
+						lpxy = this.$container.register(lpxy);
+						this.API[Class.getInterfaceName(iface)] = lpxy;
+						return true;
+					} else {
+						this.LASTERROR(_Errors.compose(),"Cannot clone the LocalAPI proxy for " + Class.getInterfaceName(iface), "attachAPI");
+					}
 				}
 			}
 
 		}
 	}
 	return false;
+}
+LocalAPIClient.prototype.releaseAll = function() {
+	this.$container.releaseAll();
+	BaseObject.ClearObject(this.API);
 }
