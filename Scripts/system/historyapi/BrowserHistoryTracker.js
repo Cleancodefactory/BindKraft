@@ -13,6 +13,7 @@ BrowserHistoryTracker.prototype.$lastPushedState = null;
 
 //+IHistoryTracker
 BrowserHistoryTracker.prototype.pushHistoryState = function (app, appstate) {
+	var app = _app.Dereference();
     //Check if appstate is string and throw exception
     if (typeof appstate !== 'string') {
         throw 'appstate should be of type string';

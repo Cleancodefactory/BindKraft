@@ -8,6 +8,6 @@ IHistoryTracker.Interface("IHistoryTracker","IManagedInterface");
 IHistoryTracker.prototype.pushHistoryState = function(app, state)
 {
 	throw 'Not implemented';
-}
+}.Arguments(IManagedInterface,null);
 
 	

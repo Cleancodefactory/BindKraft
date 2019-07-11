@@ -104,6 +104,8 @@ function LocalAPIClient(objapis, lapi, lapi1, lapiN) {
 		}
 		this.$localapis.push(LocalAPI.Default());
 	}
+	this.$container = new LocalProxyContainer();
+	
 	this.$objapis = {};
 	if (objapis != null && typeof objapis == "object" && !BaseObject.is(objapis,"LocalAPI")) {
 		for (var k in objapis) {
@@ -112,7 +114,7 @@ function LocalAPIClient(objapis, lapi, lapi1, lapiN) {
 		this.$objapis = objapis;
 	}
 	// Create own LocalProxyContainer
-	this.$container = new LocalProxyContainer();
+
 }
 LocalAPIClient.Inherit(BaseObject, "LocalAPIClient");
 LocalAPIClient.prototype.obliterate = function() {
