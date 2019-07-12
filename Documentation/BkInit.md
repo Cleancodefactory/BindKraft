@@ -93,3 +93,12 @@ BKInit.StartMenu(function (menu) {
 ### BKInit.commandUrlAlias
 
 ### BKInit.commandUrlGlobal
+
+### BKInit.AppData
+
+```Javascript
+BKInit.AppData(AppName, function (data) {
+    data.content("contentname", optionalcontenttype,content);
+    data.object("filename", {... something ...});
+};
+```

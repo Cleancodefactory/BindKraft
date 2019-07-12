@@ -16,6 +16,7 @@ TemplateSwitcher.prototype.obliterate = function() {
 };
 TemplateSwitcher.prototype.templateSource = null;
 TemplateSwitcher.prototype.requireData = null;
+TemplateSwitcher.ImplementProperty("requiredata", new InitializeBooleanParameter("IF true remains empty if set_item sets null", null),"requireData");
 TemplateSwitcher.prototype.multiTemplate = new InitializeBooleanParameter("Enables/disables support for multi rooted templates. Default is false.", false);
 TemplateSwitcher.prototype.nullTemplate = new InitializeStringParameter("The data-key of the template for missing/null data. Use with nullTemplateSwitch internal selector.", "null");
 TemplateSwitcher.prototype.notNullTemplate = new InitializeStringParameter("The data-key of the template for existing data. Use with nullTemplateSwitch internal selector.", "data");
