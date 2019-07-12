@@ -1,64 +1,54 @@
 # BindKraft Javascript platform
 
-This repository contains the source code and the documentation of the BindKraft Javascript platform (`BindKraftJS`) for use in WEB browser environment. Other variants, supporting different environments may borrow code originating in this repository, but are otherwise separate.
+This repository contains the source code and the documentation of the BindKraft Javascript platform (`BindKraftJS`) for use in WEB browser environment. BindKraftJS can potentially run on top of a variety of WEB servers - from rudimentary ones serving static content only to complex especially designed to integrate with it, like [CoreKraft](https://github.com/Cleancodefactory/CoreKraft).
 
-## Documentation and other information
+## Links
 
-The documentation is maintained in the Documentation directory.
-
-[Open the documentation](Documentation/start.md)
-
->_Links to interesting starting points will be added here in the following months_
-
-### Links
-
-[Changelog](Documentation/CHANGELOG.md) - Changes log, started in April 2019 (see more details in the document)
-
-[BindKraft.io](http://bindkraft.io) - Demo site
-
-[Roadmap](Documentation/ROADMAP.md) - Future plans
+Project information | Documentation | Sites
+--- | --- | ---
+[Changelog](Documentation/CHANGELOG.md) - Changes log, started in April 2019 (see more details in the document) | [Open the documentation](Documentation/start.md) | [BindKraft.com](http://bindkraft.com) - KraftApps (A workspace with several apps written with BindKraft sitting on top of a CoreKraft server)
+[Roadmap](Documentation/ROADMAP.md) - Future plans| . | [BindKraft.io](http://bindkraft.io) - Demo site (quite old)
 
 ## BindKraftJS at a glance
 
-BindKraft as a whole is a philosophy and a combination of several pieces in its full form - server software, client side WEB browser platform (this one - BindKraftJS), protocols and other elements. This repository, however, is the Javascript part - the one designed for WEB browsers. It can be used separately, but together with the rest of BindKraft pieces it has additional advantages thanks to the shared concept and the "by design" integration.
+> `Basically BindKraftJS adapts the desktop paradigm to the WEB page`
+
+BindKraft sees WEB pages differently - not as SPA (single page apps) or pages from an application consisting of many, but as a `desktop`. For BindKraft a WEB page is a `workspace` where a number of separate apps open, close (possibly many times and one or more instances simultaneously), communicate between themselves and so on. The user works on the page in a manner very similar to the way the user interacts with desktop applications - each app consists of windows (actually formed with DOM techniques) - one or more, they can overlap each other in a very desktopy way, or can be designed to look like a typical WEB site, but still function as windows behind the scenes. 
+
+<div style="border-top: 2px solid #C0C0C0; border-bottom: 2px solid #C0C0C0;text-align: center; padding: 5px;">
+<img src="Documentation/res/bkworkspace-1.png" style="display: inline-block;vertical-align: middle;width:30%; margin:2px;"/>
+<img src="Documentation/res/bkworkspace-2.png" style="display: inline-block;vertical-align: middle;width:30%; margin:2px;"/>
+<img src="Documentation/res/bkworkspace-3.png" style="vertical-align: middle;width:30%; margin:2px;"/>
+<div style="clear:both;"></div>
+</div>
+
+Three screenshots from different designs are shown above.
+
+BindKraft as a whole is a philosophy going beyond the client side - the desktop-like usage of the WEB pages. This includes servers (_serving the site or just providing services_) that integrate tightly with the client BindKraftJS ,formats for this communication and others.
+
+One of the interesting concepts for integration between both the client side (this one) and the server side ([CoreKraft](https://github.com/Cleancodefactory/CoreKraft) for instance) are the `NodeSets` - mechanism that enables the programmer to describe the server data (residing in one or more databases) as trees (usually following the relations naturally originating from the data schemas) and then requesting/querying them and writing them back in parts or as while with many times less coding required than in a typical application following the RESTful pattern/standard.
+
+BindKraftJS does not require all those features from a server, the integration is a matter of optional components (mostly classes) inheriting from the basic ones, which are more general in nature. So, an effective desktops with sets of apps can be created with BindKraftJS on all kinds of servers, but the more specialized ones will bring to the table amazing ways to save time and effort in wide variety of cases.
 
 ### It is a different platform and not a framework
 
+**BindKraftJS is the path most other Javascript creations did not take**. In the beginning it happened by accident, but the benefits it brought were enough to get us serious about it - first for internal use (from 2011) and now openly as open source projects.
 
-**BindKraftJS is the path most other Javascript creations did not take**. In the beginning it happened by accident, but the benefits it brought were many - much more than even the initial creators expected. This resulted in intentional further development of the platform, first for internal use and then publicly as open source.
+While virtually all modern frameworks still follow a pattern that emerged from the classic WEB applications from the 90-s, BindKraft breaks out of the old concepts, because they were born by Internet where Javascript and any serious client side programming was wither too limited or too risky from compatibility point of view. If one looks behind even in (let say) 2010 the WEB browsers were more than ready for a general change of the way we are using them - leaving the page-to-page "navigation" to become a secondary concern and embracing approaches then seen as suitable for desktop applications only. Even today the navigation still rotates around the page-to-page concept even when the application lives on a single page. BindKraft intentionally evolved in different direction, but includes support for history and url navigation simulation - to keep the search engines happy and give the users some intuitive options. Still, these are the secondary concerns and not the only way to build well-designed applications with BindKraft.
 
-**What is so different?**
+Today, with the cloud computing becoming mainstream, WEB based apps taking over more and more of their desktop counterparts it is simply convenient to have a platform where, in the same programming environment, one can build both kinds of apps any business needs - the ones that serve its employees in their work and the ones facing the clients. Everybody knows that they differ in what's more important for each kind, but if they can naturally grow in the same soil, the integration of the data and data services involved can save enormous amounts of effort.
 
-Even before 2010 the majority of the Javascript libraries/frameworks converged in a sense. They all tended to follow and often imitate programming techniques and features born in languages and environments very different from the original Javascript and its natural habitats. At the time Javascript already had a long history, but there was very little in common between the ways programmers used it. The trends that brought the critical mass, that is responsible for its popularity today, were actually the once already mentioned - emulation of techniques considered foreign for Javascript before.
+### A few hints how things look inside (for first time visitors)
 
-As a result a lot of the inherent power of the Javascript concepts was left unharnessed by most of the new adopters. We did it differently - we combined imitation of other programming environments and natural classic Javascript techniques. The resulting environment is very much object oriented, both similar to more traditional OOP languages and also implemented in a very Javascripty fashion. 
+> BindKraftJS uses `prototype` to define OOP constructs
 
-> BindKraftJS uses prototype to define OOP constructs
-
-> BindKraftJS does not run away from the non-strict typing - it embraces the thing.
+> BindKraftJS does not run away from the non-strict typing - it embraces the thing, but introduces advanced typing techniques where needed
 
 > BindKraftJS marries the `class` and `interface` concepts with the `non-typed` nature of the classic Javascript
 
 > BindKraftJS expects the UI code to blend in the DOM and act as an extended layer and not stay aside forcibly acting in one predetermined role only (take MVC for example)
 
-> BindKraftJS recognizes the fact that the HTML DOM is a base, but not an ultimate solution by itself and defines higher level UI constructs for all cases when "blending with DOM" is not enough.
+> BindKraftJS recognizes the fact that the HTML DOM is a base, but not an ultimate solution by itself and defines higher level UI constructs and abstractions for all cases when "blending with DOM" is not enough.
 
-**And what is the result of all that?**
-
-BindKraftJS sees the WEB page as a `workspace` - a desktop-like environment where multiple applications (apps) can be opened and closed, work at the same time, occupy part of the screen or the whole page in different moments in time. Each app (that has UI) maintains sets of `logical windows`, some dealing with general layout (controlling the placement of their sub-windows), others containing the actual UI content (forms or call them views if you prefer). The applications can run in multiple instances in the same desktop (WEB page) if this makes sense (depending on what they do), they are fairly isolated from each other, but can interact - provide services, create content for further use in other apps and generally present the end user with a range of tools (applications) for a complex and diversified work - all on the same page/desktop. `Basically BindKraftJS adapts the desktop paradigm to the WEB page`.
-
-This goes better with a server or servers that are designed for such use (like CoreKraft for instance), but it also works with very simple server-side applications or/and WEB services provided by various servers. The communication layers in BindKraftJS use abstractions that enable easy migration to specialized servers (or building one yourself gradually), but also allow packing of complex communication scenarios on the client if there is no server to do it (or the case does not allow for server-side solution).
-
-> BindKraftJS assumes a `response to a request may contain multiple pieces` of data with different purposes. With specialized server this will greatly reduce the number of requests and the effort to collect the needed data and resources together.
-
-> BindKraftJS defines `2+ levels of communication abstraction` to enable transparency of the data retrieval. This makes possible flexible components that need complex control over the process, but still need to be independent of the actual mechanisms involved.
-
-On a granular level - when a form/view/component is developed BindKraftJS defines concepts like `data contexts`, `view borders`, `special locations` and employs mark-up syntax (mostly in attributes) to let the programmer wire `data`, `view` (HTML DOM) and `code components` together quickly reducing the development effort mostly to programming reactions, properties (sources of data), filters/formatters etc.
-
-The advanced data-binding is actually non-automatic, but provides the programmer with a rich set of techniques to control how and when it happens both en masse and at a very granular level - as needed. The optimizations that can be achieved are simply impossible with any automatic data-binding and also this eliminates any unwanted loops in a very natural fashion.
-
-BindKraftJS is not only for business projects! Obviously this is the strongest area for it, but having a desktop with applications in windows does not cut you from the option to present this more or less like a WEB page - it is a matter of design, behavior of the windows and a few features an app needs to support. It might be a bit more work for a small WEB site, but it actually saves huge amounts of effort for big ones.
-
-_Want to see how it goes? Check the gallery, the example environments, some of the projects we built (some are demos, others are production instances)._
 
 
