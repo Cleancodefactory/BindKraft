@@ -160,6 +160,27 @@ DOMUtil.toggleClass = function(el,cls) {
 		return el.className;
 	}
 }
+// Light DOM stuff
+DOMUtil.attr = function(el, attrname, val) {
+	if (el instanceof HTMLElement && typeof attrname == "string") {
+		if (arguments.length > 2) {
+			if (val == null) {
+				el.removeAttribute(attrname);
+			} else {
+				el.setAttribute(attrname, val);
+			}
+			return val;
+		} else {
+			var r = null;
+			if (el.hasAttribute(attrname)) {
+				r = el.getAttribute(attrname);
+				if (r == null) return "";
+				return r;
+			}
+		}
+	}
+	return null;
+}
 // Helpers
 DOMUtil.arrayFrom = function(nodes) {
 	var i, arr = [];

@@ -81,6 +81,16 @@ DOMUtilElement.prototype.countClass = function(cls) {
 	}
 	return 0;
 }
+// Primitive
+DOMUtilElement.prototype.attr = function(attrname, val) {
+	if (this.$element instanceof HTMLElement) {
+		if (argumens.length > 1) {
+			return DOMUtil.attr(this.$element,attrname,val);
+		} else {
+			return DOMUtil.attr(this.$element,attrname);
+		}
+	}
+}
 // Clonning
 DOMUtilElement.prototype.clone = function() {
 	if (this.$element != null) {

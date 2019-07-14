@@ -62,11 +62,34 @@ $Managed_BaseProxy.prototype.$buildProxyFrom = function(instance, iface, contain
 }
 
 $Managed_BaseProxy.prototype.$wrapResult = function(r, method) {
+	var op, me = this;
 	// Use ReturnType or if r is a proxy use it as a template
 	// Register in the local release container, ignore the one in the comming proxy
 	if (BaseObject.is(r, "$Managed_BaseProxy")) {
 		// Extract info from the proxy
 		return this.$buildProxyFromAnother(r,this.$container);
+	} else if (BaseObject.is(r, "ChunkedOperation")) {
+		op = new ChunkedOperation();
+		r.chunk(function(success,data) {
+			op.ReportOperationChunk(success,me.$wrapResult(data,method));
+		}).then(function (xop) {
+			if (xop.isOperationSuccessful()) {
+				op.CompleteOperation(true, me.$wrapResult(xop.getOperationResult()));
+			} else {
+				op.CompleteOperation(true, xop.getOperationErrorInfo());
+			}
+		});
+		return op;
+	} else if (BaseObject.is(r, "Operation")) {
+		op = new Operation();
+		r.then(function (xop) {
+			if (xop.isOperationSuccessful()) {
+				op.CompleteOperation(true, me.$wrapResult(xop.getOperationResult()));
+			} else {
+				op.CompleteOperation(true, xop.getOperationErrorInfo());
+			}
+		});
+		return op;
 	} else if (BaseObject.is(r, "BaseObject")) {
 		// Use the $returnType from interface definition
 		var rt = Class.returnTypeOf(this.$proxiedInterface,method);
