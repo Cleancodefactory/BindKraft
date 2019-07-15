@@ -21,7 +21,7 @@ IActionUnit.prototype.seal = function() { throw "not implemented"; }
 	E.g. code on the side of the issuer that processes action unit with action "select" after it has been executed. These situations are not very likely to occur, if you happen to be in one
 	it is a good idea to check the flow of your logic and make sure it is not wrong.
 */
-IActionUnit.prototype.issealed = function { throw "not implemented"; }
+IActionUnit.prototype.issealed = function() { throw "not implemented"; }
 /**
 	The action job requested/indended precessing kind.
 	Currently these are:

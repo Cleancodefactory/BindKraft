@@ -9,7 +9,7 @@ ActionUnit.prototype.$sealed = false;
 ActionUnit.prototype.seal = function() { 
 	this.$sealed = true;
 }
-ActionUnit.prototype.issealed = function { 
+ActionUnit.prototype.issealed = function() { 
 	return this.$sealed?true:false;
 }
 ActionUnit.prototype.$sealcheck = function() {
