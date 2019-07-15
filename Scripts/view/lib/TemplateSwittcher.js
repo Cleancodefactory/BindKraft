@@ -19,7 +19,8 @@ TemplateSwitcher.prototype.requireData = null;
 TemplateSwitcher.ImplementProperty("requiredata", new InitializeBooleanParameter("IF true remains empty if set_item sets null", null),"requireData");
 TemplateSwitcher.prototype.multiTemplate = false;
 TemplateSwitcher.ImplementProperty("multitemplate", new InitializeBooleanParameter("Enables/disables support for multi rooted templates. Default is false.", false), "multiTemplate");
-
+TemplateSwitcher.prototype.select = null;
+TemplateSwitcher.ImplementProperty("select", new Initialize("A callback to choose the template to use depending on the data. Provided with bindind like data-on-$select={bind source=some path=MethodName}", null), "select");
 TemplateSwitcher.prototype.nullTemplate = new InitializeStringParameter("The data-key of the template for missing/null data. Use with nullTemplateSwitch internal selector.", "null");
 TemplateSwitcher.prototype.notNullTemplate = new InitializeStringParameter("The data-key of the template for existing data. Use with nullTemplateSwitch internal selector.", "data");
 TemplateSwitcher.prototype.$template = null;
@@ -64,7 +65,6 @@ TemplateSwitcher.prototype.$selectTemplate = function() {
     }
 };
 // ... data-on-$select="{bind source=<any> path=selectorMethod}"
-TemplateSwitcher.prototype.select = null;
 TemplateSwitcher.prototype.$createChild = function() {
     var el = $(this.root);
     el.Empty();
