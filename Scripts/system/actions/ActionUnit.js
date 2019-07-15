@@ -21,7 +21,7 @@ ActionUnit.prototype.get_action = function() {
 }
 ActionUnit.prototype.set_action = function(a) { 
 	this.$sealcheck();
-	if (this.checkValueWith(ActionUnit.$actionChecker,a) {
+	if (this.checkValueWith(ActionUnit.$actionChecker,a)) {
 		this.$action = a;
 	} else {
 		throw "set_action accepts only strings";
@@ -57,7 +57,7 @@ ActionUnit.prototype.$contentKind = null;
 ActionUnit.prototype.get_contentKind = function() { return this.$contentKind; }
 ActionUnit.prototype.set_contentKind = function(v) { 
 	this.$sealcheck();
-	if (this.checkValueWith(ActionUnit.$actionChecker,a) {
+	if (this.checkValueWith(ActionUnit.$actionChecker,a)) {
 		this.$action = a;
 	} else {
 		throw "set_contentKind accepts only strings";
