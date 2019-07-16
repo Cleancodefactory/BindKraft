@@ -173,8 +173,8 @@ $Managed_BaseProxy.prototype.$wrapArguments = function(args, method) {
 	}
 	return result;
 }
-$Managed_BaseProxy.prototype.$eventTranslator = function(proxyEventDisp, argTypes) {
-	var args = Array.createCopyOf(arguments, 2);
+$Managed_BaseProxy.prototype.$eventTranslator = function(argTypes, _args) {
+	var args = Array.createCopyOf(arguments, 1);
 	for (var i = 0; i < args.length; i++) {
 		var v = args[i];
 		if (BaseObject.is(v, "$Managed_BaseProxy")) {
@@ -193,32 +193,41 @@ $Managed_BaseProxy.prototype.$eventTranslator = function(proxyEventDisp, argType
 			args[i] = v;
 		}
 	}
-	proxyEventDisp.invokeWithArgsArray(args);
+	return args;
 }
 
 // -Internals
 $Managed_BaseProxy.prototype.$initializeProxy = function() { // Called by the constructor of the generated class inheriting the base proxy.
+	var me = this;
+	// Register in the container if set
+	if (BaseObject.is(this.$container, "IManagedInterfaceContainer")) {
+		me = this.$container.register(this); // register returns the equivalent proxy from the container and Releases this one.
+		if (me != this) return me; // Skip init because we are dead already.
+	}
 	// Connect to instance
 	var original = this.Dereference();
+	var trans = null;
 	if (original != null) {
 		for (var key in this) {
 			if (this.hasOwnProperty(key) && 
 				BaseObject.is(this[key], "IEventDispatcher") &&
 				BaseObject.is(original[key], "IEventDispatcher")
 				) {
-				
-				original[key].add(new DelegateRev(this, this.$eventTranslator, [this[key],Class.eventArgumentsOf(this.$proxiedInterface,key)]));
-				// For reminder how it was: // original[key].add(this[key]); // Old style - no proxying
+				if (trans == null) {
+					trans = new DelegateRev(this, this.$eventTranslator, [Class.eventArgumentsOf(this.$proxiedInterface,key)])
+				}
+				this[key].set_translator(trans);
+				//original[key].add(new DelegateRev(this, this.$eventTranslator, [this[key],Class.eventArgumentsOf(this.$proxiedInterface,key)]));
+				original[key].add(this[key]); // Old style - no proxying
 			}
 		}
 	} else {
 		// TODO: Log
 		this.LASTERROR(_Errors.compose(),"Original not set, the proxy will not fully initialize and will be mostly useless.");
 	}
-	// Register in the container if set
-	if (BaseObject.is(this.$container, "IManagedInterfaceContainer")) {
-		this.$container.register(this);
-	}
+	
+	
+	return me;
 }
 // IDereference
 $Managed_BaseProxy.prototype.Dereference = function() {

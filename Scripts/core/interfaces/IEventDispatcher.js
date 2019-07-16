@@ -17,3 +17,7 @@ IEventDispatcher.prototype.removeAll = function() { throw "not impl"; }
 
 IEventDispatcher.prototype.invoke = function() { throw "not impl"; }
 IEventDispatcher.prototype.invokeWithArgsArray = function(args) { throw "not impl"; }
+
+// Sets an argument translator - transforms all the arguments for the handlers
+IEventDispatcher.prototype.get_translator = function() { throw "not impl"; }
+IEventDispatcher.prototype.set_translator = function(v) { throw "not impl"; }

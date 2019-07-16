@@ -5,10 +5,11 @@
 */
 
 /*CLASS*/
-function EventDispatherRegHelper(func, priority) {
+function EventDispatherRegHelper(func, priority, translator) {
     BaseObject.apply(this,arguments);
     this.handler = func;
     this.priority = priority;
+	this.translator = translator;
 }
 EventDispatherRegHelper.Inherit(BaseObject, "EventDispatherRegHelper");
 EventDispatherRegHelper.prototype.equals = function(obj) {
