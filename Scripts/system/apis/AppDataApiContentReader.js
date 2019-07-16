@@ -11,7 +11,7 @@ AppDataApiContentReader.prototype.content = function(filename, requiredContentTy
 	var f;
 	try {
 		f = this.$dir.item(filename);
-	} catch {
+	} catch(err) {
 		f = null;
 	}
 	if (f != null) {
@@ -28,7 +28,7 @@ AppDataApiContentReader.prototype.contentTypeOf = function(filename) {
 	var f;
 	try {
 		f = this.$dir.item(filename);
-	} catch {
+	} catch(err) {
 		f = null;
 	}
 	if (f != null) {
@@ -43,7 +43,7 @@ AppDataApiContentReader.prototype.isAvailable = function(filename) {
 	var f;
 	try {
 		f = this.$dir.item(filename);
-	} catch {
+	} catch(err) {
 		f = null;
 	}
 	if (BaseObject.is(f, "IMemoryFilePersistable")) {
