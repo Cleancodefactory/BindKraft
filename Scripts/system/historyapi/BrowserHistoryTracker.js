@@ -84,7 +84,7 @@ BrowserHistoryTracker.Default = (function () {
                 inst.$historyState = {
                     entryType: 'session_start',
                     className: '',
-                    title: 'KraftApps', //Eventually get a general name like KraftApps
+                    title: 'KraftApps', //Eventually get a general name like KraftApps TODO: Please do not act like Ivo Shabarkov!
                     instId: 0,
                     url: '#',
                     state: null
