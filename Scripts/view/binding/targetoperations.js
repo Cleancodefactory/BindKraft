@@ -134,7 +134,7 @@ Binding.TargetOperations = {
 				return this.textContent;
 			},
 			write: function(v){
-				this.textContent = v;
+				this.textContent = (v != null)?v:null;
 			}
 
 		},
