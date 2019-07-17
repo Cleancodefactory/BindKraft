@@ -67,9 +67,9 @@ Rect.empty = function() {
 Rect.fromDOMElement = function (_el) {
 	var el = DOMUtil.toDOMElement(_el);
 	if (el != null) {
-		if (el.offsetParent != null) {
+		//if (el.offsetParent != null) {
 			return new Rect(el.offsetLeft, el.offsetTop, el.offsetWidth, el.offsetHeight);
-		}
+		//}
 	}
 	return null;
 	/*
