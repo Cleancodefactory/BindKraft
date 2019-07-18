@@ -17,11 +17,14 @@ ICustomParameterizationStdImpl.classInitialize = function(cls, params) {
 	
 	cls.prototype.setObjectParameter = function(name, value, type) {
 		var allowed = this.$customParameterizationAllowedParamsList;
-		for (var i = 0; i < allowed.length; i++) {
+		if (this.$customParameterizationAllowedParamsList.indexOf(name) >= 0) return true;
+		this.LASTERROR(_Errors.compose(), "Trying to set parameter " + name + " to " + this.classType() + ", but it is not allowed by ICustomParameterization");
+		return false;
+		/*for (var i = 0; i < allowed.length; i++) {
 			if (name == allowed[i]) {
 				return true;
 			}
 		}
-		return false;
+		return false;*/
 	}
 }

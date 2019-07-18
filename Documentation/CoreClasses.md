@@ -8,6 +8,7 @@
 ## Core features
 
 [BaseObject class](CoreClasses/BaseObject.md) - the root most class
+[Class - type manipulator](CoreClasses/Class.md) - Static set of methods for type checks/queries and more.
 
 ### Delegation and events
 

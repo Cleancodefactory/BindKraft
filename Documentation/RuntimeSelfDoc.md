@@ -1,6 +1,6 @@
-# Runtime Self-Documenting
+# Runtime Self-Documenting and annotation
 
-BindKraftJS carries several special function that can be used for self-documenting. They all attach pieces of information to classes and members (in actuality classes are also functions for the Javascript itself.)
+BindKraftJS carries several special function that can be used for self-documenting and annotation. They all attach pieces of information to classes and/or their members (in actuality classes are also functions for the Javascript itself.)
 
 They are all chained and called over the member or class definitions.
 
@@ -55,6 +55,24 @@ MyClass.prototype.mymethod = function(a,b,c) { ... code ...}.Returns("some descr
 ```
 >Use only once per member. Describe the return result.
 
-## Additional declarative functions
+### Hide()
+
+Instructs any documentation browsers that the class/member should not be listed.
+
+## Annotation functions
+
+These functions have deeper role - they attach information needed by certain parts of BindKraftJS. 
+
+### ReturnType(iface)
+
+Declares the method's return type. Meaningful only in interfaces intended for local proxy wrapping or remoting. These are interfaces extending:
+
+- `IManagedInterface` - local proxy wrappable. These are used to expose LocalAPI or app services (see AppGate, LocalAPI, LocalAPIClient)
+
+- `IRequestInterface` - remoting interfaces.
+
+The type declared is `iface`. This must be name or definition (type) of a compatible interface - one that extends `IManagedInterface` or `IRequestInterface` depending on the purpose of the interface where the annotation is used.
+
+It is not necessary for the annotated method to always return this type - it can also return basic types (e.g. number, string etc.), but if (in whichever cases) the method returns a BindKraft object at any circumstances it will have to support the declared interface.
 
 ## How to consume the documenting information

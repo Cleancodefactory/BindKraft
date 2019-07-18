@@ -33,21 +33,33 @@ The above example checks if certain class supprts `IFreezable` interface (1) the
 
 ### Class.implementors(iface)
 
-### Class.funcDoc(func)
+Returns an array of the class names of all the classes that support the `iface`.
 
-### Class.getInterfaceDef(iface)
+### Class.funcDoc(func) (currently out of sync)
 
-### Class.getInterfaceName(iface)
+### Class.getInterfaceDef(iface) from v2.7.0
 
-### Class.doesextend(iface1, iface2)
+Returns the definition (the type) of an interface or null if it does not exist.
 
-### Class.doesexextendedInterfacestend(iface)
+### Class.getInterfaceName(iface) from v2.7.1
 
-### Class.extendedInterfaceDefs(iface)
+Returns the name of the interface or null if it does not exist. Even if you have the name, you can check if it is valid this way.
 
-### Class.isrequestable(iface)
+### Class.doesextend(iface1, iface2) from v2.7.1
 
-### Class.typeKind(def)
+Checks if `iface1` extends `iface2` and returns true or false.
+
+### Class.extendedInterfaces(iface) from v2.7.1
+
+Returns an array of the names of all the interfaces extended by `iface` directly or indirectly.
+
+### Class.extendedInterfaceDefs(iface) from v2.7.1
+
+Like `extendedInterfaces`, but returns array containing the definitions (types) instead.
+
+### Class.isrequestable(iface) from v2.7.1
+
+### Class.typeKind(def) from v2.18
 
 ### Class.getClassDef(cls)
 
@@ -57,19 +69,22 @@ The above example checks if certain class supprts `IFreezable` interface (1) the
 
 ### Class.supportsMethod(type, member)
 
-### Class.getClassName(cls)
+### Class.getClassName(cls) from v2.16.3
 
-### Class.defaultsOf(cls)
+### Class.defaultsOf(cls) from v2.7.3
 
-### Class.classDataOf(cls, dataType)
+### Class.classDataOf(cls, dataType) from v2.18
 
-### Class.interfaceDataOf(cls, iface)
+### Class.interfaceDataOf(cls, iface) from v2.18
 
-### Class.classes([filterproc])
+### Class.classes([filterproc]) from v2.15
 
-### Class.returnTypeOf(def, method)
+### Class.returnTypeOf(def, method) from v2.18
 
-### Class.argumentsOf(def, method)
+### Class.argumentsOf(def, method) from v2.18
 
-### Class.argumentOf(def, method, index)
+### Class.argumentOf(def, method, index) from v.2.18
 
+### Class.chunkTypeOf(def, method) from v2.18.5
+
+### Class.eventArgumentsOf(def, eventname) from v2.18.5

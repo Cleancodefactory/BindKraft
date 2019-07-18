@@ -16,6 +16,10 @@ Math.bitsOff = function (v, flags) {
 Math.bitsTest = function (v, flags) {
     return ((v & flags) == flags);
 };
+Math.bitsMasked = function(v, mask) {
+	return (v & mask);
+}
+
 
 Math.newGuid = function () {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {

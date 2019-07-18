@@ -21,7 +21,7 @@ WindowBehaviorBase.prototype.uninit = function(/*BaseWindow*/ wnd) {
 	this.onuninit(wnd);
 }
 WindowBehaviorBase.prototype.onuninit = function(wnd) {
-	// TODO: Override if needed. One can override ubinit directly, but onuninit is more convenient (no need to call the parent method).
+	// TODO: Override if needed. One can override uninit directly, but onuninit is more convenient (no need to call the parent method).
 }
 /*
 	You can attach to window messages through BaseWindow.registerExternalHandler in init, but there is easier way:

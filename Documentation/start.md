@@ -19,7 +19,7 @@ Additional overviews of specific features are listed in the "References" section
 
 ## References and thematic articles
 
-[OOP Conventions](OOPConventions.md) | [OOP Helpers](OOPHelpers.md) | [Runtime documentation and annotation](RuntimeSelfDoc.md)
+[OOP in BindKraftJS](OOP.md) | [OOP Conventions](OOPConventions.md) | [OOP Helpers](OOPHelpers.md) | [Runtime documentation and annotation](RuntimeSelfDoc.md)
 
 
 [Core OOP classes and interfaces](CoreClasses.md) - The core classes forming the platform on non-visual conceptual level. Building blocks used widely.
