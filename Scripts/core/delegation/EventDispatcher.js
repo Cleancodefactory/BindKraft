@@ -1,10 +1,11 @@
 
 
 /*CLASS*/
-function EventDispatcher(targetObject) {
+function EventDispatcher(targetObject,calltranslator) {
     BaseObject.apply(this, arguments);
     this.handlers = [];
     this.target = targetObject;
+	this.$translator = calltranslator;
 };
 EventDispatcher.Inherit(BaseObject, "EventDispatcher");
 EventDispatcher.Implement(IInvocationWithArrayArgs);
@@ -81,9 +82,18 @@ EventDispatcher.prototype.$postInvoke = function (handler) {
         }
     }
 } .Description("Invokes the handler with the remembered arguments in this.$happened");
+EventDispatcher.prototype.$translateArgs = function(args) {
+	if (this.$translator == null) return args; // For speed
+	if (BaseObject.is(this.$translator, "IInvocationWithArrayArgs")) {
+		return this.$translator.invokeWithArgsArray(args);
+	}
+	this.LASTERROR(_Errors.compose(),"The translator set in an EventDispatcher is not IInvocationWithArrayArgs and will be ignored");
+	return args;
+}
 EventDispatcher.prototype.invoke = function () {
     if (this.isFrozen()) return;
 	var args = Array.createCopyOf(arguments);
+	args = this.$translateArgs(args);
     this.$happened = args;
     if (this.handlers != null && this.handlers.length) {
         var f;
@@ -107,13 +117,14 @@ EventDispatcher.prototype.invoke = function () {
 EventDispatcher.prototype.invokeWithArgsArray = function (args) {
     if (this.isFrozen()) return;
     var a = (args == null) ? [] : args;
+	a = this.$translateArgs(a);
     this.$happened = a;
     var f;
 	var fd = null; // For deletion
     for (var i = 0; this.handlers != null && i < this.handlers.length; i++) {
         f = this.handlers[i];
         if (f != null) {
-			if (f.applyHandler(this.target, args) === false) {
+			if (f.applyHandler(this.target, a) === false) {
 				(fd = fd || []).push(i);
 			}
 		}
@@ -125,6 +136,9 @@ EventDispatcher.prototype.invokeWithArgsArray = function (args) {
 	}
     return this;
 };
+EventDispatcher.prototype.get_translator = function() { return this.$translator; }
+EventDispatcher.prototype.set_translator = function(v) { this.$translator = v; }
+
 EventDispatcher.prototype.getWrapper = function () {
     var localThis = this;
     return function () {

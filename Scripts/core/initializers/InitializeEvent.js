@@ -19,6 +19,11 @@ InitializeEvent.prototype.produceDefaultValue = function (obj) {
 	}
     return null;
 };
+InitializeEvent.prototype.Arguments = function() {
+	var args = Array.createCopyOf(arguments);
+	this.$argumentTypes = args; // Verified when used (To support forward declarations we cannot verify them here)
+	return this;
+};
 InitializeEvent.prototype.defValueDescription = function () {
     return {
         value: "",

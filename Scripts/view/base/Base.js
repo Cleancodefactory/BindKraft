@@ -258,54 +258,10 @@ Base.prototype.makeCascadeCall = function(e_sender, dc, bind) {
 	throw "makeCascadeCall requires bindingParameter in the form Type.Method e.g. {bind source=x/y path=makeCascadeCall parameter='PMyProtocol.MyMethod'}"
 }
 Base.prototype.isTemplateRoot = function () {
-    var jqthis = $(this.root);
-    if (jqthis.attr("data-template-root") != null) return true;
+	if (DOMUtil.attr(this.root, "data-template-root") != null) return true;
     if (this.is("ITemplateRoot")) return true;
     return false;
 };
-Base.resourceUrl = null;
-// TODO: This should be removed as part of the caching refactoring
-Base.prototype.loadClassResources = function (callback) { // return true if already loaded (and do not call the callback), false if load is scheduled (in which case you must call the callback)
-    var url = Function.classes[this.classType()].resourceUrl;
-    // var localThis = this;
-    if (url != null && url.length > 0 && !Binding.resources.isLoaded(this.classType())) {
-        this.ajaxGetXml(url, null, function (result) {
-            if (result != null && result.status.issuccessful) {
-                if (BaseObject.is(result.resources, "string")) {
-                    Binding.resources.setLoaded(this.classType(), JSON.parse(result.resources));
-                } else {
-                    Binding.resources.setLoaded(this.classType(), result.resources);
-                }
-            }
-            if (this.loadLookups(callback)) {
-                if (callback != null) {
-                    callback.call(this);
-                }
-                return false;
-            }
-        }, false);
-    } else {
-        if (this.loadLookups(callback)) {
-            if (callback != null) callback.call(this);
-            return false;
-        }
-    }
-    return true; // no resources to load
-};
-Base.lookupUrl = null; // Used by the default implementation
-Base.prototype.loadLookups = function (callback) { // return true if already loaded, false if load is scheduled
-    // Override to support different schemas for URL calculation
-    if (Binding.$lookups.loadLookups(Function.classes[this.classType()].lookupUrl, this, function () {
-        this.lookups = Binding.$lookups.data[Function.classes[this.classType()].lookupUrl];
-        if (callback != null) callback.call(this);
-    })) {
-        // already loaded - just map them and return true (meaning already loaded)
-        this.lookups = Binding.$lookups.data[Function.classes[this.classType()].lookupUrl];
-        return true;
-    }
-    return false;
-};
-Base.prototype.lookups = null; // reference to a cached lookup tree
 Base.prototype.get_data = function () {
     if (IsNull(this.root)) {
         return null;

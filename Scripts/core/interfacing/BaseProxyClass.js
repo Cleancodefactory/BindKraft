@@ -62,11 +62,34 @@ $Managed_BaseProxy.prototype.$buildProxyFrom = function(instance, iface, contain
 }
 
 $Managed_BaseProxy.prototype.$wrapResult = function(r, method) {
+	var op, me = this;
 	// Use ReturnType or if r is a proxy use it as a template
 	// Register in the local release container, ignore the one in the comming proxy
 	if (BaseObject.is(r, "$Managed_BaseProxy")) {
 		// Extract info from the proxy
 		return this.$buildProxyFromAnother(r,this.$container);
+	} else if (BaseObject.is(r, "ChunkedOperation")) {
+		op = new ChunkedOperation();
+		r.chunk(function(success,data) {
+			op.ReportOperationChunk(success,me.$wrapResult(data,method));
+		}).then(function (xop) {
+			if (xop.isOperationSuccessful()) {
+				op.CompleteOperation(true, me.$wrapResult(xop.getOperationResult(), method));
+			} else {
+				op.CompleteOperation(true, xop.getOperationErrorInfo());
+			}
+		});
+		return op;
+	} else if (BaseObject.is(r, "Operation")) {
+		op = new Operation();
+		r.then(function (xop) {
+			if (xop.isOperationSuccessful()) {
+				op.CompleteOperation(true, me.$wrapResult(xop.getOperationResult(), method));
+			} else {
+				op.CompleteOperation(true, xop.getOperationErrorInfo());
+			}
+		});
+		return op;
 	} else if (BaseObject.is(r, "BaseObject")) {
 		// Use the $returnType from interface definition
 		var rt = Class.returnTypeOf(this.$proxiedInterface,method);
@@ -150,26 +173,61 @@ $Managed_BaseProxy.prototype.$wrapArguments = function(args, method) {
 	}
 	return result;
 }
+$Managed_BaseProxy.prototype.$eventTranslator = function(argTypes, _args) {
+	var args = Array.createCopyOf(arguments, 1);
+	for (var i = 0; i < args.length; i++) {
+		var v = args[i];
+		if (BaseObject.is(v, "$Managed_BaseProxy")) {
+			// Use the passed proxy as a template - overrides any Arguments specified for the function.
+			args[i] = this.$buildProxyFromAnother(v, this.$container);
+		} else if (BaseObject.is(v, "BaseObject")) {
+			// Use the Arguments configuration for the function (availability is crucial
+			var arg_type = (argTypes != null)?argTypes[i]:null;
+			if (arg_type == null) {
+				// No type info - no way to wrap the argument
+				throw "Cannot wrap the argument " + i + " of " + method + " because .Arguments describer is not used or does not declare interface for the argument. The type being passed as argument is: " + v.classType();
+			}
+			args[i] = this.$buildProxyFrom(v, arg_type, this.$container);
+		} else {
+			$Managed_BaseProxy.$notRef(v);
+			args[i] = v;
+		}
+	}
+	return args;
+}
+
 // -Internals
 $Managed_BaseProxy.prototype.$initializeProxy = function() { // Called by the constructor of the generated class inheriting the base proxy.
+	var me = this;
+	// Register in the container if set
+	if (BaseObject.is(this.$container, "IManagedInterfaceContainer")) {
+		me = this.$container.register(this); // register returns the equivalent proxy from the container and Releases this one.
+		if (me != this) return me; // Skip init because we are dead already.
+	}
 	// Connect to instance
 	var original = this.Dereference();
+	var trans = null;
 	if (original != null) {
 		for (var key in this) {
 			if (this.hasOwnProperty(key) && 
 				BaseObject.is(this[key], "IEventDispatcher") &&
 				BaseObject.is(original[key], "IEventDispatcher")
 				) {
-				original[key].add(this[key]); // Attach to the original dispatcher
+				if (trans == null) {
+					trans = new DelegateRev(this, this.$eventTranslator, [Class.eventArgumentsOf(this.$proxiedInterface,key)])
+				}
+				this[key].set_translator(trans);
+				//original[key].add(new DelegateRev(this, this.$eventTranslator, [this[key],Class.eventArgumentsOf(this.$proxiedInterface,key)]));
+				original[key].add(this[key]); // Old style - no proxying
 			}
 		}
 	} else {
 		// TODO: Log
+		this.LASTERROR(_Errors.compose(),"Original not set, the proxy will not fully initialize and will be mostly useless.");
 	}
-	// Register in the container if set
-	if (BaseObject.is(this.$container, "IManagedInterfaceContainer")) {
-		this.$container.register(this);
-	}
+	
+	
+	return me;
 }
 // IDereference
 $Managed_BaseProxy.prototype.Dereference = function() {

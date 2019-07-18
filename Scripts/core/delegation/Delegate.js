@@ -28,7 +28,6 @@ Delegate.prototype.obliterate = function (bFull) {
     if (this.parameters != null) delete this.parameters;
     this.__obliterated = true;
 };
-
 Delegate.prototype.invoke = function () {
 	if (this.__obliterated) return null;
     var args = [];
@@ -56,7 +55,7 @@ Delegate.prototype.invokeOn = function (thisObj) {
 	if (this.__obliterated) return null;
     var a = Array.createCopyOf(arguments,1);
     if (this.parameters != null && this.parameters.length > 0) a = a.concat(this.parameters);
-    if (this.func) return this.func.apply(thisObj, args);
+    if (this.func) return this.func.apply(thisObj, a);
     return null;
 }.Description("Executes delegate ( function ) for an object")
  .Param("thisObj","Object over which the delegate will be executed")

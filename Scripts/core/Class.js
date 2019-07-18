@@ -250,6 +250,39 @@ var Class = {
 			}
 			return null;
 		},
+		// +V: 2.18.5
+		chunkTypeOf: function(def, method) {
+			var t = this.getType(def);
+			if (t != null) {
+				if (t.prototype && typeof t.prototype[method] == "function") {
+					var ct = Class.getType(t.prototype[method].$chunkType);
+					if (ct == null) return Class.returnTypeOf(def, method); // Fallback to the return type.
+				}
+			}
+			return null;
+		},
+		eventArgumentsOf: function(def, eventdecl) {
+			var t = this.getType(def);
+			if (t != null) {
+				if (t.prototype && BaseObject.is(t.prototype[eventdecl],"InitializeEvent")) {
+					var argtypes = t.prototype[eventdecl].$argumentTypes;
+					if (BaseObject.is(argtypes, "Array")) {
+						argtypes = Array.createCopyOf(argtypes);
+						for (var i = 0; i < argtypes.length; i++) {
+							var arg = Class.getType(argtypes[i]);
+							if (arg != null) {
+								argtypes[i] = arg;
+							} else {
+								argtypes[i] = null; // Any but not class
+							}
+						}
+						return argtypes;
+					}
+				}
+			}
+			return null; // No definition
+		},
+		// -V: 2.18.5
 		// Array of the declared with Arguments argument types, only BK types are returned, the rest are nulls (no matter how declared).
 		argumentsOf: function(def, method) {
 			var t = this.getType(def);
