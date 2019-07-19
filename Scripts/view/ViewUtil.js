@@ -1,13 +1,16 @@
 // +VERSION 2.11.4
 // Obliteration bridge (should be attached to the correct API Jquery or DOMM)
 JBUtil.Empty = function(rawelement) {
-	$(rawelement).Empty();
+	DOMUtil.Empty(rawelement);
+	// $(rawelement).Empty();
 }
 JBUtil.Clean = function(rawelement) {
-	$(rawelement).Clean();
+	DOMUtil.obliterateDom(rawelement);
+	// $(rawelement).Clean();
 }
 JBUtil.Remove = function(rawelement) {
-	$(rawelement).Remove();
+	DOMUtil.Remove(rawelement);
+	// $(rawelement).Remove();
 }
 // End Obliteration bridge
 // -VERSION 2.11.4

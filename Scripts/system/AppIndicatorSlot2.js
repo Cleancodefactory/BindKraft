@@ -21,8 +21,12 @@ AppIndicatorSlot2.ImplementProperty("class", new InitializeStringParameter("Clas
 AppIndicatorSlot2.ImplementProperty("indicator", new Initialize("pluginto slot for the indicator component", null)); // it has to support IAppIndicator
 
 
-AppIndicatorSlot2.prototype.OnClassChanged = function() {
-	// JBUtil.parseDataClass
+AppIndicatorSlot2.prototype.OnClassChanged = function(prop, oldval, newval) {
+	this.$emptySlot().whencomplete().tell(function() {
+		if (typeof newval == "string" && !/^\s*$/.test(newval)) {
+			this.$fillSlot();
+		}
+	}
 }
 
 AppIndicatorSlot2.prototype.$fillSlot = function() {
@@ -32,10 +36,30 @@ AppIndicatorSlot2.prototype.$fillSlot = function() {
 		if (p != null) {
 			var clsdef = Class.getClassDef(p.className);
 			if (Class.is(p.className, "IAppIndicator")) {
-				var str = '<span data-class="' + clsdef.classType + '" data-on-pluginto="{bind source=__control path=indicator}" data-context-border="true"></span>';
+				var dtCls = p.className;
+				if (p.parameters != null && !/^\s*$/.test(p.parameters)) {
+					dtCls += '' + p.parameters;
+				}
+				var str = '<span data-class="' + dtCls + '" data-on-pluginto="{bind source=__control path=indicator}" data-context-border="true"></span>';
+				ViewBase.cloneTemplate(this.root, str, {});
+				this.rebind();
+				this.updateTargets();
 			} else {
 				this.LASTERROR(_Errors.compose(), p.className + " does not exist or does not support IAppIndicator", "$fillSlot");
 			}
 		}
 	}
+}
+AppIndicatorSlot2.prototype.$emptySlot = function() {
+	var op;
+	if (BaseObject.is(this.get_indicator(),"IAppIndicator")) {
+		op = Operation.From(this.get_indicator().unPlug());
+	} else {
+		op = OperationFrom(null);
+	}
+	op.then(function(_op) {
+		JBUtil.Empty(this.root);
+		this.$indicator = null;
+	});
+	return op;
 }

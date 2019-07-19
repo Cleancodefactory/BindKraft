@@ -411,8 +411,10 @@ SysShell.prototype.launchEx = function(_appClass, _options,/* callset of argumen
 			// Call app's appshutdown
 			var shutdownsuccess = app.appshutdown.call(app,function(success) {
 				// Async return
-				appgate.releaseAll();
-				appgate.revokeAllLocalAPI();
+				if (appgate != null) {
+					appgate.releaseAll();
+					appgate.revokeAllLocalAPI();
+				}
 				_shell.$dispatcherLeasing.clearInst(app); // Deprecated
 				// no matter the success - remove this from the running apps
 				// If we add a register for kranked zombies (apps) we can add it there n this step if it returns failure
@@ -421,15 +423,19 @@ SysShell.prototype.launchEx = function(_appClass, _options,/* callset of argumen
 			});
 			// Sync return - requires true or false explicitly
 			if (shutdownsuccess === false) {
-				appgate.releaseAll();
-				appgate.revokeAllLocalAPI();
+				if (appgate != null) {
+					appgate.releaseAll();
+					appgate.revokeAllLocalAPI();
+				}
 				_shell.$dispatcherLeasing.clearInst(app); // Deprecated
 				// If we add a register for kranked zombies (apps) we can add it there in this step
 				_shell.get_runningapps().removeElement(app);
 				sop.CompleteOperation(false,"The app reported shutdown failure.");
 			} else if (shutdownsuccess === true) {
-				appgate.releaseAll();
-				appgate.revokeAllLocalAPI();
+				if (appgate != null) {
+					appgate.releaseAll();
+					appgate.revokeAllLocalAPI();
+				}
 				_shell.$dispatcherLeasing.clearInst(app); // Deprecated
 				_shell.get_runningapps().removeElement(app);
 				sop.CompleteOperation(true,null);

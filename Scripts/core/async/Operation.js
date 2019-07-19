@@ -88,6 +88,17 @@ Operation.prototype.then = function(callback) {
 		var old = this.get_completionroutine();
 		if (BaseObject.is(old,"SugarryDispatcher")) {
 			old.tell(callback);
+		} else if (BaseObject.isCallback(old)) {
+			var wrapper = new SugaryDispatcher();
+			this.set_completionroutine(wrapper);
+			if (!this.$handlingdone) {
+				wrapper.tell(old);
+			}
+			wrapper.tell(callback);
+			if (this.$handlingdone && this.isOperationComplete()) {
+				// Ivoke it forcibly because we missed the completion and wrapper did not exist then
+				wrapper.invoke(this);
+			}
 		} else {
 			this.set_completionroutine(callback);
 		}
