@@ -39,12 +39,17 @@ Function.prototype.ReturnType = function(iface) {
 	}
     return this;
 }.Hide();
+Function.prototype.ChunkType = function(iface) {
+	this.$chunkType = Class.getType(iface);
+	if (this.$chunkType == null) {
+		CompileTime.err("Cannot resolve the specified type in a ChunkType method decoration. The type specified: " + (typeof iface == "string")?iface + ", check if the type is declared prior to using it in ChunkType decorator.":"not specified as string - check if you have parasitic definition");
+	}
+}.Hide();
 Function.prototype.Arguments = function() {
 	var args = Array.createCopyOf(arguments);
-	var arg;
 	this.$argumentTypes = args; // Verified when used (To support forward declarations we cannot verify them here
 	return this;
-}
+}.Hide();
 Function.prototype.Virtual = function(isvirt) {
 	// Because all methods are de facto virtual this mostly signifies that the method can be overriden optionally.
     var b = (arguments.length > 0)?(isvirt?true:false):true;

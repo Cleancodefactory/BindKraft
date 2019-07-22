@@ -97,7 +97,7 @@ LocalProxyContainer.prototype.releaseAll = function(prxy_or_prxyclass) {
 			for (k in proxyClassBranch) {
 				if (proxyClassBranch.hasOwnProperty(k)) { // Prevent unwanted protos
 					if (BaseObject.is(proxyClassBranch[k], "IManagedInterface")) {
-						proxyClassBranch[k].Release();
+						proxyClassBranch[k].Release(true);
 					}
 				}
 			}
@@ -192,7 +192,7 @@ LocalProxyContainer.prototype.registerByTarget = function(prxy,_level) {
 			if (proxyClassBranch.hasOwnProperty(k)) { // Prevent unwanted protos
 				var _target = DummyInterfaceProxyBuilder.Dereferece(proxyClassBranch[k]);
 				if (target == _target) {
-					prxy.Release();
+					prxy.Release(); // TODO: This is usually (may be always) called for a proxy that is not yet registered anywhere, so Release(true) may be better?
 					return proxyClassBranch[k];
 				}
 			}

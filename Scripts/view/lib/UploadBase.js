@@ -24,17 +24,19 @@ UploadBase.ImplementProperty("moduleName", new InitializeStringParameter("", "")
 UploadBase.ImplementProperty("url", new InitializeStringParameter("", ""));
 
 //Events
+UploadBase.prototype.uploadmounted = new InitializeEvent("Fires when file(s) is mounted/selected in the input element.");
 UploadBase.prototype.uploadstarted = new InitializeEvent("Fires when the upload starts.");
 UploadBase.prototype.uploadonprogress = new InitializeEvent("Fires constantly while the upload is uploading.");
-UploadBase.prototype.uploadsuccess = new InitializeEvent("Fired every time when the upload is completed successfully.");
-UploadBase.prototype.uploadfailed = new InitializeEvent("Fired every time when the upload is failed.");
-UploadBase.prototype.onerror = new InitializeEvent("");
-
+UploadBase.prototype.uploadsuccess = new InitializeEvent("Fired everytime when the upload is completed successfully.");
+UploadBase.prototype.uploadfailed = new InitializeEvent("Fired everytime when the upload is failed.");
+UploadBase.prototype.onerror = new InitializeEvent("Fires everytime when error occurs with the proper error message as argument.");
 
 UploadBase.prototype.init = function () {
     if ($$(this.root).first().getChildren().length = 0) {
         $$(this.root).first().empty().append(this.get_template());
     }else{
+        //The code below should create the input 
+        //------------------------------------------
         // $$(this.root).first().select("input['file']").first()
         //     .attributes("data-on-change", "{bind source=__control path=OnFilesSelected}")
         //     .attributes("data-on-pluginto", "{bind source=__control path=$filesfield}");
@@ -47,6 +49,7 @@ UploadBase.prototype.init = function () {
 }
 
 UploadBase.prototype.finalinit = function() {
+    debugger;
     if (this.get_filesfield() == null || this.get_filesfield() == undefined) return;
 
     var filesField = $$(this.get_filesfield()).first();
@@ -64,10 +67,13 @@ UploadBase.prototype.$mappedUrl = function() {
     return IPlatformUrlMapper.mapModuleUrl(this.get_url(), this.get_moduleName());
 }
 
-UploadBase.prototype.OnFilesSelected = function () {
-    if(this.get_autosubmit()){
+UploadBase.prototype.OnFilesSelected = function (ev) {
+    if (ev.target.files.length == 0) return;
+    if (this.get_autosubmit() == true || this.get_autosubmit() == 'true'){
         this.SubmitFiles();
     }
+
+    this.uploadmounted.invoke(this, ev.target.files);
 }
 
 UploadBase.prototype.SubmitFiles = function () {
@@ -92,6 +98,7 @@ UploadBase.prototype.SubmitFiles = function () {
 }
 
 UploadBase.prototype.SendRequest = function(formData){
+    debugger;
     if(formData == null || formData == undefined) return;
     if(!this.get_filesfield().value) return;
 

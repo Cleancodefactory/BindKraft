@@ -35,6 +35,7 @@ ChunkedOperation.prototype.OperationClear = function() {
 	return this;
 }
 ChunkedOperation.prototype.chunk = function(callback,callbackfail) {
+	if (callbackfail == null) callbackfail = callback;
 	if (BaseObject.isCallback(callback)) {
 		this.set_chunkroutine(function(success,data) {
 			if (success) {

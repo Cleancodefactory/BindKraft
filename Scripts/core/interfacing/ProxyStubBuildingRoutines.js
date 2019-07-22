@@ -35,7 +35,7 @@ var ProxyStubBuildingRoutines = {
 		if (cls == null) {
 			// Not created yet - create it now
 			cls = new Function("instance","transport","builder","container",
-			'$Managed_BaseProxy.call(this,instance,transport,builder,container); this.$initializeProxy();');
+			'$Managed_BaseProxy.call(this,instance,transport,builder,container); return this.$initializeProxy();');
 			cls.Inherit(baseProxyDef, proxyClassName);
 			cls.ImplementEx(ifaceDef);
 			cls.prototype.$proxiedInterface = ifaceDef;
