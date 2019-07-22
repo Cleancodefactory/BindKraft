@@ -13,11 +13,12 @@ BrowserHistoryTracker.prototype.$lastPushedState = null;
 
 //+IHistoryTracker
 BrowserHistoryTracker.prototype.pushHistoryState = function (_app, appstate) {
+	if (_app == null) return;
+	var app = _app.Dereference();
 	if (!BaseObject.is(_app, "IAppBase")) {
 		this.LASTERROR(_Errors.compose(),"The pushHistoryState expects an app as first argument. Nothing was done.");
 		return;
 	}
-	var app = _app.Dereference();
     //Check if appstate is string and throw exception
     if (typeof appstate !== 'string') {
         throw 'appstate should be of type string';
@@ -127,7 +128,7 @@ BrowserHistoryTracker.prototype.onPopstateHandler = function (event) {
     if (event.state !== null) {
         if (!this.$allowLeave) {
             if (event.state.entryType === 'session_start') {
-                if (window.confirm('Do you want to leave the page and loose your work?')) {
+                if (window.confirm('Do you want to leave the page and possibly lose your work?')) {
                     window.history.back();
                     return;
                 } else {
