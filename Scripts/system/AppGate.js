@@ -207,7 +207,7 @@ AppGate.prototype.bindAppsByClassNames = function(className1, className2, classN
 	var classNames = Array.createCopyOf(arguments,1);
 	var apps = this.$shell.getAppsByFilter(function(app) {
 		if (classNames.length > 0 && !classNames.Any(Predicates.TypeIs(app))) return false;
-		if (BaseObject.is(app,iface)) return true;
+		if (BaseObject.is(app,"IManagedInterface")) return true;
 		return false;
 	});
 	return this.$container.register(this.$wrap(IManagedInterface, apps));

@@ -22,6 +22,7 @@
 //#using "../CLShortcutsHelper.js"
 //#using "../CLRecentShortcuts.js"
 //#using "../AppIndicatorSlot.js"
+//#using "../AppIndicatorSlot2.js"
 //#using "../surrogateapps/surrogateapps-full.dep"
 //#using "../base/base-full.dep"
 //#using "../apis/apis-full.dep"

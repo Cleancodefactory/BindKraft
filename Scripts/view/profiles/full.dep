@@ -7,7 +7,7 @@
 //#using "../implementors/implementors-full.dep"
 
 //#using "../ViewUtil.js"
-
+//#using "../Materialize.js"
 //#using "../base/base-full.dep"
 //#using "../jbtrace.js"
 //#using "../binding/binding-full.dep"

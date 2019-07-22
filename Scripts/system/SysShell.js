@@ -17,12 +17,15 @@ function SysShell(shellspace) {
 	this.$dispatcherLeasing = new EventDispatchLeasing("IAppBase");
     $(document).bind("keydown", Delegate.createWrapper(this, this.$sysKeyBindings));
     System.Default().shutdownevent.add(new Delegate(this, this.shutdown));
+	this.shellLocalApi = new ShellLocalApi(this);
+	LocalAPI.Default().registerAPI(IShellApi,this.shellLocalApi);
 }
 SysShell.Inherit(BaseObject, "SysShell");
 SysShell.Implement(IAjaxContextParameters);
 SysShell.Implement(IStructuralQueryProcessorImpl);
 SysShell.Implement(IDOMConnectedObject);
 SysShell.Implement(IStructuralQueryRouterImpl,"sysshell",function(){ return null;});
+SysShell.prototype.shellLocalApi = null;
 // BEGIN IAjaxContextParameters - implementation
 SysShell.prototype.get_localajaxcontextparameter = function(param) {
     if (this.$ajaxcontextparameter != null && this.$ajaxcontextparameter["" + param] != null) return this.$ajaxcontextparameter["" + param];
@@ -407,6 +410,7 @@ SysShell.prototype.launchEx = function(_appClass, _options,/* callset of argumen
 			// call the app to revoke local API exposed by it - the app is responsible to record what it has exposed and revoke accordingly
 			exposeLocalAPIs(true); // sync operation
 			// Notify workspace for the shutting down
+			if (_shell.shellLocalApi) _shell.shellLocalApi.appstop.invoke(app.$__instanceId, appClass);
 			Messenger.Instance().post(new AppStartStopMessage(app,AppStartStopEventEnum.stop));
 			// Call app's appshutdown
 			var shutdownsuccess = app.appshutdown.call(app,function(success) {
@@ -521,6 +525,7 @@ SysShell.prototype.launchEx = function(_appClass, _options,/* callset of argumen
 				op.CompleteOperation(true,app);
 				// _shell.callAsync( function() {
 					app.run.apply(app, args);
+					if (_shell.shellLocalApi) _shell.shellLocalApi.appstart.invoke(app.$__instanceId, appClass);
 					Messenger.Instance().post(new AppStartStopMessage(app,AppStartStopEventEnum.start));
 				// });
 			} else {
@@ -579,7 +584,7 @@ SysShell.prototype.launchEx = function(_appClass, _options,/* callset of argumen
 		var syncinitsuccess = app.appinitialize.apply(app, args);
 		if (syncinitsuccess === true) {
 			// If it returns synchronously : init SUCCESS
-			this.get_runningapps().addElement(app);
+			_shell.get_runningapps().addElement(app);
 			app.set_instanceid(app.$__instanceId);
 			args.shift();
 			// call the app to expose API (only if everything else succeds)
@@ -587,6 +592,7 @@ SysShell.prototype.launchEx = function(_appClass, _options,/* callset of argumen
 			op.CompleteOperation(true,app);
 			// this.callAsync( function() {
 				app.run.apply(app, args);
+				if (_shell.shellLocalApi) _shell.shellLocalApi.appstart.invoke(app.$__instanceId, appClass);
 				Messenger.Instance().post(new AppStartStopMessage(app,AppStartStopEventEnum.start));
 			// });
 		} else if (syncinitsuccess === false) {

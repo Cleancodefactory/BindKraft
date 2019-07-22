@@ -10,3 +10,4 @@
 //#using "ProxyInterfaceBuilderBase.js"
 //#using "DummyProxyInterfaceBuilder.js"
 //#using "LocalProxyContainer.js"
+//#using "LocalProxyCollection.js"

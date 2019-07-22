@@ -16,17 +16,20 @@ function AppIndicatorSlot2() {
 AppIndicatorSlot2.Inherit(Base,"AppIndicatorSlot2");
 AppIndicatorSlot2.Implement(IUIControl);
 AppIndicatorSlot2.Implement(ICustomParameterizationStdImpl,"class");
-AppIndicatorSlot2.ImplementProperty("class", new InitializeStringParameter("Class name of the indicator to load", null, "OnClassChanged")); // it has to support IAppIndicator
+AppIndicatorSlot2.ImplementProperty("class", new InitializeStringParameter("Class name of the indicator to load",null), null, "OnClassChanged"); // it has to support IAppIndicator
 
 AppIndicatorSlot2.ImplementProperty("indicator", new Initialize("pluginto slot for the indicator component", null)); // it has to support IAppIndicator
 
 
 AppIndicatorSlot2.prototype.OnClassChanged = function(prop, oldval, newval) {
-	this.$emptySlot().whencomplete().tell(function() {
-		if (typeof newval == "string" && !/^\s*$/.test(newval)) {
-			this.$fillSlot();
-		}
-	}
+	this.ExecWhenInitialized(arguments, function() {
+		var me = this;
+		this.$emptySlot().whencomplete().tell(function() {
+			if (typeof newval == "string" && !/^\s*$/.test(newval)) {
+				me.$fillSlot();
+			}
+		});
+	});
 }
 
 AppIndicatorSlot2.prototype.$fillSlot = function() {
@@ -41,9 +44,15 @@ AppIndicatorSlot2.prototype.$fillSlot = function() {
 					dtCls += '' + p.parameters;
 				}
 				var str = '<span data-class="' + dtCls + '" data-on-pluginto="{bind source=__control path=indicator}" data-context-border="true"></span>';
-				ViewBase.cloneTemplate(this.root, str, {});
+				var roots = Materialize.cloneTemplate(this.root, str, {});
 				this.rebind();
 				this.updateTargets();
+				var ar = this.afterAsync(ar, function () {
+					var arrObjs = Materialize.activeClasses(roots, "IAppIndicator");
+					arrObjs.Each(function(idx, obj) {
+							obj.plug();
+					});
+				});
 			} else {
 				this.LASTERROR(_Errors.compose(), p.className + " does not exist or does not support IAppIndicator", "$fillSlot");
 			}
@@ -55,7 +64,7 @@ AppIndicatorSlot2.prototype.$emptySlot = function() {
 	if (BaseObject.is(this.get_indicator(),"IAppIndicator")) {
 		op = Operation.From(this.get_indicator().unPlug());
 	} else {
-		op = OperationFrom(null);
+		op = Operation.From(null);
 	}
 	op.then(function(_op) {
 		JBUtil.Empty(this.root);

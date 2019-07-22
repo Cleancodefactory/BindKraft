@@ -11,5 +11,10 @@ var Predicates = {
 			if (BaseObject.is(instance, item)) return true;
 			return null;
 		}
+	},
+	Equals: function(tocompare) {
+		return function(idx, item) {
+			return BaseObject.equals(tocompare, item);
+		}
 	}
 };

@@ -212,8 +212,25 @@ Base.prototype.OnDataContextChanged = function () {
     // todo: handle data context changed
 };
 
-
 // END Overridables
+// Delayer
+Base.prototype.$execAfterFinalInit = null;
+Base.prototype.ExecWhenInitialized = function(args, action) {
+	if (typeof action == "function") {
+		if (this.isFullyInitialized()) {
+			action.apply(this, args);
+		} else {
+			if (this.$execAfterFinalInit == null) this.$execAfterFinalInit = [];
+			var d = new Delegate(this, action, args);
+			this.$execAfterFinalInit.removeElement(d);
+			this.$execAfterFinalInit.addElement(d);
+		}
+	}	
+}
+
+
+// END Delayer
+
 //
 Base.prototype.$init = function () {
 	this.inspectTemplate();
@@ -813,6 +830,12 @@ Base.prototype.rebind = function (ignoreTemplateRoot, asyncResult) {
 		if (this.$finalInitPending) {
 			this.$finalInitPending = false;
 			delete this.$finalInitPending;
+			if (this.$execAfterFinalInit != null) {
+				for (i = 0; i < this.$execAfterFinalInit.length; i++) {
+					this.$execAfterFinalInit[i].invoke();
+				}
+				delete this.$execAfterFinalInit;
+			}
 			this.finalinit();
 		}
         this.OnRebind();

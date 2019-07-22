@@ -117,6 +117,10 @@ Operation.prototype.whencomplete = function() {
 		wrapper = new SugaryDispatcher(); // new one
 		oldhandler = this.get_completionroutine();
 		this.set_completionroutine(wrapper);
+		if (this.$handlingdone && this.isOperationComplete()) {
+			// Ivoke it forcibly because we missed the completion and wrapper did not exist then
+			wrapper.invoke(this);
+		}
 		if (BaseObject.isCallback(oldhandler) && !this.$handlingdone) {
 			// Attach it to the wrapper
 			wrapper.tell(oldhandler);
@@ -138,7 +142,7 @@ Operation.From = function(x) {
 		return x;
 	} else {
 		var op = new Operation();
-		op.CompletedOperation(true, x);
+		op.CompleteOperation(true, x);
 		return op;
 	}
 }

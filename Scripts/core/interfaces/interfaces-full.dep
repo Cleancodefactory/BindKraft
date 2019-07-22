@@ -82,3 +82,4 @@
 //#using "./IParametersAccumulator.js"
 //#using "./IFormatterAggregate.js"
 
+//#using "./ILocalProxyCollection.js"

@@ -152,7 +152,7 @@ LocalAPIClient.prototype.getAPI = function (ifacedef_or_name) {
 		}
 	}
 	if (BaseObject.is(this.API[ifacename], ifacedef_or_name)) { // Check if we have it and return 
-		return this.API[ifacedef_or_name];
+		return this.API[ifacename];
 	}
 	// Attempt to attach the default one
 	this.attachAPI(ifacedef_or_name);

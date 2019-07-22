@@ -1,6 +1,6 @@
 function DOMUtilFragment(fragment, singleroot) {
 	BaseObject.apply(this,arguments);
-	if (typeof fragment == "boolean") {
+	if (typeof fragment == "boolean" && fragment == true) {
 		this.$singleroot = true;
 	} else { 
 		this.set_fragment(fragment);
@@ -50,6 +50,16 @@ DOMUtilFragment.prototype.get_root = function(bCreateGroup) { // Gets the root e
 		}
 	}
 	return null;
+}
+DOMUtilFragment.prototype.get_roots = function(bCreateGroup) {
+	var result = [];
+	if (this.$fragment != null) {
+		if (bCreateGroup) throw "get_roots(true) not implemented yet";
+		if (this.$fragment.childNodes.length > 0) {
+			for (var i = 0;i < this.$fragment.childNodes.length; result.push(this.$fragment.childNodes[i++]));
+		}
+	}
+	return result;
 }
 
 DOMUtilFragment.prototype.add = function(content,how) {
