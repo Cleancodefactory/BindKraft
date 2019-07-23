@@ -15,7 +15,7 @@ BrowserHistoryTracker.prototype.$lastPushedState = null;
 BrowserHistoryTracker.prototype.pushHistoryState = function (_app, appstate) {
 	if (_app == null) return;
 	var app = _app.Dereference();
-	if (!BaseObject.is(_app, "IAppBase")) {
+	if (!BaseObject.is(app, "IAppBase")) {
 		this.LASTERROR(_Errors.compose(),"The pushHistoryState expects an app as first argument. Nothing was done.");
 		return;
 	}
