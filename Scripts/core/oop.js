@@ -732,7 +732,7 @@ Function.prototype.ExtendMethod = function(method, withMethod, bRunFirst, bRetur
 //// PROPERTY IMPLEMENTATION HELPERS //////////////////////////////////////
  
 // MyClass.ImplementProperty("myprop", new Initialize("holds something",null) [, "$myproperty"[, "mycallback"]])
-Function.prototype.ImplementProperty = function (pname, Initialize, pstore, changeCallback) {
+Function.prototype.ImplementProperty = function (pname, Initialize, pstore, changeCallback, force) {
     var pstoreprop = (pstore != null) ? pstore : "$" + pname;
     this.prototype[pstoreprop] = Initialize;
     this.prototype["get_" + pname] = function () { return this[pstoreprop]; };
@@ -740,7 +740,7 @@ Function.prototype.ImplementProperty = function (pname, Initialize, pstore, chan
     this.prototype["set_" + pname] = function (v) {
         var oldval = this[pstoreprop];
         this[pstoreprop] = v;
-        if (changeCallback != null && v != oldval) {
+        if (changeCallback != null && (force || v != oldval)) {
             this[changeCallback](pname, oldval, v);
         }
     };

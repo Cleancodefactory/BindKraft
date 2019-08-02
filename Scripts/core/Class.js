@@ -38,7 +38,8 @@ var Class = {
         if (cls.parent != null && cls.parent.constructor != Object) return Class.fullClassType(cls.parent.constructor, s);
         return s;
     },
-    supportedInterfaces: function (cls, arr, extending) {
+    supportedInterfaces: function (_cls, arr, extending) {
+		var cls = Class.getClassDef(_cls);
         var cur = cls;
 		var a = (arr != null) ? arr : [];
 		if (cls == null) return a;
