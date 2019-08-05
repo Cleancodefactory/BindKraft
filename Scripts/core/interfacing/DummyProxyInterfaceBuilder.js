@@ -83,5 +83,5 @@ DummyInterfaceProxyBuilder.Dereferece = function(p) {
 	return result;
 }
 DummyInterfaceProxyBuilder.isProxy = function(p) {
-	return BaseObject.is(result, "$Managed_BaseProxy");
+	return BaseObject.is(p, "$Managed_BaseProxy");
 }
