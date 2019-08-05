@@ -75,4 +75,10 @@ The type declared is `iface`. This must be name or definition (type) of a compat
 
 It is not necessary for the annotated method to always return this type - it can also return basic types (e.g. number, string etc.), but if (in whichever cases) the method returns a BindKraft object at any circumstances it will have to support the declared interface.
 
+### ChunkType(iface)
+
+Like the ReturnType this defines an interface only when the data passed through the method is not a basic type. ChunkType defines the type of the chunks when `ChunkedOperation` is returned by the method.
+
+### Arguments(iface)
+
 ## How to consume the documenting information

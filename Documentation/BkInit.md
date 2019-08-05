@@ -78,11 +78,42 @@ BKInit.StartMenu(function (menu) {
 
 ### BKInit.KeylaunchMenu
 
+Syntax:
+```Javascript
+    BkInit.KeylaunchMenu(function(menu) {
+        menu.add("E","launchapp MyApp");
+    });
+```
+
+Enables you to add shortcuts to `shellfs:/keylaunch` directory. This directory is internally used by the system and executes shortcuts in response to `Ctrl+Alt+{letter}` keyboard combination. Keep in mind that `letter` cannot be everything - some are reserved by the browser (may differ between browsers - test it first). These shortcuts are supported for developer's convenience - when there is no place for a launching UI or running support apps. It is recommended to not overuse this in production as it can scare the end users.
+
 ### BKInit.RecentMenu
 
 ## CL scripts (non-shortcut)
 
-### BKInit.MasterBoot - the most important
+### BKInit.MasterBoot - the most important setting
+
+Lets you specify the boot CL script. This script is executed immediately after all the specified Javascript code is loaded (see the notes a bit later).
+
+Syntax:
+```Javascript
+    BkInit.MasterBoot("startshell \
+        createworkspace 'bindkraftstyles/window-workspacewindow-withshell' \
+        initculture 'en' \
+        initframework \
+        inithistory \
+        launchone NotchShellApp \
+        launchone WelcomeApp \
+        runurlcommands \
+        ")
+```
+
+The example script above is from early version of KraftApps. The initial 4 statements are virtually mandatory for all BindKraft setups with possible variations of the arguments (current and future). More details and what they do is a topic for the [Boot process](BootProcess.md) article.
+
+This BkInit setting is usually found only in the startup modules (colloquially called WebSite or Workspace modules). To be precise the boot script has a pre-defined name - "**boot**" and must reside in the root of the `boot fs` (which is formally refered to this wat `bootfs:/boot`). When all the system preparations are done BindKraft executes this CL script.
+
+This allows (as with all the other BkInit settings) the script to be rewritten by the different modules and the last one to remain the actual file that will be executed. BkInit is intended for use during the loading phase and before initializing the system. BkInit contains handy means to write settings into the memory - mostly in the memory FS, but in some other places as well. The BK modules load in their dependency order, which guarantees that the startup module will be loaded last and its version of the boot script will take effect instead of any others. This enables a very simple technique - each module can specify such a script - designed for the scenario where it will run alone, with its dependencies only. This is convenient for development time where running all the apps from all the modules is not always useful or even desired.
+
 
 ### BKInit.ModuleScript
 

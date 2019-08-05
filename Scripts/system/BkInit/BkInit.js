@@ -11,7 +11,7 @@ var BkInit = {
 	DevMenu: function(fn) { fn(new BkInit_Shortcuts("shellfs","develop")); return this; },
 	PrivateMenu: function(privatedir, fn) { fn(new BkInit_Shortcuts("shellfs","private/" + privatedir)); return this; },
 	AppMenu: function(appname, fn) { fn(new BkInit_Shortcuts("shellfs","apps/" + appname)); return this; },
-	KeylaunchMenu: function(appname, fn) { fn(new BkInit_Shortcuts("shellfs","keylaunch")); return this; },
+	KeylaunchMenu: function(fn) { fn(new BkInit_Shortcuts("shellfs","keylaunch")); return this; },
 	RecentMenu: function(fn) { fn(new BkInit_Shortcuts("shellfs","recent")); return this; },
 	// Boot CLScript
 	MasterBoot: function(cl) { 
