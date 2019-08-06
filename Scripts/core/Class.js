@@ -48,7 +48,7 @@ var Class = {
 		if (extending != null) {
 			if (cur.interfaces != null) {
 				for (p in cur.interfaces) {
-					if (p != null && p.length > 0 && Class.doextend(extending)) {
+					if (p != null && p.length > 0 && Class.doextend(p, extending)) {
 						a.addElement(p);
 					}
 				}

@@ -117,6 +117,35 @@ This allows (as with all the other BkInit settings) the script to be rewritten b
 
 ### BKInit.ModuleScript
 
+Syntax:
+```Javascript
+    // Syntax:
+    BkInit.ModuleScript(modulename, function(scripts){
+        scripts.write(filename, script, appclass);
+    })
+
+    // Example:
+    BkInit.ModuleScript(modulename, function(scripts){
+        scripts.write("clscript1","launchapp App1 launchapp App2");
+    });
+```
+
+**modulename** - The name of the module. This translates to a subdirectory in the root of `bootfs:` with that name (e.g. bootfs:/mymodule).
+
+**filename** - The file name for the CL script. E.g. if the script is named "myscript" this will create file with the CL in `bootfs:/mymodule/myscript`.
+
+**script** - The content of the CL script
+
+**appclass** - Optional class name of the app launched by the script (if any). This is useful in some circumstances, but is otherwise optional. This property is heavily used by the shell when it displays launch menu(s) with shortcuts which are CL scripts with added icon and description. Knowing what app is started by the script it can show useful tracking information. In raw CL scripts this is useful mostly if you have intention to do something along these lines too.
+
+**What this is and can be used for?**
+
+Module scripts go into the bootfs which is a good hint already. Some modules may include series of apps or/and apps with internal commands. This can go even further - some modules may want to "prepare" the workspace in some manner and then launch an app (or more than one app). Thus by convention any number of predefined scripts can be stored by a module in a subdirectory of the bootfs. They will NOT be used for anything by default, but in the MaserBoot script they can be easily called during the workspace boot process. To call the example script file above we have to include in the master boot gcall 'mymodule/myscript'. 
+
+So, this can be viewed as ready to use scripts for various configurations/scenarios specific to a module offered as files prepared by the module's developer (usually) and placed in a convention defined location. Then some of them can be quickly included in the boot process if and when needed by the person who configures the whole workspace/web site and achieve certain effect. The fact that the developer(s) of the module know best their product makes it reasonable for them to place several scripts for specific modes/configurations and scenarios they want to make optionally available for workspace initialization.
+
+This can go much further in more complex web sites - e.g. the directories can be enumerated and scripts with certain names executed if present. This will effectively implement a very simplified imitation of a classic unix boot process - a simple way to configure the environment for different behavior without the need to dig too deep into app documentation for arguments, supported commands and so on.
+
 ### BKInit.commands
 
 ### BKInit.commandUrlAliases
