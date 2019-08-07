@@ -76,7 +76,7 @@ $Managed_BaseProxy.prototype.$wrapResult = function(r, method) {
 			if (xop.isOperationSuccessful()) {
 				op.CompleteOperation(true, me.$wrapResult(xop.getOperationResult(), method));
 			} else {
-				op.CompleteOperation(true, xop.getOperationErrorInfo());
+				op.CompleteOperation(false, xop.getOperationErrorInfo());
 			}
 		});
 		return op;
@@ -86,7 +86,7 @@ $Managed_BaseProxy.prototype.$wrapResult = function(r, method) {
 			if (xop.isOperationSuccessful()) {
 				op.CompleteOperation(true, me.$wrapResult(xop.getOperationResult(), method));
 			} else {
-				op.CompleteOperation(true, xop.getOperationErrorInfo());
+				op.CompleteOperation(false, xop.getOperationErrorInfo());
 			}
 		});
 		return op;
