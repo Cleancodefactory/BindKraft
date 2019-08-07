@@ -20,21 +20,4 @@ In conclusion it is important to underscore the fact that the supplied aPI by Bi
 
 ## Remote communications - where to start and what is what
 
-    sdf
-    `sdfsdf`
-    sfdsdf
-
-```
-as `sdfsdsdf`
-```
-
-- Asda `sdfsd` fg dfgd
-    - Seconf line
-
-* fsd sdf sdf `sdf` sdf
-    * sdfs sdfsdfsd
-
-> sdfsdf 
-sdffdsdf
-sdf sdf
 
