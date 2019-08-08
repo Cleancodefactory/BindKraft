@@ -20,22 +20,6 @@ IAppBase.prototype.set_instanceid = function(v) { this.$instanceid = v; }
 IAppBase.prototype.get_instancename = function() { return this.$instancename; }
 IAppBase.prototype.set_instancename = function(v) { this.$instancename = v; }
 
-/**
-	DPERECATED
-	WAS NEVER USED
-	REPLACED BY USAGE OF IManagedInterface::GetInterface(iface);
-
-	Gets and interface that enables controlling some aspect of the application.
-	Apps that expose services supply access to this feature by exposing through GetAppInterface the IServiceHub interface.
-	This is a special method, because from the caller's view the app is a monolith object, but the internal implementation may span through many objects and the interface requested is not neccessariy supported on the main application's object.
-	This method is responsible to get the interface from the right object of the application depending on its internal architecture.
-	The returned interface can be any interface that makes sense, inscluding requestable - if one is required by the caller it is its responsibility to check the returned result.
-	The interfaces have to be returned synchronously, thus any initialization process that makes this impossible is unacceptable and needs to implement that initialization as a process initiated from the returned interface (at least) and not as a precondition for the existence of the interface itself.
-	Or in other words GetAppInterface is an alternative to casting, just relieving the application from a requirement that will be needed without the method - to implement all the interfaces on a single object.
-	(with so much interfaces in a single class, any OOP principles you want to follow will get violated too much for any taste)
-*/
-IAppBase.prototype.GetAppInterface = function(iface /* name or def */) { throw "not implemented"; }
-
 
 // The below code is commented and kept here to remind all interested developers what decision has been made:
 // There will be only an Interface getter method over the IAppBase, all the rest will be done through one of the obtainable interfaces.

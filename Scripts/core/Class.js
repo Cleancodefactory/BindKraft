@@ -6,25 +6,35 @@ of prototyping the standard objects. The namespaces are nammed with preffix SC t
 
 // Type manipulation and information. These methods work on class definitions, not instances.
 var Class = {
+	// This method should work only on classes and not on instances. It is often used to determine if something is a class and not an instance.
     is: function (cls, clsOrProt) {
+		var typeName = this.getTypeName(clsOrProt);
+		if (typeName == null) return false;
         var cur = cls;
 		// +V: 2.7.1
 		if (typeof cls == "string") {
 			cur = this.getClassDef(cls);
 		}
-		// +-: 2.7.1
-        if (cur == null) return false;
-        if (cur.classType == clsOrProt) return true;
-        if (cur.interfaces && cur.interfaces[clsOrProt]) return true;
-        if (cur.parent) return Class.is(cur.parent.constructor, clsOrProt);
+		if (cur == null) return false;
+		var tk = this.typeKind(cur);
+		if (tk == "interface") {
+			if (cur.classType == typeName) return true;
+			return this.doesextend(cur, typeName);
+		} else if (tk == "class") {
+			// +-: 2.7.1
+			if (cur.classType == typeName) return true;
+			if (cur.interfaces && cur.interfaces[typeName]) return true;
+			if (cur.parent) return Class.is(cur.parent.constructor, typeName);
+		}
         return false;
     },
     supports: function (cls, prot) {
         var cur = cls;
-		// +V: 2.7.1
+		// +V: 2.18.2
 		if (typeof cls == "string") {
-			cur = this.getClassDef(cls);
+			cur = this.getType(cls);
 		}
+		
 		// +-: 2.7.1
         if (cls == null) return false;
         if (cur.interfaces && cur.interfaces[prot]) return true;
@@ -99,12 +109,16 @@ var Class = {
 		// +V: 2.7.1
 		getInterfaceName: function(iface) {
 			if (typeof iface == "string") {
-				return iface;
+				if (Function.interfaces[iface] != null) {
+					return iface;
+				}
 			} else if (typeof iface == "function") {
-				return (typeof iface.classType == "string")?iface.classType:null;
-			} else {
-				return null;
+				var name = (typeof iface.classType == "string")?iface.classType:null;
+				if (Function.interfaces[name] != null) {
+					return name;
+				}
 			}
+			return null;
 		},
 		doesextend: function(inspected, iface) { // We avoid using the reserved word "extends" in case we run in something that gets crazy regardless of the context (there are known javascript machines and transpilers having this problem).
 			var def = this.getInterfaceDef(inspected);
@@ -151,6 +165,14 @@ var Class = {
 			if (d != null) return "interface";
 			return null;
 		},// -V: 2.18.0
+		// +C: 2.18.2
+		getTypeName: function(cls) {
+			var name = this.getInterfaceName(cls);
+			if (typeof name == "string") return name;
+			name = this.getClassName(cls);
+			return name;
+		},
+		// -V: 2.18.2
 		getClassDef: function(cls) {
 			if (BaseObject.is(cls, "BaseObject")) {
 				var o = Function.classes[cls.classType()];
@@ -182,7 +204,8 @@ var Class = {
 			if (BaseObject.is(cls, "BaseObject")) {
 				return cls.classType();
 			} else if (typeof cls == "function" && typeof cls.classType == "string") {
-				return cls.classType;
+				var name = cls.classType;
+				if (Function.classes[name] != null) return name;
 			} else if (typeof cls == "string") {
 				if (Function.classes[cls] != null) return cls;
 			}
