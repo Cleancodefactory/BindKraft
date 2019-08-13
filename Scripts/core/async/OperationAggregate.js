@@ -54,6 +54,19 @@ function OperationAggregate(/* operations list */ /* if a number the last argume
 OperationAggregate.Inherit(Operation, "OperationAggregate");
 OperationAggregate.ImplementProperty("sealed", new InitializeBooleanParameter("",false), null, "onForceCheck");
 OperationAggregate.prototype.$operations = new InitializeArray("Filled with the aggregated operaions");
+// Overrides
+OperationAggregate.prototype.OperationReset = function() {
+	Operation.prototype.OperationReset.apply(this,arguments);
+	this.$sealed = false;
+	return this;
+}
+OperationAggregate.prototype.OperationClear = function() {
+	Operation.prototype.OperationClear.apply(this,arguments);
+	this.$sealed = false;
+	this.$operations = [];
+	return this;
+}
+
 // Alternative to get/set_seal - more convenient sometimes
 OperationAggregate.prototype.seal = function() {
 	this.set_sealed(true);

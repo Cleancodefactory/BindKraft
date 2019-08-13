@@ -35,7 +35,6 @@ ChunkedOperation.prototype.OperationClear = function() {
 	return this;
 }
 ChunkedOperation.prototype.chunk = function(callback,callbackfail) {
-	if (callbackfail == null) callbackfail = callback;
 	if (BaseObject.isCallback(callback)) {
 		this.set_chunkroutine(function(success,data) {
 			if (success) {
@@ -49,7 +48,16 @@ ChunkedOperation.prototype.chunk = function(callback,callbackfail) {
 	}
 	this.$invokeChunkHandling(); // Eat everything from the queue.
 	return this;
-}.Description("Should be used before then to avoid missing synchronously handled chunks. With one argument calls it only for successful chunks, with two - calls first for the successful and the other for unsuccessful.");
+}.Description("Should be used before then to avoid missing synchronously handled chunks. \
+With one argument calls it only for successful chunks, \
+with two - calls first for the successful and the other for unsuccessful.");
+ChunkedOperation.prototype.anychunk = function(callback) {
+	if (BaseObject.isCallback(callback)) {
+		this.set_chunkroutine(callback);
+	}
+	this.$invokeChunkHandling(); // Eat everything from the queue.
+	return this;
+}.Description("Should be used before then/whencomplete to avoid missing synchronously handled chunks. The anychunk variant passes all chunks to the callback without regard to their success/fail state.");
 
 
 

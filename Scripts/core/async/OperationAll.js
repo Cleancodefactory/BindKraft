@@ -33,6 +33,7 @@ OperationAll.prototype.$operationFinished = function() {
 		}
 	}
 	if (res.complete == res.all) {
+		if (this.isOperationComplete()) return; // It is already complete
 		switch (this.mode) {
 			case "allsuccess":
 				if (res.successful == res.all) {

@@ -70,7 +70,7 @@ $Managed_BaseProxy.prototype.$wrapResult = function(r, method) {
 		return this.$buildProxyFromAnother(r,this.$container);
 	} else if (BaseObject.is(r, "ChunkedOperation")) {
 		op = new ChunkedOperation();
-		r.chunk(function(success,data) {
+		r.anychunk(function(success,data) {
 			op.ReportOperationChunk(success,me.$wrapResult(data,method));
 		}).then(function (xop) {
 			if (xop.isOperationSuccessful()) {

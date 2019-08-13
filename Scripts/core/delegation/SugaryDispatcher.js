@@ -92,6 +92,28 @@ SugaryDispatcher.prototype.$complete = function(op,anotherOp, result) { // alias
 		}
 	}
 }
+SugaryDispatcher.prototype.succeed = function(anotherOp,result) { // alias
+	this.dispatcher.add(new Delegate(this, this.$complete,[anotherOp, result]));
+	return this;
+}.Description("Completes another operation with the specified result if current operation is successful and with its error infoif unsuccessful.");
+SugaryDispatcher.prototype.$succeed = function(op,anotherOp, result) { // alias
+	if (BaseObject.is(anotherOp, "Operation")) {
+		if (!anotherOp.isOperationComplete()) {
+			anotherOp.CompleteOperation(true, result);
+		}
+	}
+}
+SugaryDispatcher.prototype.fail = function(anotherOp,errinfo) { // alias
+	this.dispatcher.add(new Delegate(this, this.$complete,[anotherOp, errinfo]));
+	return this;
+}.Description("Completes another operation with the specified result if current operation is successful and with its error infoif unsuccessful.");
+SugaryDispatcher.prototype.$fail = function(op,anotherOp, errinfo) { // alias
+	if (BaseObject.is(anotherOp, "Operation")) {
+		if (!anotherOp.isOperationComplete()) {
+			anotherOp.CompleteOperation(false, errinfo);
+		}
+	}
+}
 /**
  * Clears everything and the object can be reused anew 
  */
