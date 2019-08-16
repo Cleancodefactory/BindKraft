@@ -3,7 +3,7 @@
 */
 (function(g) {
 	// Register the standard filesystems
-	
+	var fs;
 	// Boot FS - modules write here boot scripts
 	// bootfs: boot - the master boot script
 	// bootfs: <modulename>/*scripts
@@ -21,7 +21,7 @@
 	// - other folders may be created, but it should be backed by support (expectation) provided by special UI shell app that knows to look there
 	if (!Registers.Default().registerExists("shellfs")) {
 		Registers.Default().addRegister( new MemoryFSDirectory("shellfs"));
-		var fs = Registers.Default().getRegister("shellfs");
+		fs = Registers.Default().getRegister("shellfs");
 		var rc = fs.mkdir("recent");
 		fs.mkdir("apps");
 		fs.mkdir("startmenu");
@@ -35,10 +35,14 @@
 	// Info FS - no executable code, only information texts, runtime values and other similar static or run-time info data.
 	// 		Info FS is an alternative to logging and aims at giving an overview of the system (potentially including apps) state.
 	// infofs: modules\  - Each module should put an entry with some info about itself in file named as the module name is (ModlueInfo entries must be used)
+	// infofs: appinfo\ - Each app can publish here files following certain conventions/contracts for use by others in certain well-known way
 	// ?infofs: msgspool\ - subdirs with different kinds are created, further subdirs may be sometimes desired.
 	//						Writing here should be through APIs or a side result of usage of APIs with different direct purpose
 	if (!Registers.Default().registerExists("infofs")) {
 		Registers.Default().addRegister( new MemoryFSDirectory("infofs"));
+		fs = Registers.Default().getRegister("infofs");
+		
+		fs.mkdir("appinfo"); // here go one dir per app - each named after its class.
 	}
 	
 	// AppData-like
@@ -48,7 +52,7 @@
 	// appfs: system\ - reserved for system data
 	if (!Registers.Default().registerExists("appfs")) {
 		Registers.Default().addRegister( new MemoryFSDirectory("appfs"));
-		var fs = Registers.Default().getRegister("appfs");
+		fs = Registers.Default().getRegister("appfs");
 		// Some system entries (more to come in the future)
 		var system = fs.mkdir("system"); // TODO Implement protection with read-only marking and use it here		
 		
