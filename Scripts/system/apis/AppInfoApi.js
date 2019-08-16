@@ -9,7 +9,7 @@ AppInfoApi.prototype.getContentReader = function(AppClass) {
 }
 AppInfoApi.prototype.getAllApps = function() {
 	var fs = Registers.Default().getRegister("infofs");
-	var dir = this.$fs.cd("appinfo");
+	var dir = fs.cd("appinfo");
 	if (dir != null) {
 		var dirs = dir.get_directories();
 		if (BaseObject.is(dirs, "Array")) {
