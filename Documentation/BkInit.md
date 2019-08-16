@@ -162,3 +162,12 @@ BKInit.AppData(AppName, function (data) {
     data.object("filename", {... something ...});
 };
 ```
+
+### BKInit.AppInfo
+
+```Javascript
+BKInit.AppInfo(AppName, function (data) {
+    data.content("contentname", optionalcontenttype,content);
+    data.object("filename", {... something ...});
+};
+```

@@ -47,5 +47,14 @@ var BkInit = {
 		if (appname == null) throw "Cannot find class name";
 		fn(new BkInit_AppData(appname));
 		return this;
+	},
+	AppInfo: function(appClass, fn) {
+		if (!Class.is(appClass, "IApp")) {
+			throw "The class is not an app";
+		}
+		var appname = Class.getClassName(appClass);
+		if (appname == null) throw "Cannot find class name";
+		fn(new BkInit_AppInfo(appname));
+		return this;
 	}
 };
