@@ -11,30 +11,113 @@ function CLEngine() {
 CLEngine.Inherit(BaseObject, "CLEngine");
 // Constants
 CLEngine.End = { end: "CommandLine exhausted!"};
+// Utils
+CLEngine.repString = /\\(n)|\\(r)|\\(t)|\\(\')|\\(\S)/g;
+CLEngine.unescapeFullString = function (s) { // TODO: Needs change for better syntax
+	if (typeof s == "string") {
+		return s.replace(CLEngine.repString,function(match, g1) {
+			switch (g1) {
+				case "n":
+					return "\n";
+				case "r":
+					return "\r";
+				case "'":
+					return "'";
+				default:
+					return g1;
+			}
+		});
+	} else {
+		return s;
+	}
+}
+CLEngine.parseNumber = function(s) {
+	if (s.indexOf(".") >= 0) {
+		return parseFloat(s);
+	} else {
+		return parseInt(s,10);
+	}
+}
+CLEngine.parseHexNumber = function(s) {
+	return parseInt(s,16);
+	
+}
+
 // Pre-parsed assets - used by the executor
 CLEngine.prototype.$commandLine = new InitializeArray("The pre-parsed command line"); 
 CLEngine.prototype.$labelIndex = new InitializeObject("The command line's label index");
+
+
+
 
 ////////////////////////////////////////////////////////
 // Parser
 ////////////////////////////////////////////////////////
 CLEngine.reTokens = [
-	{ type: "space",		re: /^(\s+)/m },
-	{ type: "string",   	re: /^\'((?:\\'|[^'])*)\'/m },
-	{ type: "number",   	re: /^([+-]?[0-9]+(?:\.[0-9]+)/ },
-	{ type: "hex",   		re: /(?:0x([0-9a-fA-F]+)/ },
-	{ type: "bropen",    	re: /^(\()/ },
-	{ type: "bropen",		re: /^(\[)/ },
-	{ type: "bropen", 		re: /^(\{)/ },
-	{ type: "brclose",    	re: /^(\))/ },
-	{ type: "brclose",		re: /^(\])/ },
-	{ type: "brclose",		re: /^(\})/ },
+	{ type: "space",		re: /^(\s+)/gm, skip: true },
+	{ type: "string",   	re: /^\'((?:\\'|[^'])*)\'/gm, proc: CLEngine.unescapeFullString, priority: 10  }, // Lacks new line support
+	{ type: "number",   	re: /^([+-]?[0-9]+(?:\.[0-9]+))/g, proc: CLEngine.parseNumber, priority: 10 },
+	{ type: "hex",   		re: /^(?:0x([0-9a-fA-F]+))/g, proc: CLEngine.parseHexNumber, priority: 10  },
+	{ type: "brnopen",    	re: /^(\()/g },
+	{ type: "brsopen",		re: /^(\[)/g },
+	{ type: "brcopen", 		re: /^(\{)/g },
+	{ type: "brnclose",    	re: /^(\))/g, priority: 5 },
+	{ type: "brsclose",		re: /^(\])/g, priority: 10 },
+	{ type: "brcclose",		re: /^(\})/g, priority: 10 },
 	
-	{ type: "ident",   re: /^([a-zA-Z\_\$][a-zA-Z0-9\_\$]+)/ },
-	{ type: "endop",   re: /^;/ },
-	{ type: "dualop",   re: /^(\=\>|\>\=|\<\=|\=\=|\|\|)/ },
-	{ type: "dualop",   re: /^(\+|\*|\/|\-|\<|\>|\=)/ }
+	{ type: "ident",   re: /^([a-zA-Z\_\$][a-zA-Z0-9\_\$]+)/g, priority: 15 },
+	{ type: "endop",   re: /^(;)/g, priority: 100 },
+	{ type: "commaop",   re: /^(\,)/g, priority: 90 },
+	{ type: "dualop",   re: /^(or|and|xor)/g, priority: 60 },
+	{ type: "dualop",   re: /^(\=\>|\>\=|\<\=|\=\=)/g, priority: 50 },
+	{ type: "dualop",   re: /^(\<|\>)/g, priority: 50 },
+	{ type: "dualop",   re: /^(\*|\/)/g, priority: 20 },
+	{ type: "dualop",   re: /^(\+|\-|)/g, priority: 30 },
+	{ type: "assign",   re: /^(\=)(?!\=)/g, priority: 80 }
 ];
+
+CLEngine.prototype.$eatToken = function(strLine, mode, /*[]*/ tknLine) {
+	var match, v;
+	
+	for (var i = 0; i < CLEngine.reTokens.length; i++) {
+		var retkn = CLEngine.reTokens[i];
+		retkn.re.lastIndex = 0;
+		match = retkn.re.exec(strLine);
+		if (match != null) {
+			v = match[1];
+			if (typeof retkn.proc == "function") {
+				v = retkn.proc(v);
+			}
+			if (retkn.skip !== true) {
+				tknLine.push({ type: retkn.type, value: v});
+			}
+			return match[0].length;
+		}
+	}
+	return 0;
+}
+CLEngine.prototype.tokenizeLine = function(strLine) {
+	var tknLine = [];
+	var pos = 0;
+	var str = strLine;
+	var mode = { stack: []}; // Mode stack if empty parsing statements otherwise object {} or array []
+	// Prio
+	do {
+		var n = this.$eatToken(str, mode, tknLine);
+		if (n > 0) {
+			pos += n;
+			str = str.slice(n);
+			continue;
+		}
+		if (pos >= strLine.length) break;
+		return "cannot tokenize at " + pos;
+	} while (true);
+	return tknLine;
+}
+
+
+// Old code for reference
+
 // Constants
 /**
 	First pass
@@ -59,15 +142,9 @@ CLEngine.reExpressionLevel1 = /(?:(?:\s|;)*(?:(?:\{((?:\\\S|[^\}])*)\})|(?:\'((?
 	
 */
 CLEngine.reExpressionLevel2 = /(?:(?:^|\s|,|;)*(?:(?:\'((?:\\\S|[^\'])+)\')|([a-zA-Z_][a-zA-Z0-9_\-]*)):(?:([+-]?[0-9]+(?:\.[0-9]+)?(?=\}|\s|,|;|$))|(?:0x([0-9a-fA-F]+)(?=\}|\s|,|;|$))|(?:\'((?:[^\']|\\\S|\'\')*)\')|([^\,;\}\{\"\[\'\]\s]+))(?:,|$|;|\s))/g;
-CLEngine.repString = /\\(\S)|\'(\')/g;
 
-CLEngine.unescapeFullString = function (s) { // TODO: Needs change for better syntax
-	if (typeof s == "string") {
-		return s.replace(CLEngine.repString,"$1$2");
-	} else {
-		return s;
-	}
-}
+
+
 /**
 	There is no need to keep the labels in the parsed command line, so the callback can return true if it wants them removed after recording the position
 	stdLabelCallback does that
