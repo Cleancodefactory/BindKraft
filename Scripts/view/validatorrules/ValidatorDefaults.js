@@ -1,3 +1,4 @@
+// Deprecated the special image case is no longer supported
 
 // This should go to the adapters or configuration sections of the framework.
 

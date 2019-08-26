@@ -13,7 +13,8 @@ TestValidateControl.prototype.validateValue = function (validator, value, bindin
 };
 
 
-////////////// CompareNumbersValidatorControl /////////////////////////
+/*
+////////// CompareNumbersValidatorControl /////////////////////////
 function CompareNumbersValidatorControl(v) {
 	ValidateValue.apply(this, arguments);
 }
@@ -47,9 +48,9 @@ CompareNumbersValidatorControl.prototype.validateValue = function (validator, va
 	}
 	return this.validationResult(result);
 };
-//////////////////////END/////////////////////////////
-
-
+//////////////////END/////////////////////////////
+*/
+/*
 ////////////// CompareDatesValidatorControl /////////////////////////
 function CompareDatesValidatorControl(v) {
 	ValidateValue.apply(this, arguments);
@@ -116,8 +117,8 @@ CompareDatesValidatorControl.prototype.validateValue = function (validator, valu
 	return this.validationResult(result);
 };
 //////////////////////END/////////////////////////////
-
-
+*/
+/*
 //============================================/ FixedNumberValidatorControl \============================================>>
 
 function FixedNumberValidatorControl(v) {
@@ -197,6 +198,7 @@ FixedNumberValidatorControl.prototype.validateValue = function (validator, value
 }
 
 //<<============================================/ END FixedNumberValidatorControl \============================================
+*/
 
 ////////////// RangeNumbersValidatorControl /////////////////////////
 function RangeNumbersValidatorControl(v) {
