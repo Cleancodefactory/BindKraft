@@ -181,6 +181,55 @@ DOMUtil.attr = function(el, attrname, val) {
 	}
 	return null;
 }
+DOMUtil.getAttributes = function(el,pattern) {
+	var i, attr;
+	if (el instanceof Element) {
+		var re = null, obj = {};
+		if (typeof pattern == "string") {
+			re = new RegExp(pattern);
+		} else if (pattern instanceof RegExp) {
+			re = pattern;
+		} else if (pattern != null) {
+			throw "Argument pattern must either null, string pattern or predefined RegExp (non-global)";
+		}
+		var attrs;
+		if (re == null) {
+			attrs = el.attributes;
+			for (i = 0; i < attrs.length; i++) {
+				attr = attrs[i];
+				obj[attr.name] = attr.value;
+			}
+		} else {
+			if (re.global) re = new RegExp(re.pattern);
+			attrs = el.attributes;
+			var match;
+			for (i = 0; i < attrs.length; i++) {
+				attr = attrs[i];
+				re.lastIndex = 0;
+				match = re.exec(attr.name);
+				if (match != null) {
+					if (match.length > 1 && match[1] != null && match[1].length > 0) {
+						obj[match[1]] = attr.value;
+					} else {
+						obj[match[0]] = attr.value;
+					}
+				}
+				
+			}
+		}
+		return obj;
+	} else if (el instanceof NodeList || el instanceof HTMLCollection) {
+		var oattrs,_arr = [];
+		for (i = 0;i < el.length; i++) {
+			oattrs = DOMUtil.getAttributes(el[i],pattern);
+			if (BaseObject.is(oattrs, "object")) {
+				_arr.push(oattrs);
+			}
+		}
+		return _arr;
+	}
+	return null;
+}
 // Helpers
 DOMUtil.arrayFrom = function(nodes) {
 	var i, arr = [];

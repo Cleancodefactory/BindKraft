@@ -91,6 +91,12 @@ DOMUtilElement.prototype.attr = function(attrname, val) {
 		}
 	}
 }
+DOMUtilElement.prototype.getAttributes = function(pattern) {
+	if (this.$element instanceof HTMLElement) {
+		return DOMUtil.getAttributes(this.$element, pattern);
+	}
+	return null;
+}
 // Clonning
 DOMUtilElement.prototype.clone = function() {
 	if (this.$element != null) {
