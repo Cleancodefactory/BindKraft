@@ -2302,8 +2302,13 @@ Binding.prototype.get_targetValue = function (bRaw) {
 };
 
 Binding.prototype.set_targetValue = function (vin) {
-	if ( this.__obliterated ) { return; }
-    return this.$set_targetValue(vin);
+    if ( this.__obliterated ) { return; }
+    if (BaseObject.is(vin, "Operation")) {
+        var me = this;
+        vin.onsuccess(function(_val){ me.$set_targetValue(_val); }).onfailure(function(errinfo){ me.$set_targetValue(null); });
+    } else {
+        this.$set_targetValue(vin);
+    }
 };
 
 Binding.prototype.get_sourceValue = function (bFormat) { // move me up there
@@ -2360,15 +2365,16 @@ Binding.prototype.updateTarget = function (compiledPatt, bOverridePolicy) {
 	if (this.options.async || this.options.asyncread) {
 		this.callAsync(this.$asyncUpdateTarget);
 	} else {
-		var val = this.$get_sourceValue();
-		this.$set_targetValue(val);
+        var val = this.$get_sourceValue();
+        this.set_targetValue(val);
+        
 	}
 };
 
 Binding.prototype.$asyncUpdateTarget = function() {
 	if (this.__obliterated) { return; }
 	var val = this.$get_sourceValue();
-	this.$set_targetValue(val);
+	this.set_targetValue(val);
 };
 
 Binding.prototype.updateSource = function (compiledPatt, bOverridePolicy) {
