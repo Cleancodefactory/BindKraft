@@ -49,7 +49,5 @@ Today, with the cloud computing becoming mainstream, WEB based apps taking over 
 > BindKraftJS expects the UI code to blend in the DOM and act as an extended layer and not stay aside forcibly acting in one predetermined role only (take MVC for example)
 
 > BindKraftJS recognizes the fact that the HTML DOM is a base, but not an ultimate solution by itself and defines higher level UI constructs and abstractions for all cases when "blending with DOM" is not enough.
-TestHook
-
 
 
