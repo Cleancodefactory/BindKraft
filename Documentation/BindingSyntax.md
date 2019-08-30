@@ -160,7 +160,7 @@ The `format` parameter of a binding specifies one or more formatters to apply ov
 
 `TODO - to be continued`
 
-## options
+## [options](BindingSyntax/options.md)
 
 The options influence the way the binding works in some way. They often turn on or off certain features or change how they work. Most often the options control features that require some processing which will be ineffective if it is always performed and they give the developer the chance to enable it only on these bindings where it matters.
 

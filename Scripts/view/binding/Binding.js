@@ -2303,7 +2303,7 @@ Binding.prototype.get_targetValue = function (bRaw) {
 
 Binding.prototype.set_targetValue = function (vin) {
     if ( this.__obliterated ) { return; }
-    if (BaseObject.is(vin, "Operation")) {
+    if (this.options.operation && BaseObject.is(vin, "Operation")) {
         var me = this;
         vin.onsuccess(function(_val){ me.$set_targetValue(_val); }).onfailure(function(errinfo){ me.$set_targetValue(null); });
     } else {

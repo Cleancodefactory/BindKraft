@@ -5,6 +5,9 @@
 //#using "../validatorrules/CompareNumbersValidatorRule.js"
 //#using "../validatorrules/FixedNumberValidatorRule.js"
 //#using "../validatorrules/CompareDatesValidatorRule.js"
+//#using "../validatorrules/LengthValidatorRule.js"
+//#using "../validatorrules/RequiredFieldValidatorRule.js"
+//#using "../validatorrules/RangeNumbersValidatorRule.js"
 
 //#using "../validatorrules/ValidatorRuleReferenceImplementation.js"
 

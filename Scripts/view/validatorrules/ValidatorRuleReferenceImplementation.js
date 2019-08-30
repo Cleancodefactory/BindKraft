@@ -200,6 +200,7 @@ FixedNumberValidatorControl.prototype.validateValue = function (validator, value
 //<<============================================/ END FixedNumberValidatorControl \============================================
 */
 
+/*
 ////////////// RangeNumbersValidatorControl /////////////////////////
 function RangeNumbersValidatorControl(v) {
 	ValidateValue.apply(this, arguments);
@@ -266,13 +267,13 @@ RangeNumbersValidatorControl.prototype.validateValue = function (validator, valu
 	return this.validationResult(result);
 };
 //////////////////////END/////////////////////////////
-
+*/
 
 ////////////// CRangeDatesValidator //////////////////////////////
 function RangeDatesValidatorControl(v) {
 	ValidateValue.apply(this, arguments);
 }
-RangeDatesValidatorControl.Inherit(RangeNumbersValidatorControl, "RangeDatesValidatorControl");
+RangeDatesValidatorControl.Inherit(ValidateValue, "RangeDatesValidatorControl");
 RangeDatesValidatorControl.registerValidator("rangedates");
 RangeDatesValidatorControl.prototype.$minValue = null;
 RangeDatesValidatorControl.prototype.$maxValue = null;
@@ -315,7 +316,7 @@ RangeDatesValidatorControl.prototype.validateValue = function (validator, value,
 	return this.validationResult(result);
 };
 //////////////////////END/////////////////////////////
-
+/*
 ////////////// LengthValidatorControl //////////////////////////////
 function LengthValidatorControl(v) {
 	ValidateValue.apply(this, arguments);
@@ -372,7 +373,8 @@ LengthValidatorControl.prototype.validateValue = function (validator, value, bin
 	return this.validationResult(result);
 };
 //////////////////////END/////////////////////////////
-
+*/
+/*
 ////////////// RequiredFieldValidatorControl //////////////////////////////
 function RequiredFieldValidatorControl(v) {
 	ValidateValue.apply(this, arguments);
@@ -397,7 +399,7 @@ RequiredFieldValidatorControl.prototype.validateValue = function (validator, val
 	return this.validationResult(result);
 };
 //////////////////////END/////////////////////////////
-
+*/
 
 ////////////// RegularExpressionValidatorControl //////////////////////////////
 function RegularExpressionValidatorControl(v) {
