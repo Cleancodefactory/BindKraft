@@ -15,8 +15,6 @@ example:
 
 ## Supported options:
 
-`nonpersistable`
-
 `disabled` - disables the binding's `updateTarget`/`updateSource` functionality. Direct usage of the `set_targetValue`/`set_targetValue` will continue to work - i.e. direct usage of the binding is not disabled, but its participation in mass updates is.
 
 `async`, `asyncread`, `asyncwrite` - asynchronous processing of the updateTargets/Sources. The `async` will perform both asynchronously, while `asyncread` is only for `updateTargets` and `asyncwrite` only for `updateSources`. Internally this is done with this.async (see `BaseObject`) which creates a task and registers it with the global task scheduler for execution (_For beginners_: _this is advanced technique that "replaces" the setTimeout._). Using asyncwrite or async on read/write bindings (of type [`bind`](bindingtype.md)) is not recommended, because the source updates are typically expected to be synchronous. These work witn `data-on-event` bindings too. In that case they will invoke the handler asynchronously - in a scheduled async task. This can be used when the handler performs heavy processing you want to delay in order to keep the browser responsive.
@@ -29,5 +27,8 @@ example:
 
 `nodefault`, `preventdefault` - works only on `data-on-domevent` bindings and only for DOM events. Prevents the default processing (see preventDefault of the DOM event)
 
+**Old options**
+
+`nonpersistable` - For backwards compatibility this is still supported. In older versions (much older) the functionality now enabled with the `persistable` option (see below) was "on" by default and the `nonpersistable` option excluded bindings from it. This mode can still be turned on and this option will make sense then. However, this mode is extremely inconvenient and will be fully deprecated soon (even the ability to turn it on).
 
 
