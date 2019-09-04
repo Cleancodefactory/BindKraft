@@ -19,7 +19,7 @@ _Less common_
 
 - Binding obtained directly - found through `Base.findBindingByName` for instance.
 
-The ref parameter in a binding is mostly useful in data-on kind of bindings, but can be also employed in data-bind bindings by a custom formatter used by the binding. This is also accessible for system formatters, but it is unlikely to find an useful case for a system formatter to use a binding reference.
+The `ref` parameter in a binding is mostly useful in data-on kind of bindings, but can be also employed in data-bind bindings by a custom formatter used by the binding. This is also accessible for system formatters, but it is unlikely to find an useful case for a system formatter to use a binding reference.
 
 The main purpose of the `ref` parameters in a binding is to provide additional references/values from "places" in the view to the handler (data-on) or formatter/converter (data-bind) needed for their operation. Teh view (template) designer can provide the same references/values even if the view changes by changing the `ref` paths to point to the same object or value.
 
