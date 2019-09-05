@@ -80,82 +80,82 @@
 //    };
 //})(jQuery);
 (function ($) {
-	var original = $.fn.text;
-	$.fn.text = function () {
-		if (arguments.length > 0 && arguments[0] == null) {
-			var args = Array.createCopyOf(arguments);
-			args[0] = '';
-			return original.apply(this, args);
-		} else {
-			return original.apply(this, arguments);
-		}
-	}
+	// var original = $.fn.text;
+	// $.fn.text = function () {
+		// if (arguments.length > 0 && arguments[0] == null) {
+			// var args = Array.createCopyOf(arguments);
+			// args[0] = '';
+			// return original.apply(this, args);
+		// } else {
+			// return original.apply(this, arguments);
+		// }
+	// }
 })(jQuery);
 (function ($) {
-    $.fn.attributebyparameter = function (v, aname) {
-        if (aname == null || aname.length == 0) return null;
-        if (v != null) {
-            this.attr(aname, v);
-        }
-        return this.attr(aname);
-    };
-    $.fn.elementattribute = function(attrName, v) { // use as data-bind-elementattribute[someattribute]="{ ... }"
-        if (arguments.length == 0 || attrName == null || attrName.length == 0) return null;
-        if (arguments.length > 1) {
-            this.attr(attrName, v);
-        }
-        return this.attr(attrName);
-    };
-})(jQuery);
-
-(function ($) {
-    $.fn.checked = function (v) {
-        if (v != null) {
-            for (var i = 0; i < this.length; i++) {
-                this[i].checked = v;
-            }
-        }
-        if (this.length > 0) {
-            return this[0].checked;
-        }
-        return false;
-    };
+    // $.fn.attributebyparameter = function (v, aname) {
+        // if (aname == null || aname.length == 0) return null;
+        // if (v != null) {
+            // this.attr(aname, v);
+        // }
+        // return this.attr(aname);
+    // };
+    // $.fn.elementattribute = function(attrName, v) { // use as data-bind-elementattribute[someattribute]="{ ... }"
+        // if (arguments.length == 0 || attrName == null || attrName.length == 0) return null;
+        // if (arguments.length > 1) {
+            // this.attr(attrName, v);
+        // }
+        // return this.attr(attrName);
+    // };
 })(jQuery);
 
 (function ($) {
-    $.fn.elementdisabled = function (v, b) {
-        if (v != null) {
-            if (v) {
-                this.prop("disabled",true); 
-					if(b == null || b != "noopacity"){
-						this.css("opacity","0.5"); 
-					}
-            } else {
-                this.prop("disabled",false);
-                this.css("opacity","1.0"); 
-            }
-            for (var i = 0; i < this.length; i++) {
-                if (this.get(i) != null && BaseObject.is(this.get(i).activeClass,"IDisablable")) {
-                    this.get(i).activeClass.set_disabled(v ? true: false);
-                }
-            }
-        }
-        if (this.length > 0) {
-            return $(this[0]).prop("disabled");
-        }
-        return false;   
-    };
-	$.fn.elementreadonly = function(v) {
-		if (arguments.length > 0) {
-			this.prop("readonly", ((v)?true:false));
-			return ((v)?true:false);
-		} else {
-			if (this.length > 0) {
-				return $(this[0]).prop("readonly");
-			}
-		}
-		return false;
-	}
+    // $.fn.checked = function (v) {
+        // if (v != null) {
+            // for (var i = 0; i < this.length; i++) {
+                // this[i].checked = v;
+            // }
+        // }
+        // if (this.length > 0) {
+            // return this[0].checked;
+        // }
+        // return false;
+    // };
+})(jQuery);
+
+(function ($) {
+    // $.fn.elementdisabled = function (v, b) {
+        // if (v != null) {
+            // if (v) {
+                // this.prop("disabled",true); 
+					// if(b == null || b != "noopacity"){
+						// this.css("opacity","0.5"); 
+					// }
+            // } else {
+                // this.prop("disabled",false);
+                // this.css("opacity","1.0"); 
+            // }
+            // for (var i = 0; i < this.length; i++) {
+                // if (this.get(i) != null && BaseObject.is(this.get(i).activeClass,"IDisablable")) {
+                    // this.get(i).activeClass.set_disabled(v ? true: false);
+                // }
+            // }
+        // }
+        // if (this.length > 0) {
+            // return $(this[0]).prop("disabled");
+        // }
+        // return false;   
+    // };
+	// $.fn.elementreadonly = function(v) {
+		// if (arguments.length > 0) {
+			// this.prop("readonly", ((v)?true:false));
+			// return ((v)?true:false);
+		// } else {
+			// if (this.length > 0) {
+				// return $(this[0]).prop("readonly");
+			// }
+		// }
+		// return false;
+	// }
 })(jQuery);
 
 (function ($) {
@@ -208,137 +208,137 @@
 })(jQuery);
 
 (function ($) {
-    $.fn.datacontext = function (v) {
-        if (this.length == 0) {
-            return null;
-        }
-        var el = this[0];
-        if (el != null) {
-            if (arguments.length > 0) el.dataContext = v;
-            if (el.dataContext != null) {
-                return el.dataContext;
-            }
-        }
-        return null;
-    };
-    $.fn.metainfo = function(v) {
+    // $.fn.datacontext = function (v) {
+        // if (this.length == 0) {
+            // return null;
+        // }
+        // var el = this[0];
+        // if (el != null) {
+            // if (arguments.length > 0) el.dataContext = v;
+            // if (el.dataContext != null) {
+                // return el.dataContext;
+            // }
+        // }
+        // return null;
+    // };
+    // $.fn.metainfo = function(v) {
         
-    };
+    // };
 })(jQuery);
 (function ($) {
-    $.fn.elementtitle = function (v) {
-        if (!this.length) return null;
-        var el = this[0];
-        if (el != null && v != null) el.title = v;
-        if (el != null && el.title != null) return el.title;
-        return null;
-    };
-})(jQuery);
-
-(function ($) {
-    $.fn.textcolor = function (v) {
-        if (!this.length) return null;
-        this.css('color',v);
-        return this.css('color');
-    };
-})(jQuery);
-(function ($) {
-    $.fn.backcolor = function (v) {
-        if (!this.length) return null;
-        this.css('background-color', v);
-        return this.css('background-color');
-    };
-
-    $.fn.backimage = function (v) {
-        if (!this.length) return null;
-        this.css('background-image', v);
-        return this.css('background-image');
-    };
-	
-    $.fn.backposition = function (v) {
-        if (!this.length) return null;
-        this.css('background-position', v);
-        return this.css('background-position');
-    };
-	
-    $.fn.backgrnd = function (v) {
-        if (!this.length) return null;
-        this.css('background', v);
-        return this.css('background');
-    };
-	
-    $.fn.imgheight = function (v) {
-        if (!this.length) return null;
-        this.css('height', v);
-        return this.css('height');
-    };
-	
-    $.fn.imgwidth = function (v) {
-        if (!this.length) return null;
-        this.css('width', v);
-        return this.css('width');
-    };
+    // $.fn.elementtitle = function (v) {
+        // if (!this.length) return null;
+        // var el = this[0];
+        // if (el != null && v != null) el.title = v;
+        // if (el != null && el.title != null) return el.title;
+        // return null;
+    // };
 })(jQuery);
 
 (function ($) {
-	$.fn.src = function (v) {
-        if (!this.length) return null;
-		if (v == null || typeof v !== 'string') return null;
-		
-		if (!(v.indexOf('http://') === 0 || v.indexOf('https://') === 0)) {
-			v = mapPath(v);
-		}
-		
-		if (this.is('script') || this.is('input') || this.is('frame') || this.is('iframe') || this.is('img')) {
-			this.attr('src', v);
-		
-			return this.attr('src');
-		}
-		
-		if (this.is('sparta')) {
-			return null;
-		}
-		
-		return null;
-    };
+    // $.fn.textcolor = function (v) {
+        // if (!this.length) return null;
+        // this.css('color',v);
+        // return this.css('color');
+    // };
+})(jQuery);
+(function ($) {
+    // $.fn.backcolor = function (v) {
+        // if (!this.length) return null;
+        // this.css('background-color', v);
+        // return this.css('background-color');
+    // };
+
+    // $.fn.backimage = function (v) {
+        // if (!this.length) return null;
+        // this.css('background-image', v);
+        // return this.css('background-image');
+    // };
+	
+    // $.fn.backposition = function (v) {
+        // if (!this.length) return null;
+        // this.css('background-position', v);
+        // return this.css('background-position');
+    // };
+	
+    // $.fn.backgrnd = function (v) {
+        // if (!this.length) return null;
+        // this.css('background', v);
+        // return this.css('background');
+    // };
+	
+    // $.fn.imgheight = function (v) {
+        // if (!this.length) return null;
+        // this.css('height', v);
+        // return this.css('height');
+    // };
+	
+    // $.fn.imgwidth = function (v) {
+        // if (!this.length) return null;
+        // this.css('width', v);
+        // return this.css('width');
+    // };
 })(jQuery);
 
 (function ($) {
-    $.fn.textalign = function (v) {
-        if (!this.length) return null;
-        this.css('text-align', v);
-        return this.css('text-align');
-    };
-    $.fn.fontweight = function (v) {
-        if (!this.length) return null;
-        this.css('font-weight', v);
-        return this.css('font-weight');
-    };
-    $.fn.cssclass = function (v) {
-        if (!this.length) return null;
-        if (v != null) {
-            for (var i = 0; i < this.length; i++) {
-                this[i].className = v;
-            }
-        }
-        if (this.length > 0) return this[0].className;
-        return null;
-    };
+	// $.fn.src = function (v) {
+        // if (!this.length) return null;
+		// if (v == null || typeof v !== 'string') return null;
+		
+		// if (!(v.indexOf('http://') === 0 || v.indexOf('https://') === 0)) {
+			// v = mapPath(v);
+		// }
+		
+		// if (this.is('script') || this.is('input') || this.is('frame') || this.is('iframe') || this.is('img')) {
+			// this.attr('src', v);
+		
+			// return this.attr('src');
+		// }
+		
+		// if (this.is('sparta')) {
+			// return null;
+		// }
+		
+		// return null;
+    // };
+})(jQuery);
+
+(function ($) {
+    // $.fn.textalign = function (v) {
+        // if (!this.length) return null;
+        // this.css('text-align', v);
+        // return this.css('text-align');
+    // };
+    // $.fn.fontweight = function (v) {
+        // if (!this.length) return null;
+        // this.css('font-weight', v);
+        // return this.css('font-weight');
+    // };
+    // $.fn.cssclass = function (v) {
+        // if (!this.length) return null;
+        // if (v != null) {
+            // for (var i = 0; i < this.length; i++) {
+                // this[i].className = v;
+            // }
+        // }
+        // if (this.length > 0) return this[0].className;
+        // return null;
+    // };
     // This one must be use with index data-bind-addcssclass[<classname>]
     // Consequently the <classname> must be lowercase and can contain only alphanumerics + _
-    $.fn.addcssclass = function (idx,v) {
-        if (!this.length) return null;
-        if (v != null && idx != null) {
-            $(this.get(0)).removeClass(idx);
-            if (v) {
-                $(this.get(0)).addClass(idx);
-            }
-        } else if (idx != null) {
-            $(this.get(0)).hasClass(idx);
-        } else {
-            return null;
-        }
-    };
+    // $.fn.addcssclass = function (idx,v) {
+        // if (!this.length) return null;
+        // if (v != null && idx != null) {
+            // $(this.get(0)).removeClass(idx);
+            // if (v) {
+                // $(this.get(0)).addClass(idx);
+            // }
+        // } else if (idx != null) {
+            // $(this.get(0)).hasClass(idx);
+        // } else {
+            // return null;
+        // }
+    // };
 })(jQuery);
 
 
@@ -428,27 +428,27 @@
 })(jQuery);
 
 (function ($) {
-    $.fn.elementid = function (v) {
-        if (!this.length) return null;
-        var el = this[0];
-        if (el != null && v != null) el.id = v;
-        if (el != null && el.id != null) return el.id;
-        return null;
-    };
+    // $.fn.elementid = function (v) {
+        // if (!this.length) return null;
+        // var el = this[0];
+        // if (el != null && v != null) el.id = v;
+        // if (el != null && el.id != null) return el.id;
+        // return null;
+    // };
 })(jQuery);
 
 (function ($) {
-    $.fn.elementvisible = function (v) {
-        if (!this.length) return null;
-        if (v) {
-            this.show();
-            return true;
-        }
-        else {
-            this.hide();
-            return false;
-        }
-    };
+    // $.fn.elementvisible = function (v) {
+        // if (!this.length) return null;
+        // if (v) {
+            // this.show();
+            // return true;
+        // }
+        // else {
+            // this.hide();
+            // return false;
+        // }
+    // };
 })(jQuery);
 
 (function ($) {
@@ -466,20 +466,21 @@
 })(jQuery);
 
 (function ($) {
-    $.fn.elementvisibility = function (v) {
-        if (!this.length) return null;
-        if (v) {
-            this.css("visibility", "visible");
-            return true;
-        }
-        else {
-            this.css("visibility","hidden");
-            return false;
-        }
-    };
+    // $.fn.elementvisibility = function (v) {
+        // if (!this.length) return null;
+        // if (v) {
+            // this.css("visibility", "visible");
+            // return true;
+        // }
+        // else {
+            // this.css("visibility","hidden");
+            // return false;
+        // }
+    // };
 })(jQuery);
 
 (function ($) {
+	/*
     $.fn.indentination = function (v) {
         if (!this.length) return null;
         if (v != null) {
@@ -491,6 +492,7 @@
             return $(this[0]).css("margin-left");
         }
     };
+	*/
 	function $pixelsize(v,side) {
 		if (!this.length || this.length == 0) return null;
 		if (arguments.length > 0) {
