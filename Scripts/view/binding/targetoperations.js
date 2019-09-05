@@ -138,6 +138,24 @@ Binding.TargetOperations = {
 			}
 
 		},
+		val: {
+			indexed: false,
+			read: function(){
+				return this.value;
+			},
+			write: function(v){
+				this.value = v;
+			}
+		},
+		html: {
+			indexed: false,
+			read: function(){
+				return this.innerHTML;
+			},
+			write: function(v){
+				this.innerHTML = v;
+			}
+		},
 		textcolor: {
 			indexed: false,
 			read: function(){
