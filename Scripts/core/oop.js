@@ -741,7 +741,11 @@ Function.prototype.ImplementProperty = function (pname, Initialize, pstore, chan
         var oldval = this[pstoreprop];
         this[pstoreprop] = v;
         if (changeCallback != null && (force || v != oldval)) {
-            this[changeCallback](pname, oldval, v);
+			if (typeof changeCallback == "function") {
+				changeCallback.call(this, oldval, v);
+			} else if (typeof changeCallback == "string") {
+				this[changeCallback](pname, oldval, v);
+			}
         }
     };
 	this.prototype["set_" + pname].$Initialize = Initialize;
@@ -776,7 +780,11 @@ Function.prototype.ImplementActiveProperty = function (pname, Initialize, pstore
 		this[pstoreprop] = v;
 		if (force) b = true;
 		if (changeCallback != null && b) {
-            this[changeCallback](pname, oldval, v);
+			if (typeof changeCallback == "function") {
+				changeCallback.call(this, oldval, v);
+			} else if (typeof changeCallback == "string") {
+				this[changeCallback](pname, oldval, v);
+			}            
         }
 		if (b && this[pname + "_changed"] != null) this[pname + "_changed"].invoke(this, v);
 	};
@@ -837,7 +845,12 @@ Function.prototype.ImplementIndexedProperty = function (pname, Initialize, pstor
             this[pstoreprop] = idx; // if called with a single arg we assume the caller calls this as normal (non-indexed property).
         }
 		if (changeCallback != null) {
-            this[changeCallback]();
+			if (typeof changeCallback == "function") {
+				changeCallback.call(this, v);
+			} else if (typeof changeCallback == "string") {
+				this[changeCallback](v);
+			}
+            
         }
     };
 	this.prototype["set_" + pname].$Initialize = Initialize;
@@ -876,7 +889,14 @@ Function.prototype.ImplementActiveIndexedProperty = function (pname, Initialize,
         }
 		if (b) {
 			if (this[pname + "_changed"] != null) this[pname + "_changed"].invoke(this, v);
-			if (typeof changeCallback == "string") this[changeCallback].call(this, v);
+			if (changeCallback != null) {
+				if (typeof changeCallback == "function") {
+					changeCallback.call(this, v);
+				} else if (typeof changeCallback == "string") {
+					this[changeCallback](v);
+				}
+				
+			}
 		}
     };
 	this.prototype["set_" + pname].$Initialize = Initialize;
@@ -955,8 +975,13 @@ Function.prototype.ImplementIndexedWriteProperty = function (pname, Initialize, 
 			}
         }
 		if (changeCallback != null) {
-            this[changeCallback]();
-        }
+			if (typeof changeCallback == "function") {
+				changeCallback.call(this, v);
+			} else if (typeof changeCallback == "string") {
+				this[changeCallback](v);
+			}
+			
+		}
     };
 	this.prototype["set_" + pname].$Initialize = this.prototype[pstoreprop];
     return this;

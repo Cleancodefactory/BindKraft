@@ -1,13 +1,23 @@
 # View classes and interfaces reference
 
-## Base level
+## General
+
+### Classes
 
 [Base class](ViewClasses/Base.md)
 
-## Implementors
+### Implementors
 
 [ICustomParameterizationStdImpl](ViewClasses/ICustomParameterizationStdImpl.md)
 
-## Low level
+### Low level
 
 [DOMUtilFragment](ViewClasses/DOMUtilFragment.md)
+
+## Library
+
+Library of components for view (template construction). [Click here for the full list](ViewClasses/lib/lib.md).
+
+Some of the most frequently used are: ...
+For the full list [click here](ViewClasses/lib/lib.md).
+
