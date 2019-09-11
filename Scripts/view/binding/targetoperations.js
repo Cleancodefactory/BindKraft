@@ -372,7 +372,10 @@ Binding.TargetOperations = {
 					}
 				} else {
 					var styles = window.getComputedStyle(this);
-					this.__olddisplayStyle = styles.getPropertyValue("display");
+					var curval = styles.getPropertyValue("display");
+					if (curval != "none") {
+						this.__olddisplayStyle = curval;
+					}
 					this.style.setProperty('display', 'none');
 				}
 			}
