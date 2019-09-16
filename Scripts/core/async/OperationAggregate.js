@@ -28,7 +28,7 @@
 function OperationAggregate(/* operations list */ /* if a number the last argument is a timeout*/) {
 	var timeout = null;
 	var doseal = true;
-	
+	Operation.call(this,null,timeout);
 	for (var i = 0; i < arguments.length;i++) {
 		// TODO: Probably we can recognize operations more liberaly - by interface (future refactoring may be necessary).
 		if (BaseObject.is(arguments[i],"Operation")) {
@@ -46,7 +46,7 @@ function OperationAggregate(/* operations list */ /* if a number the last argume
 			timeout = arguments[i];
 		}
 	}
-	Operation.call(this,null,timeout);
+	
 	if (doseal) {
 		this.set_sealed(true);
 	}
