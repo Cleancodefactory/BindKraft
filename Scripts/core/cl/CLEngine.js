@@ -54,34 +54,37 @@ CLEngine.prototype.$labelIndex = new InitializeObject("The command line's label 
 // Parser
 ////////////////////////////////////////////////////////
 CLEngine.reTokens = [
-	{ type: "space",		re: /^(\s+)/gm, skip: true },
-	{ type: "string",   	re: /^\'((?:\\'|[^'])*)\'/gm, proc: CLEngine.unescapeFullString, priority: 10  }, // Lacks new line support
-	{ type: "number",   	re: /^([+-]?[0-9]+(?:\.[0-9]+))/g, proc: CLEngine.parseNumber, priority: 10 },
-	{ type: "hex",   		re: /^(?:0x([0-9a-fA-F]+))/g, proc: CLEngine.parseHexNumber, priority: 10  },
-	{ type: "brnopen",    	re: /^(\()/g },
-	{ type: "brsopen",		re: /^(\[)/g },
-	{ type: "brcopen", 		re: /^(\{)/g },
-	{ type: "brnclose",    	re: /^(\))/g, priority: 5 },
-	{ type: "brsclose",		re: /^(\])/g, priority: 10 },
-	{ type: "brcclose",		re: /^(\})/g, priority: 10 },
+	{ type: "space",		re: /(\s+)/gm, skip: true },
+	{ type: "string",   	re: /\'((?:\\'|[^'])*)\'/gm, proc: CLEngine.unescapeFullString, priority: 10  }, // Lacks new line support
+	{ type: "number",   	re: /([+-]?[0-9]+(?:\.[0-9]+))/g, proc: CLEngine.parseNumber, priority: 10 },
+	{ type: "hex",   		re: /(?:0x([0-9a-fA-F]+))/g, proc: CLEngine.parseHexNumber, priority: 10  },
+	{ type: "brnopen",    	re: /(\()/g },
+	{ type: "brsopen",		re: /(\[)/g },
+	{ type: "brcopen", 		re: /(\{)/g },
+	{ type: "brnclose",    	re: /(\))/g, priority: 5 },
+	{ type: "brsclose",		re: /(\])/g, priority: 10 },
+	{ type: "brcclose",		re: /(\})/g, priority: 10 },
 	
-	{ type: "ident",   re: /^([a-zA-Z\_\$][a-zA-Z0-9\_\$]+)/g, priority: 15 },
-	{ type: "endop",   re: /^(;)/g, priority: 100 },
-	{ type: "commaop",   re: /^(\,)/g, priority: 90 },
-	{ type: "dualop",   re: /^(or|and|xor)/g, priority: 60 },
-	{ type: "dualop",   re: /^(\=\>|\>\=|\<\=|\=\=)/g, priority: 50 },
-	{ type: "dualop",   re: /^(\<|\>)/g, priority: 50 },
-	{ type: "dualop",   re: /^(\*|\/)/g, priority: 20 },
-	{ type: "dualop",   re: /^(\+|\-|)/g, priority: 30 },
-	{ type: "assign",   re: /^(\=)(?!\=)/g, priority: 80 }
+	{ type: "ident",   	re: /([a-zA-Z\_\$][a-zA-Z0-9\_\$]+)/g, priority: 15 },
+	{ type: "endop",   	re: /(;)/g, priority: 100 },
+	{ type: "commaop",  re: /(\,)/g, priority: 90 },
+	{ type: "dualop",   re: /(or|and|xor)/g, priority: 60 },
+	{ type: "dualop",   re: /(\=\>|\>\=|\<\=|\=\=)/g, priority: 50 },
+	{ type: "dualop",   re: /(\<|\>)/g, priority: 50 },
+	{ type: "dualop",   re: /(\*|\/)/g, priority: 20 },
+	{ type: "dualop",   re: /(\+|\-|)/g, priority: 30 },
+	{ type: "assign",   re: /(\=)(?!\=)/g, priority: 80 }
 ];
-
-CLEngine.prototype.$eatToken = function(strLine, mode, /*[]*/ tknLine) {
+/*
+	mode - parse what: statement, object literal, array literal.
+	pos - the position at which to attempt recognition
+*/
+CLEngine.prototype.$eatToken = function(strLine, mode, pos, /*[]*/ tknLine) {
 	var match, v;
 	
 	for (var i = 0; i < CLEngine.reTokens.length; i++) {
 		var retkn = CLEngine.reTokens[i];
-		retkn.re.lastIndex = 0;
+		retkn.re.lastIndex = pos;
 		match = retkn.re.exec(strLine);
 		if (match != null) {
 			v = match[1];
@@ -103,7 +106,7 @@ CLEngine.prototype.tokenizeLine = function(strLine) {
 	var mode = { stack: []}; // Mode stack if empty parsing statements otherwise object {} or array []
 	// Prio
 	do {
-		var n = this.$eatToken(str, mode, tknLine);
+		var n = this.$eatToken(str, mode, pos, tknLine);
 		if (n > 0) {
 			pos += n;
 			str = str.slice(n);

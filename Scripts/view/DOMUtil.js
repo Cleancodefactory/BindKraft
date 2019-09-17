@@ -519,10 +519,18 @@ DOMUtil.queryOneByDataKey = function(node, datakey) {
 	return DOMUtil.findElement(node, '[data-key="' + datakey + '"]',DOMUtil.BorderCallbacks.DataKeysInViewIn);
 }
 DOMUtil.queryOne = function(node, selector) {
-	return DOMUtil.findElement(node, selector,DOMUtil.BorderCallbacks.DataKeysInViewIn);
+	if (arguments.length > 1) {
+		return DOMUtil.findElement(node, selector,DOMUtil.BorderCallbacks.DataKeysInViewIn);
+	} else {
+		return DOMUtil.findElement(document.body, selector,DOMUtil.BorderCallbacks.DataKeysInViewIn);
+	}
 }
 DOMUtil.queryAll = function(node, selector) {
-	return DOMUtil.findElements(node, selector,DOMUtil.BorderCallbacks.DataKeysInViewIn);
+	if (arguments.length > 1) {
+		return DOMUtil.findElements(node, selector,DOMUtil.BorderCallbacks.DataKeysInViewIn);
+	} else {
+		return DOMUtil.findElements(document.body, selector,DOMUtil.BorderCallbacks.DataKeysInViewIn);
+	}
 }
 DOMUtil.parentByDataKey = function(node, datakey) {
 	return DOMUtil.findParent(node, '[data-key="' + datakey + '"]',DOMUtil.BorderCallbacks.DataKeysInViewOut);

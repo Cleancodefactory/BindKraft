@@ -1,0 +1,24 @@
+
+    <div data-class="WindowInfoDisplay" class="c_window_info_display" data-key="windowinfodisplay" >
+        <input type="button" value="Clear" data-on-click="{bind source=__control path=onClearMessages}" 
+			class="client_tools_buttons" 
+			style="margin:2px 2px 0 0;float:right;cursor:pointer; " />
+        <table style="margin-top:15px; border-collapse: collapse; background-color:transparent;width:100%;" >
+            <tbody data-class="Repeater" data-bind-$items="{read source=__control path=$reversedc}">
+                <tr class="c_window_info_display_row">
+                    <td style="width:30px; text-align:center">
+                        <img data-class="ImageX"   alt="" class="f_notifyimg" 
+                         data-bind-$src="{read path=messageType customformat=__control:CustomImgFormatter}" />
+                    </td>
+                    <td style="width:auto;">
+                        <span  data-bind-text="{read path=message}"></span>
+                    </td>
+                    <td style="width:50px; text-align:left;">
+                        <img data-class="ImageX"   alt="" style="cursor:pointer" 
+                             data-bind-$src="{read source=static text='/img/delete__icon.png'}"
+                             data-on-click="{bind source=__control path=onRemoveMessage}" />
+                    </td>
+                </tr>  
+            </tbody>      
+        </table>
+    </div>

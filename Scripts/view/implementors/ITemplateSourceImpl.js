@@ -42,8 +42,9 @@ ITemplateSourceImpl.classInitialize = function(cls, defaultTemplateSelector, opt
 		}
 		// Legacy search is by defaultTemplateSelector without parsing
 		if (BaseObject.getProperty(options, "legacy", false)) {
-			tml = $(this.get_templateName());
-			if (tml !=null && tml.length > 0) return tml.children().clone().get(0);
+			tml = DOMUtil.queryOne(tmlName);
+			
+			if (tml !=null) return tml.innerHTML;
 			tml = null;
 		}
 		// Try global TemplateRegister and DOM
@@ -73,12 +74,10 @@ ITemplateSourceImpl.GetGlobalTemplate = function (tn, options) {
 		}
 		if (!BaseObject.getProperty(options, "nodom", false)) {
 			tml = ITemplateSourceImpl.GetTemplateFromDom(tn.module, tn.name, options);
-            if (tml != null && $(tml).length > 0) {
-				//var tml = $(tml).children().get(0);
-                return tml.innerHTML;
-            }
-			tml = null;
+            if (tml != null) return tml;
+			tml = null; // Set to null for further methods (if any)
 		}
+		// Further methods can be put here. Please do not overdo it!
 	}
 	return null;
 }
@@ -94,13 +93,10 @@ ITemplateSourceImpl.GetTemplateFromDom = function(module, name, options) {
 	} else {
 		sel += ((sel.length > 0)?("_" + name):name);
 	}
-	var tml = $("#" + sel);
-	if (tml != null && tml.length > 0) {
-		return tml.get(0);
-	}
-	var tml = $("." + sel);
-	if (tml != null && tml.length > 0) {
-		return tml.get(0);
+	var tml = DOMUtil.queryOne("#" + sel);
+	if (tml == null) tml = DOMUtil.queryOne("." + sel);
+	if (tml != null) {
+		return tml.innerHTML;
 	}
 	return null;
 }
