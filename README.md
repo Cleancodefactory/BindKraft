@@ -5,9 +5,9 @@ This repository contains the source code and the documentation of the BindKraft 
 ## Links
 
 Project information | Documentation | Sites
---- | --- | ---
-[Changelog](Documentation/CHANGELOG.md) - Changes log, started in April 2019 (see more details in the document) | [Open the documentation](Documentation/start.md) | [BindKraft.com](http://bindkraft.com) - KraftApps (A workspace with several apps written with BindKraft sitting on top of a CoreKraft server)
-[Roadmap](Documentation/ROADMAP.md) - Future plans| . | [BindKraft.io](http://bindkraft.io) - Demo site (quite old)
+| --- | --- | --- |
+| [Changelog](Documentation/CHANGELOG.md) - Changes log, started in April 2019 (see more details in the document) | [Open the documentation](Documentation/start.md) | [BindKraft.com](http://bindkraft.com) - KraftApps (A workspace with several apps written with BindKraft sitting on top of a CoreKraft server) |
+| [Roadmap](Documentation/ROADMAP.md) - Future plans| . | [BindKraft.io](http://bindkraft.io) - Demo site (quite old) |
 
 ## BindKraftJS at a glance
 
