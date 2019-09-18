@@ -3,4 +3,6 @@
 //#using "./IInfoDisplayWindowImpl.js"
 //#using "./IViewHostWindowImpl.js"
 //#using "./IAttachedWindowBehaviorsImpl.js"
-// //#using "./IDialogViewImpl.js"
+//#using "./IInfoDisplayPanelImpl.js"
+// //#using "./IDialogViewImpl.js
+"

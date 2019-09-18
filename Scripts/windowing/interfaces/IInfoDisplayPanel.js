@@ -1,7 +1,17 @@
-
-
-
 /*INTERFACE*/
+function IInfoDisplayPanel() { }
+IInfoDisplayPanel.RequiredTypes("Base");
+IInfoDisplayPanel.Interface("IInfoDisplayPanel");
+IInfoDisplayPanel.prototype.dataexhaustedevent = new InitializeEvent("Fired by the display panel whenever the data inside it is cleared by the user.");
+IInfoDisplayPanel.prototype.addEntry = function (entry) { throw "not impl"; }.Description("Optional. If supported it should add entry with minimal overhead. return true if supported");
+IInfoDisplayPanel.prototype.get_reversedc = function () { throw "not impl";}.Description("Returns the reversed list of the messages");
+IInfoDisplayPanel.prototype.onRemoveMessage = function (e, item, binding) { throw "not impl"; }
+IInfoDisplayPanel.prototype.onClearMessages = function (e, dc, binding, bparam) { throw "not impl";}
+IInfoDisplayPanel.prototype.get_infomessagesavailable = function() { throw "not impl"; }
+	
+
+
+/* Old version - we no longer keep code in interfaces.
 function IInfoDisplayPanel() { }
 IInfoDisplayPanel.RequiredTypes("Base");
 IInfoDisplayPanel.Interface("IInfoDisplayPanel");
@@ -43,3 +53,4 @@ IInfoDisplayPanel.prototype.get_infomessagesavailable = function() {
 	if (dc != null && dc.length > 0) return true;
 	return false;
 }
+*/

@@ -7,23 +7,23 @@ function SimpleInfoDisplay() {
 }
 SimpleInfoDisplay.Inherit(Base, "SimpleInfoDisplay");
 SimpleInfoDisplay.Implement(IUIControl);
-SimpleInfoDisplay.Implement(IInfoDisplayPanel);
+SimpleInfoDisplay.Implement(IInfoDisplayPanelImpl);
 SimpleInfoDisplay.prototype.onShowHidePanel = function (e, dc, binding, bparam) {
 };
-SimpleInfoDisplay.prototype.CustomImgFormatter = {
+SimpleInfoDisplay.prototype.TypeColor = {
     ToTarget: function (v) {
         switch (v) {
             case "error":
-                return "img/notify/error.png";
+                return "#D0C0C0";
                 break;
             case "warning":
-                return "img/notify/warning.png";
+                return "#D0D0C0";
                 break;
             case "info":
-                return "img/notify/info.png";
+                return "#C0C0D0";
                 break;
             default:
-                return "img/notify/help.png";
+                return "#C0C0C0";
                 break;
 
         }
