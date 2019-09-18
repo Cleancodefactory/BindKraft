@@ -82,8 +82,8 @@
 */
 function LocalAPIClient(objapis, lapi, lapi1, lapiN) {
 	BaseObject.apply(this, arguments);
+	this.$localapis = [];
 	if (arguments.length > 0) {
-		this.$localapis = [];
 		for (var i = 0; i < arguments.length; i++) {
 			if (BaseObject.is(arguments[i], "LocalAPI")) {
 				this.$localapis.push(arguments[i]);

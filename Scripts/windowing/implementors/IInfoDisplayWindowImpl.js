@@ -1,21 +1,49 @@
-/* ERROR VIEW HOSTING PROTOCOL IMPL */
+/* ERROR VIEW HOSTING Interface IMPL */
+/*
+	Defaults are not supported for this feature, becasue it is not bound to an exact class
+*/
 /* Interface IErrorDisplay */
 function IInfoDisplayWindowImpl() { }
 IInfoDisplayWindowImpl.InterfaceImpl(IInfoDisplay);
 // IInfoDisplayWindowImpl.classType = "IInfoDisplay";
 IInfoDisplayWindowImpl.RequiredTypes("BaseWindow", "IStructuralQueryProcessor,IStructuralQueryEmiter");
-IInfoDisplayWindowImpl.defaultInfoDisplayTemplate = "#defaultInfoDisplayTemplate";
-IInfoDisplayWindowImpl.ImplementProperty("displayelement", new InitializeStringParameter("data-key of an element in the window caption area that implements the infodisplay. The element must have data class implementing IInfoDisplayPanel.",null));
-IInfoDisplayWindowImpl.classInitialize = function (cls, useTemplate, area, method) {
+IInfoDisplayWindowImpl.defaultInfoDisplayTemplate = "bindkraft/defaultinfodisplaytemplate";
+IInfoDisplayWindowImpl.ImplementProperty("infodisplayelement", new InitializeStringParameter("data-key of an element in the window caption area that implements the infodisplay. The element must have data class implementing IInfoDisplayPanel.",null));
+IInfoDisplayWindowImpl.classInitialize = function (cls, useTemplate, options) {
     if (BaseObject.is(useTemplate, "string") && useTemplate.length > 0) {
-        cls.prototype.$defaultInfoDisplayTemplate = useTemplate;
+        cls.prototype.$defaultInfoDisplayTemplate = useTemplate; // use template can be raw string (name) or Connector 
     }
-    // cls.prototype.
+	// Private get template proc
+	function _gettemplate(name_or_connector) {
+		var tmlName = name_or_connector;
+		if (BaseObject.is(tmlName, "Connector")) { // Load through clonned connector
+			if (!tmlName.isAsync) return tmlName.createNewConnector().bind();
+			return null;
+		} else if (typeof tmlName == "string") {
+			if (BaseObject.getProperty(options, "legacy", false)) {
+				tml = DOMUtil.queryOne(tmlName);
+				if (tml != null) tml = tml.innerHTML;
+				if (tml != null && tml.length > 0) {
+					return tml;
+				}
+				tml = null;
+			}
+			var tn = ITemplateSourceImpl.ParseTemplateName(tmlName);
+			tml = ITemplateSourceImpl.GetGlobalTemplate(tn,options);
+			if (tml != null) return tml;
+		}
+		// Future extensions will go here
+		return null;
+	}
+	function _template(_this) {
+		var tmlname = BaseObject.getProperty(_this, "createParameters.data.infoDisplayTemplate", BaseObject.getProperty(_this, "$defaultInfoDisplayTemplate", IInfoDisplayWindowImpl.defaultInfoDisplayTemplate));
+		return _gettemplate(tmlname);
+	}
+	
+
     cls.prototype.$infoDisplayView = null;
     cls.prototype.$infoDisplayCreate = function () {
-        var tmlPattern = BaseObject.getProperty(this, "createParameters.data.infoDisplayTemplate", BaseObject.getProperty(this, "$defaultInfoDisplayTemplate", IInfoDisplayWindowImpl.defaultInfoDisplayTemplate));
-        var idisp = $(tmlPattern).children().clone();
-
+        var idisp = _template(this);
         var cc = this.get_clientcontainer();
         if (cc != null && BaseObject.isDOM(cc)) {
             this.$infoDisplayView = ViewBase.materialize($(cc), idisp, "prepend");
@@ -26,7 +54,6 @@ IInfoDisplayWindowImpl.classInitialize = function (cls, useTemplate, area, metho
                     this.$infoDisplayDestroy();
                 }));
             }
-            //cc.prepend(idisp);
         }
         return this.$infoDisplayView;
     };
@@ -36,7 +63,8 @@ IInfoDisplayWindowImpl.classInitialize = function (cls, useTemplate, area, metho
 		if (bDoNotCreate) {
 			return null;
 		} else {
-			if (this.get_displayelement() != null) {
+			if (this.get_infodisplayelement() != null) {
+				// TODO: this needs refactoring and checks - we are more strict now.
 				idisp = this.childObject(this.get_displayelement());
 				if (BaseObject.is(idisp,"Base")) {
 					this.$infoDisplayView = idisp;
@@ -50,8 +78,8 @@ IInfoDisplayWindowImpl.classInitialize = function (cls, useTemplate, area, metho
     cls.prototype.$infoDisplayDestroy = function () {
         var idisp = this.$infoDisplayView;
         if (idisp != null) {
-            var el = idisp.get_liveelement();
-            if (el != null) el.Remove();
+            // var el = idisp.get_liveelement(); // TODO: We should probably check this too
+            if (idisp.root != null) DOMUtil.Remove(idisp.root);
         }
         this.$infoDisplayView = null;
     };
@@ -61,7 +89,7 @@ IInfoDisplayWindowImpl.classInitialize = function (cls, useTemplate, area, metho
     cls.prototype.infoDisplayAdd = function (info) {
         var idisp = this.$get_infoDisplay();
         if (idisp != null) {
-            if (BaseObject.is(this.$infoDisplayView, "IInfoDisplayPanel")) {
+            if (BaseObject.is(idisp, "IInfoDisplayPanel")) {
                 idisp.addEntry(info);
             }
         }
@@ -101,14 +129,10 @@ IInfoDisplayWindowImpl.classInitialize = function (cls, useTemplate, area, metho
             if (!this.throwDownStructuralQuery(query)) {
                 // The message is still not shown anywhere - skip everything and try something else
                 if (BaseObject.is(window.Shell, "Shell")) {
-                    if (BaseObject.is(window.Shell, "IInfoDisplay")) {
-                        window.Shell.infoDisplayAdd(query);
-                    } else {
-                        var w = Shell.get_workspacewindow();
-                        if (w != null && BaseObject.is(w, "IInfoDisplay")) {
-                            w.infoDisplayAdd(query);
-                        }
-                    }
+					var w = Shell.get_workspacewindow();
+					if (w != null && BaseObject.is(w, "IInfoDisplay")) {
+						w.infoDisplayAdd(query);
+					}
                 }
                 return true;
             }

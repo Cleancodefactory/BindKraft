@@ -1,3 +1,10 @@
+/*
+	This file contained the built-in validator rules. Now they are put in separate files in view/validatorrules.
+	
+	This file will be removed from the code base soon and the example validator code moved to documentation page.
+
+*/
+
 
 // Test validator - ref implementation //
 /*CLASS*/
@@ -13,7 +20,8 @@ TestValidateControl.prototype.validateValue = function (validator, value, bindin
 };
 
 
-////////////// CompareNumbersValidatorControl /////////////////////////
+/*
+////////// CompareNumbersValidatorControl /////////////////////////
 function CompareNumbersValidatorControl(v) {
 	ValidateValue.apply(this, arguments);
 }
@@ -47,9 +55,9 @@ CompareNumbersValidatorControl.prototype.validateValue = function (validator, va
 	}
 	return this.validationResult(result);
 };
-//////////////////////END/////////////////////////////
-
-
+//////////////////END/////////////////////////////
+*/
+/*
 ////////////// CompareDatesValidatorControl /////////////////////////
 function CompareDatesValidatorControl(v) {
 	ValidateValue.apply(this, arguments);
@@ -116,8 +124,8 @@ CompareDatesValidatorControl.prototype.validateValue = function (validator, valu
 	return this.validationResult(result);
 };
 //////////////////////END/////////////////////////////
-
-
+*/
+/*
 //============================================/ FixedNumberValidatorControl \============================================>>
 
 function FixedNumberValidatorControl(v) {
@@ -197,7 +205,9 @@ FixedNumberValidatorControl.prototype.validateValue = function (validator, value
 }
 
 //<<============================================/ END FixedNumberValidatorControl \============================================
+*/
 
+/*
 ////////////// RangeNumbersValidatorControl /////////////////////////
 function RangeNumbersValidatorControl(v) {
 	ValidateValue.apply(this, arguments);
@@ -264,13 +274,13 @@ RangeNumbersValidatorControl.prototype.validateValue = function (validator, valu
 	return this.validationResult(result);
 };
 //////////////////////END/////////////////////////////
-
-
+*/
+/*
 ////////////// CRangeDatesValidator //////////////////////////////
 function RangeDatesValidatorControl(v) {
 	ValidateValue.apply(this, arguments);
 }
-RangeDatesValidatorControl.Inherit(RangeNumbersValidatorControl, "RangeDatesValidatorControl");
+RangeDatesValidatorControl.Inherit(ValidateValue, "RangeDatesValidatorControl");
 RangeDatesValidatorControl.registerValidator("rangedates");
 RangeDatesValidatorControl.prototype.$minValue = null;
 RangeDatesValidatorControl.prototype.$maxValue = null;
@@ -313,7 +323,8 @@ RangeDatesValidatorControl.prototype.validateValue = function (validator, value,
 	return this.validationResult(result);
 };
 //////////////////////END/////////////////////////////
-
+*/
+/*
 ////////////// LengthValidatorControl //////////////////////////////
 function LengthValidatorControl(v) {
 	ValidateValue.apply(this, arguments);
@@ -370,7 +381,8 @@ LengthValidatorControl.prototype.validateValue = function (validator, value, bin
 	return this.validationResult(result);
 };
 //////////////////////END/////////////////////////////
-
+*/
+/*
 ////////////// RequiredFieldValidatorControl //////////////////////////////
 function RequiredFieldValidatorControl(v) {
 	ValidateValue.apply(this, arguments);
@@ -395,8 +407,8 @@ RequiredFieldValidatorControl.prototype.validateValue = function (validator, val
 	return this.validationResult(result);
 };
 //////////////////////END/////////////////////////////
-
-
+*/
+/*
 ////////////// RegularExpressionValidatorControl //////////////////////////////
 function RegularExpressionValidatorControl(v) {
 	ValidateValue.apply(this, arguments);
@@ -470,8 +482,8 @@ RegularExpressionValidatorControl.prototype.validateValue = function (validator,
 	return this.validationResult(result);
 };
 //////////////////////END/////////////////////////////
-
-
+*/
+/*
 ////////////// EmailValidatorControl //////////////////////////////
 function EmailValidatorControl(v) {
 	ValidateValue.apply(this, arguments);
@@ -510,7 +522,8 @@ EmailValidatorControl.prototype.validateValue = function (validator, value, bind
 	"\n@return @enum ValidationResultEnum value"
 );
 //////////////////////END/////////////////////////////
-
+*/
+/*
 ////////////// ZipCodeValidatorControl //////////////////////////////
 function ZipCodeValidatorControl(v) {
 	ValidateValue.apply(this, arguments);
@@ -541,7 +554,8 @@ ZipCodeValidatorControl.prototype.validateValue = function (validator, value, bi
 	return this.validationResult(result);
 };
 //////////////////////END/////////////////////////////
-
+*/
+/*
 ////////////// PhonenumberValidatorControl //////////////////////////////
 function PhonenumberValidatorControl(v) {
 	ValidateValue.apply(this, arguments);
@@ -569,7 +583,8 @@ PhonenumberValidatorControl.prototype.validateValue = function (validator, value
 	return this.validationResult(result);
 };
 //////////////////////END/////////////////////////////
-
+*/
+/*
 ////////////// UrlValidatorControl //////////////////////////////
 function UrlValidatorControl(v) {
 	ValidateValue.apply(this, arguments);
@@ -599,7 +614,9 @@ UrlValidatorControl.prototype.validateValue = function (validator, value, bindin
 	return this.validationResult(result);
 };
 //////////////////////END/////////////////////////////
+*/
 
+/*
 ////////////// NumberValidatorControl //////////////////////////////
 function NumberValidatorControl(v) {
 	ValidateValue.apply(this, arguments);
@@ -625,7 +642,8 @@ NumberValidatorControl.prototype.validateValue = function (validator, value, bin
 	return this.validationResult(result);
 };
 //////////////////////END/////////////////////////////
-
+*/
+/*
 ////////////// StateCodeValidatorControl //////////////////////////////
 function StateCodeValidatorControl(v) {
 	ValidateValue.apply(this, arguments);
@@ -653,7 +671,8 @@ StateCodeValidatorControl.prototype.validateValue = function (validator, value, 
 	return this.validationResult(result);
 };
 //////////////////////END/////////////////////////////
-
+*/
+/*
 ////////////// AsyncValidatorControl //////////////////////////////
 function AsyncValidatorControl(v) {
 	ValidateValue.apply(this, arguments);
@@ -693,7 +712,7 @@ AsyncValidatorControl.prototype.reportBack = function (result, message, forceInd
 		this.$validator.reportResult(this, result);
 	}
 };
-
+*/
 /* Callback delegate prototype:
 	function ( obj) returns ValidationResultEnum
 	obj {
@@ -709,7 +728,7 @@ AsyncValidatorControl.prototype.reportBack = function (result, message, forceInd
 	even if the result is correct (by default correct values do not show part or all of the validation indication UI)
 */
 //////////////////////END/////////////////////////////
-
+/*
 ////////////// DelegateValidatorControl //////////////////////////////
 function DelegateValidatorControl(v) {
 	ValidateValue.apply(this, arguments);
@@ -738,7 +757,7 @@ DelegateValidatorControl.prototype.validateValue = function (validator, value, b
 	}
 	return this.validationResult(result);
 };
-
+*/
 
 
 function ValidationSummaryControl(v) {
@@ -750,6 +769,7 @@ ValidationSummaryControl.prototype.validateValue = function (validator, value, b
 	return this.validationResult(result);
 };
 
+/*
 ////////////// RangeDatesValidatorControlEx //////////////////////////////
 function RangeDatesValidatorControlEx(v) {
 	ValidateValue.apply(this, arguments);
@@ -803,7 +823,8 @@ RangeDatesValidatorControlEx.prototype.validateValue = function (validator, valu
 	return this.validationResult(result);
 };
 //////////////////////END/////////////////////////////
-
+*/
+/*
 ////////////// SameValuesValidatorControl //////////////////////////////
 function SameValuesValidatorControl(v) {
 	ValidateValues.apply(this, arguments);
@@ -835,7 +856,8 @@ SameValuesValidatorControl.prototype.validateValues = function (validator, value
 	return this.validationResult(result);
 };
 //////////////////////END/////////////////////////////
-
+*/
+/*
 ////////////// ValidDateFieldValidatorControl //////////////////////////////
 function ValidDateFieldValidatorControl(v) {
 	ValidateValue.apply(this, arguments);
@@ -869,3 +891,4 @@ ValidDateFieldValidatorControl.prototype.validateValue = function (validator, va
 	return this.validationResult(result);
 };
 //////////////////////END/////////////////////////////
+*/

@@ -131,6 +131,24 @@ Operation.prototype.whencomplete = function() {
 	}
 	return wrapper;
 }.Description("Creates an event dispatcher tuned to advise newcomers and returns it - multiple handlers can be advised - see");
+Operation.prototype.onsuccess = function(callback) {
+	return this.whencomplete().onsuccess(callback);
+}
+Operation.prototype.success = Operation.prototype.onsuccess;
+Operation.prototype.onfailure = function(callback) {
+	return this.whencomplete().onfailure(callback);
+}
+Operation.prototype.failure = Operation.prototype.onfailure;
+
+Operation.prototype.complete = function(anotherOp,result) {
+	return this.whencomplete().complete(anotherOp, result);
+}
+Operation.prototype.succeed = function(anotherOp,result) {
+	return this.whencomplete().succeed(anotherOp, result);
+}
+Operation.prototype.fail = function(anotherOp,errinfo) {
+	return this.whencomplete().fail(anotherOp, errinfo);
+}
 
 // HELPERS ////////////////////////////////////////////////////
 /**

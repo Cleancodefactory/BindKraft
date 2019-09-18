@@ -11,7 +11,7 @@ var BkInit = {
 	DevMenu: function(fn) { fn(new BkInit_Shortcuts("shellfs","develop")); return this; },
 	PrivateMenu: function(privatedir, fn) { fn(new BkInit_Shortcuts("shellfs","private/" + privatedir)); return this; },
 	AppMenu: function(appname, fn) { fn(new BkInit_Shortcuts("shellfs","apps/" + appname)); return this; },
-	KeylaunchMenu: function(appname, fn) { fn(new BkInit_Shortcuts("shellfs","keylaunch")); return this; },
+	KeylaunchMenu: function(fn) { fn(new BkInit_Shortcuts("shellfs","keylaunch")); return this; },
 	RecentMenu: function(fn) { fn(new BkInit_Shortcuts("shellfs","recent")); return this; },
 	// Boot CLScript
 	MasterBoot: function(cl) { 
@@ -46,6 +46,15 @@ var BkInit = {
 		var appname = Class.getClassName(appClass);
 		if (appname == null) throw "Cannot find class name";
 		fn(new BkInit_AppData(appname));
+		return this;
+	},
+	AppInfo: function(appClass, fn) {
+		if (!Class.is(appClass, "IApp")) {
+			throw "The class is not an app";
+		}
+		var appname = Class.getClassName(appClass);
+		if (appname == null) throw "Cannot find class name";
+		fn(new BkInit_AppInfo(appname));
 		return this;
 	}
 };

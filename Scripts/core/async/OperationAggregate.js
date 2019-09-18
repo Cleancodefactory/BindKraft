@@ -28,7 +28,7 @@
 function OperationAggregate(/* operations list */ /* if a number the last argument is a timeout*/) {
 	var timeout = null;
 	var doseal = true;
-	
+	Operation.call(this,null,timeout);
 	for (var i = 0; i < arguments.length;i++) {
 		// TODO: Probably we can recognize operations more liberaly - by interface (future refactoring may be necessary).
 		if (BaseObject.is(arguments[i],"Operation")) {
@@ -46,7 +46,7 @@ function OperationAggregate(/* operations list */ /* if a number the last argume
 			timeout = arguments[i];
 		}
 	}
-	Operation.call(this,null,timeout);
+	
 	if (doseal) {
 		this.set_sealed(true);
 	}
@@ -54,6 +54,19 @@ function OperationAggregate(/* operations list */ /* if a number the last argume
 OperationAggregate.Inherit(Operation, "OperationAggregate");
 OperationAggregate.ImplementProperty("sealed", new InitializeBooleanParameter("",false), null, "onForceCheck");
 OperationAggregate.prototype.$operations = new InitializeArray("Filled with the aggregated operaions");
+// Overrides
+OperationAggregate.prototype.OperationReset = function() {
+	Operation.prototype.OperationReset.apply(this,arguments);
+	this.$sealed = false;
+	return this;
+}
+OperationAggregate.prototype.OperationClear = function() {
+	Operation.prototype.OperationClear.apply(this,arguments);
+	this.$sealed = false;
+	this.$operations = [];
+	return this;
+}
+
 // Alternative to get/set_seal - more convenient sometimes
 OperationAggregate.prototype.seal = function() {
 	this.set_sealed(true);

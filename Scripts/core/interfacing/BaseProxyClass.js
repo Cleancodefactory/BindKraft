@@ -70,13 +70,13 @@ $Managed_BaseProxy.prototype.$wrapResult = function(r, method) {
 		return this.$buildProxyFromAnother(r,this.$container);
 	} else if (BaseObject.is(r, "ChunkedOperation")) {
 		op = new ChunkedOperation();
-		r.chunk(function(success,data) {
+		r.anychunk(function(success,data) {
 			op.ReportOperationChunk(success,me.$wrapResult(data,method));
 		}).then(function (xop) {
 			if (xop.isOperationSuccessful()) {
 				op.CompleteOperation(true, me.$wrapResult(xop.getOperationResult(), method));
 			} else {
-				op.CompleteOperation(true, xop.getOperationErrorInfo());
+				op.CompleteOperation(false, xop.getOperationErrorInfo());
 			}
 		});
 		return op;
@@ -86,7 +86,7 @@ $Managed_BaseProxy.prototype.$wrapResult = function(r, method) {
 			if (xop.isOperationSuccessful()) {
 				op.CompleteOperation(true, me.$wrapResult(xop.getOperationResult(), method));
 			} else {
-				op.CompleteOperation(true, xop.getOperationErrorInfo());
+				op.CompleteOperation(false, xop.getOperationErrorInfo());
 			}
 		});
 		return op;

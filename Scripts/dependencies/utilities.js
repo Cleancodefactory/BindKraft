@@ -79,7 +79,7 @@ function HideProgressAfterAjax() {
         HideProgressAfterAjax_Counter = 0;
     }
 	$('#loading_count').text("" + HideProgressAfterAjax_Counter);
-    $('#loading').elementtitle("Requests in progress: " + HideProgressAfterAjax_Counter);
+    $('#loading').prop("title","Requests in progress: " + HideProgressAfterAjax_Counter);
 }
 
 function ShowProgressBeforeAjax() {
@@ -88,7 +88,7 @@ function ShowProgressBeforeAjax() {
     $('#loading').show();
     $('#loading_cover').show();
 	$('#loading_count').text("" + HideProgressAfterAjax_Counter);
-    $('#loading').elementtitle("Requests in progress: " + HideProgressAfterAjax_Counter);
+    $('#loading').prop("title","Requests in progress: " + HideProgressAfterAjax_Counter);
 }
 
 //GUID//

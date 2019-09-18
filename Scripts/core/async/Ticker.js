@@ -58,11 +58,19 @@ Ticker.prototype.tick = function () {
 			}
 		} catch (ex) {
 			if (console) {
-				console.log("Exception in a ticker initiated action. " + ex);
-				if (typeof ex.stack == "string") {
-					console.log("Stack: " + ex.stack);
-					alert("Stack: " + ex.stack);
+				if (console.error) {
+					console.error("Exception in a ticker initiated action. " + ex);
+				} else {
+					console.log("Exception in a ticker initiated action. " + ex);
 				}
+				if (window.Error) {
+					var xerr = new Error(ex);
+					if (typeof xerr.stack == "string") {
+						console.log("Stack: " + xerr.stack);
+						//alert("Stack: " + xerr.stack);
+					}
+				}
+				
 			}
 		}
         CallContext.endContext(this);

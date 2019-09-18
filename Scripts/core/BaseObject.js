@@ -27,6 +27,7 @@ function BaseObject() {
     }
     BaseObject.initProtocols(this);
 };
+Function.classes["BaseObject"] = BaseObject; // Exception for the root class
 // usage in the constructor:
 // BaseObject.initProtocols(this);
 // Never use this directly, calling the constructor of the parent will eventually call it in BaseObject constructor.

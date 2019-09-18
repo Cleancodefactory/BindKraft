@@ -1,4 +1,4 @@
-/*
+/* DEPRECATED
 */
 
 function IServiceHub() {}

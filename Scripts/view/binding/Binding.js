@@ -1725,7 +1725,7 @@ Binding.HSourcePathPart.prototype.solution = function(binding) {
 // 2. When obj is not null they execute on it and return the result
 // This way we have both - extraction and calculation of naming in one method
 Binding.HSourcePathPart.prototype.resolve = function (obj, binding) {
-    var s;
+    var s,o;
     switch (this.kind) {
         case "literal":
             return this.prop;
@@ -1743,7 +1743,9 @@ Binding.HSourcePathPart.prototype.resolve = function (obj, binding) {
 					}
 				} else {
 					if (obj == null) return ("$" + this.prop);
-					return obj["get_" + this.prop].call(obj);
+					o = obj["get_" + this.prop];
+					if (typeof o != "function") throw "get_" + this.prop + " does not exist";
+					return o.call(obj);
 				}
             } else {
                 if (obj == null) return this.prop;
@@ -2105,7 +2107,7 @@ Binding.prototype.$get_targetValue = function (bRaw) { // if bRaw is present and
             } else {
                 var msg = new InfoMessageQuery(ex + "<br/>\n ERROR in Binding.prototype.$get_targetValue of " + this.$expression + "<br/>\n HTML extract: " + this.$get_htmlExtractForErrorInfo());
                 JBUtil.throwStructuralQuery(this.$target, msg);
-                throw (ex + "<br/>\n ERROR in Binding.prototype.$set_sourceValue of " + this.$expression + "<br/>\n HTML extract: " + this.$get_htmlExtractForErrorInfo());
+                throw (ex + "<br/>\n ERROR in Binding.prototype.$get_targetValue of " + this.$expression + "<br/>\n HTML extract: " + this.$get_htmlExtractForErrorInfo());
                 // InfoMessageQuery.emit(this,
             }
 
@@ -2149,7 +2151,7 @@ Binding.prototype.$get_sourceValue = function (bFormat) { // The source is consi
         } else {
             var msg = new InfoMessageQuery(ex + "<br/>\n ERROR in Binding.prototype.$get_sourceValue of " + this.$expression + "<br/>\n HTML extract: " + this.$get_htmlExtractForErrorInfo());
             JBUtil.throwStructuralQuery(this.$target, msg);
-            throw (ex + "<br/>\n ERROR in Binding.prototype.$set_sourceValue of " + this.$expression + "<br/>\n HTML extract: " + this.$get_htmlExtractForErrorInfo());
+            throw (ex + "<br/>\n ERROR in Binding.prototype.$get_sourceValue of " + this.$expression + "<br/>\n HTML extract: " + this.$get_htmlExtractForErrorInfo());
             // InfoMessageQuery.emit(this,
         }
     }
@@ -2302,8 +2304,13 @@ Binding.prototype.get_targetValue = function (bRaw) {
 };
 
 Binding.prototype.set_targetValue = function (vin) {
-	if ( this.__obliterated ) { return; }
-    return this.$set_targetValue(vin);
+    if ( this.__obliterated ) { return; }
+    if (this.options.operation && BaseObject.is(vin, "Operation")) {
+        var me = this;
+        vin.onsuccess(function(_val){ me.$set_targetValue(_val); }).onfailure(function(errinfo){ me.$set_targetValue(null); });
+    } else {
+        this.$set_targetValue(vin);
+    }
 };
 
 Binding.prototype.get_sourceValue = function (bFormat) { // move me up there
@@ -2360,15 +2367,16 @@ Binding.prototype.updateTarget = function (compiledPatt, bOverridePolicy) {
 	if (this.options.async || this.options.asyncread) {
 		this.callAsync(this.$asyncUpdateTarget);
 	} else {
-		var val = this.$get_sourceValue();
-		this.$set_targetValue(val);
+        var val = this.$get_sourceValue();
+        this.set_targetValue(val);
+        
 	}
 };
 
 Binding.prototype.$asyncUpdateTarget = function() {
 	if (this.__obliterated) { return; }
 	var val = this.$get_sourceValue();
-	this.$set_targetValue(val);
+	this.set_targetValue(val);
 };
 
 Binding.prototype.updateSource = function (compiledPatt, bOverridePolicy) {

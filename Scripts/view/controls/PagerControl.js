@@ -26,12 +26,19 @@ PagerControl.ImplementProperty("dataarea", new InitializeObject("Must be bound t
 // PagerControl.ImplementProperty("template", new InitializeStringParameter("Choose which template to load.", "default"));
 PagerControl.ImplementProperty("normalize", new InitializeBooleanParameter("Normalize the position of the data area.", true));
 PagerControl.ImplementProperty("maxpageitems", new InitializeNumericParameter("The number of the page items to return from the get_pages - null - all, >0 hpages before and after the current"));
+PagerControl.ImplementProperty("autolink", new InitializeBooleanParameter("Subscribe to the dataarea events without need of explicit binding", false));
 
 PagerControl.prototype.init = function() {
 	var el = $(this.root);
 	var tml = this.get_template();
 	el.empty();
     el.append(tml);
+}
+PagerControl.prototype.finalinit = function() {
+	if (this.get_autolink() && BaseObject.is(this.get_dataarea(), "DataArea")) {
+		var da = this.get_dataarea();
+		da.countsetevent.add(new Delegate(this, this.updatePager));
+	}
 }
 // Deprecated due to usage of ItemplateSourceImpl
 // PagerControl.prototype.$init = function () {

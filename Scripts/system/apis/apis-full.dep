@@ -1,6 +1,11 @@
 //#using "./IAppDataApiContentReader.js"
 //#using "./IAppDataApi.js"
+//#using "./IAppInfoApiContentReader.js"
+//#using "./IAppInfoApi.js"
+
 //#using "./IShellApi.js"
 //#using "./AppDataApi.js"
 //#using "./AppDataApiContentReader.js"
+//#using "./AppInfoApi.js"
+//#using "./AppInfoApiContentReader.js"
 //#using "./ShellLocalApi.js"

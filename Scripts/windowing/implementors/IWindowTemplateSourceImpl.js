@@ -38,10 +38,8 @@ IWindowTemplateSourceImpl.classInitialize = function(cls, defaultTemplateSelecto
 		} else if (typeof tmlName == "string") {
 			// Legacy search is by defaultTemplateSelector without parsing
 			if (BaseObject.getProperty(options, "legacy", false)) {
-				tml = $$(this.get_templateName()).first().innerHtml();
-				if (tml != null && tml.length > 0) {
-					return tml;
-				}
+				tml = DOMUtil.queryOne(tmlName);
+				if (tml !=null) return tml.innerHTML;
 				tml = null;
 			}
 			// Try global TemplateRegister and DOM

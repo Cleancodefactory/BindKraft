@@ -7,6 +7,9 @@ function Validator(domEl) {
     ViewBase.apply(this, arguments);
     this.validateBindings = new Array();
     this.$rules = new Array();
+	
+	
+	/* This code has been factored in separate private methods - see below
     var rule, attr, node = $(this.root);
     var attrs = node.getAttributes("data-validate-(\\S+)");
     var clsDesc;
@@ -37,6 +40,7 @@ function Validator(domEl) {
             });
         }
     }
+	*/
 }
 Validator.Inherit(ViewBase, "Validator");
 Validator.Implement(IValidator);
@@ -70,12 +74,112 @@ Validator.prototype.$init = function () {
         c.remove();
     }
     this.$createAutoValidators();
+	var imprules = this.get_importrules();
+	if (imprules != null) {
+		this.$buildRulesFromData(imprules);
+	}
+	this.$buildRulesFromDedicatedAtttributes();
+	this.$sortRules();
+	
     this.init();
     this.initializedevent.invoke(this, null);
     this.rebind(); // Default behaviour, items controls should override this
     this.onValidityChanged(); // initial state
 };
+Validator.prototype.get_importrules = function() {
+	// This getter is provided for parameterization only: @importrules={read service=someservice path=pathtoruledefs}
+	return null;
+}
+// +Validation rules building
+/**
+	v :=
+		"{classdef}{classdef}..."
+		|
+		["classdef"*]
+		|
+		[ruleinstance]
+		|
+		[{ className:,parameters:}*]
+*/
+Validator.prototype.$buildRulesFromData = function(v) {
+	var arr = v;
+	if (typeof arr == "string") {
+		var arr = JBUtil.getEnclosedTokens("{","}","\\",v);
+		// array of validator rule defs (being class defs) - convert them to object defs
+	}
+	if (!BaseObject.is(arr, "Array")) arr = [arr];
+	if (BaseObject.is(arr, "Array")) { // A bit crazy, eh?
+		rules = arr.Select(function(idx, item) {
+			if (BaseObject.is(item, "ValidateValue")) {
+				// The rule must be prepared and parametrized.
+				return item;
+			}
+			var def = null;
+			if (BaseObject.is(item,"string")) {
+				def = JBUtil.parseDataClass(item);
+			} else if (typeof item == "object") {
+				def = item;
+			} else {
+				jbTrace.log("Unrecognised rule definition.");
+			}
+			if (def != null && def.className != null) {
+				if (Validator.validatorsRegistry[def.className] != null) def.className = Validator.validatorsRegistry[def.className];
+				if (Class.is(Function.classes[def.className],"ValidateValue")) {
+					var rule = new Function.classes[def.className](this);
+					JBUtil.parametrize.call(rule, this.root, this, def.parameters);
+					return rule;
+				} else {
+					jbTrace.log("The " + def.className + " is not a validation rule (ValidateValue)");
+				}
+			}
+		});
+		this.$rules = rules;
+	}
+}
+Validator.prototype.$buildRulesFromDedicatedAtttributes = function() {
+	var attrs = this.$().getAttributes("data-validate-(\\S+)");
+    var clsDesc;
+    if (attrs != null) {
+        for (attr in attrs) {
+            if (Validator.validatorsRegistry[attr] != null) {
+                clsDesc = {
+                    className: Validator.validatorsRegistry[attr],
+                    parameters: attrs[attr]
+                };
+            } else {
+                clsDesc = JBUtil.parseDataClass(attrs[attr]);// A bit of craziness - jumbled attribute name is any validator rule with explicitly specified class name
+            }
+            if (clsDesc != null) {
+                if (Class.is(Function.classes[clsDesc.className], "ValidateValue")) {
+                    rule = new Function.classes[clsDesc.className](this);
+                    this.$rules.push(rule);
+                    JBUtil.parametrize.call(rule, this.root, this, clsDesc.parameters);
+                }
+            }
+        }
+        this.$sortRules();
+    }
+}
+Validator.prototype.$sortRules = function() {
+	if (this.$rules != null) {
+		this.$rules = this.$rules.sort(function (a, b) {
+			if (a == null) return -1;
+			if (b == null) return 1;
+			if (a.get_order != null && b.get_order != null) return (a.get_order() - b.get_order());
+			return 0;
+		});
+	}
+}
+Validator.prototype.$clearRules = function() {
+	if (BaseObject.is(this.$rules, "Array")) {
+		for (var i = 0; i < this.$rules.length; this.$rules[i++].obliterate());
+	}
+	this.$rules = [];
+}
 
+// -Validation rules building
+
+// +Validation rules autobuilt from meta info (candidate for deprecation)
 Validator.prototype.$autoValidatorsCreated = false;
 Validator.prototype.$createAutoValidators = function () {
     if (this.$autoValidatorsCreated) return;
@@ -118,6 +222,7 @@ Validator.prototype.$createAutoValidators = function () {
         }
     }
 }.Description("Creates validators and adds them to the array of Rules");
+// -Validation rules autobuilt from meta info (candidate for deprecation)
 
 Validator.prototype.$template = null;
 
@@ -216,42 +321,16 @@ Validator.prototype.$rules = null;
 Validator.prototype.get_rules = function() {
 	return this.$rules;
 }
+/**
+	set_rules enables to dynamically reset the rules with a new set. This can happen with bindings data-bind-$rules={read ...}
+	
+	Dynamic rules (re)definition is not a normal technique, but is useful in programmatically generated and managed UI.
+*/
 Validator.prototype.set_rules = function(v) {
-	var rules = null;
-	this.$rules = [];
-	var arr = v;
-	if (typeof arr == "string") {
-		var arr = JBUtil.getEnclosedTokens("{","}","\\",v);
-		// array of validator rule defs (being class defs) - convert them to object defs
-	}
-	if (!BaseObject.is(arr, "Array")) arr = [arr];
-	if (BaseObject.is(arr, "Array")) { // A bit crazy, eh?
-		rules = arr.Select(function(idx, item) {
-			if (BaseObject.is(item, "ValidateValue")) {
-				// The rule must be prepared and parametrized.
-				return item;
-			}
-			var def = null;
-			if (BaseObject.is(item,"string")) {
-				def = JBUtil.parseDataClass(item);
-			} else if (typeof item == "object") {
-				def = item;
-			} else {
-				jbTrace.log("Unrecognised rule definition.");
-			}
-			if (def != null && def.className != null) {
-				if (Validator.validatorsRegistry[def.className] != null) def.className = Validator.validatorsRegistry[def.className];
-				if (Class.is(Function.classes[def.className],"ValidateValue")) {
-					var rule = new Function.classes[def.className](this);
-					JBUtil.parametrize.call(rule, this.root, this, def.parameters);
-					return rule;
-				} else {
-					jbTrace.log("The " + def.className + " is not a validation rule (ValidateValue)");
-				}
-			}
-		});
-		this.$rules = rules;
-	}
+	this.$clearRules();
+	this.$buildRulesFromData(v);
+	this.$sortRules();
+	
 }.Description("The rules can be set in different formats. Currently we support: 1) string containing \"{classname parameters}\" elements, 2) Array of objects { className: string, parameters: string|object} ")
 	.Param("v","Rule definitions or ready rules as an array or a single rule definition. Each can be a string {...} an object { className: string, parameters: string|object} see JBUtil.parametrize for more info.");
 Validator.prototype.registerValidationEvents = function (b) {

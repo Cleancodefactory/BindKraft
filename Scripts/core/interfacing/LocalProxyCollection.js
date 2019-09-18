@@ -1,6 +1,7 @@
-function LocalProxyCollection(arr) {
+function LocalProxyCollection(arr, optItemInterface) {
 	BaseObject.apply(this, arguments);
 	this.$collection = arr || [];
+	this.$itemInterface = Class.getInterfaceDef(optItemInterface);
 }
 LocalProxyCollection.Inherit(BaseObject, "LocalProxyCollection");
 LocalProxyCollection.Implement(ILocalProxyCollection);
@@ -8,9 +9,13 @@ LocalProxyCollection.Implement(ILocalProxyCollection);
 LocalProxyCollection.prototype.count = function() {
 	return this.$collection.length;
 }
-LocalProxyCollection.prototype.item = function(index) {
+LocalProxyCollection.prototype.item = function(index, astype) {
 	if (index >= 0 && index < this.$collection.length) {
-		return this.$collection[index];
+		if (this.$itemInterface != null) {
+			return DummyInterfaceProxyBuilder.Default().buildProxy(this.$collection[index], this.$itemInterface);
+		} else {
+			return this.$collection[index];
+		}
 	}
 	return null;
 }
