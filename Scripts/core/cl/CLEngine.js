@@ -55,24 +55,24 @@ CLEngine.prototype.$labelIndex = new InitializeObject("The command line's label 
 ////////////////////////////////////////////////////////
 CLEngine.reTokens = [
 	{ type: "space",		re: /(\s+)/gm, skip: true },
-	{ type: "string",   	re: /\'((?:\\'|[^'])*)\'/gm, proc: CLEngine.unescapeFullString, priority: 10  }, // Lacks new line support
-	{ type: "number",   	re: /([+-]?[0-9]+(?:\.[0-9]+))/g, proc: CLEngine.parseNumber, priority: 10 },
-	{ type: "hex",   		re: /(?:0x([0-9a-fA-F]+))/g, proc: CLEngine.parseHexNumber, priority: 10  },
-	{ type: "brnopen",    	re: /(\()/g },
+	{ type: "string",   	re: /\'((?:\\'|[^'])*)\'/gm, proc: CLEngine.unescapeFullString, priority: 10, rtype: "literal"  }, // Lacks new line support
+	{ type: "number",   	re: /([+\-]?[0-9]+(?:\.[0-9]+)?)/g, proc: CLEngine.parseNumber, priority: 10, rtype: "literal" },
+	{ type: "hex",   		re: /(?:0x([0-9a-fA-F]+))/g, proc: CLEngine.parseHexNumber, priority: 10, rtype: "literal"  },
+	{ type: "brnopen",    	re: /(\()/g, priority: 5 },
 	{ type: "brsopen",		re: /(\[)/g },
 	{ type: "brcopen", 		re: /(\{)/g },
 	{ type: "brnclose",    	re: /(\))/g, priority: 5 },
 	{ type: "brsclose",		re: /(\])/g, priority: 10 },
 	{ type: "brcclose",		re: /(\})/g, priority: 10 },
 	
-	{ type: "ident",   	re: /([a-zA-Z\_\$][a-zA-Z0-9\_\$]+)/g, priority: 15 },
+	{ type: "ident",   	re: /([a-zA-Z\_\$][a-zA-Z0-9\_\$]*?)/g, priority: 15 },
 	{ type: "endop",   	re: /(;)/g, priority: 100 },
 	{ type: "commaop",  re: /(\,)/g, priority: 90 },
 	{ type: "dualop",   re: /(or|and|xor)/g, priority: 60 },
 	{ type: "dualop",   re: /(\=\>|\>\=|\<\=|\=\=)/g, priority: 50 },
 	{ type: "dualop",   re: /(\<|\>)/g, priority: 50 },
 	{ type: "dualop",   re: /(\*|\/)/g, priority: 20 },
-	{ type: "dualop",   re: /(\+|\-|)/g, priority: 30 },
+	{ type: "dualop",   re: /(\+|\-)/g, priority: 30 },
 	{ type: "assign",   re: /(\=)(?!\=)/g, priority: 80 }
 ];
 /*
@@ -86,18 +86,18 @@ CLEngine.prototype.$eatToken = function(strLine, mode, pos, /*[]*/ tknLine) {
 		var retkn = CLEngine.reTokens[i];
 		retkn.re.lastIndex = pos;
 		match = retkn.re.exec(strLine);
-		if (match != null) {
+		if (match != null && match.index == pos) {
 			v = match[1];
 			if (typeof retkn.proc == "function") {
 				v = retkn.proc(v);
 			}
 			if (retkn.skip !== true) {
-				tknLine.push({ type: retkn.type, value: v});
+				tknLine.push({ type: retkn.type, value: v, pos: pos, priority: retkn.priority, rtype: retkn.rtype});
 			}
 			return match[0].length;
 		}
 	}
-	return 0;
+	return -1;
 }
 CLEngine.prototype.tokenizeLine = function(strLine) {
 	var tknLine = [];
@@ -109,15 +109,33 @@ CLEngine.prototype.tokenizeLine = function(strLine) {
 		var n = this.$eatToken(str, mode, pos, tknLine);
 		if (n > 0) {
 			pos += n;
-			str = str.slice(n);
+			// str = str.slice(n);
+			if (pos >= str.length) break;
 			continue;
+		} else {
+			return "cannot tokenize at " + pos + " (" + str.slice(pos,20) + ")";
 		}
-		if (pos >= strLine.length) break;
-		return "cannot tokenize at " + pos;
 	} while (true);
 	return tknLine;
 }
-
+CLEngine.prototype.processLine = function(arr) {
+	var _next;
+	var _vstack = [];
+	var _opstack = [];
+	var _item;
+	var result = [];
+	for (var i = 0; i < arr.length; i++) {
+		_next = null;
+		if (i < arr.length - 1) _next = arr[i+1];
+		item = arr[i];
+		if (item.rype == "literal") {
+			_vstack.push(item);
+		} else {
+			
+		}
+		// TODO: Continue
+	}
+}
 
 // Old code for reference
 
