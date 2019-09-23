@@ -144,7 +144,7 @@ Binding.TargetOperations = {
 				return this.value;
 			},
 			write: function(v){
-				this.value = v;
+				this.value = (v == null)?null:v;
 			}
 		},
 		html: {
