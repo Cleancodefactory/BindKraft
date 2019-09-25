@@ -355,6 +355,31 @@ Binding.TargetOperations = {
 				this.id = v;
 			}
 		},
+		display: {
+			indexed: true,
+			read: function(idx, bind) {
+				if (typeof idx == "string" && idx.length > 0) {
+					var curval = this.style.getPropertyValue("display");
+					if (curval != "none") return true;
+				}
+				return false;
+			},
+			write: function(idx, v, bind) { 
+				if (typeof idx == "string" && idx.length > 0 && v) {
+					this.style.setProperty('display', idx);
+				} else {
+					this.style.setProperty('display', "none");
+				}
+			}
+		},
+		displaymode: {
+			read: function(bind) {
+				return styles.getPropertyValue("display");
+			}, 
+			write: function(v, bind) {
+				this.style.setProperty('display', v);
+			}
+		},
 		elementvisible: {
 			read: function(bind) {
 				var styles = window.getComputedStyle(this);
