@@ -10,7 +10,7 @@ IInfoDisplay.prototype.infoDisplayAdd = function (info) { // (InfoMessageQuery i
 IInfoDisplay.prototype.infoDisplayClear = function (clearWhat) { // Clear the display. The clearWhat is now reserved, will be used as an option to clear some messages only
     // TODO: Override and imeplement clear on the storages, then invoke update on the display area or if no messages remain dematerialize it if this is possible.
 }
-IInfoDisplay.prototype.$isinfodisplayactive = true;
+IInfoDisplay.prototype.$isinfodisplayactive = false;
 IInfoDisplay.prototype.get_isinfodisplayactive = function () { return this.$isinfodisplayactive; }
 IInfoDisplay.prototype.set_isinfodisplayactive = function (v) { this.$isinfodisplayactive = v; }
 IInfoDisplay.ImplementProperty("maxinfomessagepriority", new InitializeNumericParameter("Max priority for which to display the message unconditionaly.", 0));
