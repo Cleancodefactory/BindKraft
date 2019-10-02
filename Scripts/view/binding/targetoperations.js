@@ -226,6 +226,16 @@ Binding.TargetOperations = {
 				this.style.setProperty("width",v);
 			}
 		},
+		style: {
+			indexed: true,
+			read: function(idx,bind){
+				var styles = window.getComputedStyle(this);
+				return styles.getPropertyValue(idx);
+			},
+			write: function(idx, v, bind){
+				this.style.setProperty(idx,v);
+			}
+		},
 		src: {
 			indexed: false,
 			read: function(bind){
