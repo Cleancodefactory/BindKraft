@@ -42,3 +42,9 @@ ShellLocalApi.prototype.bindAppsByClassNames = function(className1, className2, 
 	});
 	return new LocalProxyCollection(apps);
 }
+
+ShellLocalApi.prototype.getRunningAppsClassNames = function() { 
+	return this.$shell.getAppsByFilter().Select(function(idx, app) {
+		if (!this.indexOf(app.classType()) >= 0) return app.classType();
+	});
+}
