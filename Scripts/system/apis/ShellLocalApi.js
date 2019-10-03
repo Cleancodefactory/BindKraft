@@ -34,7 +34,7 @@ ShellLocalApi.prototype.activateApp = function(appproxy_orid) {
 	return false;
 }
 ShellLocalApi.prototype.bindAppsByClassNames = function(className1, className2, className3) { 
-	var classNames = Array.createCopyOf(arguments,1);
+	var classNames = Array.createCopyOf(arguments,0);
 	var apps = this.$shell.getAppsByFilter(function(app) {
 		if (classNames.length > 0 && !classNames.Any(Predicates.TypeIs(app))) return false;
 		if (BaseObject.is(app,"IManagedInterface")) return true;

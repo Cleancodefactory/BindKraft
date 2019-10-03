@@ -33,3 +33,12 @@ ValidateValue.prototype.set_order = function (v) { this.$order = v; };
 ValidateValue.prototype.$disabled = false;
 ValidateValue.prototype.get_disabled = function () { return this.$disabled; };
 ValidateValue.prototype.set_disabled = function (v) { this.$disabled = v; };
+// Utility methods available for rules
+ValidateValue.prototype.isValueEmpty = function(v, bWhiteSpace) { 
+	if (v == null) return true;
+	if (typeof v == "string") {
+		if (v.length == 0) return true;
+		if (bWhiteSpace && /^\s+$/.test(v)) return true;
+	}
+	return false;
+};
