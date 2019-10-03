@@ -2,7 +2,7 @@
 function RangeDatesValidatorRuleEx(v) {
 	ValidateValue.apply(this, arguments);
 }
-RangeDatesValidatorRuleEx.Inherit(RangeNumbersValidatorControl, "RangeDatesValidatorRuleEx");
+RangeDatesValidatorRuleEx.Inherit(ValidateValue, "RangeDatesValidatorRuleEx");
 RangeDatesValidatorRuleEx.registerValidator("rangedatesex");
 RangeDatesValidatorRuleEx.prototype.$minValue = null;
 RangeDatesValidatorRuleEx.prototype.$maxValue = null;
@@ -31,7 +31,7 @@ RangeDatesValidatorRuleEx.prototype.get_message = function (lastValue) {
 };
 RangeDatesValidatorRuleEx.prototype.validateValue = function (validator, value, binding) {
 	var result = ValidationResultEnum.correct;
-	if (!IsNull(value) && value.toString().trim().length != 0) {
+	if (!this.isValueEmpty(value) && value.toString().trim().length != 0) {
 		var minValue = DateShort.FromTarget(DateShort.ToTarget(this.get_minValue()));
 		var maxValue = DateShort.FromTarget(DateShort.ToTarget(this.get_maxValue()));
 		if (IsNull(minValue)) {

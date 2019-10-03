@@ -50,6 +50,8 @@ RegularExpressionValidatorRule.prototype.get_message = function (lastValue) {
 };
 RegularExpressionValidatorRule.prototype.validateValue = function (validator, value, binding) {
 	var result = ValidationResultEnum.correct;
+	if (this.isValueEmpty(value) || typeof value != "string") return this.validationResult(result);
+	
 	var expresion = this.get_expresion();
 	var flags = "";
 	if (!isNaN(this.get_global()) && this.get_global()) {

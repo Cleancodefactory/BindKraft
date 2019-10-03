@@ -17,7 +17,7 @@ PhonenumberValidatorRule.prototype.get_message = function (lastValue) {
 };
 PhonenumberValidatorRule.prototype.validateValue = function (validator, value, binding) {
 	var result = ValidationResultEnum.correct;
-	if (!IsNull(value)) {
+	if (!this.isValueEmpty(value) && typeof value == "string") {
 		if (!(value.match(PhonenumberValidatorRule.expresion))) {
 			result = ValidationResultEnum.incorrect;
 		}

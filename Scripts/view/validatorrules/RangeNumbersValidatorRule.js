@@ -18,6 +18,12 @@ RangeNumbersValidatorRule.prototype.get_maxValue = function () {
 RangeNumbersValidatorRule.prototype.set_maxValue = function (v) {
 	this.$maxValue = v;
 };
+RangeNumbersValidatorRule.prototype.set_asint = function (v) {
+	this.$asint = v;
+};
+RangeNumbersValidatorRule.prototype.get_asint = function () {
+	return (this.$asint?true:false);
+}
 RangeNumbersValidatorRule.prototype.get_message = function (lastValue) {
 	var msg = this.get_text();
 
@@ -45,20 +51,38 @@ RangeNumbersValidatorRule.prototype.get_message = function (lastValue) {
 
 	return msg;
 };
+RangeNumbersValidatorRule.prototype.$toInt = function(v) {
+	if (typeof v == "number" && !isNaN(v) && Math.floor(v) == v) return v;
+	var x = parseInt(v,10);
+	if (!isNaN(x)) return x;
+	return null;
+}
+RangeNumbersValidatorRule.prototype.$toFloat = function(v) {
+	if (typeof v == "number" && !isNaN(v)) return v;
+	var x = parseFloat(v);
+	if (!isNaN(x)) return x;
+	return null;
+}
 RangeNumbersValidatorRule.prototype.validateValue = function (validator, value, binding) {
 	var result = ValidationResultEnum.correct;
-	if (!IsNull(value) && value.toString().trim().length != 0) {
-		var minValue = parseFloat(this.get_minValue());
-		if (IsNull(minValue)) {
-			minValue = Number.MIN_VALUE;
-		}
-		var maxValue = parseFloat(this.get_maxValue());
-		if (IsNull(maxValue)) {
-			maxValue = Number.MAX_VALUE;
-		}
-		var numericValue = parseFloat(value);
-		if (numericValue < minValue || numericValue > maxValue) {
-			result = ValidationResultEnum.incorrect;
+	if (!this.isValueEmpty(value) && value.toString().trim().length != 0) {
+		var minValue, maxValue, numericValue;
+		if (this.get_asint()) {
+			minValue = this.$toInt(this.get_minValue());
+			maxValue = this.$toInt(this.get_maxValue());
+			numericValue = this.$toInt(value);
+			if (numericValue != null && ((minValue != null || numericValue < minValue) || 
+										 (maxValue != null || numericValue > maxValue))) {
+				result = ValidationResultEnum.incorrect;
+			}
+		} else {
+			minValue = this.$toFloat(this.get_minValue());
+			maxValue = this.$toFloat(this.get_maxValue());
+			numericValue = this.$toFloat(value);
+			if (numericValue != null && ((minValue != null || numericValue < minValue) || 
+										 (maxValue != null || numericValue > maxValue))) {
+				result = ValidationResultEnum.incorrect;
+			}
 		}
 	}
 	return this.validationResult(result);

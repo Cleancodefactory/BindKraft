@@ -19,8 +19,10 @@ UrlValidatorRule.prototype.get_message = function (lastValue) {
 };
 UrlValidatorRule.prototype.validateValue = function (validator, value, binding) {
 	var result = ValidationResultEnum.correct;
-	if (!(value.match(UrlValidatorRule.expresion))) {
-		result = ValidationResultEnum.incorrect;
+	if (!this.isValueEmpty(value) && typeof value == "string") {
+		if (!(value.match(UrlValidatorRule.expresion))) {
+			result = ValidationResultEnum.incorrect;
+		}
 	}
 	//    if (!(UrlValidatorRule.expresion.test(value))) {
 	//        result = ValidationResultEnum.incorrect;

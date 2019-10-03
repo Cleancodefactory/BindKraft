@@ -22,7 +22,7 @@ ValidDateFieldValidatorRule.prototype.get_dateformat = function () {
 };
 ValidDateFieldValidatorRule.prototype.validateValue = function (validator, value, binding) {
 	var result = ValidationResultEnum.correct;
-	if (!IsNull(value) && !value.toString().trim().length == 0) {
+	if (!this.isValueEmpty(value) && typeof value == "string") {
 		var date = Globalize.parseDate(value, this.get_dateformat());
 		if (IsNull(date)) {
 			result = ValidationResultEnum.incorrect;
