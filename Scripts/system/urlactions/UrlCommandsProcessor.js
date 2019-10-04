@@ -9,6 +9,9 @@
 	Details:
 		The settings of the feature are in 
 		appfs:system/urlcommands
+		appfs:system/urlcommands/aliases/
+										  al1
+										  al2
 		
 		The particular settings UNDER that directory are as follows:
 		/general -	property file with general settings (currently only 'prefix')
