@@ -25,7 +25,7 @@
             1) It is obtained from the Helper method of the connector
             2) The connector may return null if helper is not available
             3) The helper method should be called with a Interface type name and return a helper that supports it. 
-            4) The helper method can be called without parameter and then it should return (if possible) a 'most general helper' if available.
+            4) ?The helper method can be called without parameter and then it should return (if possible) a 'most general helper' if available.
             5) The helpers should be created on each call to the Helper() method (by it). The method can use a factory mechanism to choose the best helper for its current settings.  
                 For example, there can be a register for helpers about paging parameters which depend on their server end point.
             6) A standard helper register is being built which will Implement factory approach dependent on connector type and connector parameters. 

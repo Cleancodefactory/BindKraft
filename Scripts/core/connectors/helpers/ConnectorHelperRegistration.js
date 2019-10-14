@@ -28,6 +28,14 @@ function ConnectorHelperRegistration(className, configuration, addressConstraint
             }
             return false;
         }
+	} else if (addressConstraint instanceof RegExp) {
+		this.addressConstraint = function(connector,protocolName) {
+            var addr = connector.get_address();
+			if (addr != null && typeof addr == "string") {
+				return addressConstraint.test(addr);
+			}
+            return false;
+        }
     } else if (BaseObject.isCallback(addressConstraint)) {
         this.addressConstraint = addressConstraint;
     } else {

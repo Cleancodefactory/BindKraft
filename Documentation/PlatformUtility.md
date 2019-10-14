@@ -1,6 +1,8 @@
 # Platform utility adaptation and usage
 
-The BindKraft packet servers are designed to cooperate with the Javascript part of the platform and simplify a wide range of operations. In most cases the BindKraft setup uses a single such server which is the default back end of the system - serves templates, essential core data, various resources and so forth.
+As mentioned elsewhere BindKraft is designed for primary usage with a specialized server. It can be run also with a minimal server in a manner very much similar to the SPA (Single Page Applications) in the end of the second decade of 21-st century.
+
+The BindKraft packet servers (CoreKraft for example) are designed to cooperate with the Javascript part of the platform and simplify a wide range of operations. In most cases the BindKraft setup uses a single such server which is the default back end of the system - serves templates, essential core data, various resources and so forth.
 
 You can think that usually there is at least one such server that supplies the pieces of the applications on the particular BindKraft setup. The work data the applications need can be spread among many servers and services which may or may not be based on BindKraft, but there still needs to be one (at least) from which the applications start and their pieces are loaded. Production installations will have a BindKRaft server for that purpose or at least a server that follows the principles.
 

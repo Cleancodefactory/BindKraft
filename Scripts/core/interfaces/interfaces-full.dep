@@ -83,3 +83,5 @@
 //#using "./IFormatterAggregate.js"
 
 //#using "./ILocalProxyCollection.js"
+//#using "./IManagedDataSupplier.js"
+//#using "./IManagedDataProvider.js"

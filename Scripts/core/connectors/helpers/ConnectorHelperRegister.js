@@ -57,10 +57,12 @@ ConnectorHelperRegister.prototype.GetHelper = function(connector,protocolName) {
     }
     return null;
 }
-
-ConnectorHelperRegister.$default = null;
-ConnectorHelperRegister.Default = function() {
-    if (this.$default == null) {
-        this.$default = new ConnectorHelperRegister();
-    }
-}
+ConnectorHelperRegister.Default = (function() {
+	var $default;
+	return function() {
+		if ($default == null) {
+			$default = new ConnectorHelperRegister();
+		}
+		return $default;
+	}
+})();

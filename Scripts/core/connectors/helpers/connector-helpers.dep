@@ -1,7 +1,7 @@
 //#using "../../interfaces/IConnectorPagingHelper.js"
 //#using "../../interfaces/IConnectorPrimaryKeyHelper.js"
 //#using "../../interfaces/IConnectorSingleFilteringHelper.js"
-//#using "BaseConnectorHelper.js"
+//#using "ConnectorHelperBase.js"
 //#using "ConnectorHelperRegister.js"
 //#using "ConnectorPagingHelper.js"
 //#using "ConnectorPrimaryKeyHelper.js"
