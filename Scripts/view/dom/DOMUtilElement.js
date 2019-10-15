@@ -217,12 +217,15 @@ DOMUtilElement.prototype.parentByDataKey = function(datakey) {
 // BindKraft special
 DOMUtilElement.prototype.obliterateDOM = function(bSelfToo) {
 	DOMUtil.obliterateDom(this.$element, bSelfToo);
+	return this;
 }
 DOMUtilElement.prototype.Empty = function() {
 	DOMUtil.Empty(this.$element);
+	return this;
 }
 DOMUtilElement.prototype.Remove = function() {
 	DOMUtil.Remove(this.$element);
+	return this;
 }
 DOMUtilElement.prototype.activeclass = function(typereq) { // Incorrect classes are not returned
 	var t = typereq || "Base";
