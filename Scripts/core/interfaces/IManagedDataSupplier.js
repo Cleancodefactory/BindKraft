@@ -20,7 +20,7 @@ IManagedDataSupplier.prototype.GetRecords = function(offset, limit, parameters, 
 /**
 	@return {boolean}	True if parameters are supported
 */
-IManagedDataSupplier.prototype.supportsParametrs = function() { throw "not impl"; }
+IManagedDataSupplier.prototype.supportsParameters = function() { throw "not impl"; }
 /**
 	@return {boolean}	True if orders are supported
 */

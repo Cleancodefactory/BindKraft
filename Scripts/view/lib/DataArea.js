@@ -41,6 +41,7 @@ function DataArea() {
 
 DataArea.Inherit(Base, "DataArea");
 DataArea.Implement(IFreezable);
+DataArea.Implement(IParameters);
 DataArea.Implement(IPlatformUrlMapperImpl);
 DataArea.prototype.init = function() {
     if (this.root != null) this.root.hasDataContext = true;
