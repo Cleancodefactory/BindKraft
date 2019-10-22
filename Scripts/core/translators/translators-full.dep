@@ -1,0 +1,6 @@
+/* 
+	Various built-in translators. 
+	Translators are requested by requesting an interface extending ITranslator, hence it is important to notice
+	what kind of interface(s) they implement.
+*/
+//#using "./DefaultDataSupplierOrderExtractor.js"

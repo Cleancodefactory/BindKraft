@@ -38,7 +38,9 @@ function Connector(addr, host, options) {
     this.$options = options;
 	this.applyOptions(); // Distributes some of the options values to normal properties.
 }
-Connector.Inherit(BaseObject, "Connector");
+Connector.Inherit(BaseObject, "Connector")
+	.Implement(IParameters);
+
 Connector.prototype.obliterate = function(bFull) {
     BaseObject.prototype.obliterate.call(this, bFull);
 };

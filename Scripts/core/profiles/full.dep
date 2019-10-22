@@ -36,6 +36,7 @@
 //#using "../env/env-full.dep"
 //#using "../commandprocessing/commandprocessing-full.dep"
 //#using "../cl/cl-full.dep"
+//#using "../translators/translators-full.dep"
 //#using "../connectors/connectors-full.dep"
 //#using "../delegation/delegation-full.dep"
 //#using "../math/math-full.dep"
