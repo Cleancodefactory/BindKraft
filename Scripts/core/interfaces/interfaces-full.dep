@@ -85,3 +85,8 @@
 //#using "./ILocalProxyCollection.js"
 //#using "./IManagedDataSupplier.js"
 //#using "./IManagedDataProvider.js"
+
+//#using "./ITranslator.js"
+//#using "./ITranslatorProvider.js"
+//#using "./ITranslateParamersToOrdersArray.js"
+//#using "./ITranslateParamersToLimitOffset.js"

@@ -95,6 +95,7 @@ Connector.prototype.get_address = function () {
 };
 Connector.prototype.set_address = function (v) {
     this.$data = v;
+	this.isBound = false;
 };
 Connector.prototype.$optiondelay = 500; // Default delay for operations that need to wait in order to optimize the behaviour they provide.
 Connector.prototype.get_optiondelay = function () {
@@ -114,6 +115,15 @@ Connector.prototype.get_resource = function (idx) {
         return this.$resource;
     }
 };
+/**
+	While this is implemented as indexed property using it with index is untypical and
+	possible only for connectors that fetch/store a single dictionary. In most cases where
+	no such a specific assumption for the data structure is possible set_resource is used 
+	as a regular setter. The indexed behavior is provided as a convenience for (very) rare cases.
+	
+	@remarks: set_resource will not set isBound to true, because the other settings may be in any state
+		including unusable (not really pointing to the resource in terms of address, parameters etc.)
+*/
 Connector.prototype.set_resource = function (idx, v) {
     if (arguments.length > 1) {
         if (idx != null) {
@@ -142,6 +152,7 @@ Connector.prototype.set_parameters = function (idx, v) {
                 this.$parameters = {};
             }
             this.$parameters[idx] = v;
+			this.isBound = false;
 			return;
         } else {
             newval = v;
@@ -154,7 +165,7 @@ Connector.prototype.set_parameters = function (idx, v) {
 	} else {
 		this.$parameters = newval; // if called with a single arg we assume the caller calls this as normal (non-indexed property).
 	}
-    
+	this.isBound = false;    
 }.Description("The indexed parameters property setter has a specific behavior - when you set an object and there are some parameters (object already existing) it will combine the two objects, replace any values that come from the new parameters. When you set null, this will clear all the parameters. Additionally it supports the standard indexed property behavior.");
 Connector.prototype.$cloneRequest = function() { // Clones the request address and parameters
 	// Options are not preserved, because they are not part of the request, but an instruction how to perform it.
@@ -264,12 +275,27 @@ Connector.prototype.update = function (callback) { // callback(resource (= null 
     throw "Connector: not implemented! This class does not Implement update!";
 
 };
+/**
+	By default store ignores the isBound's value, it proceeds with updating the resource regardless of isBound and will not set the property 
+	if successful update is done. As a result of that unlike in the case with bind and resolve (implemented by inheriting classes) in the implementation
+	of update the isBound flag can be set if the implementation deems this appropriate.
+	
+	Rationale: Declaring the connector bound effectively declares that with the current settings the same data will be fetched, which is fine for bind 
+		(still when settings are changed isBound is not auto-cleared in order to keep implementations simpler - resetState is necessary after changes).
+		In case of store setting isBound declares symetry between read and write operations which is not a given - it depends on what the connector does, the
+		source it connects etc. Thus isBound can be set by those connectors that work symetrically and should not be set by those that do not.
+		
+		If isBound is set by update if bind is called immediately after that, no connection will be made and the last known resource will be returned, which
+		is obviously what will be really fetched if connection is made anew in some cases and something different in others (actually most cases).
+	
+	Safe bet: Don't rise isBound, the worst that can happen is an unneded request/connection.
+*/
 Connector.prototype.store = function (callback) { // Executes store resource operation (if supported)
     if (this.isAsync) {
         // Try to store
         this.update(callback);
         return true;
-    } else { // Synch
+    } else { // Sync
         if (!this.update()) {
             // failure
             this.$reportResult(false, null, this.errorInfo);

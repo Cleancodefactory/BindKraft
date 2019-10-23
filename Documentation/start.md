@@ -24,7 +24,7 @@ Additional overviews of specific features are listed in the "References" section
 
 [Core OOP classes and interfaces](CoreClasses.md) - The core classes forming the platform on non-visual conceptual level. Building blocks used widely.
 
-> [Operations](Operations.md) | [Memory FS](MemoryFS.md) | [Writing interface implementers](WritingInterfaceImplementers.md)
+> [Operations](Operations.md) | [Memory FS](MemoryFS.md) | [Writing interface implementers](WritingInterfaceImplementers.md) | [Connectors](Connectors.md)
 
 [View level classes and interfaces](ViewClasses.md) - The classes that build the UI basics - data binding, validation etc.
 
@@ -47,6 +47,8 @@ Additional overviews of specific features are listed in the "References" section
 [List of system Local API](LocalAPIList.md) | 
 [System settings](SystemSettings.md) |
 [BKInit - instance configuration](BkInit.md)
+
+[Data types/formats](DataTypes/DataTypes.md) - the structures for various purposes. Non-strict Javscript data consisting of objects, arrays and values arranged according to the conventions described in the section.
 
 [Others](OtherClasses.md) - Specific classes and interfaces that do not fit into other categories.
 >[Settings, Persistence, State and shared data pieces](Settings,Persistence,State_and_shared_data_pieces.md)

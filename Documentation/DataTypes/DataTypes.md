@@ -6,6 +6,6 @@ This section documents such "data types/formats" used in BK for various purposes
 
 ## Types list
 
-[Orders array](ordersarray.md)
+[Orders array](ordersarray.md) - specify one or more order instructions on column/direction basis
 
-
+[Raw results](rawresults.md) - holds multiple records - a subset of a bigger set of records.

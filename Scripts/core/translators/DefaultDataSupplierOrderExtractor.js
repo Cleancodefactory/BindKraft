@@ -5,8 +5,6 @@
 function DefaultDataSupplierOrderExtractor(conf) {
 	BaseObject.apply(this, arguments);
 	this.conf = conf;
-	this.order = ordefieldname;
-	this.orderDir = orderdirname;
 }
 DefaultDataSupplierOrderExtractor.Inherit(BaseObject, "DefaultDataSupplierOrderExtractor");
 DefaultDataSupplierOrderExtractor.Implement(ITranslateParamersToOrdersArray);
@@ -21,8 +19,8 @@ DefaultDataSupplierOrderExtractor.prototype.PerformTranslation = function(/*IPar
 			var order = this.conf[i];
 			if (!BaseObject.is(order,"Array")) continue;
 			
-			var _orderField = order[0]?order[0] + "" || null;
-			var _orderDir = order[1]?order[1] + "" || null;
+			var _orderField = order[0]?order[0] + "": null;
+			var _orderDir = order[1]?order[1] + "": null;
 			if (_orderField == null || /^\s*$/.test(_orderField)) continue;
 			var ord, dir;
 			
