@@ -11,3 +11,5 @@
 //#using "helpers/connector-helpers.dep"
 //#using "RegisterTemplateConnector.js"
 //#using "TemplateConnector.js"
+
+//#using "DataSupplierConnector.js"
