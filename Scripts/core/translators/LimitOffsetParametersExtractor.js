@@ -14,7 +14,10 @@ LimitOffsetParametersExtractor.Inherit(BaseObject, "LimitOffsetParametersExtract
 LimitOffsetParametersExtractor.Implement(ITranslateParamersToLimitOffset);
 LimitOffsetParametersExtractor.ImplementProperty("limitName", new InitializeStringParameter("Gets/sets the name of the limit parameter", "numrows"));
 LimitOffsetParametersExtractor.ImplementProperty("offsetName", new InitializeStringParameter("Gets/sets the name of the offset parameter", "startrowindex"));
-
+/**
+	@parameters {IParameters|object}
+	@returns	{ limit: <limit>,offset: <offset> }
+*/
 LimitOffsetParametersExtractor.prototype.PerformTranslation = function(/*IParameters*/ parameters) {
 	var result = {};
 	if (BaseObject.is(parameters, "IParameters")) {

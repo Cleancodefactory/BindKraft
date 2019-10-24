@@ -25,7 +25,7 @@ DataSupplierConnector.prototype.$getOrderExtractor = function() {
 	var ext = this.get_orderExtractor(); // If set takes precedence
 	if (BaseObject.is(ext, "ITranslateParamersToOrdersArray")) return ext;
 	if (BaseObject.is(this.host, "ITranslatorProvider")) {
-		ext = this.host.GetTranslator("ITranslateParamersToOrdersArray");
+		ext = this.host.GetTranslator("ITranslateParamersToOrdersArray", this.get_adress());
 		if (BaseObject.is(ext, "ITranslateParamersToOrdersArray")) return ext;
 	}
 	// create default
@@ -35,7 +35,7 @@ DataSupplierConnector.prototype.$getPagingExtractor = function() {
 	var ext = this.get_pagingExtractor();
 	if (BaseObject.is(ext, "ITranslateParamersToLimitOffset")) return ext;
 	if (BaseObject.is(this.host, "ITranslatorProvider")) {
-		ext = this.host.GetTranslator("ITranslateParamersToLimitOffset");
+		ext = this.host.GetTranslator("ITranslateParamersToLimitOffset", this.get_adress());
 		if (BaseObject.is(ext, "ITranslateParamersToLimitOffset")) return ext;
 	}
 	return new LimitOffsetParametersExtractor({limitName: "fieldtosort", offsetName: "sortdirection"});
