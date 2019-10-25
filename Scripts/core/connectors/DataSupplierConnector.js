@@ -73,7 +73,7 @@ DataSupplierConnector.prototype.resolve = function (callback) {
 		ordParams = null;
 	}
 	// call the IManagedDataSupplier - expect [Raw results]
-	var results = iface.GetRecords(pagParams.offset, ordParams.limit, parameters, orders);
+	var results = iface.GetRecords(pagParams.offset, pagParams.limit, parameters, ordParams);
 	var self = this;
 	if (BaseObject.is(results, "Operation")) {
 		results.onsuccess(function(data) {
