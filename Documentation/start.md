@@ -17,43 +17,62 @@ Additional overviews of specific features are listed in the "References" section
 
 ## Tutorials
 
+Not yet included in this documentation.
+
 ## References and thematic articles
 
-[OOP in BindKraftJS](OOP.md) | [OOP Conventions](OOPConventions.md) | [OOP Helpers](OOPHelpers.md) | [Runtime documentation and annotation](RuntimeSelfDoc.md)
+### OOP in BindKraft (overview articles)
+
+* [OOP in BindKraftJS](OOP.md) 
+* [OOP Conventions](OOPConventions.md) 
+* [OOP Helpers](OOPHelpers.md) 
+* [Runtime documentation and annotation](RuntimeSelfDoc.md)
 
 
-[Core OOP classes and interfaces](CoreClasses.md) - The core classes forming the platform on non-visual conceptual level. Building blocks used widely.
+### [Core OOP classes and interfaces reference](CoreClasses.md) - The core classes forming the platform on non-visual conceptual level. Building blocks used widely.
 
-> [Operations](Operations.md) | [Memory FS](MemoryFS.md) | [Writing interface implementers](WritingInterfaceImplementers.md) | [Connectors](Connectors.md)
+* [Operations](Operations.md) 
+* [Memory FS](MemoryFS.md) 
+* [Writing interface implementers](WritingInterfaceImplementers.md) 
+* [Connectors](Connectors.md) 
+* [BKUrl](BKUrl.md) 
+* [Initializers](Initializers.md)
 
-[View level classes and interfaces](ViewClasses.md) - The classes that build the UI basics - data binding, validation etc.
+#### Miscellaneous core features: 
 
->[Templates](Templates.md) |
- [Writing UI classes (components)](UIClassesWritting.md) |
- [Binding syntax](BindingSyntax.md) | 
- [Using formatters](UsingFormatters.md) | 
- [Formatters - creating](Formatters.md)
+* [Translators](Translators.md) 
+* [Mergers](Mergers.md) 
+* [Value checkers](ValueCheckers.md)
+* [Defaults](UsingDefaults.md)
 
+### [View level classes and interfaces reference](ViewClasses.md) - The classes that build the UI basics - data binding, validation etc.
 
-[Windowing classes and interfaces](WindowingClasses.md) - The classes forming the windowing subsystem.
+* [Templates](Templates.md) 
+* [Writing UI classes (components)](UIClassesWritting.md)
+* [Binding syntax](BindingSyntax.md)
+* [Using formatters](UsingFormatters.md)
+* [Formatters - creating](Formatters.md)
 
->[Window behaviors](Windowing/WindowBehaviors.md) | 
-[Window message handling](Windowing/WindowMessagesHandling.md)
+### [Windowing classes and interfaces reference](WindowingClasses.md) - The classes forming the windowing subsystem.
 
-[System classes and interfaces](SystemClasses.md) - The system, app, daemon and API forming elements of the OOP.
+* [Window behaviors](Windowing/WindowBehaviors.md)
+* [Window message handling](Windowing/WindowMessagesHandling.md)
 
->[SysShell overview](SysShell.md) | 
-[Local API](LocalAPIs.md) | 
-[List of system Local API](LocalAPIList.md) | 
-[System settings](SystemSettings.md) |
-[BKInit - instance configuration](BkInit.md)
+### [System classes and interfaces reference](SystemClasses.md) - The system, app, daemon and API forming elements of the OOP.
 
-[Data types/formats](DataTypes/DataTypes.md) - the structures for various purposes. Non-strict Javscript data consisting of objects, arrays and values arranged according to the conventions described in the section.
+* [SysShell overview](SysShell.md)
+* [Local API](LocalAPIs.md)
+* [List of system Local API](LocalAPIList.md)
+* [System settings](SystemSettings.md) |
+* [BKInit - instance configuration](BkInit.md)
 
-[Others](OtherClasses.md) - Specific classes and interfaces that do not fit into other categories.
->[Settings, Persistence, State and shared data pieces](Settings,Persistence,State_and_shared_data_pieces.md)
+### [Data types/formats](DataTypes/DataTypes.md) - the structures for various purposes. Non-strict Javscript data consisting of objects, arrays and values arranged according to the conventions described in the section.
 
-[Preliminary](Preliminary.md) - Partial documentation of classes that are under construction. These will move elsewhere once they become ready. This section is mostly for people involved in the BindKraft core development.
+### [Others](OtherClasses.md) - Specific classes and interfaces that do not fit into other categories.
+
+* [Settings, Persistence, State and shared data pieces](Settings_Persistence_State_and_shared_data_pieces.md)
+
+* [Preliminary](Preliminary.md) - Partial documentation of classes that are under construction. These will move elsewhere once they become ready. This section is mostly for people involved in the BindKraft core development.
 
 ## Integration
 
