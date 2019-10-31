@@ -71,16 +71,16 @@ RangeNumbersValidatorRule.prototype.validateValue = function (validator, value, 
 			minValue = this.$toInt(this.get_minValue());
 			maxValue = this.$toInt(this.get_maxValue());
 			numericValue = this.$toInt(value);
-			if (numericValue != null && ((minValue != null || numericValue < minValue) || 
-										 (maxValue != null || numericValue > maxValue))) {
+			if (numericValue != null && ((minValue != null && numericValue < minValue) || 
+										 (maxValue != null && numericValue > maxValue))) {
 				result = ValidationResultEnum.incorrect;
 			}
 		} else {
 			minValue = this.$toFloat(this.get_minValue());
 			maxValue = this.$toFloat(this.get_maxValue());
 			numericValue = this.$toFloat(value);
-			if (numericValue != null && ((minValue != null || numericValue < minValue) || 
-										 (maxValue != null || numericValue > maxValue))) {
+			if (numericValue != null && ((minValue != null && numericValue < minValue) || 
+										 (maxValue != null && numericValue > maxValue))) {
 				result = ValidationResultEnum.incorrect;
 			}
 		}
