@@ -12,3 +12,5 @@
 11: Added property stubbing routine as static method of Delegate.
     Added BaseObject.LASTERROR static method that works just like the instance one.
     Corrected and styled minimally the MainWindow's final fall-back template (in code).
+
+    TODO: update this file - use the release notes.
