@@ -1,6 +1,6 @@
 ﻿{
   "name": "BindKraft",
-  "version": "1.0.0",
+  "version": "2.19.1",
   "description": "",
   "keywords": [],
   "author": "Clean Code Factory",
@@ -9,7 +9,7 @@
   "signals": [],
   "release": [
     {
-      "version": "1.0.0",
+      "version": "2.19.1",
       "info": "Initial creation"
     }
   ]
