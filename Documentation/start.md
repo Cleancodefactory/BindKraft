@@ -13,6 +13,14 @@ This is the start page of the BindKraftJS documentation. See the sections below 
 
 [BindKraft](BindKraft.md) - general overview of the concept, architecture and philosophy of the platform.
 
+[Templates](Templates.md) and [views](View.md)
+
+>[Class specifiers](BindingSyntax/DataClass.md) (data-class)
+
+>[Bindings](Bindings.md) - Data and event bindings.
+
+>[Markers](BindingSyntax/Markers.md) (data-class)
+
 Additional overviews of specific features are listed in the "References" section further in this document.
 
 ## Tutorials
