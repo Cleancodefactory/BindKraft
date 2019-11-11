@@ -1,7 +1,7 @@
 
 
 
-// The state is currently unused. The query itself indicates a state change will happen when updating sources.
+// The state is currently unused (no longer - it is now used). The query itself indicates a state change will happen when updating sources.
 /*CLASS*/ /*QUERY*/
 function DataStateQuery(state, binding) {
     this.state = state;
