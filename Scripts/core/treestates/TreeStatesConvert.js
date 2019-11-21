@@ -35,9 +35,12 @@
 [name,types,const]
 	types = num|string|bool|null
 	
-State element
+State element (TSE)
 
 [ ["name1","int|number|missing"],["name2","bool|number|missing"] ]
+
+Data and:
+
 
 */
 
@@ -49,18 +52,18 @@ function TreeStatesConvert(map) {
 }
 TreeStatesConvert.Inherit(BaseObject,"TreeStatesConvert");
 TreeStatesConvert.prototype.$map = null;
-TreeStatesConvert.prototype.linearize = function(/*array of state objects*/ states) {
-}.Description("Converts the array of state objects to array of linearized state values")
-	.Param("states","Array of state objects matching the map")
-	.Returns("If successful an array of linearized state values, each of them is an array in turn. The result can be empty, on error null is returned and last error set.");
-TreeStatesConvert.prototype.linearize = function(arrStates) {
+TreeStatesConvert.prototype.linearize = function(/*array of state objects*/ arrStates) {
 	var r = TreeStatesConvert.LinearizeTSM(this.$map, arrStates);
 	if (TreeStatesConvert.isError(r)) {
 		this.LASTERROR(_Errors.compose(),r.text);
 		return null;
 	}
 	return r;
-}	
+}.Description("Converts the array of state objects to array of linearized state values")
+	.Param("states","Array of state objects matching the map")
+	.Returns("If successful an array of linearized state values, each of them is an array in turn. The result can be empty, on error null is returned and last error set.");
+
+// Static methods	
 TreeStatesConvert.ErrorValue = {
 	error: "TreeStatesConvert error"
 }
@@ -86,7 +89,10 @@ TreeStatesConvert.isNonFatalError = function(v) {
 }
 // Validators
 /**
-	Checks if the comma separated list of types is valid
+	Checks if the comma separated list of types is valid - i.e. all types are supported
+	
+	@param types {string} Comma separated type names without spaces.
+	@returns {tscerr|array<string>} Error or array of type names as strings
 */
 TreeStatesConvert.TSEUTypesValid = function(types) {
 	if (typeof types != "string") {
@@ -108,7 +114,7 @@ TreeStatesConvert.TSEUTypesValid = function(types) {
 	Gets the corresponding value from an object
 	has to be called with a non-null TSEU
 */
-TreeStatesConvert.TSEUValFromObject = function(tseu, obj) { // Extracts TSEU specifie value from the object
+TreeStatesConvert.TSEUValFromObject = function(tseu, obj) { // Extracts TSEU specific value from the object
 	var name = tseu[0];
 	var types = tseu[1];
 	var arrTypes = TreeStatesConvert.TSEUTypesValid(types);
@@ -136,6 +142,7 @@ TreeStatesConvert.TSEUTestConditions = function(tseu, v) { // tests the conditio
 /**
 	Executes all the TSEU from a TSE to strip the values from an object and put them in an array
 	Checks the conditions and stops if any fails - returns null in that case or the linear otherwise
+	
 	match - []
 	not match - null
 	error - error
@@ -268,27 +275,12 @@ TreeStatesConvert.LinearizeTSM = function(tsm, objset, _linear) {
 	}
 	
 }
-// TSEU - Tree State Element Unit READ
-/**
-	Checks the type of a value coming from linear
-*/
-TreeStatesConvert.TSEUValFromLinear = function(tseu, v) {
-	var types = tseu[1];
-	var arrTypes = TreeStatesConvert.TSEUTypesValid(types);
-	if (this.isError(arrTypes)) return arrTypes;
-	
-	var vtype = TreeStatesConvert.ValueType(v);
-	if (arrTypes.findElement(vtype) < 0) {
-		return this.Error("A value of type not specified in the TSEU");
-	}
-	return v;
-}
 
 /**
 	Sets the corresponding value to an object
 	Returns true if successful
 */
-TreeStatesConvert.TSEUValToObject = function(tseu, v, obj) { // Extracts TSEU specifie value from the object
+TreeStatesConvert.TSEUValToObject = function(tseu, v, obj) { // Extracts TSEU specific value from the object
 	var name = tseu[0];
 	var types = tseu[1];
 	// Validate TSEU
@@ -302,32 +294,14 @@ TreeStatesConvert.TSEUValToObject = function(tseu, v, obj) { // Extracts TSEU sp
 	return true;
 }
 
-/**
-	Executes all the TSEU from a TSE to check the values from an array and puts them on the object
-	Checks the conditions and stops if any fails - returns null in that case - the object otherwise
-	
-*/
-TreeStatesConvert.DeLinearizeTSE = function(tse,arr,_obj) { // Converts data from object to linear array of values
-	var obj = _obj || {};
-		if (arr == null || arr.length == 0) {
-		if (isrequired) return null; // fail
-		return obj; // fine we are optional - empty object
-	}
-	if (tse.length != arr.length + 1) return null; // fail
-	for (var i = 0; i < tse.length;i++) {
-		// Read one and check type
-		var val = TreeStatesConvert.TSEUValFromLinear(tse[i], arr[i-1]);
-		if (this.isError(val)) return null; // fail
-		// Check conditions and set to the object
-		if (!TreeStatesConvert.TSEUValToObject(tse[i], val, obj)) {
-			// Some condition is not met
-			return null;
-		}
-	}
-	return obj;
-}
 
 // Basic routines
+/**
+	Determines the type of the value (according to the TSEU type set)
+	
+	@param v {any} - the value to check
+	@returns {string|null} the name of the type or null if mapping is impossible
+*/
 TreeStatesConvert.ValueType = function(v) {
 	if (typeof v === "number" && !isNaN(v)) {
 		return "num";
@@ -397,30 +371,3 @@ TreeStatesConvert.Conditions = {
 };
 
 
-//// Example for tests
-g_cond1to20 = TreeStatesConvert.Condition("range",0,20);
-g_cond21to40 = TreeStatesConvert.Condition("range",21,40);
-g_condAlphaA = TreeStatesConvert.Condition("regex",/^A[a-zA-Z]+$/);
-g_condAlphaB = TreeStatesConvert.Condition("regex",/^B[a-zA-Z]+$/);
-
-g_ExampleTSE1 = [
-	[ "alpha", "num,null", [g_cond1to20] ],
-	[ "beta", "string",[g_condAlphaA]]
-];
-g_ExampleTSE2 = [
-	[ "alpha", "num,null", [g_cond21to40] ],
-	[ "beta", "string"]
-];
-g_ExampleTSE21 = [
-	[ "gamma", "string,null", [g_condAlphaB] ]
-];
-
-g_ExampleTSM = [
-	[ [g_ExampleTSE1]
-	],
-	
-	[ [g_ExampleTSE2],
-	  [ [g_ExampleTSE21]
-	  ]
-	]
-];
