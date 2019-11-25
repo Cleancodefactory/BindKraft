@@ -15,7 +15,18 @@ TreeStatesConvert.TSEUValFromLinear = function(tseu, v) {
 	}
 	return v;
 }
-
+/**
+	Delinearizes a TSM (not TSMS)
+	@param tsm 	{TSM} A TSM to drive the delinearization
+	@param _linears [Array<Array>] Array of arrays of values
+*/
+TreeStatesConvert.DeLinearizeTSM = function(tsm,_linear,objset) /* objset */ {
+	if (!BaseObject.is(tsm, "Array") || tsm.length == 0) {
+		if (_linear == null) return null;
+		if (_linear.length == 0) return objset; // end of recursion
+	}
+	var tse = tsm[0];
+}
 /**
 	Executes all the TSEU from a TSE to check the values from an array (linear) and puts them on the object
 	Checks the conditions and stops if any fails - returns null in that case - the object otherwise.
@@ -40,14 +51,13 @@ TreeStatesConvert.DeLinearizeTSE = function(tse,arrvals,_obj) { // Converts data
 		var val = TreeStatesConvert.TSEUValFromLinear(tse[i], arr[i]);
 		if (this.isError(val)) return null; // fail
 		// Check conditions and set to the object
-		if (!TreeStatesConvert.TSEUValToObject(tse[i], val, obj)) {
+		if (!TreeStatesConvert.DeLinearizeTSU(tse[i], val, obj)) {
 			// Some condition is not met
 			return null;
 		}
 	}
 	return obj;
 }
-
 /**
 	Called during delinearization of a TSE linear to deal with individual value
 	If TSEU matches the value, the value is set to the object passed and true is returned.
@@ -67,3 +77,22 @@ TreeStatesConvert.DeLinearizeTSU = function(tseu, value, obj) {
 	return true;
 	
 }
+/**
+	Sets the corresponding value to an object
+	Returns true if successful
+*/
+/* Essentially the same as DeLinearizeTSU
+TreeStatesConvert.TSEUValToObject = function(tseu, v, obj) { // Extracts TSEU specific value from the object
+	var name = tseu[0];
+	var types = tseu[1];
+	// Validate TSEU
+	var arrTypes = TreeStatesConvert.TSEUTypesValid(types);
+	if (this.isError(arrTypes)) return false;
+	// Check the type - not needed, already done
+	// Test conditions
+	if (!TreeStatesConvert.TSEUTestConditions(tseu, v)) return false;
+	// Set it
+	obj[name] = v;
+	return true;
+}
+*/

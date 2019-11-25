@@ -276,23 +276,6 @@ TreeStatesConvert.LinearizeTSM = function(tsm, objset, _linear) {
 	
 }
 
-/**
-	Sets the corresponding value to an object
-	Returns true if successful
-*/
-TreeStatesConvert.TSEUValToObject = function(tseu, v, obj) { // Extracts TSEU specific value from the object
-	var name = tseu[0];
-	var types = tseu[1];
-	// Validate TSEU
-	var arrTypes = TreeStatesConvert.TSEUTypesValid(types);
-	if (this.isError(arrTypes)) return false;
-	// Check the type - not needed, already done
-	// Test conditions
-	if (!TreeStatesConvert.TSEUTestConditions(tseu, v)) return false;
-	// Set it
-	obj[name] = v;
-	return true;
-}
 
 
 // Basic routines

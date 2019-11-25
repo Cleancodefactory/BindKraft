@@ -30,9 +30,9 @@ var ExampleTSE2 = [
 var ExampleTSE21 = [
     [ "gamma", "string,null", [condAlphaB] ]
 ];
-
-var ExampleTSM = [
-    [ 
+// Map set - TSMS
+var ExampleTSMS = [
+    [ // Map - TSM
         [ExampleTSE1]
     ],
     [ 
@@ -69,6 +69,12 @@ These define the conditions that the value has to meet in order to be considered
 > TSM describes all the states in which the app can be.
 
 TSM := [ *([TSE] [TSM])]
+
+**TSMS** - Tree State Map Set
+
+> Set of alternative TSM. The top level API functions accept TSMS, so the definition of an app state tree should be structured that way even if there is only a single Tree State Map.
+
+_The structures do not contain properties or array elements that can identify them as TSM, TSE or TSEU which makes the structure important._
 
 ## Definitions - syntax
 
