@@ -250,8 +250,10 @@ Binding.TargetOperations = {
 				if (!(v.indexOf('http://') === 0 || v.indexOf('https://') === 0)) {
 					v = mapPath(v);
 				}
-				if (this.is('script') || this.is('input') || this.is('frame') || this.is('iframe') || this.is('img')) {
+				if (DOMUtil.matchesSelector(this,['script','input','frame','iframe','img'])) {
 					this.src = v;
+				} else {
+					if (window.console) window.console.log("data-bind-src used on an unsupported element - only script, input, frame, iframe, img are supported");
 				}
 			}
 		},

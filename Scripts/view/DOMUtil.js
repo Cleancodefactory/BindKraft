@@ -352,6 +352,38 @@ DOMUtil.closestParent = function(dom, selector, bAndSelf) {
 }
 */
 /**
+	Checks if the element or set of elements all match a selector or at least one of the selectors (if array of
+	selectors is supplied
+
+	@param dom {HTMLElement|NodeList|HTMLCollection|Array<HTMLElement>} - single or set of elements - only HTMLElement-s are processed, the others will never pass.
+	@param selector {string|Array<string>} - selector to test against
+	@returns {boolean} - true if all the elements match the selector
+*/
+DOMUtil.matchesSelector = function(dom, selector) {
+	var i;
+	if (typeof selector == "string") {
+		if (dom instanceof HTMLElement) {
+			if (typeof selector == "string") {
+				if (dom.matches(selector)) return true;
+			} else if (BaseObject.is(selector, "Array")) {
+				for (i = 0; i < selector.length; i++) {
+					if (dom.matches(selector[i])) return true;
+				}
+			}
+			return false;
+			
+		} else if (dom instanceof NodeList || dom instanceof HTMLCollection || BaseObject.is(dom, "Array")) {
+			for (i = 0; i < dom.length; i++) {
+				if (dom[i] instanceof HTMLElement) {
+					if (!this.matchesSelector(dom[i], selector)) return false;
+				}
+			}
+			return true;
+		}
+	} 
+}
+
+/**
 	@param dom* {NodeList|HTMLCollection|Array<HTMLElement>}	- set of elements - only HTMLElement-s are processed, the others will never pass.
 	@param dom** {HTMLElement} - Single element.
 	@param selector {string} - CSS selector
@@ -367,7 +399,7 @@ DOMUtil.filterElements = function(dom,selector) {
 		var el,result = [];
 		for (var i = 0; i < dom.length; i++) {
 			if (dom[i] instanceof HTMLElement) {
-				el = this.filterElements(dom[i]);
+				el = this.filterElements(dom[i], selector);
 				if (el) result.push(el);
 			}
 		}
