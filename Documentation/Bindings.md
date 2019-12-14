@@ -1,5 +1,7 @@
 # Bindings
 
+>For binding syntax reference - [see here](BindingSyntax.md)
+
 The bindings are one of the core BindKraft features - a feature that actually gives the name of the platform.
 
 The bindings are used in all BindKraft templates no matter what role the template plays. To give context to this document one can first read about [Templates](Templates.md) and [Views](View.md). In short a template is a piece of HTML containing some special attributes on some of its elements. These attributes are defined by BindKraft and we can roughly separate them into the following categories:

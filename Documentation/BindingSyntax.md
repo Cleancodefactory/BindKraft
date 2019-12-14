@@ -1,15 +1,30 @@
 # Binding syntax
 
-This syntax is for both `data-bind-{targetexpr}` syntax and `data-on-{event}` syntax, however not all settings apply/make sense for both. This is noted in the details about each of them.
+This syntax is for both `data-bind-{targetexpr}` syntax and `data-on-{event}` syntax, however not all settings apply (make sense) for both. This is noted in the details about each of them.
 
 It is important to always consider the fact that each binding is an object of one of two classes:
 
   `Binding` class - all the `data-bing-{targetexpr}` bindings
   `Handler` class - all the `data-on-{event}` bindings.
 
-The importance of this is that when a reference to a binding is obtained in some way it can be manipulated the way any object can - directly through its methods and properties. This makes it practical for BindKraft to use "passive" bindings and instead of linking them automatically to certain events, which is a mixed blessing, to offer mass activation routines and individual management interface (the members of the binding classes) that are fully under the developer's control and easily enable the same results to be achieved.
+The terminology is as follows:
 
-## Syntax scheme
+```HTML
+  <!-- DATA BINDINGS -->
+  <someelement ... data-bind-{target_expression}="{expression or source_expression}" ...>
+
+  <!-- EVENT BINDINGS -->
+  <someelement ... data-on-{eventname}="{expression or source_expression}" ...>
+```
+
+> For general concepts and usage discussion see [Bindings](../Bindings.md)
+
+> [Target expressions](Bindings.md#target-operation) are documented here
+
+> Expressions (also called source expressions) are described below and in the linked pages
+
+
+## Expression syntax scheme
 
 ```bnf
 "{"bind|read|probe["("<positive_int>")"]
@@ -109,7 +124,7 @@ The importance of this is that when a reference to a binding is obtained in some
 
 Specififies the behavior of the binding when updateTargets/updateSources are called for mass binding activation. Does not matter for the `data-on-` bindings - in them `bind` should always be used by convention. [Read more ...](BindingSyntax/bindingtype.md)
 
-## `source` – source of the data
+## `source` and `service`
 
 _mutually exclusive with `service`_
 
