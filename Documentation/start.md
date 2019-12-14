@@ -49,7 +49,11 @@ Not yet included in this documentation.
 
 * [Templates](Templates.md) 
 * [Writing UI classes (components)](UIClassesWritting.md)
-* [Binding syntax](BindingSyntax.md)
+* [data-class](DataClass.md) - data-class={...}
+* [Binding syntax](BindingSyntax.md) - data-bind-something={...} and data-on-event={...}
+    * [Bindings](Bindings.md) - overview and usage discussion
+    * [Target expressions](Bindings.md#target-operation)
+* [Markers](BindingSyntax/Markers.md) - data-context-border="true", data-template-root="true" etc.
 * [Using formatters](UsingFormatters.md)
 * [Formatters - creating](Formatters.md)
 
