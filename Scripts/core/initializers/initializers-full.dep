@@ -16,6 +16,7 @@
 //#using "./InitializeBindingParameter.js"
 //#using "./InitializeReadOnlyParameter.js"
 //#using "./InitializeCustomFormatter.js"
+//#using "./InitializeFetcher.js"
 
 //#using "./InitializeMethodCallback.js"
 
