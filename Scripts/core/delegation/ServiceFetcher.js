@@ -32,6 +32,7 @@ function ServiceFetcher(target, iface, reason, silent) {
 		if (target != null && target.classType) s = target.classType();
 		throw "ServiceFetcher cannot function on an object that does not support IStructuralQueryEmiter. Target's class is: " + s;
 	}
+	
 }
 ServiceFetcher.Inherit(BaseObject, "ServiceFetcher");
 ServiceFetcher.createFetcher = function(target, iface, reason) {
@@ -53,3 +54,6 @@ ServiceFetcher.createFetcher = function(target, iface, reason) {
 	}
 }
 ServiceFetcher.prototype.$service = null; // Fetched service
+ServiceFetcher.prototype.findService = function(iface,reason) {
+	return FindServiceQuery.findService(this.$target, iface, reason);
+}
