@@ -21,29 +21,35 @@ The Formatters API in BindKraftJS actually covers `formatters`, `convertors`, `f
 - **Sorter** - Sorts elements (usually work on sets - arrays/objects)
 - **Calculator** - Calculates a value based on the input
 
-So, for the reminder of the document we will use the term `formatter` as general term pointing at anything based on the formatter API, but the specific formatter can be actually a convertor or a filter, or something else (mentioned when unclear).
+For the reminder of the document we will use the term `formatter` as general term pointing at anything based on the formatter API, but the specific formatter can be actually a convertor or a filter, or something else (mentioned when unclear).
 
-What is called _formatting_ or _conversion_ in BK is similar to the operations called **piping** in many other programming environments. It is a popular approach that got its fame from unix shells and process management in general. The term is then used for similar purposes in many other cases. However in BindKraft (not only Javascript) the abstraction comes from **binding** techniques - something that can be loosely described in general sense as _connecting objects in some way_. This means that unlike piping in binding two way operation or bidirectional (reversible) operation is rather expected if it looks possible.
+_Formatting_ or _conversion_ in BK is similar to the operations called **piping** in some other programming environments. It is a popular approach that got its fame from unix shells and process management in general. However in BindKraft the abstraction is impacted by the need to use "piping" in **binding** techniques - conveniently and as easy as feasible. Bindings can be loosely described in general sense as _connecting objects in some way_. This means that unlike typical piping in binding two way operation or bidirectional (reversible) operation is rather expected if it is possible.
 
-While formatters can be used in code (especially convertors, filters, sorters, calculators) they are primarily designed for usage through bindings in the `mark up`. This does not negate the usage in code, on the contrary - in the overwhelming majority of cases the conversions needed by the code are most easily specified in the `mark up` (HTML templates of views, controls etc.). This is not a coincidence, but a logical consequence of the usual cycle of everyday work with BindKRaftJS - adapting UI templates to certain code. Thus whenever the formatters serve non-visual purpose they still most often appear in templates for visual UI elements - they just connect pieces backed by different source code together.
+The formatters can be used entirely in code, but they are designed with primary aim to fit into the HTML templates and the bindings specified in them even if that will make their in-code usage slightly less convenient. 
 
 ## Kinds of formatters
 
 There are two kinds of formatters in respect the way they are used:
+
 - **System formatters** - defined by the system and available for usage everywhere without the need to instantiate them.
-- **Custom formatters** - configured on local basis for use only in certain template (more about these later).
+
+- **Custom formatters** - configured/defined on local basis for use only in certain template (more about these later).
 
 In respect to the implementation the formatters can be split again in two categories:
-- **Implemented as classes** - all system formatters and custom formatters that can be needed in many places (e.g. in many templates used by an app or 2-3 apps etc.)
-- **Ad Hoc formatters** - Implemented locally for a single or atmost a few templates only with minimum additional effort.
 
-Obviously the implementation follows the problem that is solved with the particular formatter. There are those that implement fairly abstract operations and may be needed in different places and there are those that make sense only under specific conditions of a singular class/view. This is why BK supports these different approaches. Almost all projects built with BK need some Ad Hoc formatters here and there - they act almost as properties, but can be put between different "points" - to connect arbitrary elements in the scope where they are implemented. Unlike them the formatters implemented as classes are rarely too specialized - not enough to say "almost as properties" anyway.
+- **Implemented as classes** - all system formatters and custom formatters that can be needed in many places (e.g. in many templates used by an app or 2-3 apps etc.).
+
+- **Ad Hoc formatters** - Implemented locally for usage only in the template directly managed by the class. The Ad Hoc formatters can be reused in a very limited fashion - as long as there are more than one different templates that can be managed by instances of the same class.
+
+Obviously the particular implementation is determined by the specific problem  solved with the particular formatter. There are those that implement fairly abstract operations and may be needed in different places and there are those that make sense only under specific conditions of a singular class/view. This is why BK supports these different approaches. Ad Hoc formatters require the same effort needed for a typical method of a class and typically solve similarly scoped problems. Formatters implemented as classes can retain their own state, support extensive configuration and even interact with multiple other objects in order to determine how to perform their job, but they require a bit more effort.
 
 We will cover the usage details further in this document and describe the creation of formatters in depth in the article "Formatters".
 
+### Formatter aggregates
+
 For convenience BindKraftJS offers one more very specific category of formatters - **formatter aggregates**. While using them the programmer rarely needs to know if a specific formatter is aggregate or not - the purpose of the aggregates is to combine a few formatters together into an aggregate that looks like a single formatter, but is internally created as a predefined chain of existing formatters. A good example are some system date-time formatters (`DefaultDateTimeFormat`, `DefaultDateFormat`, `DefaultTimeFormat`) - they combine ConvertDateTime convertor and different formatters for user-readable representation, thus performing all the work from conversion from raw format to Date object and then to readable text for the user.
 
-As you would probably expect aggregates can be system and custom formatters. In bindings multiple formatters can be chained, but for the frequently used cases and in order to implicitly enforce some policy these can be done also by creating aggregates.
+As you would probably expect aggregates can be system and custom formatters. In bindings multiple formatters can be chained, but for the frequently used cases and in order to implicitly enforce some policy. aggregates enable the black-box approach.
 
 ## Naming Conventions
 
@@ -69,7 +75,7 @@ The above convention is not binding for the aggregate formatters (both system an
 
 ## Bidirectional/unidirectional formatters
 
-If it is possible all formatters SHOULD be reversible (bidirectional). However, this is not always the case. Obviously one cannot expect that from a `sorter`, `filter` or `calculator` formatters. With these almost always information will be lost during their operation and the reverse one will be possible only rarely.
+If it is possible all formatters SHOULD be reversible (bidirectional). However, this is not always the case. Obviously one cannot expect that from a `sorter`, `filter` or `calculator` formatters. With these almost always information will be lost during their operation and its reversal will be possible only rarely.
 
 So, we define directions as **ToTarget** and **FromTarget** and we treat `ToTarget` as `primary direction`. This is the direction that is implemented and the reverse (**FromTarget**) is not usable or is implemented as `pass-through`. The naming comes from the way formatters work in bindings - format/convert the data between the data and the source.
 
