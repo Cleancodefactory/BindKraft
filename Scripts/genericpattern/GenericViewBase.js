@@ -32,8 +32,11 @@ GenericViewBaseEx.prototype.set_isDirty = function (v) {
 	var b = false;
 	if (this.$isDirty != v) b = true;
     this.$isDirty = v;
-	if (b) this.viewdirtystatechanged.invoke(this,this.$isDirty);
+	if (b) {
+		this.viewdirtystatechanged.invoke(this,this.$isDirty);
+	}
 };
+
 GenericViewBaseEx.prototype.set_isdirty = function (v) {
 	this.set_isDirty(v);
 }
@@ -80,8 +83,12 @@ GenericViewBaseEx.prototype.onClose = function () {
 	this.closeValidators();
     return true;
 };
+GenericViewBaseEx.prototype.OnStateChecking = function() {}; // Override to do something
 GenericViewBaseEx.onStructuralQuery("DataStateQuery", function (query, procInstructions) {
-	this.set_isdirty(true);
+	if (query.state) {
+		this.set_isdirty(true);
+	}
+	this.OnStateChecking();
     return true;
 });
 GenericViewBaseEx.onStructuralQuery("HostCallQuery", function (query, procInstructions) {

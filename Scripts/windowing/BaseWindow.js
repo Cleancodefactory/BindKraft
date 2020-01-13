@@ -899,9 +899,14 @@ BaseWindow.prototype.windowmaxminchanged = new InitializeEvent("Fired when minim
                     return (z1 - z2);
                 });
                 this.children = cordered;
+				var zgap = 200;
                 for (var i = 0; i < this.children.length; i++) {
                     if (BaseObject.is(this.children[i], "BaseWindow")) {
-                        this.children[i].set_zorder(i);
+						if (this.children[i].getWindowStyles() & WindowStyleFlags.topmost) {
+							this.children[i].set_zorder(i + zgap); // Leave the gap so we can hide/show a cover.
+						} else {
+							this.children[i].set_zorder(i);
+						}
                     }
                 }
                 WindowingMessage.fireOn(this, WindowEventEnum.ActivateWindow, {});
@@ -946,6 +951,53 @@ BaseWindow.prototype.windowmaxminchanged = new InitializeEvent("Fired when minim
     }
     return currentResult;
 };
+// +GAP cover
+/*
+ *  topmost windows are zordered with gap (currently 200) a cover can be shown between them and the rest temporarily
+ */
+BaseWindow.prototype.$gapcover = null; // Filled when the gap is shown and cleared when hidden
+BaseWindow.prototype.$calcGapZOrder = function () {
+    var ord = -1;
+    var x;
+    for (var i = 0; i < this.children.length; i++) {
+        if (BaseObject.is(this.children[i], "BaseWindow") && (this.children[i].getWindowStyles() & WindowStyleFlags.topmost)) {
+            x = this.children[i].get_zorder();
+            if (x > 0) {
+                if (ord > 0) {
+                    ord = (x < ord)?x:ord;
+                } else {
+                    ord = x;
+                }
+            }
+        }
+    }
+    if (ord > 0) {
+        return ord - 5;
+    }
+    return -1; // Undetermined
+}
+// TODO: Should be put into the templates?
+BaseWindow.prototype.$createAndAttachGapCover = function () {
+    var cover = $('<div style="position:absolute;top:0px;left:0px;width:100%;height:100%;background-color:#FFFFFF;opacity:0.01;"></div>');
+    $(this.root).append(cover);
+    this.$gapcover = cover;
+    return cover;
+}
+BaseWindow.prototype.showTopMostGapCover = function () {
+    if (this.$gapcover != null) return;
+    var ord = this.$calcGapZOrder();
+    if (ord > 0) {
+        var cover = this.$createAndAttachGapCover();
+        cover.css("z-index", ord);
+    }
+}
+BaseWindow.prototype.hideTopMostGapCover = function () {
+    if (this.$gapcover != null) {
+        this.$gapcover.remove();
+        this.$gapcover = null;
+    }
+}
+// -GAP cover
 
 BaseWindow.prototype.$externalHandlers = null;
 BaseWindow.prototype.registerExternalHandler = function (msgType, handler) {

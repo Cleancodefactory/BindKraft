@@ -2235,8 +2235,10 @@ Binding.prototype.$set_sourceValue = function (val, bFormat, bDontMarkState) {
 Binding.prototype.$onCheckSourceState = function (eventOrSender, dcOrNothing) {
 	if ( this.__obliterated ) { return; }
     if (this.testSourceState()) {
-        JBUtil.throwStructuralQuery(this.$target, new DataStateQuery(null, this), null);
-    }
+        JBUtil.throwStructuralQuery(this.$target, new DataStateQuery(true, this), null);
+    } else {
+		JBUtil.throwStructuralQuery(this.$target, new DataStateQuery(false, this), null);
+	}
 };
 
 Binding.prototype.testSourceState = function (bFormat, bOverridePolicy) { // Does fake update source to determine if the source's state will change

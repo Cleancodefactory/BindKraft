@@ -11,7 +11,7 @@ PagerControl.$defaults = {
 	templateName: "bindkraft/control-pager" // id="bindkraft_control-pager"
 };
 
-PagerControl.parameterNames = ["dataarea","normalize","maxpageitems","templateName","templateSource"];
+PagerControl.parameterNames = ["dataarea","normalize","maxpageitems","templateName","templateSource","autolink"];
 PagerControl.prototype.setObjectParameter = function(name, value, type) {
 	if (name.inSet(PagerControl.parameterNames)) return true;
 	return false;

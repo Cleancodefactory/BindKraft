@@ -14,5 +14,6 @@
 //#using "./EventConnector.js"
 //#using "./SugaryDispatcher.js"
 //#using "./EventDispatchLeasing.js"
+//#using "./ServiceFetcher.js"
 
 //#using "./MulticastDelegate.js"
