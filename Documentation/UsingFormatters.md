@@ -77,7 +77,7 @@ The above convention is not binding for the aggregate formatters (both system an
 
 If it is possible all formatters SHOULD be reversible (bidirectional). However, this is not always the case. Obviously one cannot expect that from a `sorter`, `filter` or `calculator` formatters. With these almost always information will be lost during their operation and its reversal will be possible only rarely.
 
-So, we define directions as **ToTarget** and **FromTarget** and we treat `ToTarget` as `primary direction`. This is the direction that is implemented and the reverse (**FromTarget**) is not usable or is implemented as `pass-through`. The naming comes from the way formatters work in bindings - format/convert the data between the data and the source.
+BindKraft defines the directions as **ToTarget** and **FromTarget** and we treat `ToTarget` as `primary direction`. This is the direction that is implemented and the reverse (**FromTarget**) is not usable or is implemented as `pass-through`. The naming comes from the way formatters work in bindings - format/convert the data between the data and the source.
 
 TODO: _More information about the implementation conventions_
 
