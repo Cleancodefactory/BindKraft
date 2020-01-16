@@ -1,7 +1,5 @@
-
-
-
-
+// OBSOLETE. Still used by the legacy ajax chain which in turn is still heavilly used.
+// will be deprecated as the new ajax features replace it.
 /*
     The cache manager is configured with:
     branchesAndFlags: { branchName: flag, ...}

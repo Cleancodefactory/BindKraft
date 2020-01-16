@@ -95,9 +95,9 @@ Binding.$regReplacements = /\%\%([A-Za-z0-9_]+)\%\%/gi; // Replacements before d
 Binding.$regExpColor = /\#([0-9a-fA-F]{6})/i;
 Binding.$reSplitPath = /\.(?=[^\/\.]|\()/gi;
 Binding.$reArray = /([^\[\-\)]+)(?:(?:\-|\[|\()(\S*?)(?:\)|\]|$))?/i; // $1 = arrname, $2/$3 - elindex
-Binding.resources = null; // global resources (consumed faster without query for update)
-Binding.$lookups = null; // global lookups cache StringResources
-Binding.dynamicresources = null; // dynamic global resources (consumed with query for update if needed)
+Binding.resources = null; // OBSOLETE global resources (consumed faster without query for update)
+Binding.$lookups = null; // OBSOLETE global lookups cache StringResources
+Binding.dynamicresources = null; // OBSOLETE dynamic global resources (consumed with query for update if needed)
 Binding.updateEntityState = false; // Default, should be false from (including) version 1.7.5 because of the new policy to explicitly allow it on each individual binding
 								   // The old code still works if this is true, but in future versions this and the entire old mechanism will be removed.
 Binding.entityStatePropertyName = "state";
@@ -603,267 +603,6 @@ Binding.prototype.$constructRules = function (cnt) {
 }.Description("...")
  .Param("cnt","...");
 
-//Binding.prototype.$newParsing = function (bindStr) {
-//    //Using the $tempRegEx
-//    this.$type = "bind";
-//    this.$path = null;
-//    this.$source = null;
-//    this.$sourceType = "default";
-//    this.$tempRegEx = Binding.$tempRegEx;
-//    this.$tempRegEx.lastIndex = 0;
-//    var r, s;
-//    while (r = this.$tempRegEx.exec(bindStr)) {
-//        if (r[1] != null && r[1] != "") {
-//            this.$type = r[1];
-//            //	Read Bind Probe
-//            this.$order = (r[2] == null || r[2].length == 0) ? 0 : parseInt(r[2]);
-//        }
-//        else if (r[3] != null && r[3] != "") {
-//            //	source|service
-//            s = r[3].trim();
-//            this.$source = r[4];
-//            if (s == "source") {
-//                switch (this.$source) {
-//                    case "self":
-//                        this.$sourceType = "self";
-//                        break;
-//                    case "static":
-//                        this.$sourceType = "static";
-//                        break;
-//                    case "globalresource":
-//                        this.$sourceType = "globalresource";
-//                        break;
-//                    case "dynamicresource":
-//                        this.$sourceType = "dynamicresource";
-//                        break;
-//                    case "parentcontext":
-//                        this.$source = null;
-//                        this.$sourceType = "default";
-//                        this.$useParentContext = true;
-//                        break;
-//                    case "systemsettings":
-//                        this.$source = null;
-//                        this.$sourceType = "systemsettings";
-//                        break;
-//                    case "appletstorage":
-//                        this.$source = null;
-//                        this.$sourceType = "appletstorage";
-//                        break;
-//                    case "settings":
-//                        this.$source = null;
-//                        this.$sourceType = "systemsettings";
-//                        break;
-//                    case "ajaxsettings":
-//                        this.$source = null;
-//                        this.$sourceType = "ajaxsettings";
-//                        break;
-//                    default:
-//                        // translates to source or service
-//                        this.$sourceType = s;
-//                }
-//            } else {
-//                this.$sourceType = s; // service and others
-//            }
-//            this.$traceBinding("type", this.$sourceType);
-//        }
-//        else if ((r[5] != null && r[5] != "") || (r[21] != null && r[21] != "") || (r[23] != null && r[23] != "")) {
-//            var t = (r[5] == null) ? ((r[21] == null) ? r[23] : r[21]) : r[5];
-//            // path
-//            switch (t) {
-//                case "path":
-//                    this.$path = r[6].trim();
-//                    break;
-//                case "text":
-//                    if (this.$sourceType != "static") alert('source must be static for literal value to take effect\n' + this.$expression);
-//                    this.$path = null;
-//                    this.$literalValue = r[22].trim();
-//                    break;
-//                case "number":
-//                    if (this.$sourceType != "static") alert('source must be static for literal value to take effect\n' + this.$expression);
-//                    this.$path = null;
-//                    this.$literalValue = parseInt(r[22].trim(), 10);
-//                    break;
-//                case "object":
-//                    if (this.$sourceType != "static") alert('source must be static for literal value to take effect\n' + this.$expression);
-//                    this.$path = null;
-//                    var s = r[24].trim();
-//                    if (s.length > 0 && Function.classes[s] != null) {
-//                        this.$literalValue = new Function.classes[s];
-//                    } else if (s.length == 0 || s.toLowerCase() == "object") {
-//                        this.$literalValue = {};
-//                    } else if (s.length > 0 && s.toLowerCase() == "array") {
-//                        this.$literalValue = [];
-//                    } else {
-//                        this.$literalValue = null;
-//                        jbTrace.log("The class name not found in expression: " + this.$expression);
-//                    }
-//                    break;
-//            }
-//            this.$traceBinding("path", this.$path);
-//        }
-//        else if ((r[7] != null && r[7] != "") || (r[9] != null && r[9] != "")) {
-//            // format|inverseformat
-//            this.$formatterType = (r[7] == null || r[7] == "") ? r[9].trim() : r[7].trim();
-//            if (this.$formatterType.indexOf("inverse") == 0) {
-//                this.$formatterType = this.$formatterType.slice(7); // "inverse".length == 7
-//                this.$formatterInverse = true;
-//            }
-//            this.$formatter = (r[8] != null || r[8] == "") ? r[8].trim() : r[10].trim();
-//            // customformat|inversecustomformat
-//            switch (this.$formatterType) {
-//                case "format":
-//                    this.$formatterObject = Function.classes[this.$formatter];
-//                    break;
-//                case "customformat":
-//                    if (this.$formatter != null) {
-//                        this.$formatterObject = this.$getCustomFormatterObject(this.$formatter);
-//                    }
-//                    break;
-//            }
-//        }
-//        else if (r[11] != null && r[11] != "") {
-//            // options
-//            var opts = r[10].split(",");
-//            for (var i = 0; i < opts.length; i++) {
-//                this.options[opts[i]] = true;
-//            }
-//        }
-//        else if (r[12] != null && r[12] != "") {
-//            //flags
-//            var flags = r[12].split(",");
-//            for (var i = 0; i < flags.length; i++) {
-//                this.flags[flags[i]] = true;
-//            }
-//        }
-//        else if (r[13] != null && r[13] != "") {
-//            // create|createleaf
-//            this.createIfNotExist = {
-//                Leaf: r[13],
-//                Type: r[14].trim()
-//            };
-//        }
-//        else if (r[15] != null && r[15] != "") {
-//            // checkstate
-//            var opts = r[15].split(",");
-//            if (opts.length > 0) {
-//                var delegate = new Delegate(this, this.$onCheckSourceState);
-//                var wrapper = delegate.getWrapper();
-//                var e = null;
-//                var el = $(this.$target);
-//                var ac = el.activeclass();
-//                for (var i = 0; i < opts.length; i++) {
-//                    // Register with the target for state checks
-//                    e = opts[i];
-//                    if (e.length > 0) {
-//                        if (e.charAt(0) == "$") {
-//                            if (ac != null) {
-//                                // TODO: Change this to handle events like readdata/writedata !!!
-//                                var pureAction = e.slice(1).trim();
-//                                if (BaseObject.is(ac[pureAction], "EventDispatcher")) {
-//                                    ac[pureAction].add(delegate, true);
-//                                } else if (BaseObject.is(ac["set_" + pureAction], "function")) {
-//                                    ac["set_" + pureAction].call(ac, delegate);
-//                                } else {
-//                                    ac[pureAction] = delegate;
-//                                }
-//                            } else {
-//                                jbTrace.log("The target element has no data-class and the event '" + e + "' cannot be attached in binding: " + this.$expression);
-//                            }
-//                        } else {
-//                            // DOM
-//                            el.bind(e, wrapper);
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        else if (r[16] != null && r[16] != "") {
-//            //readdata
-//            this.$autoReadEvents = r[16];
-//            this.$autoReadAttached = false;
-//        }
-//        else if (r[17] != null && r[17] != "") {
-//            // writedata
-//            this.$autoWriteEvents = r[17];
-//            this.autoWrite(this.$target, this.$autoWriteEvents);
-//        }
-//        else if (r[18] != null && r[18] != "") {
-//            // ref reference
-//            if (this.references == null) this.references = {};
-//            this.references[r[18].trim()] = r[19].trim();
-//        }
-//        else if (r[20] != null && r[20] != "") {
-//            // debug
-//            //to do - cleaned!
-//            var arr = r[20].split(":");
-//            if (arr != null && arr.length > 1) {
-//                var handlerEl = JBUtil.getRelatedElements(this.$target, arr[0]);
-//                var ac = handlerEl.activeclass();
-//                if (ac != null) {
-//                    if (ac[arr[1]] != null) {
-//                        this.$debugDelegate = new Delegate(ac, ac[arr[1]]);
-//                    } else {
-//                        alert("The object referred by the debug clause does not support the specified method: " + this.$expression);
-//                    }
-//                } else {
-//                    alert("The object referred by the debug clause has no attached active class: " + this.$expression);
-//                }
-//            } else {
-//                alert("Syntax error in debug clause in binding: " + this.$expression);
-//            }
-//        }
-//        //        else if (r[19] != "") {
-//        //            // text|number
-//        //        }
-//        //        else if (r[21] != "") {
-//        //            // object
-//        //        }
-//        else if (r[25] != null && r[25] != "") {
-//            // validator
-//            var validator, vs = JBUtil.getRelatedElements(this.$target, r[24]);
-//            for (var i = 0; i < vs.length; i++) {
-//                validator = vs.get(i);
-//                if (validator != null) {
-//                    validator = validator.activeClass;
-//                    if (BaseObject.is(validator, "IValidator")) {
-//                        validator.add_binding(this);
-//                        // Uncomment if there is real need to let the bindings know their validators (unlikely, but ... who knows)
-//                        if (this.validators == null) this.validators = [];
-//                        this.validators.push(validator);
-//                    }
-//                }
-//            }
-//        }
-//        else if (r[26] != null && r[26] != "") {
-//            // name
-//            this.bindingName = r[26].trim();
-//        }
-//        else if (r[27] != null && r[27] != "") {
-//            // trace
-//            this.$traceBinding("type", this.$sourceType);
-//        }
-//        else if (r[28] != null && r[28] != "") {
-//            //onload|onenter|onleave|onclose
-//        }
-//        else if (r[30] != null && r[30] != "") {
-//            // parameter|argument
-//            this.bindingParameter = r[31].trim();
-//            if (r[30] == "controlparam") {
-//                this.$controlParameterName = this.bindingParameter;
-//                this.$resolveBindingParameter = this.$resolveControlParameter;
-//            }
-//        }
-//    }
-
-//    //Checking for null
-//    if (this.flags == null) {
-//        this.flags = {};
-//    }
-//    if (this.options == null) {
-//        this.options = {};
-//    }
-//};
-
 Binding.prototype.$parseExpression = function (expr) {
 	if ( this.__obliterated ) { return; }
     this.$type = "bind";
@@ -1351,16 +1090,6 @@ Binding.prototype.$setupSource = function () {
         case "static": // The context is provided on creation
             this.$sourceObject = null;
             break;
-        case "globalresource":
-            this.$sourceObject = (BaseObject.is(Binding.resources, "StringResources")) ? Binding.resources.data : Binding.resources;
-            // this.$sourceObject = (BaseObject.is(Binding.resources, "ResourceSet")) ? Binding.resources.data : Binding.resources;
-            break;
-        case "dynamicresource":
-            this.$sourceObject = (BaseObject.is(Binding.dynamicresources, "ResourceSet")) ? Binding.dynamicresources.data : Binding.dynamicresources;
-            break;
-        case "ajaxsettings":
-            this.$sourceObject = new AjaxContextParametersRequester(this.$target);
-            break;
         case "systemsettings":
             this.$sourceObject = System.Default().settings;
             // this.$sourceObject = (BaseObject.is(Binding.resources, "ResourceSet")) ? Binding.resources.data : Binding.resources;
@@ -1377,24 +1106,15 @@ Binding.prototype.$setupSource = function () {
 				// TODO: Should this throw an exception if the service is unavailable?
 			}
             break;
-		case "shellcommand":
+		case "shellcommand": // Deprecation or breaking changes are to be expected
 			this.$sourceObject = null;
 			break;
-        case "appletstorage":
+        case "appletstorage": // OBSOLETE This will probably be deprecated - service can easilly fill the gap better - prefer it.
             this.$sourceObject = null; // no access to any applet storage
             p = FindServiceQuery.findService(this.$target, "IAppletStorage");
             if (p != null) this.$sourceObject = p.get_appletstorage();
-            // this.$sourceObject = System.Default().settings;
-            // this.$sourceObject = (BaseObject.is(Binding.resources, "ResourceSet")) ? Binding.resources.data : Binding.resources;
+            
             break;
-        //        case "control":
-        //            p = JBUtil.getSpecialParent(this.$target, JBUtil.EParentKinds.control);
-        //            this.$sourceObject = this.$getSourceObject(p);
-        //            break;
-        //        case "view":
-        //            p = JBUtil.getSpecialParent(this.$target, JBUtil.EParentKinds.templateRoot);
-        //            this.$sourceObject = this.$getSourceObject(p);
-        //            break;
         default:
             this.$sourceObject = this.$findDataContext();
             break;

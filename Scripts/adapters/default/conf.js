@@ -70,10 +70,7 @@ var PACKETSTUFFING_BRANCH_HANDLERS = {
         onApplyToInstance: function (item, hash) {
             if (item == null) return;
             // This is the point where we can attach the resources to the global store
-            var cn = this.classType();
-            if (BaseObject.is(Binding.resources, "StringResources")) {
-                Binding.resources.data[cn] = item.data;
-            }
+            
             this._resources = item.data;
         }
     },
@@ -251,8 +248,10 @@ function jb_initFramework(globalProvider) { // The global provider is being aske
     var gp = globalProvider;
     // Prepare cached data access points
     Function._rules = {};
+	/* Deprecated in 2.20.0
     Binding.resources = new StringResources({}); // Pass the preloaded static system wide resources
     Binding.dynamicresources = new StringResources(); // Not currently used (Feb 2012). We should probably deprecate this
+	*/
     // Init the cache manager singleton
     CacheManager.Default = new CacheManager(PACKETSTUFFING_BRANCHESANDFLAGS, PACKETSTUFFING_BRANCH_HANDLERS);
     if (System.Default().settings.DisableClientSideCaching) {
