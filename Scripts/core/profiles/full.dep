@@ -32,7 +32,7 @@
 //#using "../InterfaceObject.js"
 //#using "../InterfaceObjectTemplate.js"
 //#using "../async/async-full.dep"
-////#using "../cache/cache-full.dep"
+//#using "../cache/cache-full.dep"
 //#using "../env/env-full.dep"
 //#using "../commandprocessing/commandprocessing-full.dep"
 //#using "../cl/cl-full.dep"
