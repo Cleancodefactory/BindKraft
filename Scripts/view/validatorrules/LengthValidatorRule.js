@@ -28,9 +28,9 @@ LengthValidatorRule.prototype.get_allowEmptySpaces = function () {
 };
 LengthValidatorRule.prototype.get_message = function (lastValue) {
 	var msg = this.get_text();
-	if (msg == null || msg.length == 0) {
+	/* if (msg == null || msg.length == 0) {
 		msg = Binding.resources.get("Validation.Length");
-	}
+	} */
 	if (msg == null || msg.length == 0) {
 		msg = this.get_allowEmptySpaces() ? 
 		"Input value must be between %l and %l" : 

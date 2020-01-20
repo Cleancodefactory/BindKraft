@@ -8,9 +8,9 @@ EmailValidatorRule.expresion = /^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}
 EmailValidatorRule.addExpresion = /^\w+[\w-\.]*\@\w+((-\w+)|(\w*))\.[a-z]{2,3}$/;
 EmailValidatorRule.prototype.get_message = function (lastValue) {
 	var msg = this.get_text();
-	if (msg == null || msg.length == 0) {
-		msg = Binding.resources.get("Validation.Email");
-	}
+	// if (msg == null || msg.length == 0) {
+		// msg = Binding.resources.get("Validation.Email");
+	// }
 	if (msg == null || msg.length == 0) {
 		msg = "Email: %l is incorrect";
 	}
