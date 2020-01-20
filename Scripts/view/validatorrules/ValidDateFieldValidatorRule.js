@@ -6,9 +6,9 @@ ValidDateFieldValidatorRule.Inherit(ValidateValue, "ValidDateFieldValidatorRule"
 ValidDateFieldValidatorRule.registerValidator("validdate");
 ValidDateFieldValidatorRule.prototype.get_message = function (lastValue) {
 	var msg = this.get_text();
-	if (msg == null || msg.length == 0) {
+	/* if (msg == null || msg.length == 0) {
 		msg = Binding.resources.get("Validation.ValidDate");
-	}
+	} */
 	if (msg == null || msg.length == 0) {
 		msg = 'Date is not valid. Required format "' + this.get_dateformat() + '".';
 	}

@@ -7,9 +7,9 @@ PhonenumberValidatorRule.registerValidator("phonenumber");
 PhonenumberValidatorRule.expresion = /^((\d[-. ]?)?((\(\d{3}\))|\d{3}))?[-. ]?\d{3}[-. ]?\d{4}$/;
 PhonenumberValidatorRule.prototype.get_message = function (lastValue) {
 	var msg = this.get_text();
-	if (msg == null || msg.length == 0) {
+	/* if (msg == null || msg.length == 0) {
 		msg = Binding.resources.get("Validation.PhoneNumber");
-	}
+	} */
 	if (msg == null || msg.length == 0) {
 		msg = "Phone number is incorrect";
 	}

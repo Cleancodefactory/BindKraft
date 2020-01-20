@@ -6,9 +6,9 @@ RequiredFieldValidatorRule.Inherit(ValidateValue, "RequiredFieldValidatorRule");
 RequiredFieldValidatorRule.registerValidator("required");
 RequiredFieldValidatorRule.prototype.get_message = function (lastValue) {
 	var msg = this.get_text();
-	if (msg == null || msg.length == 0) {
+	/* if (msg == null || msg.length == 0) {
 		msg = Binding.resources.get("Validation.Required");
-	}
+	} */
 	if (msg == null || msg.length == 0) {
 		msg = "Field is required";
 	}

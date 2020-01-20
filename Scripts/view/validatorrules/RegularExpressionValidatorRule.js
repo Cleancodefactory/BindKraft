@@ -40,9 +40,9 @@ RegularExpressionValidatorRule.prototype.get_multiline = function () {
 
 RegularExpressionValidatorRule.prototype.get_message = function (lastValue) {
 	var msg = this.get_text();
-	if (msg == null || msg.length == 0) {
+	/* if (msg == null || msg.length == 0) {
 		msg = Binding.resources.get("Validation.Regex");
-	}
+	} */
 	if (msg == null || msg.length == 0) {
 		msg = "Regular expression: %l is not match";
 	}

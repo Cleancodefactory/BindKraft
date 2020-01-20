@@ -38,13 +38,13 @@ FixedNumberValidatorRule.prototype.get_message = function () {
 
 	if (msg == null || msg.length == 0) {
 		if (this.get_before() != null && this.get_after() != null) {
-			msg = Binding.resources.get("Validation.FixedNumber");
+			// msg = Binding.resources.get("Validation.FixedNumber");
 			if (msg == null || msg.length == 0) {
 				msg = "The input value must have most of %l numeric characters before the floating point and %l after";
 			}
 			return msg.sprintf(this.get_before(), this.get_after());
 		} else {
-			msg = Binding.resources.get("Validation.FixedNumber_LeftPartOnly");
+			// msg = Binding.resources.get("Validation.FixedNumber_LeftPartOnly");
 			if (msg == null || msg.length == 0) {
 				msg = "The input value must have most of %l numeric characters before the floating";
 			}

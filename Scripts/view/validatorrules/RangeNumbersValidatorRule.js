@@ -29,19 +29,19 @@ RangeNumbersValidatorRule.prototype.get_message = function (lastValue) {
 
 	if (msg == null || msg.length == 0) {
 		if (this.get_minValue() != null && this.get_maxValue() != null) {
-			msg = Binding.resources.get("Validation.Range");
+			//msg = Binding.resources.get("Validation.Range");
 			if (msg == null || msg.length == 0) {
 				msg = msg = "The input value must be between %l and %l";
 			}
 			return msg.sprintf(this.get_minValue(), this.get_maxValue());
 		} else if (this.get_minValue() != null) {
-			msg = Binding.resources.get("Validation.Range_MinValueOnly");
+			//msg = Binding.resources.get("Validation.Range_MinValueOnly");
 			if (msg == null || msg.length == 0) {
 				msg = "The input value must be greater or equal to %l";
 			}
 			return msg.sprintf(this.get_minValue());
 		} else if (this.get_maxValue() != null) {
-			msg = Binding.resources.get("Validation.Range_MaxValueOnly");
+			//msg = Binding.resources.get("Validation.Range_MaxValueOnly");
 			if (msg == null || msg.length == 0) {
 				msg = "The input value must be less or equal to %l";
 			}

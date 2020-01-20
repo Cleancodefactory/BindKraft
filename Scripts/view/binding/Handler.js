@@ -308,7 +308,6 @@ Handler.prototype.$set_targetValue = function (v) {
                 } else if (this.$trigger != null) {
                     dlg = new Delegate(this, this.OmniTriggerDisp);
 				} else if (this.$plug === true) {
-                    //dlg = new Delegate(this, this.OmniPlugDisp);
 					this.OmniPlugDisp(this.$target.activeClass,this.$target);
 				} else if (this.$sourceType == "shellcommand") {
 					dlg = new Delegate(this, this.CommandExecutorDisp);

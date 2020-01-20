@@ -200,7 +200,7 @@ DOMUtil.getAttributes = function(el,pattern) {
 				obj[attr.name] = attr.value;
 			}
 		} else {
-			if (re.global) re = new RegExp(re.pattern);
+			if (re.global) re = new RegExp(re.source);
 			attrs = el.attributes;
 			var match;
 			for (i = 0; i < attrs.length; i++) {

@@ -21,9 +21,9 @@ RangeDatesValidatorRuleEx.prototype.set_maxValue = function (v) {
 RangeDatesValidatorRuleEx.prototype.get_message = function (lastValue) {
 	if (this.$isValid) return "Data is OK";
 	var msg = this.get_text();
-	if (msg == null || msg.length == 0) {
+	/* if (msg == null || msg.length == 0) {
 		msg = Binding.resources.get("jsValidation.RangeDate");
-	}
+	} */
 	if (msg == null || msg.length == 0) {
 		msg = "Input value must be between %l and %l";
 	}

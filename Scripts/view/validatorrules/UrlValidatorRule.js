@@ -9,9 +9,9 @@ UrlValidatorRule.registerValidator("url");
 UrlValidatorRule.expresion = /^(http|ftp|https)\:\/\/[a-zA-Z0-9\-\.]+(\.[a-zA-Z])+([\w\-\.,@?^=%&amp;:\/~\+#])*$/i;
 UrlValidatorRule.prototype.get_message = function (lastValue) {
 	var msg = this.get_text();
-	if (msg == null || msg.length == 0) {
+	/* if (msg == null || msg.length == 0) {
 		msg = Binding.resources.get("Validation.Url");
-	}
+	} */
 	if (msg == null || msg.length == 0) {
 		msg = "URL : %l is incorrect";
 	}

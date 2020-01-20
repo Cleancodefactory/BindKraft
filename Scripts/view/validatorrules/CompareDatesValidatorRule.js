@@ -12,15 +12,6 @@ CompareDatesValidatorRule.prototype.get_message = function (lastValue) {
 	if (IsNull(msg) || msg.length == 0) {
 		if (!IsNull(this.$isSmaller)) {
 			if (this.$isSmaller > 0) {
-				msg = Binding.resources.get("Validation.CompareDateBefore");
-			} else {
-				msg = Binding.resources.get("Validation.CompareDateAfter");
-			}
-		}
-	}
-	if (IsNull(msg) || msg.length == 0) {
-		if (!IsNull(this.$isSmaller)) {
-			if (this.$isSmaller > 0) {
 				msg = 'Input date must be before %l';
 			} else {
 				msg = 'Input date must be after %l';

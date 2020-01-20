@@ -7,9 +7,9 @@ CompareNumbersValidatorRule.registerValidator("comparenumbers");
 CompareNumbersValidatorRule.prototype.$valueToCompare = null;
 CompareNumbersValidatorRule.prototype.get_message = function (lastValue) {
 	var msg = this.get_text();
-	if (IsNull(msg) || msg.length == 0) {
-		msg = Binding.resources.get("Validation.Compare");
-	}
+	// if (IsNull(msg) || msg.length == 0) {
+		// msg = Binding.resources.get("Validation.Compare");
+	// }
 	if (IsNull(msg) || msg.length == 0) {
 		msg = "Input value must be equal to %l";
 	}
