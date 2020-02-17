@@ -274,6 +274,35 @@ Base.prototype.makeCascadeCall = function(e_sender, dc, bind) {
 	}
 	throw "makeCascadeCall requires bindingParameter in the form Type.Method e.g. {bind source=x/y path=makeCascadeCall parameter='PMyProtocol.MyMethod'}"
 }
+
+Base.prototype.cascadeInstances = function(prot_or_class, stopType1, stopType2 /* ... */) {
+	var results = [];
+	var i, stopTypes = Array.createCopyOf(arguments, 1);
+	function checkStops(o) {
+		for (i = 0; i < stopTypes.length; i++) {
+			if (o.is(stopTypes[i])) return true;
+		}
+		return false;
+	}
+	
+	if (this.is(prot_or_class)) {
+		results.push(this);
+	}
+	function recurseDescendants(o) {
+		var i,x;
+		if (o.bindingDescendants != null && o.bindingDescendants.length > 0) {
+			for (i = 0; i < o.bindingDescendants.length;i++) {
+				x = o.bindingDescendants[i];
+				if (BaseObject.is(x, prot_or_class)) {
+					results.push(x);
+				}
+				if (!checkStops(x)) recurseDescendants(x);
+			}
+		}
+	}
+	recurseDescendants(this);
+	return results;
+}.Description("Goes through the bindingDescendants and collects all the data-classes that are of the specified prot_ot_class, stops searching deeper at any element that is any of the stop types");
 Base.prototype.isTemplateRoot = function () {
 	if (DOMUtil.attr(this.root, "data-template-root") != null) return true;
     if (this.is("ITemplateRoot")) return true;
@@ -455,9 +484,25 @@ Base.prototype.findParent = function (key) {
  .Param("key", "The data-key to look for")
  .Returns("The parent with the requested data-key or null if not found. The returned parent will be Base class if the element has data-class specified or the element itself if data-class is not specified on it.")
  .Problem("Search does not obey the template borders!");
-Base.prototype.get_validators = function (vgrp_in) {
+Base.prototype.get_validators = function (vgrp_in, bReturnDeiabled) {
+// +V:2.20.1 - retiring the old code in favor of faster andmore precise one
+	var vgrp = ((typeof vgrp_in == "string" && vgrp_in.length > 0) ? vgrp_in:null);
+	var arr = this.cascadeInstances("IValidator",IUIControl); // Validators in sub-components are not included - their components should deal with them
+	var v, results = [];
+    for (var i = 0; i < arr.length; i++) {
+        v = arr[i];
+		if (vgrp != null) {
+			if (v.isOfGroup(vgrp) && (bReturnDeiabled || !v.get_disabled())) results.push(v);
+		} else {
+			results.push(v);
+		}
+        
+    }
+    return results;
+
     // TODO: (URGENT ;) ) Fo it right - honour the boundaries
     // TODO: (NOT SO URGENT) It may be wise to not return the currently disabled validators, but this needs some thought.
+	/* DEPRECATED
     var vgrp = ((typeof vgrp_in == "string" && vgrp_in.length > 0) ? vgrp_in:null);
     var arr = $(this.root).find('[data-class]');
     var a, results = [];
@@ -472,6 +517,8 @@ Base.prototype.get_validators = function (vgrp_in) {
         }
     }
     return results;
+	*/
+ // -V:2.20.1
 };
 Base.prototype.get_incorrectvalidators = function (vgrp) {
     var arr = this.get_validators(vgrp);

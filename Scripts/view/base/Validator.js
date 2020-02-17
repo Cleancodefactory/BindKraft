@@ -435,7 +435,7 @@ Validator.prototype.$validate = function (bIndicate) {
         var arrValues = [];
         for (i = 0; i < this.$rules.length; i++) {
             curRule = this.$rules[i];
-            if (curRule.get_disabled() !== true) {
+            if (!curRule.get_disabled()) {
                 arrValues = [];
                 for (j = 0; j < this.validateBindings.length; j++) {
                     arrValues.push(this.validateBindings[j].$get_targetValue(curRule.raw));
@@ -455,7 +455,7 @@ Validator.prototype.$validate = function (bIndicate) {
         var cval;
         for (i = 0; i < this.$rules.length; i++) {
             curRule = this.$rules[i];
-            if (curRule.get_disabled() !== true) {
+            if (!curRule.get_disabled()) {
                 cval = binding.$get_targetValue(curRule.raw);
                 r = curRule.validateValue(this, cval, binding);
                 if (r > result) result = r;
