@@ -476,6 +476,7 @@ Validator.prototype.get_waitingasynch = function () {
     return (this.waitReport > 0) ? true : false;
 };
 Validator.prototype.reportResult = function (curRule, r) { // Callback for validation rules (asynch rules only!!!) proto: reportResult(this, result);
+	if (this.waitReport <= 0) return;
     this.waitReport--;
     if (this.waitReport < 0) this.waitReport = 0;
     if (this.get_disabled()) {
@@ -522,7 +523,7 @@ Validator.prototype.validate = function (bIndicate, fCallBack) { // fCallBack pr
 Validator.prototype.validateHandler = function(event_or_sender, dc, bind) {
 	this.validate(true);
 }
-Validator.prototype.close = function () {
+Validator.prototype.closeValidator = function () {
     this.$closeHint();
 };
 Validator.prototype.uninit = function () {

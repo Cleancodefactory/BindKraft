@@ -13,3 +13,4 @@
 //#using "./ICustomParameterizationStdImpl.js"
 //#using "./IAppCommandsImpl.js"
 //#using "./IAppElementImpl.js"
+//#using "./IValidatableImpl.js"

@@ -11,8 +11,21 @@ The implementation of binding removal methods is not critical, but it is not cle
 /*INTERFACE*/
 function IValidator() { };
 IValidator.Interface("IValidator");
+// Binding management
 IValidator.prototype.add_binding = function (binding) { };
 IValidator.prototype.set_binding = function (bindings) { }; // must support multiple arguments
 IValidator.prototype.remove_binding = function (binding) { };
-IValidator.prototype.validate = function (bIndicate) { return ValidationResultEnum.correct; }; // bIndicate tells the validator to show visual indication, if false no indication should be presented.
-IValidator.prototype.close = function () { }; // called to give the validator chance to uninitialize
+/**
+	bIndicate - tells the validator to show visual indication. It is currently handled a bit incorrectly, recommend to call with it true always
+	callback - optional, required for asynchronous validators - called when the validation completes
+*/
+IValidator.prototype.validate = function (bIndicate, callback) { return ValidationResultEnum.correct; }; // bIndicate tells the validator to show visual indication, if false no indication should be presented.
+/**
+	Puts the validator into uninitialized state.
+*/
+IValidator.prototype.uninit = function() {}; 
+/**
+	A legacy feature that considers indication as indicators and hints (usually popped up somehow). Closes only the popped out part. 
+	In future versions it might be completely removed or most likely deactivated (the method will do nothing, but will remain there for compatibility reasons).
+*/
+IValidator.prototype.closeValidator = function () { }; // called to ask the validator to hide any additional UI (popped hints, but not status indicators)

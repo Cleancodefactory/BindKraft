@@ -487,7 +487,7 @@ Base.prototype.findParent = function (key) {
 Base.prototype.get_validators = function (vgrp_in, bReturnDeiabled) {
 // +V:2.20.1 - retiring the old code in favor of faster andmore precise one
 	var vgrp = ((typeof vgrp_in == "string" && vgrp_in.length > 0) ? vgrp_in:null);
-	var arr = this.cascadeInstances("IValidator",IUIControl); // Validators in sub-components are not included - their components should deal with them
+	var arr = this.cascadeInstances("IValidator",IUIControl,IValidator); // Validators in sub-components are not included - their components should deal with them
 	var v, results = [];
     for (var i = 0; i < arr.length; i++) {
         v = arr[i];
@@ -566,7 +566,7 @@ Base.prototype.get_correctvalidators = function (vgrp) {
 Base.prototype.closeValidators = function (vgrp) {
     var arr = this.get_validators(vgrp);
     for (var i = 0; i < arr.length; i++) {
-        if (arr[i] != null) arr[i].close();
+        if (arr[i] != null) arr[i].closeValidator();
     }
 };
 Base.prototype.uninitValidators = function (vgrp) {
@@ -594,6 +594,9 @@ Base.prototype.validate = function (fCallBack, vgrp) {
                 }
             } else {
                 v = arr[i].validate(true);
+				if (v == ValidationResultEnum.pending) {
+					throw "There are one or more asynchronous validators, validate should be called with a callback";
+				}
             }
             if (v > r) r = v;
         }

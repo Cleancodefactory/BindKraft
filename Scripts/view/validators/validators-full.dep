@@ -21,6 +21,7 @@
 //#using "../validatorrules/RangeDatesValidatorRuleEx.js"
 //#using "../validatorrules/SameValuesValidatorRule.js"
 //#using "../validatorrules/ValidDateFieldValidatorRule.js"
+//#using "../validatorrules/CheckValidationRule.js"
 
 //#using "../validatorrules/ValidatorRuleReferenceImplementation.js"
 

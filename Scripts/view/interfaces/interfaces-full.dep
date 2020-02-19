@@ -37,6 +37,7 @@
 //#using "./IUIControl.js"
 //#using "./IUserData.js"
 //#using "./IValidator.js"
+//#using "./IValidatable.js"
 //#using "./IViewContainerEventsSink.js"
 //#using "./IOpionatedView.js"
 //#using "./IViewHostQuery.js"
