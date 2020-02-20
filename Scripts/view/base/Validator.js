@@ -61,7 +61,7 @@ Validator.showhint = false;
 Validator.autohidehint = false;
 Validator.events = "blur";
 Validator.prototype.obliterate = function () {
-    this.close();
+    this.closeValidator();
     ViewBase.prototype.obliterate.apply(this);
 }.Description("Destructor");
 
@@ -416,7 +416,7 @@ Validator.prototype.get_disabled = function () {
 };
 Validator.prototype.set_disabled = function (v) {
     if (v && !this.$disabled) {
-        this.close();
+        this.closeValidator();
     } else if (!v && this.$disabled) {
         this.$disabled = v;
         this.validate(true);
