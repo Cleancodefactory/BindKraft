@@ -8,3 +8,4 @@
 //#using "./PopTemplate.js"
 //#using "./SourceSyntaxColoring.js"
 //#using "./RibonCommand.js"
+//#using "./Scrollable.js"

@@ -1,15 +1,15 @@
-function CScrollable() {
-	CBase.apply(this, arguments);
+function Scrollable() {
+	Base.apply(this, arguments);
 }
-CScrollable.inherit(CBase, "CScrollable");
-CScrollable.implement(PUIControl);
-CScrollable.implementProperty("direction", new IntentStringParameter("Direction - H or V - only the first letter matters","H"));
-CScrollable.implementProperty("carefor", new IntentStringParameter("child elements to care for. Null for all of them.",null));
-CScrollable.implementProperty("prevhandle", new IntentStringParameter("Child element for left handle (its data-key).","prevhandle"));
-CScrollable.implementProperty("nexthandle", new IntentStringParameter("Child element for right handle (its data-key).","nexthandle"));
-CScrollable.prototype.changedevent = new IntentEvent("Firest every time the position changes");
-CScrollable.prototype.$scrollablecontainer = null; // if null this element, if string parent/chid address, if DOM element the element itself
-CScrollable.prototype.get_scrollablecontainer = function() {
+Scrollable.Inherit(Base, "Scrollable");
+Scrollable.Implement(IUIControl);
+Scrollable.ImplementProperty("direction", new InitializeStringParameter("Direction - H or V - only the first letter matters","H"));
+Scrollable.ImplementProperty("carefor", new InitializeStringParameter("child elements to care for. Null for all of them.",null));
+Scrollable.ImplementProperty("prevhandle", new InitializeStringParameter("Child element for left handle (its data-key).","prevhandle"));
+Scrollable.ImplementProperty("nexthandle", new InitializeStringParameter("Child element for right handle (its data-key).","nexthandle"));
+Scrollable.prototype.changedevent = new InitializeEvent("Firest every time the position changes");
+Scrollable.prototype.$scrollablecontainer = null; // if null this element, if string parent/chid address, if DOM element the element itself
+Scrollable.prototype.get_scrollablecontainer = function() {
 	if (this.$scrollablecontainer == null) return this.root;
 	if (typeof this.$scrollablecontainer == "string") {
 		var el = this.getRelatedElements("./" + this.$scrollablecontainer);
@@ -18,27 +18,27 @@ CScrollable.prototype.get_scrollablecontainer = function() {
 	return this.$scrollablecontainer;
 }.Returns("The naked element that is driven by this class. It is recommended to control element inside the DOM hierarchy of this element.")
 	.Description("This property will sort out that to do depending on the what was assigned to it through the setter. See the setter for more details.");
-CScrollable.prototype.set_scrollablecontainer = function(v) {
+Scrollable.prototype.set_scrollablecontainer = function(v) {
 	this.$scrollablecontainer = v;
 }.Returns("Sets the element that contains the tiles to move around. It can be set in 3 different ways - as string parent/child key, as element (naked) directly, or as null which means this element will be the container (this is default).")
-CScrollable.prototype.init = function() {
+Scrollable.prototype.init = function() {
 	//
 	this.on("mouseover", this.onMouseOver);
 	this.on("mouseout", this.onMouseOut);
 	this.on("./" + this.get_prevhandle(),"click", this.movePrev);
 	this.on("./" + this.get_nexthandle(),"click", this.moveNext);
-	if (window.addWheelListener) window.addWheelListener(this.root, CDelegate.createWrapper(this, this.$onMouseWheel));
+	if (window.addWheelListener) window.addWheelListener(this.root, Delegate.createWrapper(this, this.$onMouseWheel));
 }
-CScrollable.prototype.get_direction = function() {
+Scrollable.prototype.get_direction = function() {
 	if (this.$direction) {
 		if (this.$direction.charAt(0).toUpperCase() == "V") return "V";
 	}
 	return "H";
 }
-CScrollable.prototype.get_booldirection = function() { // H is true, V is false
+Scrollable.prototype.get_booldirection = function() { // H is true, V is false
 	return ((this.get_direction() == "V")?false:true);
 }
-CScrollable.prototype.$elementsToCareFor = function() {
+Scrollable.prototype.$elementsToCareFor = function() {
 	var els = null;
 	if (this.get_carefor() != null) {
 		els = $(this.get_scrollablecontainer()).children(); // We have to filter them, but how? Needs decision.
@@ -53,7 +53,7 @@ CScrollable.prototype.$elementsToCareFor = function() {
 	}
 	return els;
 }
-CScrollable.prototype.$getHandles = function(which) {
+Scrollable.prototype.$getHandles = function(which) {
 	var result = $();
 	var r;
 	if (which == null || (which == "prev" && this.get_prevhandle() != null && this.get_prevhandle().length > 0)) {
@@ -66,7 +66,7 @@ CScrollable.prototype.$getHandles = function(which) {
 	}
 	return result;
 }
-CScrollable.prototype.showHideHandles = function(show) {
+Scrollable.prototype.showHideHandles = function(show) {
 	var handles = this.$getHandles();
 	if (show) {
 		this.$recalcHandles();
@@ -75,7 +75,7 @@ CScrollable.prototype.showHideHandles = function(show) {
 		handles.hide();
 	}
 }
-CScrollable.prototype.$recalcHandles = function() { // We will probably deprecate this
+Scrollable.prototype.$recalcHandles = function() { // We will probably deprecate this
 	if (this.get_booldirection()) { // Horizontal
 		var width = $(this.get_scrollablecontainer()).width();
 		var height = $(this.get_scrollablecontainer()).width();
@@ -103,13 +103,13 @@ CScrollable.prototype.$recalcHandles = function() { // We will probably deprecat
 	} else {
 	}
 }
-CScrollable.prototype.onMouseOver = function(e) {
+Scrollable.prototype.onMouseOver = function(e) {
 	this.showHideHandles(true);
 }
-CScrollable.prototype.onMouseOut = function(e) {
+Scrollable.prototype.onMouseOut = function(e) {
 	this.showHideHandles(false);
 }
-CScrollable.prototype.isRectVisible = function(rect) {
+Scrollable.prototype.isRectVisible = function(rect) {
 	if (this.get_booldirection()) { // Horizontal
 		var curScroll = this.get_scrollablecontainer().scrollLeft;
 		var width = $(this.get_scrollablecontainer()).width();
@@ -122,7 +122,7 @@ CScrollable.prototype.isRectVisible = function(rect) {
 	} else {
 	}
 }
-CScrollable.prototype.$onMouseWheel = function(e) {
+Scrollable.prototype.$onMouseWheel = function(e) {
 	if (e != null) {
 		if (e.deltaY < 0) {
 			this.moveNext();
@@ -132,14 +132,14 @@ CScrollable.prototype.$onMouseWheel = function(e) {
         e.preventDefault();
     }
 }
-CScrollable.prototype.movePrev = function(e, dc, bind) {
+Scrollable.prototype.movePrev = function(e, dc, bind) {
 	if (this.get_booldirection()) { // Horizontal
 		var curScroll = this.get_scrollablecontainer().scrollLeft;
 		var itemEls = this.$elementsToCareFor();
 		var arrRects = [];
 		var rect;
 		for (var i = 0; i < itemEls.length; i++) {
-			rect = new CRect(itemEls[i].offsetLeft,itemEls[i].offsetTop);
+			rect = new Rect(itemEls[i].offsetLeft,itemEls[i].offsetTop);
 			rect.w = $(itemEls[i]).width();
 			rect.h = $(itemEls[i]).height();
 			arrRects.push(rect);
@@ -162,7 +162,7 @@ CScrollable.prototype.movePrev = function(e, dc, bind) {
 	this.$recalcHandles();
 	this.changedevent.invoke(this, null);
 }
-CScrollable.prototype.moveNext = function(e, dc, bind) {
+Scrollable.prototype.moveNext = function(e, dc, bind) {
 	if (this.get_booldirection()) { // Horizontal
 		var curScroll = this.get_scrollablecontainer().scrollLeft;
 		var itemEls = this.$elementsToCareFor();
@@ -170,7 +170,7 @@ CScrollable.prototype.moveNext = function(e, dc, bind) {
 		var arrRects = [];
 		var rect;
 		for (var i = 0; i < itemEls.length; i++) {
-			rect = new CRect(itemEls[i].offsetLeft,itemEls[i].offsetTop);
+			rect = new Rect(itemEls[i].offsetLeft,itemEls[i].offsetTop);
 			rect.w = $(itemEls[i]).width();
 			rect.h = $(itemEls[i]).height();
 			arrRects.push(rect);
@@ -192,14 +192,14 @@ CScrollable.prototype.moveNext = function(e, dc, bind) {
 	this.$recalcHandles();
 	this.changedevent.invoke(this, null);
 }
-CScrollable.prototype.get_prevactive = function() {
+Scrollable.prototype.get_prevactive = function() {
 	if (this.get_booldirection()) { // Horizontal
 		var i;
 		var itemEls = this.$elementsToCareFor();
 		var rect;
 		var firstVisible = -1;
 		for (i = 0; i < itemEls.length; i++) {
-			rect = new CRect(itemEls[i].offsetLeft,itemEls[i].offsetTop);
+			rect = new Rect(itemEls[i].offsetLeft,itemEls[i].offsetTop);
 			rect.w = $(itemEls[i]).width();
 			rect.h = $(itemEls[i]).height();
 			if (this.isRectVisible(rect)) {
@@ -212,14 +212,14 @@ CScrollable.prototype.get_prevactive = function() {
 	}
 	return false;
 }.Description("Returns true if there are prev elements partialy or fully invisible");
-CScrollable.prototype.get_nextactive = function() {
+Scrollable.prototype.get_nextactive = function() {
 	if (this.get_booldirection()) { // Horizontal
 		var i;
 		var itemEls = this.$elementsToCareFor();
 		var rect;
 		var firstVisible = itemEls.length;
 		for (i = itemEls.length - 1; i >= 0; i--) {
-			rect = new CRect(itemEls[i].offsetLeft,itemEls[i].offsetTop);
+			rect = new Rect(itemEls[i].offsetLeft,itemEls[i].offsetTop);
 			rect.w = $(itemEls[i]).width();
 			rect.h = $(itemEls[i]).height();
 			if (this.isRectVisible(rect)) {
@@ -232,7 +232,7 @@ CScrollable.prototype.get_nextactive = function() {
 	}
 	return false;
 }.Description("Returns true if there are next elements partialy or fully invisible");
-CScrollable.prototype.moveTo = function(e, dc, bind) {
+Scrollable.prototype.moveTo = function(e, dc, bind) {
 	// TODO: write me ;)
 	this.$recalcHandles();
 	this.changedevent.invoke(this, null);
