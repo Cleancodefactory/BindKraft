@@ -16,5 +16,7 @@ Check the examples or corresponding tutorials to get a better understanding of t
 
 [SelectableRepeater](SelectableRepeater.md)
 
+[TextBox](TextBox.md)
+
 TO DO: continue the list
 

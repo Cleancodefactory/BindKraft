@@ -52,7 +52,7 @@ TextBox.prototype.set_selectionstart = function(v) {
 TextBox.prototype.get_selectionend = function() {
 	return this.root.selectionEnd;
 }
-TextBox.prototype.set_selectionend = function() {
+TextBox.prototype.set_selectionend = function(v) {
 	this.root.setSelectionRange(this.root.selectionStart,v,"none");
 }
 TextBox.prototype.get_selectiondirection = function() {
