@@ -8,9 +8,7 @@ if (JBCoreConstants.CompileTimeConsoleLog || JBCoreConstants.CompileTimeLogSize 
 	CompileTime.warn("If this is a production deployment take time to adjust the configuration - smaller log size and minimal console logging are recommended.");
 }
 
-// Classes must have some static method to create them.
-Function.classes = new Object();
-Function.interfaces = new Object();
+
 Function.createInstance = function (className, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10) { // Supports up to 10 constructor parameters
     if (this.classes[className] != null) {
         return new this.classes[className](arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
@@ -111,6 +109,16 @@ Function.prototype.Inherit = function (parentCls, clsName) {
 			this.customObliterators.push(parentCls.customObliterators[i]);
 		}
 	}
+	this.createInstance = function (arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10) { // Supports up to 10 constructor parameters
+		// V: 2.21
+		return new this(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
+		/*
+		if (this.classes[className] != null) {
+			return new this.classes[className](arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
+		}
+		return null;
+		*/
+	};
     return this;
 }.Description("Inherits from another class")
  .Param("parentCls","Class from which to Inherit")

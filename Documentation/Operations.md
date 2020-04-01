@@ -1,7 +1,7 @@
 Operations
 ==========
 
-If you just want to check how to use typical `operations` skip to the **Operation class** section.
+If you just want to check how to use typical `operations` skip to the **Operation class** section or see its page: [Operation](CoreClasses/Operation.md).
 
 ## Overview
 

@@ -39,7 +39,7 @@ Not yet included in this documentation.
 
 ### [Core OOP classes and interfaces reference](CoreClasses.md) - The core classes forming the platform on non-visual conceptual level. Building blocks used widely.
 
-* [Operations](Operations.md) 
+* [Operations](Operations.md), frequently used classes: [Operation](CoreClasses/Operation.md), [ChunkedOperation](CoreClasses/ChunkedOperation.md) 
 * [Memory FS](MemoryFS.md) 
 * [Writing interface implementers](WritingInterfaceImplementers.md) 
 * [Connectors](Connectors.md) 

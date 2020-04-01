@@ -99,7 +99,7 @@ DataLookupControl.prototype.set_value = function (v) {
         // Send request for the item
         var host = this.get_bindhost();
         if (host == null) host = this;
-        var mon = Function.createInstance(this.get_connectorType(), this.get_itemaddress(), host);
+        var mon = Class(this.get_connectorType()).createInstance(this.get_itemaddress(), host);
         mon.set_parameters({});
         mon.set_parameters(this.get_itemparamname(), this.$selectedvalue);
         var self = this;

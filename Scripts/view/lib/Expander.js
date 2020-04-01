@@ -1,7 +1,12 @@
 
 
+(function() {
 
-
+var Panel = Class("Panel"), 
+    IDisablable = Interface("IDisablable"), 
+    InitializeStringParameter = Class("InitializeStringParameter"),
+    InitializeNumericParameter = Class("InitializeNumericParameter"),
+    InitializeEvent = Class("InitializeEvent");
 /*CLASS*/
 
 function Expander() {
@@ -137,3 +142,5 @@ Expander.prototype.set_collapsed = function(v) {
         this.Expand();
     }
 };
+
+})();
