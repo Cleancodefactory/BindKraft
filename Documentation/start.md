@@ -32,14 +32,15 @@ Not yet included in this documentation.
 ### OOP in BindKraft (overview articles)
 
 * [OOP in BindKraftJS](OOP.md) 
-* [OOP Conventions](OOPConventions.md) 
+* [OOP Conventions and terms](OOPConventions.md) 
+* [OOP - declaring interfaces](OOPInterfaces.md)
 * [OOP Helpers](OOPHelpers.md) 
 * [Runtime documentation and annotation](RuntimeSelfDoc.md)
 
 
 ### [Core OOP classes and interfaces reference](CoreClasses.md) - The core classes forming the platform on non-visual conceptual level. Building blocks used widely.
 
-* [Operations](Operations.md) 
+* [Operations](Operations.md), frequently used classes: [Operation](CoreClasses/Operation.md), [ChunkedOperation](CoreClasses/ChunkedOperation.md) 
 * [Memory FS](MemoryFS.md) 
 * [Writing interface implementers](WritingInterfaceImplementers.md) 
 * [Connectors](Connectors.md) 

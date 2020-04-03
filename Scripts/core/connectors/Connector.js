@@ -45,7 +45,7 @@ Connector.prototype.obliterate = function(bFull) {
     BaseObject.prototype.obliterate.call(this, bFull);
 };
 Connector.Create = function(connectorType, address, host, options) {
-	var conn = Function.createInstance(connectorType,address, host, options);
+	var conn = Class(connectorType).createInstance(address, host, options);
 	if (BaseObject.is(conn, "Connector")) return conn;
 	return null;
 }.Description("Creates a connector of the given type with the parameters supplied (like doing so with new, but from the type supplied as string.). If there is no such class or if it is not a Connector returns null")
@@ -55,7 +55,7 @@ Connector.Create = function(connectorType, address, host, options) {
 	.Param("options","plain object with options - see the information about Connector in the documentation or the comments in the source code.")
 	.Returns("The new initialized connector or null if the class does not exist or it is not a connector");
 Connector.prototype.createNewConnector = function() {
-    return Function.createInstance(this.classType(),this.$data, this.host, this.$options);
+    return Class(this.classType()).createInstance(this.$data, this.host, this.$options);
 }.Description("Creates a new connector with the same settings. A connector can be reused, but to do this safely one needs to be careful with its parameters, when in doubt - use a clone through this method.")
 Connector.prototype.Helper = function(helperprotocol) {
     if (helperprotocol == null) return null;

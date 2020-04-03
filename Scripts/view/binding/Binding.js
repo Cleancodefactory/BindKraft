@@ -11,7 +11,11 @@
 		freezesite					- data-on handlers are called inside a freeze block if they are defined on instance supporting IFreezable
 		persistable					- marks the binding as one that impacts the underlying object state
 		operation					- ?
-		nodefault|preventdefault 	- only data-on for DOM events - prevents default
+        nodefault|preventdefault 	- only data-on for DOM events - prevents default
+        stoppropagation|
+        nopropagation               - only data-on for DOM events - stops further propagation
+                       
+        
 
 */
 
@@ -76,7 +80,7 @@ Binding.$regExpContent = /\{(bind|read|probe)(?:\((\d+)\))?\s*(.*)\}/i;
 Binding.$regExpFormatter = /(inverseformat|inversecustomformat|format|customformat)=((?:(?:[^\(\s]+)|(?:\((?:[^\)]|\)\))*\)))+)/i;
 Binding.$regExpSingleFormatter = /([^\(]+)(?:\(((?:[^\)]|\)\))*)\))?/i;
 Binding.$regExpFlags = /(flags)=(\S+)/i;
-Binding.$regExpOptions = /(options)=(\S+)/i; // currently supported: nonpersistable, disabled, async, asyncread, asyncwrite, freezesite, persistable, operation, (nodefault, preventdefault)
+Binding.$regExpOptions = /(options)=(\S+)/i; // currently supported: nonpersistable, disabled, async, asyncread, asyncwrite, freezesite, persistable, operation, (nodefault, preventdefault), (stoppropagation, nopropagation)
 Binding.$regExpName = /(name)=(\S+)/i;
 Binding.$regExpCreate = /(create|createleaf)=(\S+)/i;
 Binding.$regExpCreateLeafs = { create: false, createleaf: true };

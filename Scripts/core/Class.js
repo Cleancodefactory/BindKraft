@@ -4,6 +4,37 @@ We need a few utilities for the standard classes. To avoid complicating the mixi
 of prototyping the standard objects. The namespaces are nammed with preffix SC to hint at what they point and that they are static
 */
 
+// Global class registry - moved from oop.js (V:2.21)
+Function.classes = new Object();
+Function.interfaces = new Object();
+Function.interfaceImplementers = new Object();
+function Class(class_name) {
+	if (typeof class_name == "string") {
+	 	if (typeof Function.classes[class_name] == "function") return Function.classes[class_name];
+		throw "Class " + class_name + " is not defined.";
+	}
+	if (Function.classes["BaseObject"] != null && BaseObject.is(class_name, "BaseObject")) {
+		return Function.classes[class_name.classType()];
+	}
+	return null;
+}
+function Interface(if_name) {
+	if (typeof if_name == "string") {
+		if (typeof Function.interfaces[if_name] == "function") return Function.interfaces[if_name];
+		throw "Interface " + if_name + " is not defined.";
+	}
+	return null;
+}
+function InterfaceImplementer(if_name) {
+	if (typeof if_name == "string") {
+		if (typeof Function.interfaceImplementers[if_name] == "function") return Function.interfaceImplementers[if_name];
+		throw "Interface implementer " + if_name + " is not defined.";
+	}
+	return null;
+}
+
+
+(function(_) { 
 // Type manipulation and information. These methods work on class definitions, not instances.
 var Class = {
 	// This method should work only on classes and not on instances. It is often used to determine if something is a class and not an instance.
@@ -336,7 +367,33 @@ var Class = {
 			return null; // No definition
 		}
 	// -V: 2.18.0
-	
+	// +V: ??? 2.21.0, delayed, not enough, pollution cannot be prevented without ruining the syntax
+		/*
+		,
+		defineClass: function(className) {
+			return {
+				Inherits: function(_baseClass) {
+					var baseClass = (typeof _baseClass == "function")?_baseClass:Class(_baseClass);
+					return {
+						constructor: function(fc) {
+							if (typeof fc != "function") {
+								CompileTime.err("The constructor has to be a function. While defining " + className + ".");
+								if (JBCoreConstants.CompileTimeThrowOnErrors) {
+									throw "The constructor has to be a function. While defining " + className + ".";
+								} else {
+									return null;
+								}
+							}
+							fc.Inherit(baseClass, className, baseClass);
+							return new _ClassDefiner(fc);
+						}
+					}
+
+				}
+			}
+		}
+		*/
+	// -V: 2.21.0
 };
 // +V: 2.7.1
 // Aliasing for easy usage:
@@ -344,3 +401,55 @@ Class.doextend = Class.doesextend;
 Class.isexending = Class.doesextend;
 Class.implementers = Class.implementors;
 // -V: 2.7.1
+
+// +V: ???? 2.21.0  - delayed, not enough, changes have to be bigger in order to stop polluting global class prototypes
+	/*
+	function _ClassDefiner(fc, classname, baseClass) {
+		this.fc = dc;
+		this.cn = classname;
+		this.bc = baseClass; 
+	}
+	_ClassDefiner.prototype.Implement = function() {
+		this.fc.Implement.apply(fc, arguments);
+		return this;
+	}
+	_ClassDefiner.prototype.ImplementEx = function() {
+		this.fc.ImplementEx.apply(fc, arguments);
+		return this;
+	}
+	_ClassDefiner.prototype.Reimplement = function() {
+		this.fc.Reimplement.apply(fc, arguments);
+		return this;
+	}
+	_ClassDefiner.prototype.Prototype = function(proc) {
+		if (typeof proc != "function") {
+			CompileTime.err("Prototype expects a function(proto, base) where proto is the prototype object and base is the prototype of the base class. While defining " + this.cn + ".");
+			if (JBCoreConstants.CompileTimeThrowOnErrors) {
+				throw "Prototype expects a function(proto, base) where proto is the prototype object and base is the prototype of the base class. While defining " + this.cn + ".";
+			} else {
+				return null;
+			}
+		}
+		proc(this.fc.prototype, this.bc.prototype);
+		return this;		
+	}
+	_ClassDefiner.prototype.Definition = function(proc) {
+		if (typeof proc != "function") {
+			CompileTime.err("Definition expects a function(class, base) where class is the class definition and base is the prototype of the base class. While defining " + this.cn + ".");
+			if (JBCoreConstants.CompileTimeThrowOnErrors) {
+				throw "Definition expects a function(class, base) where class is the class definition and base is the prototype of the base class. While defining " + this.cn + ".";
+			} else {
+				return null;
+			}
+		}
+		proc(this.fc, this.bc.prototype);
+		return this;		
+	}
+	*/
+// -V: 2.21.0
+
+for (var k in Class) {
+	_[k] = Class[k];
+}
+
+})(Class);

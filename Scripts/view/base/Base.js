@@ -10,10 +10,12 @@ function Base(viewRootElement) {
     this.postinitializedevent.set_adviseNewComers(true);
 }
 Base.Inherit(DataHolder, "Base");
-Base.interfaces = { PBase: true };
-Base.Implement(IStructuralQueryRouter);
-Base.Implement(IStructuralQueryEmiter);
-Base.Implement(IDOMConnectedObject);
+Base.interfaces = { PBase: true }; // Obsolete - will be removed soon
+Base.Implement(IStructuralQueryRouter)
+    .Implement(IStructuralQueryEmiter)
+    .Implement(IFindService)
+    .Implement(IDOMConnectedObject);
+
 Base.registerDOMDestructor("activeClass");
 Base.getRelatedElements = function (baseEl, patt) {
     return JBUtil.getRelatedElements(baseEl, patt);

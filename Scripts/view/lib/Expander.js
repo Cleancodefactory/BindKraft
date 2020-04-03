@@ -1,9 +1,15 @@
 
 
+(function() {
 
+// Imports
+var Panel = Class("Panel"), 
+    IDisablable = Interface("IDisablable"), 
+    InitializeStringParameter = Class("InitializeStringParameter"),
+    InitializeNumericParameter = Class("InitializeNumericParameter"),
+    InitializeEvent = Class("InitializeEvent");
 
 /*CLASS*/
-
 function Expander() {
     Panel.apply(this, arguments);
     this.$isopen = false;
@@ -137,3 +143,5 @@ Expander.prototype.set_collapsed = function(v) {
         this.Expand();
     }
 };
+
+})();
