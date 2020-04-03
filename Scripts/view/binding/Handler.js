@@ -33,6 +33,9 @@ Handler.prototype.OmniHandlerDom = function (ev) {
 	if ((this.options.nodefault || this.options.preventdefault) && ev != null && ev.preventDefault) {
 		ev.preventDefault();
 	}
+	if ((this.options.stoppropagation || this.options.nopropagation) && ev != null && ev.stopPropagation) {
+		ev.stopPropagation();
+	}
 	return this.callAsyncIf(this.options.async, function () {
 		var hndlr = this.$get_sourceValue();
 		if (hndlr != null) {

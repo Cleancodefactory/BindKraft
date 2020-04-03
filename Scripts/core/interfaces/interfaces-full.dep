@@ -90,3 +90,5 @@
 //#using "./ITranslatorProvider.js"
 //#using "./ITranslateParamersToOrdersArray.js"
 //#using "./ITranslateParamersToLimitOffset.js"
+
+//#using "./IFindService.js"

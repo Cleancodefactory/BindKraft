@@ -27,6 +27,8 @@ example:
 
 `nodefault`, `preventdefault` - works only on `data-on-domevent` bindings and only for DOM events. Prevents the default processing (see preventDefault of the DOM event)
 
+`nopropagation`, `stoppropagation` - (new from version 2.21), works only on `data-on-domevent` bindings and only for DOM events. Stops te DOM event propagation. All handlers on the current element will be called, but the event will not propagate further to other elements.
+
 **Old options**
 
 `nonpersistable` - For backwards compatibility this is still supported. In older versions (much older) the functionality now enabled with the `persistable` option (see below) was "on" by default and the `nonpersistable` option excluded bindings from it. This mode can still be turned on and this option will make sense then. However, this mode is extremely inconvenient and will be fully deprecated soon (even the ability to turn it on).

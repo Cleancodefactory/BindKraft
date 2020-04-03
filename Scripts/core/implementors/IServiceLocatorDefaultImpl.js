@@ -18,7 +18,7 @@ IServiceLocatorDefaultImpl.classInitialize = function(cls, map) {
 				if (typeof oper == "string") { // property name over the this.
 					cls.prototype.$__serviceLocatorMap[k] = (function() {
 						var propname = oper;
-						return function(iface, reason) {
+						return function(iface, reason) { // The function is called in run time with the this of the instance.
 							var r = BaseObject.getProperty(this, propname, null);
 							// TODO: Implement run-time error logging here
 							if (BaseObject.is(r, iface)) {
@@ -44,7 +44,7 @@ IServiceLocatorDefaultImpl.classInitialize = function(cls, map) {
 					cls.prototype.$__serviceLocatorMap[k] = oper; // null
 					// The locateService will do the task if it sees null here - less closures
 				} else {
-					CompileTime.err("Unsupported entry in serice locator map while implementing IServiceLocatorDefaultImpl on class " + cls.classType + ".");
+					CompileTime.err("Unsupported entry in service locator map while implementing IServiceLocatorDefaultImpl on class " + cls.classType + ".");
 				}
 				
 			}

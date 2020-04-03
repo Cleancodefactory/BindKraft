@@ -18,3 +18,4 @@
 //#using "./IFormatterRegistrationImpl.js"
 //#using "./IParametersAccumulatorImpl.js"
 //#using "./IFormatterAggregateImpl.js"
+//#using "./IFindServiceImpl.js"
