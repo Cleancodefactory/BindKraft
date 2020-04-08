@@ -46,7 +46,7 @@ Base.prototype.subscribeFor = function(evenDisp, handler, priority) {
         handlerHelper.to(evenDisp, priority);
         return handlerHelper;
     }
-    return false;
+    return null;
 }
 Base.prototype.unsubscribeAll = function() {
     EventHandlerHelperRegister.On(this, "$generalDispatcherHandlers").unbind();
