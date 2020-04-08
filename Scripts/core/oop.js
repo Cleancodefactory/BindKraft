@@ -766,7 +766,6 @@ Function.prototype.ImplementProperty = function (pname, initialize, pstore, chan
     };
 	this.prototype["set_" + pname].$Initialize = initialize;
 	return this;
-	initialize = initialize || new Initialize("no description", null);
 }.Description("'Implements' pseudo-property on a class or Interface")
  .Param("pname","Property name")
  .Param("Initialize","Property type and documentation, instance of one of the Initialize classes")
@@ -779,7 +778,6 @@ Function.prototype.ImplementActiveProperty = function (pname, initialize, pstore
 	initialize = initialize || new Initialize("no description", null);
 	if (typeof pstore_or_force == "boolean") {
 		force = pstore_or_force;
-		initialize = initialize || new Initialize("no description", null);
 	} else if (typeof pstore_or_force == "string") {
 		pstore = pstore_or_force;
 		force = force_in;
@@ -800,7 +798,6 @@ Function.prototype.ImplementActiveProperty = function (pname, initialize, pstore
 		if (force) b = true;
 		if (changeCallback != null && b) {
 			if (typeof changeCallback == "function") {
-				initialize = initialize || new Initialize("no description", null);
 				changeCallback.call(this, oldval, v);
 			} else if (typeof changeCallback == "string") {
 				this[changeCallback](pname, oldval, v);
@@ -836,11 +833,9 @@ Function.prototype.ImplementWriteProperty = function (pname, initialize, pstore)
 	var pstoreprop = (pstore != null) ? pstore : "$" + pname;
 	initialize = initialize || new Initialize("no description", null);
     this.prototype[pstoreprop] = initialize;
-	this.prototype["set_" + pname] = functi
-	initialize = initialize || new Initialize("no description", null);on (v) { this[pstoreprop] = v; };
+    this.prototype["set_" + pname] = function (v) { this[pstoreprop] = v; };
 	this.prototype["set_" + pname].$Initialize = initialize;
-	return this;
-	initialize = initialize || new Initialize("no description", null);
+    return this;
 }.Description("Implements a write-only pseudo-property on a class or Interface")
  .Param("pname","Property name")
  .Param("Initialize","Property type and documentation, instance of one of the Initialize classes")
