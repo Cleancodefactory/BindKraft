@@ -285,13 +285,16 @@ Function.prototype.InterfaceImpl = function (pname) {
         // Function.interfaces[pname.classType] = this; // Registration MUST NOT be performed, this is implementer of a protocol, not a redefinition of a protocol. Keep the commented code to warn people who may want to change this.
 		
 	// V: 2.7.1 // };
-	if (Function.interfaceImplementers[pname] != null) {
-		CompileTime.err("Interface implementer " + pname + " is previously defined and will be replaced. This is an error and may cause various unpredictable problems.");
-		if (JBCoreConstants.CompileTimeThrowOnErrors) {
-			throw "Interface implementer " + pname + " is already defined. Redefining an implementer can cause various unpredictable problems - check if this is done by mistake or name your implementer differently.";
+	// This is OBSOLETE and will cause errors, it returned back from a check-in by mistake. I am leaving it here commented out in order to make it more noticeable if this happens again (will remove it a bit later)
+	if (typeof this.name == "string") {
+		if (Function.interfaceImplementers[this.name] != null) {
+	 		CompileTime.warn("Interface implementer " + this.name + " for interface " + pname.classType + " is previously defined and will be replaced. This is an error and may cause various unpredictable problems.");
 		}
+		Function.interfaceImplementers[this.name] = this;
+	} else {
+		CompileTime.warn("Anonymous interface implementer is defined for interface " + pname.classType + ". If it is in a closure it will not be visible elsewhere and it will not be importable through InterfaceImplementer() function.");
 	}
-	Function.interfaceImplementers[pname] = this;
+	
     return this;
 }.Description("Defines an 'Interface' implementation (implementer). It is a coding feature and is not registarable.")
  .Param("pname","Interfae being implemented by the implementer. The definition must be specified, not the name only. In earlier versions name was usable, but led to inconsistencies, for htis reason passing interface name is left unsupported intentionally - to avoid mistakes based on earlier version knowledge.")
