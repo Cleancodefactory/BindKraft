@@ -1,5 +1,5 @@
 function IFormatterAggregateImpl() {}
-IFormatterAggregateImpl.InterfaceImpl(IFormatterAggregate);
+IFormatterAggregateImpl.InterfaceImpl(IFormatterAggregate, "IFormatterAggregateImpl");
 IFormatterAggregateImpl.classInitialize = function(cls) {
 	cls.prototype.$initialize = function() {
 		var sysfmts = Registers.getRegister("systemformatters");

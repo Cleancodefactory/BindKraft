@@ -242,7 +242,8 @@ Function.prototype.Interface = function (pname, /*multiple*/ extendsInterfaces) 
 	}
  // -v 2.7.0
 
-Function.prototype.InterfaceImpl = function (pname) {
+Function.prototype.InterfaceImpl = function (pname, _implementerName) {
+	var implementerName = _implementerName || this.name;
 	if (typeof pname == "string") {
 		var s = pname;
 		pname = Class.getInterfaceDef(pname);
@@ -288,10 +289,10 @@ Function.prototype.InterfaceImpl = function (pname) {
 	// V: 2.7.1 // };
 	// This is OBSOLETE and will cause errors, it returned back from a check-in by mistake. I am leaving it here commented out in order to make it more noticeable if this happens again (will remove it a bit later)
 	if (typeof this.name == "string") {
-		if (Function.interfaceImplementers[this.name] != null) {
-	 		CompileTime.warn("Interface implementer " + this.name + " for interface " + pname.classType + " is previously defined and will be replaced. This is an error and may cause various unpredictable problems.");
+		if (Function.interfaceImplementers[implementerName] != null) {
+	 		CompileTime.warn("Interface implementer " + implementerName + " for interface " + pname.classType + " is previously defined and will be replaced. This is an error and may cause various unpredictable problems.");
 		}
-		Function.interfaceImplementers[this.name] = this;
+		Function.interfaceImplementers[implementerName] = this;
 	} else {
 		CompileTime.warn("Anonymous interface implementer is defined for interface " + pname.classType + ". If it is in a closure it will not be visible elsewhere and it will not be importable through InterfaceImplementer() function.");
 	}

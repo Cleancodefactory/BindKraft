@@ -7,7 +7,7 @@
 
 /*INTERFACE*/
 function ITemplateSourceImpl() {}
-ITemplateSourceImpl.InterfaceImpl(ITemplateSource);
+ITemplateSourceImpl.InterfaceImpl(ITemplateSource, "ITemplateSourceImpl");
 ITemplateSourceImpl.classInitialize = function(cls, defaultTemplateSelector) {
 	cls.ImplementProperty("templateName", new InitializeStringParameter("Template selector",defaultTemplateSelector));
 	cls.prototype.get_template = function() {

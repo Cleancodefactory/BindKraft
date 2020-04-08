@@ -4,7 +4,7 @@
 */
 /* Interface IErrorDisplay */
 function IInfoDisplayWindowImpl() { }
-IInfoDisplayWindowImpl.InterfaceImpl(IInfoDisplay);
+IInfoDisplayWindowImpl.InterfaceImpl(IInfoDisplay, "IInfoDisplayWindowImpl");
 // IInfoDisplayWindowImpl.classType = "IInfoDisplay";
 IInfoDisplayWindowImpl.RequiredTypes("BaseWindow", "IStructuralQueryProcessor,IStructuralQueryEmiter");
 IInfoDisplayWindowImpl.defaultInfoDisplayTemplate = "bindkraft/defaultinfodisplaytemplate";

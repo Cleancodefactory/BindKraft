@@ -3,7 +3,7 @@
 
 /*INTERFACE*/ /*IMPL*/
 function IDOMFocusContainerImpl() {}
-IDOMFocusContainerImpl.InterfaceImpl(IFocusContainer);
+IDOMFocusContainerImpl.InterfaceImpl(IFocusContainer, "IDOMFocusContainerImpl");
 IDOMFocusContainerImpl.RequiredTypes("Base", "IFocusContainerRegister");
 IDOMFocusContainerImpl.$reParseControlAttribute = /index=((?:\+|\-)?\d+)|accel=\'([^\'$])\'|column=((?:\+|\-)?\d+)|depth=((?:\+|\-)?\d+)/gi;
 IDOMFocusContainerImpl.$parseControlAttribute = function(attrVal) { // Returns an object with the parameters. 

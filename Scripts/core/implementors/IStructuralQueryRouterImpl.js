@@ -2,7 +2,7 @@
 
 
 function IStructuralQueryRouterImpl() { }
-IStructuralQueryRouterImpl.InterfaceImpl(IStructuralQueryRouter);
+IStructuralQueryRouterImpl.InterfaceImpl(IStructuralQueryRouter, "IStructuralQueryRouterImpl");
 // routingTypeName - string, the routing type implemented by this class
 // getParentProc - a func designed for _thiscall on instances of the implementor class. Must return the parent of the object as appropriate.
 //      Very often query routers have different kinds of possible parents and the routine must analyze and return the correct one.

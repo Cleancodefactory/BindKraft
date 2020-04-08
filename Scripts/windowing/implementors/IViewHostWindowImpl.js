@@ -16,7 +16,7 @@
 function IViewHostWindowImpl() { 
 	var x = this.root;
 }
-IViewHostWindowImpl.InterfaceImpl(IViewHostWindow);
+IViewHostWindowImpl.InterfaceImpl(IViewHostWindow, "IViewHostWindowImpl");
 IViewHostWindowImpl.RequiredTypes("BaseWindow");
 IViewHostWindowImpl.classInitialize = function (cls) {
     cls.Implement(IStructuralQueryProcessorImpl);

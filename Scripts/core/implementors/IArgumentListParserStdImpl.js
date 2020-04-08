@@ -23,7 +23,7 @@
 	
 */
 function IArgumentListParserStdImpl() {}
-IArgumentListParserStdImpl.InterfaceImpl("IArgumentListParser");
+IArgumentListParserStdImpl.InterfaceImpl("IArgumentListParser", "IArgumentListParserStdImpl");
 // This one is reserved for future use
 IArgumentListParserStdImpl.$reParamsChainWithBindings = /(?:(?:^|\s)([\+\-]?[0-9]+(?:\.[0-9]+)?)(?=$|\s))|(?:(?:^|\s)([0-9a-zA-Z\_\-\$\[\]\.]+(?=$|\s)))|(?:(?:^|\s)\'((?:\\\'|[^\'])*)\')|(?:(?:^|\s)\{((?:\\\}|[^\}])*)\})/gm;
 // Numeric and string parameters array separated with spaces (num str 'str')

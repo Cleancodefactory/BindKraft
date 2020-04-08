@@ -3,5 +3,5 @@
 	Defines a property that returns the encironment context.
 */
 function ISupportsEnvironmentContextImpl() {}
-ISupportsEnvironmentContextImpl.InterfaceImpl(ISupportsEnvironmentContext);
+ISupportsEnvironmentContextImpl.InterfaceImpl(ISupportsEnvironmentContext,"ISupportsEnvironmentContextImpl");
 ISupportsEnvironmentContextImpl.ImplementReadProperty("environment", new InitializeObject("EnvironmentContext instance","EnvironmentContext"));

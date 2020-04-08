@@ -3,7 +3,7 @@
 	The interface's implementation is very simple, because its usage is mostly passive through bindings in window templates.
 */
 function IAppCommandsImpl() {}
-IAppCommandsImpl.InterfaceImpl(IAppCommands);
+IAppCommandsImpl.InterfaceImpl(IAppCommands, "IAppCommandsImpl");
 IAppCommandsImpl.RequiredTypes("IApp");
 IAppCommandsImpl.prototype.$appcommands = null;
 IAppCommandsImpl.prototype.get_appcommands = function() {

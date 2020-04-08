@@ -6,7 +6,7 @@
 	serious amount of additional work - see IAppHistoryFullSupport for more info on that topic.
 */
 function IAppHistorySupportImpl() {}
-IAppHistorySupportImpl.InterfaceImpl("IAppHistorySupport");
+IAppHistorySupportImpl.InterfaceImpl("IAppHistorySupport", "IAppHistorySupportImpl");
 IAppHistorySupportImpl.RequiredTypes("IApp"); // Inherited from the interface, but we repeat it for clarity
 IAppHistorySupportImpl.classInitialize = function(cls, bDisAllowHistory) {
 		cls.prototype.get_allowhistory = function() { return bDisAllowHistory?false:true; }

@@ -4,7 +4,7 @@
 
 /*INTERFACE*/
 function IViewContainerEventsSinkImpl() {}
-IViewContainerEventsSinkImpl.InterfaceImpl("IViewContainerEventsSink");
+IViewContainerEventsSinkImpl.InterfaceImpl("IViewContainerEventsSink", "IViewContainerEventsSinkImpl");
 IViewContainerEventsSinkImpl.RequiredTypes("Base"); // cvan be implemented only on Base derived classes
 IViewContainerEventsSinkImpl.classInitialize = function (cls) {
 	cls.prototype.onViewStateChanged = function (state) { 

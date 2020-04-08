@@ -6,7 +6,7 @@
 	
 */
 function ICustomParameterizationStdImpl() {}
-ICustomParameterizationStdImpl.InterfaceImpl(ICustomParameterization);
+ICustomParameterizationStdImpl.InterfaceImpl(ICustomParameterization, "ICustomParameterizationStdImpl");
 ICustomParameterizationStdImpl.classInitialize = function(cls, params) {
 	var list = Array.createCopyOf(arguments,1);
 	if (BaseObject.is(cls.prototype.$customParameterizationAllowedParamsList, "Array")) {

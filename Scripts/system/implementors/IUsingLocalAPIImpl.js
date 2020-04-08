@@ -38,7 +38,7 @@
 	
 */
 function IUsingLocalAPIImpl() {}
-IUsingLocalAPIImpl.InterfaceImpl(IUsingLocalAPI);
+IUsingLocalAPIImpl.InterfaceImpl(IUsingLocalAPI, "IUsingLocalAPIImpl");
 IUsingLocalAPIImpl.RequiredTypes("AppBase"); // Further scope of compatibility may be extended a little
 IUsingLocalAPIImpl.inheritorInitialize = function(cls, parentCls) {
 	// __$localAPIInjects is an object. Reusing the same field name when inheriting is an error

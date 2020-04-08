@@ -4,7 +4,7 @@
 function IMemoryDirectoryImpl() {
 	this.set_filedatemodified();
 }
-IMemoryDirectoryImpl.InterfaceImpl(IMemoryDirectory);
+IMemoryDirectoryImpl.InterfaceImpl(IMemoryDirectory, "IMemoryDirectoryImpl");
 IMemoryDirectoryImpl.Initialize();
 // Last time canged or saved to the memory location
 IMemoryDirectoryImpl.prototype.$filedatemodified = null;

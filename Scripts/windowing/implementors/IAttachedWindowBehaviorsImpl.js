@@ -1,5 +1,5 @@
 function IAttachedWindowBehaviorsImpl() {}
-IAttachedWindowBehaviorsImpl.InterfaceImpl(IAttachedWindowBehaviors);
+IAttachedWindowBehaviorsImpl.InterfaceImpl(IAttachedWindowBehaviors, "IAttachedWindowBehaviorsImpl");
 IAttachedWindowBehaviorsImpl.RequiredTypes("BaseWindow");
 IAttachedWindowBehaviorsImpl.classInitialize = function(cls) {
 	cls.prototype.$attachedBehaviors = new InitializeArray("Registerd behaviors");

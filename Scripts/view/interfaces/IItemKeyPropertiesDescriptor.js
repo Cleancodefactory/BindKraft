@@ -11,7 +11,7 @@ IItemKeyPropertiesDescriptor.ImplementProperty("titleproperty", new InitializeSt
 IItemKeyPropertiesDescriptor.ImplementProperty("originalitemkey", new InitializeStringParameter("The name of the key under which to link the original property.","__original"));
 /*INTERFACE*/ /*IMPL*/
 function IItemKeyPropertiesDescriptorImpl() {}
-IItemKeyPropertiesDescriptorImpl.InterfaceImpl(IItemKeyPropertiesDescriptor);
+IItemKeyPropertiesDescriptorImpl.InterfaceImpl(IItemKeyPropertiesDescriptor, "IItemKeyPropertiesDescriptorImpl");
 IItemKeyPropertiesDescriptorImpl.prototype.StandardListConvertor = {
 	ToTarget: function(v,b) {
 		if (BaseObject.is(v,"Array")) {

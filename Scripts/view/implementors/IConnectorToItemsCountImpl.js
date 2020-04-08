@@ -3,7 +3,7 @@
 
 /*INTERFACE*/ /*IMPL*/
 function IConnectorToItemsCountImpl() {}
-IConnectorToItemsCountImpl.InterfaceImpl(IConnectorToItemsCount);
+IConnectorToItemsCountImpl.InterfaceImpl(IConnectorToItemsCount, "IConnectorToItemsCountImpl");
 IConnectorToItemsCountImpl.prototype.$countconnector = null;
 IConnectorToItemsCountImpl.prototype.get_countconnector = function() {
 	this.$preparecountconnector(); 

@@ -2,7 +2,7 @@
 	The de
 */
 function IDisplayDataSupplierImpl() {}
-IDisplayDataSupplierImpl.InterfaceImpl(IDisplayDataSupplier);
+IDisplayDataSupplierImpl.InterfaceImpl(IDisplayDataSupplier, "IDisplayDataSupplierImpl");
 IDisplayDataSupplierImpl.classInitialize = function(cls) {
 	cls.prototype.$displaydata = null;
 	// Call this method to change the display data

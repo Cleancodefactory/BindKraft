@@ -1,4 +1,5 @@
-/* Daemons manager implementation
+/* DEPRECATED normal apps without UI do this.
+	Daemons manager implementation
 
 	This implementer does not have specific requirements, but may get some in future.
 	It is intended for implementation by the system, apps and possibly daemons.
@@ -9,7 +10,7 @@
 // import {DaemonRegisterItem} from '../misc/DaemonRegisterItem.js';
 
 function IDaemonManagerImpl() {}
-IDaemonManagerImpl.InterfaceImpl(IDaemonManager);
+IDaemonManagerImpl.InterfaceImpl(IDaemonManager, "IDaemonManagerImpl");
 IDaemonManagerImpl.classInitialize = function (cls) {
 
     cls.prototype.$appmgr_lastid = 0;

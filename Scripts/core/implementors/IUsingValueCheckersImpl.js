@@ -18,7 +18,7 @@
 */
 
 function IUsingValueCheckersImpl() {}
-IUsingValueCheckersImpl.InterfaceImpl(IUsingValueCheckers);
+IUsingValueCheckersImpl.InterfaceImpl(IUsingValueCheckers, "IUsingValueCheckersImpl");
 IUsingValueCheckersImpl.prototype.checkValueWith = function(checker, value) {
 	var _checker = checker;
 	if (checker == "string") {

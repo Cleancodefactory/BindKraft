@@ -19,7 +19,7 @@
 */
 function IInfoDisplayPanelImpl() { }
 IInfoDisplayPanelImpl.RequiredTypes("Base");
-IInfoDisplayPanelImpl.InterfaceImpl(IInfoDisplayPanel);
+IInfoDisplayPanelImpl.InterfaceImpl(IInfoDisplayPanel, "IInfoDisplayPanelImpl");
 IInfoDisplayPanelImpl.prototype.get_reversedc = function () {
     var dc = this.get_data(); // nali
     if (BaseObject.is(dc, "Array")) dc = dc.reverse().slice(0, 10);
