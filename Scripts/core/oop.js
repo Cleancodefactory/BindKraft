@@ -32,7 +32,8 @@ class.Inherit(CParent);
 // Call parent methods using
 this.parent.methodName.call(this,...params...);
 */
-Function.prototype.Inherit = function (parentCls, clsName) {
+Function.prototype.Inherit = function (parentCls, _clsName) {
+	var clsName = _clsName || this.name;
 	CompileTime.trace("constructing class " + clsName);
 	if (typeof this.classType == "string") {
 		CompileTime.err("Inherit is called more than once for " + this.classType + " with declared name " + clsName + ". Check if this is done in other files (happens sometimes when code is copied and pasted.");
