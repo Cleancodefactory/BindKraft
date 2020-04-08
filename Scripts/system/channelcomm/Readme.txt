@@ -33,3 +33,8 @@ the part that is in a BK environment, which enables the native part
 available for the other participants to be managed on the BK side,
 but left naked for the other with as much help provided for the non-BK
 side as possible - e.g. simpler formats and life cycles.
+
+ChannelComm does not support transferable objects in order to keep the
+abstraction always applicable. The other side of a channel can be even a 
+non-browser piece of software, so transferring the control of objects is
+not possible in all cases.
