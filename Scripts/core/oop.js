@@ -747,11 +747,12 @@ Function.prototype.ExtendMethod = function(method, withMethod, bRunFirst, bRetur
 //// PROPERTY IMPLEMENTATION HELPERS //////////////////////////////////////
  
 // MyClass.ImplementProperty("myprop", new Initialize("holds something",null) [, "$myproperty"[, "mycallback"]])
-Function.prototype.ImplementProperty = function (pname, Initialize, pstore, changeCallback, force) {
-    var pstoreprop = (pstore != null) ? pstore : "$" + pname;
-    this.prototype[pstoreprop] = Initialize;
+Function.prototype.ImplementProperty = function (pname, initialize, pstore, changeCallback, force) {
+	var pstoreprop = (pstore != null) ? pstore : "$" + pname;
+	if (initialize == null) initialize = new Initialize("(no description)", null);
+    this.prototype[pstoreprop] = initialize;
     this.prototype["get_" + pname] = function () { return this[pstoreprop]; };
-	this.prototype["get_" + pname].$Initialize = Initialize;
+	this.prototype["get_" + pname].$Initialize = initialize;
     this.prototype["set_" + pname] = function (v) {
         var oldval = this[pstoreprop];
         this[pstoreprop] = v;
@@ -763,8 +764,9 @@ Function.prototype.ImplementProperty = function (pname, Initialize, pstore, chan
 			}
         }
     };
-	this.prototype["set_" + pname].$Initialize = Initialize;
-    return this;
+	this.prototype["set_" + pname].$Initialize = initialize;
+	return this;
+	initialize = initialize || new Initialize("no description", null);
 }.Description("'Implements' pseudo-property on a class or Interface")
  .Param("pname","Property name")
  .Param("Initialize","Property type and documentation, instance of one of the Initialize classes")
@@ -772,18 +774,20 @@ Function.prototype.ImplementProperty = function (pname, Initialize, pstore, chan
  .Param("changeCallback","Optional callback name invoked on change ot the property. The callback must be a method of the class/Interface and has the following prototype function(propertyname,old_Value,new_Value).")
  .Returns("this - can be chained");
 
-Function.prototype.ImplementActiveProperty = function (pname, Initialize, pstore_or_force,force_in,changeCallback) {
+Function.prototype.ImplementActiveProperty = function (pname, initialize, pstore_or_force,force_in,changeCallback) {
 	var pstore = null, force = false, oldval = null;;
+	initialize = initialize || new Initialize("no description", null);
 	if (typeof pstore_or_force == "boolean") {
 		force = pstore_or_force;
+		initialize = initialize || new Initialize("no description", null);
 	} else if (typeof pstore_or_force == "string") {
 		pstore = pstore_or_force;
 		force = force_in;
 	}
 	var pstoreprop = (pstore != null) ? pstore : "$" + pname;
-	this.prototype[pstoreprop] = Initialize;
+	this.prototype[pstoreprop] = initialize;
 	this.prototype["get_" + pname] = function () { return this[pstoreprop]; };
-	this.prototype["get_" + pname].$Initialize = Initialize;
+	this.prototype["get_" + pname].$Initialize = initialize;
 	this.prototype["set_" + pname] = function (v) {
 		var b = false;
 		if (BaseObject.is(v, "Array") || BaseObject.is(v, "BaseObject")) {
@@ -796,6 +800,7 @@ Function.prototype.ImplementActiveProperty = function (pname, Initialize, pstore
 		if (force) b = true;
 		if (changeCallback != null && b) {
 			if (typeof changeCallback == "function") {
+				initialize = initialize || new Initialize("no description", null);
 				changeCallback.call(this, oldval, v);
 			} else if (typeof changeCallback == "string") {
 				this[changeCallback](pname, oldval, v);
@@ -803,7 +808,7 @@ Function.prototype.ImplementActiveProperty = function (pname, Initialize, pstore
         }
 		if (b && this[pname + "_changed"] != null) this[pname + "_changed"].invoke(this, v);
 	};
-	this.prototype["set_" + pname].$Initialize = Initialize;
+	this.prototype["set_" + pname].$Initialize = initialize;
 	this.prototype[pname + "_changed"] = new InitializeEvent("Notifies when the property " + pname + " has changed.");
 	this.prototype["set_" + pname].$changeevent = pname + "_changed";
 	return this;
@@ -814,11 +819,12 @@ Function.prototype.ImplementActiveProperty = function (pname, Initialize, pstore
  .Param("force_in","Optional - if true will force the event to be fired on each assignment even if the value has not actually changed.")
  .Returns("this - can be chained");
 
-Function.prototype.ImplementReadProperty = function (pname, Initialize, pstore) {
-    var pstoreprop = (pstore != null) ? pstore : "$" + pname;
-    this.prototype[pstoreprop] = Initialize;
+Function.prototype.ImplementReadProperty = function (pname, initialize, pstore) {
+	var pstoreprop = (pstore != null) ? pstore : "$" + pname;
+	initialize = initialize || new Initialize("no description", null);
+    this.prototype[pstoreprop] = initialize;
     this.prototype["get_" + pname] = function () { return this[pstoreprop]; };
-	this.prototype["get_" + pname].$Initialize = Initialize;
+	this.prototype["get_" + pname].$Initialize = initialize;
     return this;
 }.Description("Implements a read-only pseudo-property on a class or Interface")
  .Param("pname","Property name")
@@ -826,12 +832,15 @@ Function.prototype.ImplementReadProperty = function (pname, Initialize, pstore) 
  .Param("pstore","Optional location of the storage for the property, default is this.$<pname>")
  .Returns("this - can be chained");
 
-Function.prototype.ImplementWriteProperty = function (pname, Initialize, pstore) {
-    var pstoreprop = (pstore != null) ? pstore : "$" + pname;
-    this.prototype[pstoreprop] = Initialize;
-    this.prototype["set_" + pname] = function (v) { this[pstoreprop] = v; };
-	this.prototype["set_" + pname].$Initialize = Initialize;
-    return this;
+Function.prototype.ImplementWriteProperty = function (pname, initialize, pstore) {
+	var pstoreprop = (pstore != null) ? pstore : "$" + pname;
+	initialize = initialize || new Initialize("no description", null);
+    this.prototype[pstoreprop] = initialize;
+	this.prototype["set_" + pname] = functi
+	initialize = initialize || new Initialize("no description", null);on (v) { this[pstoreprop] = v; };
+	this.prototype["set_" + pname].$Initialize = initialize;
+	return this;
+	initialize = initialize || new Initialize("no description", null);
 }.Description("Implements a write-only pseudo-property on a class or Interface")
  .Param("pname","Property name")
  .Param("Initialize","Property type and documentation, instance of one of the Initialize classes")
