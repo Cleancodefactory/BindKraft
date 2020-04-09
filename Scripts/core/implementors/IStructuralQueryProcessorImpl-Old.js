@@ -4,7 +4,7 @@
 /*IMPL HELPER*/
 // Usage: MyClass.Implement(IStructuralQueryProcessorImpl);
 function IStructuralQueryProcessorImpl() { }
-IStructuralQueryProcessorImpl.InterfaceImpl(IStructuralQueryProcessor);
+IStructuralQueryProcessorImpl.InterfaceImpl(IStructuralQueryProcessor, "IStructuralQueryProcessorImpl");
 IStructuralQueryProcessorImpl.classInitialize = function(cls) {
     cls.onStructuralQuery = function(stype, method) {
         if (cls.prototype.$queryDispatchTable == null) cls.prototype.$queryDispatchTable = { };

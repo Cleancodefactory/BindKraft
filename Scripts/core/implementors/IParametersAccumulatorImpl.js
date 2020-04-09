@@ -1,5 +1,5 @@
 function IParametersAccumulatorImpl() {}
-IParametersAccumulatorImpl.InterfaceImpl(IParametersAccumulator);
+IParametersAccumulatorImpl.InterfaceImpl(IParametersAccumulator, "IParametersAccumulatorImpl");
 IParametersAccumulatorImpl.classInitialize = function(cls,_accsets) {// accsets - zero or more named sets, default (null) is always supported
 	cls.prototype.$__parametersAccumulatorDefault = null;
 	var accsets = Array.createCopyOf(arguments, 1); // empty if none specified

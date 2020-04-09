@@ -22,7 +22,7 @@
 
 /*INTERFACE*/
 function ITemplateSourceImpl() {}
-ITemplateSourceImpl.InterfaceImpl(ITemplateSource);
+ITemplateSourceImpl.InterfaceImpl(ITemplateSource, "ITemplateSourceImpl");
 ITemplateSourceImpl.RequiredTypes("Base");
 ITemplateSourceImpl.ForbiddenTypes("BaseWindow");
 ITemplateSourceImpl.classInitialize = function(cls, defaultTemplateSelector, options) {

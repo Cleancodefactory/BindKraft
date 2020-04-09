@@ -21,7 +21,7 @@
 	Alternatives and plans: Static declaration support can be introduced with some inherent limitations (no API exposition according to state for example). Could be a separate implementer - will be determined after some usage.
 */
 function IImplementsLocalAPIImpl() {}
-IImplementsLocalAPIImpl.InterfaceImpl(IImplementsLocalAPI);
+IImplementsLocalAPIImpl.InterfaceImpl(IImplementsLocalAPI, "IImplementsLocalAPIImpl");
 IImplementsLocalAPIImpl.classInitialize = function(cls) {
 	cls.prototype.OnGetExposedLocalAPI = function() {
 		throw "OnGetExposedLocalAPI must be implemented, but isn't. See the documentation or the IImplementsLocalAPIImpl.js for the details.";

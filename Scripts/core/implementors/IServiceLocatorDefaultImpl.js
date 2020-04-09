@@ -2,7 +2,7 @@
 	Helps you implement simple service locator by mapping the locator logic with none or a little code.
 */
 function IServiceLocatorDefaultImpl() {}
-IServiceLocatorDefaultImpl.InterfaceImpl(IServiceLocator);
+IServiceLocatorDefaultImpl.InterfaceImpl(IServiceLocator, "IServiceLocatorDefaultImpl");
 IServiceLocatorDefaultImpl.classInitialize = function(cls, map) {
 	if (cls.prototype.$__serviceLocatorMap == null || !cls.prototype.$__serviceLocatorMap.$__svclocator) {
 		CompileTime.warn("Found something in the $__serviceLocatorMap property which is not a service locator map - replacing it!");

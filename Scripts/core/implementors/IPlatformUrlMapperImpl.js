@@ -4,7 +4,7 @@
 function IPlatformUrlMapperImpl() {
 	
 }
-IPlatformUrlMapperImpl.InterfaceImpl(IPlatformUrlMapper);
+IPlatformUrlMapperImpl.InterfaceImpl(IPlatformUrlMapper,"IPlatformUrlMapperImpl");
 IPlatformUrlMapperImpl.classInitialize = function(cls,defModulename, defServername) {
 	ICustomParameterization.registerStdParamNames(cls,"servername","modulename");
 	cls.ImplementProperty("modulename", new InitializeStringParameter("...", defModulename));

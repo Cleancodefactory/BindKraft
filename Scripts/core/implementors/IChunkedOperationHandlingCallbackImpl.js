@@ -21,7 +21,7 @@
 	
 */
 function IChunkedOperationHandlingCallbackImpl() {}
-IChunkedOperationHandlingCallbackImpl.InterfaceImpl(IChunkedOperationHandlingCallbacks);
+IChunkedOperationHandlingCallbackImpl.InterfaceImpl(IChunkedOperationHandlingCallbacks, "IChunkedOperationHandlingCallbackImpl");
 IChunkedOperationHandlingCallbackImpl.RequiredTypes("IOperation");
 IChunkedOperationHandlingCallbackImpl.classInitialize = function(cls) {
 	

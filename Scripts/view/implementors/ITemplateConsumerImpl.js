@@ -1,5 +1,5 @@
 function ITemplateConsumerImpl(){}
-ITemplateConsumerImpl.InterfaceImpl(ITemplateConsumer);
+ITemplateConsumerImpl.InterfaceImpl(ITemplateConsumer, "ITemplateConsumerImpl");
 ITemplateConsumerImpl.RequiredTypes("Base");
 ITemplateConsumerImpl.ForbiddenTypes("BaseWindow"); // This interface assumes in-view locations which makes it unusable for Windows
 ITemplateConsumerImpl.prototype.templateSource = null;

@@ -4,7 +4,7 @@
  * to create additional instances (e.g. for mockups).
  *
  */
-function ChannelCommunicator() {
+function ChannelCommHub() {
     BaseObject.apply(this, arguments);
 }
-ChannelCommunicator.Inherit(BaseObject, "ChannelCommunicator");
+ChannelCommHub.Inherit(BaseObject, "ChannelCommHub");

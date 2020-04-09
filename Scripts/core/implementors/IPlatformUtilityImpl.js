@@ -5,7 +5,7 @@
 */
 function IPlatformUtilityImpl() { }
 IPlatformUtilityImpl.Description("Enables you to YourClass.implement(IPlatformUtilityImpl,'<your module name>'[,server]) and use over your this methods that perform for you certain actions in the correct platform dependent manner.");
-IPlatformUtilityImpl.InterfaceImpl(IPlatformUtility);
+IPlatformUtilityImpl.InterfaceImpl(IPlatformUtility, "IPlatformUtilityImpl");
 IPlatformUtilityImpl.classInitialize = function(cls,moduleName,server) { // Server is not currently supported on production level.
 	cls.prototype.$platformModuleName = moduleName;
 	cls.prototype.$platformModuleServer = server;

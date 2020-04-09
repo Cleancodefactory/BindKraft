@@ -32,7 +32,8 @@ class.Inherit(CParent);
 // Call parent methods using
 this.parent.methodName.call(this,...params...);
 */
-Function.prototype.Inherit = function (parentCls, clsName) {
+Function.prototype.Inherit = function (parentCls, _clsName) {
+	var clsName = _clsName || this.name;
 	CompileTime.trace("constructing class " + clsName);
 	if (typeof this.classType == "string") {
 		CompileTime.err("Inherit is called more than once for " + this.classType + " with declared name " + clsName + ". Check if this is done in other files (happens sometimes when code is copied and pasted.");
@@ -241,7 +242,8 @@ Function.prototype.Interface = function (pname, /*multiple*/ extendsInterfaces) 
 	}
  // -v 2.7.0
 
-Function.prototype.InterfaceImpl = function (pname) {
+Function.prototype.InterfaceImpl = function (pname, _implementerName) {
+	var implementerName = _implementerName || this.name;
 	if (typeof pname == "string") {
 		var s = pname;
 		pname = Class.getInterfaceDef(pname);
@@ -285,13 +287,16 @@ Function.prototype.InterfaceImpl = function (pname) {
         // Function.interfaces[pname.classType] = this; // Registration MUST NOT be performed, this is implementer of a protocol, not a redefinition of a protocol. Keep the commented code to warn people who may want to change this.
 		
 	// V: 2.7.1 // };
-	if (Function.interfaceImplementers[pname] != null) {
-		CompileTime.err("Interface implementer " + pname + " is previously defined and will be replaced. This is an error and may cause various unpredictable problems.");
-		if (JBCoreConstants.CompileTimeThrowOnErrors) {
-			throw "Interface implementer " + pname + " is already defined. Redefining an implementer can cause various unpredictable problems - check if this is done by mistake or name your implementer differently.";
+	// This is OBSOLETE and will cause errors, it returned back from a check-in by mistake. I am leaving it here commented out in order to make it more noticeable if this happens again (will remove it a bit later)
+	if (typeof this.name == "string") {
+		if (Function.interfaceImplementers[implementerName] != null) {
+	 		CompileTime.warn("Interface implementer " + implementerName + " for interface " + pname.classType + " is previously defined and will be replaced. This is an error and may cause various unpredictable problems.");
 		}
+		Function.interfaceImplementers[implementerName] = this;
+	} else {
+		CompileTime.warn("Anonymous interface implementer is defined for interface " + pname.classType + ". If it is in a closure it will not be visible elsewhere and it will not be importable through InterfaceImplementer() function.");
 	}
-	Function.interfaceImplementers[pname] = this;
+	
     return this;
 }.Description("Defines an 'Interface' implementation (implementer). It is a coding feature and is not registarable.")
  .Param("pname","Interfae being implemented by the implementer. The definition must be specified, not the name only. In earlier versions name was usable, but led to inconsistencies, for htis reason passing interface name is left unsupported intentionally - to avoid mistakes based on earlier version knowledge.")
@@ -747,11 +752,12 @@ Function.prototype.ExtendMethod = function(method, withMethod, bRunFirst, bRetur
 //// PROPERTY IMPLEMENTATION HELPERS //////////////////////////////////////
  
 // MyClass.ImplementProperty("myprop", new Initialize("holds something",null) [, "$myproperty"[, "mycallback"]])
-Function.prototype.ImplementProperty = function (pname, Initialize, pstore, changeCallback, force) {
-    var pstoreprop = (pstore != null) ? pstore : "$" + pname;
-    this.prototype[pstoreprop] = Initialize;
+Function.prototype.ImplementProperty = function (pname, initialize, pstore, changeCallback, force) {
+	var pstoreprop = (pstore != null) ? pstore : "$" + pname;
+	if (initialize == null) initialize = new Initialize("(no description)", null);
+    this.prototype[pstoreprop] = initialize;
     this.prototype["get_" + pname] = function () { return this[pstoreprop]; };
-	this.prototype["get_" + pname].$Initialize = Initialize;
+	this.prototype["get_" + pname].$Initialize = initialize;
     this.prototype["set_" + pname] = function (v) {
         var oldval = this[pstoreprop];
         this[pstoreprop] = v;
@@ -763,8 +769,8 @@ Function.prototype.ImplementProperty = function (pname, Initialize, pstore, chan
 			}
         }
     };
-	this.prototype["set_" + pname].$Initialize = Initialize;
-    return this;
+	this.prototype["set_" + pname].$Initialize = initialize;
+	return this;
 }.Description("'Implements' pseudo-property on a class or Interface")
  .Param("pname","Property name")
  .Param("Initialize","Property type and documentation, instance of one of the Initialize classes")
@@ -772,8 +778,9 @@ Function.prototype.ImplementProperty = function (pname, Initialize, pstore, chan
  .Param("changeCallback","Optional callback name invoked on change ot the property. The callback must be a method of the class/Interface and has the following prototype function(propertyname,old_Value,new_Value).")
  .Returns("this - can be chained");
 
-Function.prototype.ImplementActiveProperty = function (pname, Initialize, pstore_or_force,force_in,changeCallback) {
+Function.prototype.ImplementActiveProperty = function (pname, initialize, pstore_or_force,force_in,changeCallback) {
 	var pstore = null, force = false, oldval = null;;
+	initialize = initialize || new Initialize("no description", null);
 	if (typeof pstore_or_force == "boolean") {
 		force = pstore_or_force;
 	} else if (typeof pstore_or_force == "string") {
@@ -781,9 +788,9 @@ Function.prototype.ImplementActiveProperty = function (pname, Initialize, pstore
 		force = force_in;
 	}
 	var pstoreprop = (pstore != null) ? pstore : "$" + pname;
-	this.prototype[pstoreprop] = Initialize;
+	this.prototype[pstoreprop] = initialize;
 	this.prototype["get_" + pname] = function () { return this[pstoreprop]; };
-	this.prototype["get_" + pname].$Initialize = Initialize;
+	this.prototype["get_" + pname].$Initialize = initialize;
 	this.prototype["set_" + pname] = function (v) {
 		var b = false;
 		if (BaseObject.is(v, "Array") || BaseObject.is(v, "BaseObject")) {
@@ -803,7 +810,7 @@ Function.prototype.ImplementActiveProperty = function (pname, Initialize, pstore
         }
 		if (b && this[pname + "_changed"] != null) this[pname + "_changed"].invoke(this, v);
 	};
-	this.prototype["set_" + pname].$Initialize = Initialize;
+	this.prototype["set_" + pname].$Initialize = initialize;
 	this.prototype[pname + "_changed"] = new InitializeEvent("Notifies when the property " + pname + " has changed.");
 	this.prototype["set_" + pname].$changeevent = pname + "_changed";
 	return this;
@@ -814,11 +821,12 @@ Function.prototype.ImplementActiveProperty = function (pname, Initialize, pstore
  .Param("force_in","Optional - if true will force the event to be fired on each assignment even if the value has not actually changed.")
  .Returns("this - can be chained");
 
-Function.prototype.ImplementReadProperty = function (pname, Initialize, pstore) {
-    var pstoreprop = (pstore != null) ? pstore : "$" + pname;
-    this.prototype[pstoreprop] = Initialize;
+Function.prototype.ImplementReadProperty = function (pname, initialize, pstore) {
+	var pstoreprop = (pstore != null) ? pstore : "$" + pname;
+	initialize = initialize || new Initialize("no description", null);
+    this.prototype[pstoreprop] = initialize;
     this.prototype["get_" + pname] = function () { return this[pstoreprop]; };
-	this.prototype["get_" + pname].$Initialize = Initialize;
+	this.prototype["get_" + pname].$Initialize = initialize;
     return this;
 }.Description("Implements a read-only pseudo-property on a class or Interface")
  .Param("pname","Property name")
@@ -826,11 +834,12 @@ Function.prototype.ImplementReadProperty = function (pname, Initialize, pstore) 
  .Param("pstore","Optional location of the storage for the property, default is this.$<pname>")
  .Returns("this - can be chained");
 
-Function.prototype.ImplementWriteProperty = function (pname, Initialize, pstore) {
-    var pstoreprop = (pstore != null) ? pstore : "$" + pname;
-    this.prototype[pstoreprop] = Initialize;
+Function.prototype.ImplementWriteProperty = function (pname, initialize, pstore) {
+	var pstoreprop = (pstore != null) ? pstore : "$" + pname;
+	initialize = initialize || new Initialize("no description", null);
+    this.prototype[pstoreprop] = initialize;
     this.prototype["set_" + pname] = function (v) { this[pstoreprop] = v; };
-	this.prototype["set_" + pname].$Initialize = Initialize;
+	this.prototype["set_" + pname].$Initialize = initialize;
     return this;
 }.Description("Implements a write-only pseudo-property on a class or Interface")
  .Param("pname","Property name")

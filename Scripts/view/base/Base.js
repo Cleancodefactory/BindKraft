@@ -26,6 +26,7 @@ Base.getRelatedObjects = function (baseEl, patt, types) {
 //                              1         2          3          4          5          6          7
 Base.$reAsyncInstruction = /^(\d+)?(?:M(\d+))?(?:R(\d+))?(?:B(\d+))?(?:D(\d+))?(?:I(\d+))?(?:C(\d+))?$/i;
 Base.prototype.obliterate = function (bFull) {
+    this.unsubscribeAll();
     this.unBind();
     if (this.root != null && this.root.activeClass != null) {
         try {                               ////// TODO: Workaround for cases when trying to delete objects from another browser window. Needs better solution.
@@ -37,6 +38,20 @@ Base.prototype.obliterate = function (bFull) {
     }
     DataHolder.prototype.obliterate.call(this, bFull);
 };
+// Event handling helper
+Base.prototype.generalDispatcherHandlers = null;
+Base.prototype.subscribeFor = function(evenDisp, handler, priority) {
+    if (handler != null && BaseObject.is(evenDisp, "IEventDispatcher")) {
+        var handlerHelper = EventHandlerHelperRegister.On(this, "$generalDispatcherHandlers").bind(this, handler);
+        handlerHelper.to(evenDisp, priority);
+        return handlerHelper;
+    }
+    return null;
+}
+Base.prototype.unsubscribeAll = function() {
+    EventHandlerHelperRegister.On(this, "$generalDispatcherHandlers").unbind();
+}
+
 // examples 
 // on a Repeater data-async="I10"
 // on whatever data-async="B10D5"

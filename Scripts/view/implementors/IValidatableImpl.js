@@ -26,7 +26,7 @@
 	
 */
 function IValidatableImpl() {}
-IValidatableImpl.InterfaceImpl(IValidatable);
+IValidatableImpl.InterfaceImpl(IValidatable, "IValidatableImpl");
 IValidatableImpl.RequiredTypes("Base");
 IValidatableImpl.prototype.$knownvalidity = ValidationResultEnum.uninitialized;
 IValidatableImpl.prototype.get_knownvalidity = function() { return this.$knownvalidity; }
