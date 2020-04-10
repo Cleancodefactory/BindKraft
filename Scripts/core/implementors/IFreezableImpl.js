@@ -1,5 +1,5 @@
 function IFreezableImpl() {}
-IFreezableImpl.InterfaceImpl(IFreezable);
+IFreezableImpl.InterfaceImpl(IFreezable, "IFreezableImpl");
 IFreezableImpl.prototype.$frozeEvents = false;
 IFreezableImpl.prototype.areEventsFrozen = function () {
     return this.$frozeEvents; 

@@ -3,7 +3,7 @@
 
 /*INTERFACE*/ /*IMPL*/
 function IActionRuleContextConstructorImpl () {}
-IActionRuleContextConstructorImpl.InterfaceImpl(IActionRuleContextConstructor);
+IActionRuleContextConstructorImpl.InterfaceImpl(IActionRuleContextConstructor, "IActionRuleContextConstructorImpl");
 IActionRuleContextConstructorImpl.classInitialize = function(cls, customContextBuilder,finishOperation) {
 	// Common
 	cls.onStructuralQuery("BuildActionRuleContextQuery", function (query, procInst) {

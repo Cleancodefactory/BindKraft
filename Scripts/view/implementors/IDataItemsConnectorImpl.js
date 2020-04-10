@@ -2,7 +2,7 @@
 
 
 function IDataItemsConnectorImpl() {}
-IDataItemsConnectorImpl.InterfaceImpl(IDataItems);
+IDataItemsConnectorImpl.InterfaceImpl(IDataItems, "IDataItemsConnectorImpl");
 IDataItemsConnectorImpl.RequiredTypes("IConnectorToItemsContent,IConnectorToItemsCount,IItemKeyPropertiesDescriptor");
 IDataItemsConnectorImpl.prototype.$filterfields = null;
 IDataItemsConnectorImpl.prototype.$idfields = null;

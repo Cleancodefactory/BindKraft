@@ -3,7 +3,7 @@
 
 /*IMPL HELPER*/
 function IStructuralQueryEmiterImpl() { }
-IStructuralQueryEmiterImpl.InterfaceImpl(IStructuralQueryEmiter);
+IStructuralQueryEmiterImpl.InterfaceImpl(IStructuralQueryEmiter, "IStructuralQueryEmiterImpl");
 // like the query router
 IStructuralQueryEmiterImpl.classInitialize = function(cls, routingTypeName, getParentProc) {
     cls.prototype.throwStructuralQuery = function(query, processInstructions) {

@@ -3,7 +3,7 @@
 
 /*INTERFACE*/ /*IMPL*/
 function IConnectorToItemsContentImpl() {}
-IConnectorToItemsContentImpl.InterfaceImpl(IConnectorToItemsContent);
+IConnectorToItemsContentImpl.InterfaceImpl(IConnectorToItemsContent, "IConnectorToItemsContentImpl");
 IConnectorToItemsContentImpl.RequiredTypes("IConnectorToItemsSupport");
 IConnectorToItemsContentImpl.ImplementProperty("contentflags", new InitializeNumericParameter("Content flags for the content connector (rarely used)",0))
 IConnectorToItemsContentImpl.prototype.$contentconnector = null;

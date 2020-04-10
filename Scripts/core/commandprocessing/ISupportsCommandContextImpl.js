@@ -11,7 +11,7 @@
 								
 */
 function ISupportsCommandContextImpl() {}
-ISupportsCommandContextImpl.InterfaceImpl(ISupportsCommandContext);
+ISupportsCommandContextImpl.InterfaceImpl(ISupportsCommandContext, "ISupportsCommandContextImpl");
 ISupportsCommandContextImpl.classInitialize = function(cls, mode,/*optional*/getter_cmdreg, /*optional*/ getter_env, /*optional*/ getter_app,/*optional*/ getter_custom) {
 	var $cachedcontext = null
 	

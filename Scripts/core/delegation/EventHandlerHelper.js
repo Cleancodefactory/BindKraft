@@ -57,8 +57,21 @@ EventHandlerHelper.prototype.getFunction = function () {
 }
 EventHandlerHelper.prototype.to = function (source, evntName, priority) {
     if (this.bound) return false;
-    if (typeof evntName == "string" && evntName != "") {
-        if (BaseObject.is(source, "BaseObject") && BaseObject.is(source[evntName], "EventDispatcher")) {
+    if (BaseObject.is(source,"IEventDispatcher")) {
+        var _pri = evntName || priority || null;
+        var d = this.getDelegate();
+        if (d != null) {
+            if (_pri != null) {
+                source.add(d, priority);
+            } else {
+                source.add(d);
+            }
+            this.bound = true;
+            this.source = source;
+            this.eventName = null;
+        }
+    } else if (typeof evntName == "string" && evntName != "") {
+        if (BaseObject.is(source, "BaseObject") && BaseObject.is(source[evntName], "IEventDispatcher")) {
             var d = this.getDelegate();
             if (d != null) {
                 if (priority != null) {
@@ -84,11 +97,16 @@ EventHandlerHelper.prototype.to = function (source, evntName, priority) {
 };
 EventHandlerHelper.prototype.unbind = function () {
     if (this.bound) {
-        if (this.source != null && this.eventName != null) {
-            if (BaseObject.is(this.source, "BaseObject") && BaseObject.is(this.source[this.eventName], "EventDispatcher")) {
-                this.source[this.eventName].remove(this.getDelegate());
-            } else if (BaseObject.isDOM(this.source) || BaseObject.isJQuery(this.source)) {
-                $(this.source).unbind(this.eventName, this.getFunction());
+        if (this.source != null) {
+            if (BaseObject.is(this.source, "IEventDispatcher")) {
+                this.source.remove(this.getDelegate());
+            } else if (this.eventName != null) {
+                if (BaseObject.is(this.source, "BaseObject") && BaseObject.is(this.source[this.eventName], "IEventDispatcher")) {
+                    this.source[this.eventName].remove(this.getDelegate());
+                } else if (BaseObject.isDOM(this.source) || BaseObject.isJQuery(this.source)) {
+                    $(this.source).unbind(this.eventName, this.getFunction());
+                }
+                
             }
         }
     }
@@ -98,6 +116,7 @@ EventHandlerHelper.prototype.unbind = function () {
     this.$func = null;
     this.obj_or_callback = null;
     this.func = null;
+    this.source = null;
     return false;
 };
 EventHandlerHelper.bind = function (obj_or_callback, func) {

@@ -22,7 +22,7 @@
 
 /*INTERFACE IMPL (BaseWindow)*/
 function IWindowTemplateSourceImpl() {}
-IWindowTemplateSourceImpl.InterfaceImpl(ITemplateSource);
+IWindowTemplateSourceImpl.InterfaceImpl(ITemplateSource, "IWindowTemplateSourceImpl");
 IWindowTemplateSourceImpl.RequiredTypes("BaseWindow");
 IWindowTemplateSourceImpl.classInitialize = function(cls, defaultTemplateSelectorOrConnector, options) {
 	// For backward compatibility reasons we use this.templateName

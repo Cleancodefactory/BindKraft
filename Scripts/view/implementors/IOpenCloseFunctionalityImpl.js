@@ -1,6 +1,6 @@
 
 function IOpenCloseFunctionalityImpl() {}
-IOpenCloseFunctionalityImpl.InterfaceImpl(IOpenCloseFunctionality);
+IOpenCloseFunctionalityImpl.InterfaceImpl(IOpenCloseFunctionality, "IOpenCloseFunctionalityImpl");
 IOpenCloseFunctionalityImpl.RequiredTypes("Base");
 IOpenCloseFunctionalityImpl.classInitialize = function(cls, _delay, goActive, goInactive) {
 	

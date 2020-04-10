@@ -1,5 +1,5 @@
 function IFormatterRegistrationImpl() {}
-IFormatterRegistrationImpl.InterfaceImpl(IFormatterRegistration);
+IFormatterRegistrationImpl.InterfaceImpl(IFormatterRegistration, "IFormatterRegistrationImpl");
 IFormatterRegistrationImpl.inheritorInitialize = function(cls, parentCls) {
 	if (!cls.DoNotRegister) {
 		var reg = Registers.Default().getRegister("systemformatters");

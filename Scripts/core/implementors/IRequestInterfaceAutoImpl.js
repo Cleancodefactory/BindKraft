@@ -2,7 +2,7 @@
 
 /*INTERFACE*/ /*IMPL*/
 function IRequestInterfaceAutoImpl() { }
-IRequestInterfaceAutoImpl.InterfaceImpl(IRequestInterface);
+IRequestInterfaceAutoImpl.InterfaceImpl(IRequestInterface, "IRequestInterfaceAutoImpl");
 IRequestInterfaceAutoImpl.classInitialize = function(cls) {
 	// var requestable = Class.is(cls,"IRequestInterface"); // We have to implement this
 	// This query below makes it necessary to put this last or re-apply the implementer in derived class again

@@ -324,6 +324,7 @@ ViewBase.prototype.onviewcloseevent = new InitializeEvent("Fired when onClose of
 ViewBase.prototype.onClose = function () {
     this.closeValidators();
     if (this.onviewcloseevent != null) this.onviewcloseevent.invoke(this, null);
+    this.unsubscribeAll();
     for (var k in this) {
         var ed = this[k];
         if (BaseObject.is(ed, "EventDispatcher")) {

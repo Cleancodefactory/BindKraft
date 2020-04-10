@@ -10,7 +10,7 @@ as .Implement("force");
 	
 */
 function IOperationHandlingCallbackImpl() {}
-IOperationHandlingCallbackImpl.InterfaceImpl(IOperationHandling);
+IOperationHandlingCallbackImpl.InterfaceImpl(IOperationHandling, "IOperationHandlingCallbackImpl");
 IOperationHandlingCallbackImpl.classInitialize = function(cls, force) {
 	if (force != "force") {
 		if (Class.is(cls,"IOperation") || Class.is(cls,"IOperationHandling") || Class.is(cls,"IOperationReset")) {

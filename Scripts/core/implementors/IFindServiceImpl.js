@@ -1,5 +1,5 @@
 function IFindServiceImpl() {}
-IFindServiceImpl.InterfaceImpl(IFindService);
+IFindServiceImpl.InterfaceImpl(IFindService,"IFindServiceImpl");
 IFindServiceImpl.RequiredTypes("IStructuralQueryEmiter");
 IFindServiceImpl.prototype.findService = function(_type, reason) {
     var p = new FindServiceQuery(_type, reason);

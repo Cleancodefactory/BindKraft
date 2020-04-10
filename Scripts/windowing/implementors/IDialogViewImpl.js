@@ -2,21 +2,21 @@
 // Different implementers may exist for specific dialogs, but this is very unlikely - the way dialogs report
 // what happens in them whould be the same, what happens as a result is a completely different problem and not a concern for IDialogView
 function IDialogViewImpl() { }
-IDialogView.InterfaceImpl(IDialogView);
-IDialogView.RequiredTypes("Base");
-IDialogView.prototype.hideDialog = function () {
+IDialogViewImpl.InterfaceImpl(IDialogView, "IDialogViewImpl");
+IDialogViewImpl.RequiredTypes("Base");
+IDialogViewImpl.prototype.hideDialog = function () {
     this.throwStructuralQuery(new HostCallQuery(HostCallCommandFlags.hide));
 }
-IDialogView.prototype.showDialog = function () {
+IDialogViewImpl.prototype.showDialog = function () {
     this.throwStructuralQuery(new HostCallQuery(HostCallCommandFlags.show | HostCallCommandFlags.activate));
 }
-IDialogView.prototype.completeDialog = function (success, data) {
+IDialogViewImpl.prototype.completeDialog = function (success, data) {
 	return this.$completeDialog(success,data,true);
 }.Description("Open-close dialog behavior.");
-IDialogView.prototype.applyDialog = function (success, data) {
+IDialogViewImpl.prototype.applyDialog = function (success, data) {
 	return this.$completeDialog(success,data,false);
 }.Description("This is for behavior in which the actions apply some results to the opener, but the dialog remains open for further use by the user.");
-IDialogView.prototype.$completeDialog = function (success, data, doclose) {
+IDialogViewImpl.prototype.$completeDialog = function (success, data, doclose) {
     var container = this.get_hostcontainer();
     if (BaseObject.is(container, "BaseWindow")) {
         WindowingMessage.fireOn(container, WindowEventEnum.ReportResult, {
@@ -52,6 +52,6 @@ IDialogView.prototype.$completeDialog = function (success, data, doclose) {
 }.Description("")
     .Param("success", "Boolean denoting success")
     .Param("data", "The data to include in the close event or/and callback");
-IDialogView.prototype.InitWorkData = function(data) {
+IDialogViewImpl.prototype.InitWorkData = function(data) {
 	alert("You have to implement InitWorkData in your dialog view.");
 }

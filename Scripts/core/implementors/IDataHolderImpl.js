@@ -1,5 +1,5 @@
 function IDataHolderImpl() { }
-IDataHolderImpl.InterfaceImpl(IDataHolder);
+IDataHolderImpl.InterfaceImpl(IDataHolder, "IDataHolderImpl");
 IDataHolderImpl.classInitialize = function (cls, privatePropertyName) {
     var _propname = ((privatePropertyName == null)?"$dataContext":privatePropertyName);
     cls.prototype.get_data = function() { 

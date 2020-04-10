@@ -1,6 +1,6 @@
 function ISupportsCommandRegisterImpl() {
 }
-ISupportsCommandRegisterImpl.InterfaceImpl(ISupportsCommandRegister);
+ISupportsCommandRegisterImpl.InterfaceImpl(ISupportsCommandRegister, "ISupportsCommandRegisterImpl");
 // Static register by default
 ISupportsCommandRegisterImpl.prototype.$commandregister = new CommandReg("CmdsDemoTestApp");
 ISupportsCommandRegisterImpl.prototype.get_commandregister = function() { 

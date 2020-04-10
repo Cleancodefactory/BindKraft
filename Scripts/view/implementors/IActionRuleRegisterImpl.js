@@ -3,7 +3,7 @@
 
 /*INTERFACE*/ /*IMPL*/
 function IActionRuleRegisterImpl() {}
-IActionRuleRegisterImpl.InterfaceImpl(IActionRuleRegister);
+IActionRuleRegisterImpl.InterfaceImpl(IActionRuleRegister, "IActionRuleRegisterImpl");
 IActionRuleRegisterImpl.classInitialize = function (cls) {
 	// example: { rule1: { unspecified: ruleproc1, view: ruleproc2}, rule2: {app: ruleproc3 }}
 	cls.prototype.$actionRuleRegister = new InitializeObject("An object of objects which in turn contain the purpose as name and the actual rule in these properties.");
