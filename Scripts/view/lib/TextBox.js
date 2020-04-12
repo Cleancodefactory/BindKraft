@@ -40,7 +40,7 @@ TextBox.prototype.get_val = function () {
 };
 TextBox.prototype.set_val = function (v) {
 	var oldval = this.root.value;
-    this.root.value = v;
+    this.root.value = (v == null)?null:v;
 	if (oldval != v) this.valchangedevent.invoke(this,{ oldval: oldval, newval: v});
 };
 TextBox.prototype.get_selectionstart = function() {
