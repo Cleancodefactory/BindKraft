@@ -897,13 +897,13 @@ Base.prototype.rebind = function (ignoreTemplateRoot, asyncResult) {
 		if (this.$finalInitPending) {
 			this.$finalInitPending = false;
 			delete this.$finalInitPending;
+			this.finalinit();
 			if (this.$execAfterFinalInit != null) {
 				for (i = 0; i < this.$execAfterFinalInit.length; i++) {
 					this.$execAfterFinalInit[i].invoke();
 				}
 				delete this.$execAfterFinalInit;
 			}
-			this.finalinit();
 		}
         this.OnRebind();
         this.boundevent.invoke(this, this.get_data());
