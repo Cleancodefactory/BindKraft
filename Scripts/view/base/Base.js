@@ -231,8 +231,23 @@ Base.prototype.OnDataContextChanged = function () {
 
 // END Overridables
 // Delayer
-Base.prototype.$execAfterFinalInit = null;
+Base.prototype.$execBeforeFinalInit = null;
 Base.prototype.ExecWhenInitialized = function(args, action) {
+	if (typeof action == "function") {
+		if (this.isFullyInitialized()) {
+			action.apply(this, args);
+		} else {
+			if (this.$execBeforeFinalInit == null) this.$execBeforeFinalInit = [];
+			var d = new Delegate(this, action, args);
+			this.$execBeforeFinalInit.removeElement(d);
+			this.$execBeforeFinalInit.addElement(d);
+		}
+	}	
+}
+Base.prototype.ExecBeforeFinalInit = Base.prototype.ExecWhenInitialized;
+
+Base.prototype.$execAfterFinalInit = null;
+Base.prototype.ExecAfterFinalInit = function(args, action) {
 	if (typeof action == "function") {
 		if (this.isFullyInitialized()) {
 			action.apply(this, args);
@@ -897,6 +912,12 @@ Base.prototype.rebind = function (ignoreTemplateRoot, asyncResult) {
 		if (this.$finalInitPending) {
 			this.$finalInitPending = false;
 			delete this.$finalInitPending;
+			if (this.$execBeforeFinalInit != null) {
+				for (i = 0; i < this.$execBeforeFinalInit.length; i++) {
+					this.$execBeforeFinalInit[i].invoke();
+				}
+				delete this.$execBeforeFinalInit;
+			}
 			this.finalinit();
 			if (this.$execAfterFinalInit != null) {
 				for (i = 0; i < this.$execAfterFinalInit.length; i++) {
