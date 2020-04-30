@@ -44,7 +44,7 @@ Handling DOM and custom events, adding referenced data, bindings and links to pl
 
 Formatting, converting, filtering and otherwise modifying the data while it passes through the binding. Field validation with validators using validation rules. Moving the inline validation configuration outside of the view - into the code.
 
-### [Data binging target operations](Views-Targetops.md)
+### [Data binding target operations](Views-Targetops.md)
 
 A pass through the available `target operations` - what the bindings can do directly to the DOM. Program visibility, styling and other aspects of DOM elements with bindings.
 
@@ -59,3 +59,13 @@ Crossing the boundaries of the view from components safely. Using services to ge
 ### [Binding options and data techniques](Views-BindOptions.md)
 
 A few simple options combined with other features provide easy ways to manage your working data with very little effort. Some communication with the server is introduced to make the material more realistic.
+
+## Working with data the BindKraft way - a short digression
+
+### [CoreKraft NodeSets as an implementation of the principle](Data1-NodeSets.md)
+
+What kind of data services are best for BindKraft and how CoreKraft implements them. Using states to push back changed and new data to the server. Organizing the data manipulation in a view and a little overdoing it just to show that this can go really far.
+
+### [Preserving references](Data1-PreserveReferences.md)
+
+References preservation - the basic principle to which everything in BindKraft adheres. How this saves work and lets you apply any techniques you like, but doesn't require you to follow a specific pattern.

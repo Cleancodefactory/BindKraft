@@ -1,4 +1,21 @@
-
+/**
+ * @param 0 {boolean} Optional, if boolean specifies seal/left unsealed while creating (default seal)
+ * @param # {Operation} Adds operation to the list
+ * @param last {number} Optional, if last param is number this is timeout.
+ * 
+ * Sealed (default usage)
+ * op = new OperationAll(op1,op2,op3)
+ * op.onsuccess(...).onfailure(...)
+ * 
+ * Unsealed usage
+ * op = new OperationAll(false, op1, op2)
+ * op.attach(op3);
+ * op.attach(op4);
+ * // optionally the mode can be changed
+ * op.successAll(); // will succeed if all succeed, otherwise will fail when any operation fails
+ * op.seal();
+ * op.onsuccess().onfailure()
+ */
 
 function OperationAll() {
 	OperationAggregate.apply(this,arguments);
