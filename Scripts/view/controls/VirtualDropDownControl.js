@@ -60,6 +60,7 @@ VirtualDropDownControl.prototype.activatedevent = new InitializeEvent("Fired whe
 VirtualDropDownControl.prototype.openevent = new InitializeEvent("Fired whenever the dropdown opens.");
 VirtualDropDownControl.prototype.closeevent = new InitializeEvent("Fired whenever the dropdown closes.");
 VirtualDropDownControl.prototype.updateuievent = new InitializeEvent("For usage mostly inside the control template. Fires when underlying data changes and full update is not performed. It can be used for readdata directives in certain bindings.");
+VirtualDropDownControl.prototype.itemssuppliedevent = new InitializeEvent("Fired when items are set. Useful when a binding with options=operation is bound to $items the selection has to be (re)applied with another binding.")
 
 VirtualDropDownControl.prototype.OnItemDisableEnable = function(itemInterface, itemData) {
     if (BaseObject.is(itemInterface,"Base")) {
@@ -185,9 +186,13 @@ VirtualDropDownControl.prototype.get_items = function() {
 VirtualDropDownControl.prototype.set_items = function(v) {
 	this.$items = v;
 	this.discardAsync("update_targets");
-	this.asyncUpdateTargets().then(this,function() { this.selchangedevent.invoke(this,
-        (this.get_multiselect()?this.get_selecteditems():this.get_selecteditem())
-    ) });
+	this.asyncUpdateTargets().then(this,function() { 
+		this.itemssuppliedevent.invoke(this,this.$items);
+		// TODO Consider removing this. The above event should be enough.
+		this.selchangedevent.invoke(this,
+        	(this.get_multiselect()?this.get_selecteditems():this.get_selecteditem())
+		);
+	});
 }
 VirtualDropDownControl.prototype.supplyPagedItems = function(start, end, params) {
 	var result = null;
@@ -254,8 +259,8 @@ VirtualDropDownControl.prototype.set_bodyVisible = function (v) {
                 $(this.$el_drop).hide();
             } else {
 				//this.Dimentions();
+				$(this.$el_drop).show();
 				JBUtil.adjustPopupInHost(this, this.get_droppanel(), 0, -30);
-                $(this.$el_drop).show();
 				if (this.$el_scrollable != null && $(this.$el_scrollable).activeclass() != null) {
 					$(this.$el_scrollable).activeclass().onDataAreaChange();
 				}

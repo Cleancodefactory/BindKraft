@@ -1101,7 +1101,7 @@ Base.prototype.asyncUpdateTargets = function (pattIn, bOverridePolicy, asyncResu
     var ar = this.async(this.$asyncUpdateTargets).maxAge(JBCoreConstants.ClientViewTasksMaxAge).key("update_targets")
     if (rootAR == null) {
         // Check if we need to chain this on a running operation
-        ar.chainIf(null); // Chain on any running opration
+        ar.chainIf(null); // Chain on any running operation
     } else {
         ar.chain(rootAR);
     }
