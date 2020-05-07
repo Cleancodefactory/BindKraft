@@ -17,7 +17,11 @@ EventHandlerHelperRegister.prototype.unbind = function () {
     this.handlers.length = 0;
 };
 EventHandlerHelperRegister.On = function (obj, name) {
-    if (obj[name] == null) obj[name] = new EventHandlerHelperRegister();
-    return obj[name];
+    if (obj[JBCoreConstants.EventHelperRegisterProp] == null) {
+        obj[JBCoreConstants.EventHelperRegisterProp] = {};
+    }
+    var _root = obj[JBCoreConstants.EventHelperRegisterProp];
+    if (_root[name] == null) _root[name] = new EventHandlerHelperRegister();
+    return _root[name];
 };
 EventHandlerHelperRegister.For = EventHandlerHelperRegister.On;

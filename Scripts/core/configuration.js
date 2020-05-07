@@ -9,7 +9,7 @@
 */
 
 var JBFrameworkVersion = { 
-	core: { major: 2, minor: 21, revision: 0 }
+	core: { major: 2, minor: 21, revision: 1 }
 };
 // Apply default settings, can be overriten (see in the header of the file how)
 (function() {
@@ -43,7 +43,8 @@ var JBFrameworkVersion = {
 		DontSetPageBase: false,	  // Do not create/replace the base element of the workspoace page and its href.
 		StrictLocalProxies: true,
 		JQFallBack: false, // OBSOLETE, will be removed soon. Where available use the JQuery fallbacks. This will be removed when all dependencies on jquery are removed.
-		DontCatchTickerExceptions: false // v:2.21.0
+		DontCatchTickerExceptions: false, // v:2.21.0
+		EventHelperRegisterProp: "$__eventHelperRegister" // Root object on which helper registers attach (this enables us to reserve only a single name on the main this)
 	};
 	
 	for (var k in defaults) {

@@ -39,7 +39,7 @@ Base.prototype.obliterate = function (bFull) {
     DataHolder.prototype.obliterate.call(this, bFull);
 };
 // Event handling helper
-Base.prototype.generalDispatcherHandlers = null;
+Base.prototype.$generalDispatcherHandlers = null;
 Base.prototype.subscribeFor = function(evenDisp, handler, priority) {
     if (handler != null && BaseObject.is(evenDisp, "IEventDispatcher")) {
         var handlerHelper = EventHandlerHelperRegister.On(this, "$generalDispatcherHandlers").bind(this, handler);

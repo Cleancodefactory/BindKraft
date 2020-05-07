@@ -155,6 +155,14 @@ BaseObject.LASTERROR = function(code, text, method) {
 	}
 };
 
+
+BaseObject.prototype.releaseAllEventSubscribers = function() {
+    for (var i in this) {
+        if (BaseObject.is(this[i], "IEventDispatcher")) {
+            this[i].removeAll();
+        }
+    }
+}
 // HINT: When implementing your own Obliterator call the parent after your specific code, this way problems are much less likely to occur
 BaseObject.prototype.obliterate = function (bFull) { // Destructor
     if ( typeof DIAGNOSTICS != "undefined" && !this.__obliterated )	{
