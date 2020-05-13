@@ -713,7 +713,11 @@ Binding.prototype.$parseExpression = function (expr) {
 					if (this.$targetAction == "pluginto") {
 						this.$path = arr[2].trim();
 						this.$literalValue = null;
-						this.$plug = true;
+                        this.$plug = true;
+                    } else if (this.$targetAction == "plugelement") {
+                        this.$path = arr[2].trim();
+						this.$literalValue = null;
+                        this.$plugdom = true;
 					} else {
 						this.$path = arr[2].trim();
 					}

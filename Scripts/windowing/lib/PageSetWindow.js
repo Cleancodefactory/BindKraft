@@ -47,6 +47,7 @@ PageSetWindow.prototype.on_EnableWindow = function (msg) {
     if (msg.data != null && msg.data.enable != null) {
         var enabledPage = msg.target;
         if (!msg.data.enable) {
+            if (this.$cachedChildren != null) this.$cachedChildren.clear();
             var currentIndex = this.get_currentindex();
             var currentPage = this.get_childwindow(currentIndex);
             if (currentPage == msg.target) {
@@ -96,6 +97,7 @@ PageSetWindow.prototype.on_ChildRemoved = function (msg) {
 	this.notifyParent(PageSetEventEnum.notifyPageRemoved, { page: msg.data.child });
 	this.callAsync(this.updateTabs);
 }
+
 /*
     @param {object|boolean} - null - nothing, true - activate, false noactive
 */
