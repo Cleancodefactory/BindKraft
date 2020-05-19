@@ -8,9 +8,11 @@ RegularExpressionValidatorRule.prototype.$expresion = null;
 RegularExpressionValidatorRule.prototype.set_expresion = function (v) {
 	return this.$expresion = v;
 };
+RegularExpressionValidatorRule.prototype.set_expression = RegularExpressionValidatorRule.prototype.set_expresion;
 RegularExpressionValidatorRule.prototype.get_expresion = function () {
 	return this.$expresion;
 };
+RegularExpressionValidatorRule.prototype.get_expression = RegularExpressionValidatorRule.prototype.get_expresion;
 
 //Regex Flags
 RegularExpressionValidatorRule.prototype.$global = 0;
