@@ -9,6 +9,7 @@
 //#using "../enumerations/enumerations-full.dep"
 //#using "../historyapi/historyapi-full.dep"
 //#using "../urlactions/urlactions-full.dep"
+//#using "../tokenstorage/tokenstorage-full.dep"
 
 //#using "../AppBase.js"
 //#using "../AppBaseEx.js"
