@@ -39,7 +39,7 @@ Base.prototype.obliterate = function (bFull) {
     DataHolder.prototype.obliterate.call(this, bFull);
 };
 // Event handling helper
-Base.prototype.generalDispatcherHandlers = null;
+Base.prototype.$generalDispatcherHandlers = null;
 Base.prototype.subscribeFor = function(evenDisp, handler, priority) {
     if (handler != null && BaseObject.is(evenDisp, "IEventDispatcher")) {
         var handlerHelper = EventHandlerHelperRegister.On(this, "$generalDispatcherHandlers").bind(this, handler);
@@ -231,8 +231,23 @@ Base.prototype.OnDataContextChanged = function () {
 
 // END Overridables
 // Delayer
-Base.prototype.$execAfterFinalInit = null;
+Base.prototype.$execBeforeFinalInit = null;
 Base.prototype.ExecWhenInitialized = function(args, action) {
+	if (typeof action == "function") {
+		if (this.isFullyInitialized()) {
+			action.apply(this, args);
+		} else {
+			if (this.$execBeforeFinalInit == null) this.$execBeforeFinalInit = [];
+			var d = new Delegate(this, action, args);
+			this.$execBeforeFinalInit.removeElement(d);
+			this.$execBeforeFinalInit.addElement(d);
+		}
+	}	
+}
+Base.prototype.ExecBeforeFinalInit = Base.prototype.ExecWhenInitialized;
+
+Base.prototype.$execAfterFinalInit = null;
+Base.prototype.ExecAfterFinalInit = function(args, action) {
 	if (typeof action == "function") {
 		if (this.isFullyInitialized()) {
 			action.apply(this, args);
@@ -897,13 +912,19 @@ Base.prototype.rebind = function (ignoreTemplateRoot, asyncResult) {
 		if (this.$finalInitPending) {
 			this.$finalInitPending = false;
 			delete this.$finalInitPending;
+			if (this.$execBeforeFinalInit != null) {
+				for (i = 0; i < this.$execBeforeFinalInit.length; i++) {
+					this.$execBeforeFinalInit[i].invoke();
+				}
+				delete this.$execBeforeFinalInit;
+			}
+			this.finalinit();
 			if (this.$execAfterFinalInit != null) {
 				for (i = 0; i < this.$execAfterFinalInit.length; i++) {
 					this.$execAfterFinalInit[i].invoke();
 				}
 				delete this.$execAfterFinalInit;
 			}
-			this.finalinit();
 		}
         this.OnRebind();
         this.boundevent.invoke(this, this.get_data());
@@ -1080,7 +1101,7 @@ Base.prototype.asyncUpdateTargets = function (pattIn, bOverridePolicy, asyncResu
     var ar = this.async(this.$asyncUpdateTargets).maxAge(JBCoreConstants.ClientViewTasksMaxAge).key("update_targets")
     if (rootAR == null) {
         // Check if we need to chain this on a running operation
-        ar.chainIf(null); // Chain on any running opration
+        ar.chainIf(null); // Chain on any running operation
     } else {
         ar.chain(rootAR);
     }

@@ -38,7 +38,14 @@ Ticker.prototype.get_totalticks = function () {
     return this.$totalticks;
 };
 Ticker.prototype.tickWrapper = null;
-Ticker.prototype.tick = function () {
+Ticker.prototype.tick = function() {
+    if (window.JBCoreConstants.DontCatchTickerExceptions) {
+        this.tickN();
+    } else {
+        this.tickC();
+    }
+}
+Ticker.prototype.tickC = function () {
     this.$totalticks++;
     if (this.clients.length > 0) {
         CallContext.resetContext(); // Reset all contexts
@@ -73,6 +80,33 @@ Ticker.prototype.tick = function () {
 				
 			}
 		}
+        CallContext.endContext(this);
+        window.setTimeout(this.tickWrapper, this.timeout);
+		// window.setTimeout("Ticker.Default.tick()",this.timeout)
+        this.ticking = true;
+    } else {
+        this.ticking = false;
+    }
+};
+Ticker.prototype.tickN = function () {
+    this.$totalticks++;
+    if (this.clients.length > 0) {
+        CallContext.resetContext(); // Reset all contexts
+        CallContext.rootContext(this).description = "Ticker induced (can be destroyed by schedulers)";
+		
+			for (var i = 0; i < this.clients.length; i++) {
+				var clnt = this.clients[i];
+				if (BaseObject.is(clnt, "Delegate")) {
+					clnt.invoke();
+				} else if (BaseObject.is(clnt, "ITickable")) {
+					clnt.tick(this);
+				} else if (BaseObject.is(clnt, "BaseObject")) {
+					clnt.tick(); // WARNING! This will be removed at some point - Implement ITickable!
+				} else if (BaseObject.is(clnt, "function")) {
+					clnt();
+				}
+			}
+		
         CallContext.endContext(this);
         window.setTimeout(this.tickWrapper, this.timeout);
 		// window.setTimeout("Ticker.Default.tick()",this.timeout)

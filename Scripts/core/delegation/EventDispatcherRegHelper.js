@@ -12,6 +12,12 @@ function EventDispatherRegHelper(func, priority, translator) {
 	this.translator = translator;
 }
 EventDispatherRegHelper.Inherit(BaseObject, "EventDispatherRegHelper");
+EventDispatherRegHelper.prototype.obliterate = function() {
+    delete this.handler;
+    delete this.priority;
+    delete this.translator;
+    BaseObject.prototype.obliterate.call(this);
+}
 EventDispatherRegHelper.prototype.equals = function(obj) {
     if (obj == this) return true;
     if (BaseObject.is(obj,"EventDispatherRegHelper")) {

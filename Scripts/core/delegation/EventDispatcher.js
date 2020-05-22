@@ -53,7 +53,8 @@ EventDispatcher.prototype.add = function (func, bPriority) {
 };
 EventDispatcher.prototype.remove = function (func) {
     if (this.handlers == null) return this;
-    this.handlers.removeElement(func);
+    var h = this.handlers.removeElement(func);
+    if (h != null) h.obliterate();
     return this;
 };
 EventDispatcher.prototype.removeByTarget = function (target) {
@@ -67,8 +68,12 @@ EventDispatcher.prototype.removeByTarget = function (target) {
     return this;
 };
 EventDispatcher.prototype.removeAll = function () {
+    if (this.__obliterated) return;
     for (var i = 0; this.handlers != null && i < this.handlers.length; i++) {
         // TODO: Should we oliterate them?
+        if (this.handlers[i] != null) {
+            this.handlers[i].obliterate();
+        }
         delete this.handlers[i];
     }
     this.handlers = [];

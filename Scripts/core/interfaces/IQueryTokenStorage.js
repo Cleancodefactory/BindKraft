@@ -1,3 +1,3 @@
 function IQueryTokenStorage() {}
-IQueryTokenStorage.Inteface("IQueryTokenStorage",  "IManagedInterface");
+IQueryTokenStorage.Interface("IQueryTokenStorage",  "IManagedInterface");
 

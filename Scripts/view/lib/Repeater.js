@@ -124,8 +124,8 @@ Repeater.prototype.set_items = function (newData) {
     if (this.getAsyncInstruction("items") > 0 && BaseObject.is(this.$items, "Array")) {
         this.discardAsync("set_items");
         this.discardAsync("update_descendants");
-        var async = this.async(this.$asyncSetItems).key("set_items").maxAge(120000);
-        async.execute(async); // passing itself
+        var asyncOp = this.async(this.$asyncSetItems).key("set_items").maxAge(120000);
+        asyncOp.execute(asyncOp); // passing itself
     } else {
         //if (!BaseObject.equals(newData,this.$items)) {
         // Recreate, rebind and update
@@ -142,22 +142,22 @@ Repeater.prototype.set_items = function (newData) {
 }.Description("Sets the items to be repeated")
  .Param("newData","Array with the new items");
 
-Repeater.prototype.$asyncSetItems = function (async) {
+Repeater.prototype.$asyncSetItems = function (asyncOp) {
 	this.$templatenotapplied = false;
     var el = $(this.root);
     if (this.get_itemTemplate() == null) return;
     el.Empty();
 	if (this.reverseMode) {
 		for (var i = this.$offset; i >= 0 && i < this.$items.length && (this.$limit < 0 || this.$offset - i < this.$limit); i -= this.getAsyncInstruction("items")) {
-			this.async(this.$asyncSetSomeItems).maxAge(120000).chain(async).execute(i, el);
+			this.asyncOp(this.$asyncSetSomeItems).maxAge(120000).chain(asyncOp).execute(i, el);
 		}
 	} else {
 		for (var i = this.$offset; i < this.$items.length && (this.$limit < 0 || i - this.$offset < this.$limit); i += this.getAsyncInstruction("items")) {
-			this.async(this.$asyncSetSomeItems).maxAge(120000).chain(async).execute(i, el);
+			this.asyncOp(this.$asyncSetSomeItems).maxAge(120000).chain(asyncOp).execute(i, el);
 		};
 	}
-    this.asyncUpdateTargets(null, false, async);
-    async.then(this, function () {
+    this.asyncUpdateTargets(null, false, asyncOp);
+    asyncOp.then(this, function () {
         this.itemschangedevent.invoke(this, this.$items);
     });
 }.Description("Sets items asynchronously")
