@@ -3,4 +3,6 @@
 //#using "./PatternChecker.js"
 //#using "./DictoList.js"
 //#using "./IconSpec.js"
+//#using "./KeyedTokenItem.js"
+//#using "./KeyedTokenStorage.js"
 

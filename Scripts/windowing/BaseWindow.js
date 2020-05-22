@@ -186,7 +186,7 @@ BaseWindow.prototype.get_enabledwindow = function () {
 };
 BaseWindow.prototype.set_enabledwindow = function (v) {
     this.$enabledwindow = v;
-    this.notifyParent(WindowEventEnum.EnableWindow, { enable: this.$enabledwindow });
+    this.notifyParent(WindowEventEnum.EnableWindow, { enable: (v?true:false) });
     if (!v) {
 
     }

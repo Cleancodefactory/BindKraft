@@ -49,6 +49,53 @@ LightFetchHttp.ImplementProperty("queryBoolAsNumber", new InitializeBooleanParam
 LightFetchHttp.ImplementProperty("queryMaxDepth", new InitializeNumericParameter("When encoding data in query string, sets the max depth for object traversal, 0 is default", 0));
 LightFetchHttp.ImplementProperty("postDataEncode", new InitializeStringParameter("Specifies how to encode the data for POST, PUT", "json"));
 
+// + Plugins
+/*
+	Dynamic data consists of properties providing the fetcher with access to sources of tokens, parameters and alike. When a request is sent the fetcher will inspect them and 
+	inject additional settings to the request (like headers).
+*/
+LightFetchHttp.prototype.$plugins = null;
+LightFetchHttp.prototype.addPlugin = function(plugin) {
+	if (!BaseObject.is(plugin, "LightFetchHttpPluginBase")) return false;
+	if (this.$plugins == null) this.$plugins = [];
+	var existing = this.$plugins.FirstOrDefault(function(idx, p) {
+		if (p.classDefinition() == plugin.classDefinition()) return p;
+	})
+	if (existing != null) return false;
+	this.$plugins.push(plugin);
+	return true;
+}
+LightFetchHttp.prototype.removePlugin = function(plugin_ot_type) {
+	if (this.$plugins == null) return false;
+	var cls = Class.getClassDef(plugin_ot_type);
+	for (var i = 0; i < this.$plugins.length; i++) {
+		if (cls == this.$plugins[i].classDefinition()) {
+			this.$plugins.splice(i,1);
+			return true;
+		}
+	}
+	return false;
+}
+LightFetchHttp.prototype.removeAllPlugins = function() {
+	this.$plugins = null;
+}
+
+// Frequently used plugins have helper properties:
+LightFetchHttp.prototype.set_bearerTokens = function(storage) {
+	if (storage != null) {
+		if (!BaseObject.is(storage, "IQueryTokenStorage")) throw "set_bearerToken accepts only IQueryTokenStorage as parameter.";
+		var bp = new LightFetchHttpBearerPlugin(storage);
+		return this.addPlugin(bp);
+	} else {
+		this.removePlugin(LightFetchHttpBearerPlugin);
+	}
+}
+
+
+// - Plugins
+
+
+
 LightFetchHttp.prototype.$url = null;
 LightFetchHttp.prototype.get_url = function() {
 	return this.$url;
@@ -298,6 +345,7 @@ LightFetchHttp.prototype.$requestReset = function() {
 */
 LightFetchHttp.prototype.$fetch = function(url, /*encoded*/ reqdata, bodydata) {
 	if (this.$xhr != null) {
+		var i;
 		if (this.isOpened()) return Operation.Failed("busy - reset needed");
 		
 		this.discardAsync("cancellrequest");
@@ -323,6 +371,11 @@ LightFetchHttp.prototype.$fetch = function(url, /*encoded*/ reqdata, bodydata) {
 			for (var h in this.$headers) {
 				if (this.$headers.hasOwnProperty(h)) {
 					xhr.setRequestHeader(h, this.$headers[h]);
+				}
+			}
+			if (this.$plugins != null) {
+				for (i = 0; i < this.$plugins.length; i++) {
+					this.$plugins[i].manipulateRequest(this, xhr);
 				}
 			}
 			// Set timeout (allowed between open and send)

@@ -135,6 +135,8 @@ Handler.prototype.OmniPlugDisp = function(target1, target2) {
 	});
 }
 
+
+
 Handler.prototype.OmniTriggerDom = function (ev) {
 	if (this.__obliterated) { return; }
     this.callAsyncIf(this.options.async, function () {
@@ -288,6 +290,8 @@ Handler.prototype.$set_targetValue = function (v) {
                 dlg = new Delegate(this, this.OmniTriggerDisp);
 			} else if (this.$plug === true) {
                 // dlg = new Delegate(this, this.OmniPlugDisp);
+				this.OmniPlugDisp(this.$actualTarget,this.$target.activeClass);
+			} else if (this.$plugdom === true) {
 				this.OmniPlugDisp(this.$actualTarget,this.$target);
 			} else if (this.$sourceType == "shellcommand") {
 				dlg = new Delegate(this, this.CommandExecutorDisp);
@@ -312,6 +316,8 @@ Handler.prototype.$set_targetValue = function (v) {
                     dlg = new Delegate(this, this.OmniTriggerDisp);
 				} else if (this.$plug === true) {
 					this.OmniPlugDisp(this.$target.activeClass,this.$target);
+				} else if (this.$plugdom === true) {
+					this.OmniPlugDisp(this.$target);
 				} else if (this.$sourceType == "shellcommand") {
 					dlg = new Delegate(this, this.CommandExecutorDisp);
                 } else {
@@ -339,7 +345,9 @@ Handler.prototype.$set_targetValue = function (v) {
                     this.$currentHandler = Delegate.createWrapper(this, this.OmniTriggerDom);
 				} else if (this.$plug === true) {
 					this.OmniPlugDisp(this.$target.activeClass,this.$target);
-                    // this.$currentHandler = Delegate.createWrapper(this, this.OmniPlugDom);
+					// this.$currentHandler = Delegate.createWrapper(this, this.OmniPlugDom);
+				} else if (this.$plugdom === true) {
+					this.OmniPlugDisp(this.$target);
 				} else if (this.$sourceType == "shellcommand") {
 					this.$currentHandler = Delegate.createWrapper(this, this.CommandExecutorDom);
                 } else {
