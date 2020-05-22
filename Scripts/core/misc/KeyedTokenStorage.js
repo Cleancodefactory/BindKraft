@@ -6,10 +6,13 @@ KeyedTokenStorage.Inherit(BaseObject, "KeyedTokenStorage")
 
 
 KeyedTokenStorage.prototype.$storage = new InitializeArray("The storage itself");
+KeyedTokenStorage.ImplementProperty("parentStorage");
 
-KeyedTokenStorage.prototype.registerToken = function( /*KeyedTokenItem|string*/ key_item, /*optional, string*/ token) {
+
+
+KeyedTokenStorage.prototype.registerToken = function( /*KeyedTokenItem|string|RegeExp*/ key_item, /*optional, string*/ token) {
     if (!BaseObject.is(key_item, "KeyedTokenItem")) {
-        if (typeof key_item == "string") {
+        if (typeof key_item == "string" || key_item instanceof RegExp) {
             if (typeof token != "string" || token == null) {
                 return false;
             }
@@ -18,6 +21,8 @@ KeyedTokenStorage.prototype.registerToken = function( /*KeyedTokenItem|string*/ 
         } else {
             throw "key_item parameter is not of an expected type (KeyedTokenItem|string)";
         }
+    } else {
+        return this.$storage.addElement(key_item);
     }
 }
 KeyedTokenStorage.prototype.unregisterToken = function(key_item) {
@@ -44,5 +49,6 @@ KeyedTokenStorage.prototype.getItem = function(key) { //: KeyewdTokenItem
 KeyedTokenStorage.prototype.getToken = function(key) { //: KeyewdTokenItem
     var kti = this.getItem(key);
     if (kti != null) return kti.get_token();
+    if (this.get_parentStorage() != null) return this.get_parentStorage().get_token();
     return null;
 }

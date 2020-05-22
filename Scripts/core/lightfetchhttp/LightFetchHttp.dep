@@ -1,3 +1,4 @@
-
+//#using "LightFetchHttpPluginBase.js"
+//#using "LightFetchHttpBearerPlugin.js"
 //#using "LightFetchHttp.js"
 //#using "LightFetchHttpActiveResult.js"
