@@ -41,7 +41,7 @@ LightFetchHttp.$ultimateTimeLimit = 600;
 LightFetchHttp.ImplementProperty("httpuser", new InitializeStringParameter("The user name for http std header", null));
 LightFetchHttp.ImplementProperty("httppass", new InitializeStringParameter("The password for http std header", null));
 
-LightFetchHttp.ImplementProperty("timelimit", new InitializeNumericParameter("The maximum time permitted for the request to complete in seconds, default is 60 seconds", 60));
+LightFetchHttp.ImplementProperty("timelimit", new InitializeNumericParameter("The maximum time permitted for the request to complete in seconds, default is 60 seconds", null));
 LightFetchHttp.ImplementProperty("fillResponseHeaders", new InitializeNumericParameter("Include the response headers in the result", false));
 LightFetchHttp.ImplementProperty("expectedContent", new InitializeStringParameter("How to process/check the response", ""));
 LightFetchHttp.ImplementProperty("withCredentials", new InitializeStringParameter("Send cookies for cors", false));
@@ -244,6 +244,7 @@ LightFetchHttp.prototype.isComplete = function() {
 // +Response reading
 LightFetchHttp.prototype.getResponse = function() {
 	if (this.isComplete()) {
+		this.discardAsync("cancellrequest");
 		var res = {
 			status: {
 				issuccessful: this.$xhr.status == 200, // for compatibility reasons in this case both are the same
@@ -346,7 +347,10 @@ LightFetchHttp.prototype.$requestReset = function() {
 LightFetchHttp.prototype.$fetch = function(url, /*encoded*/ reqdata, bodydata) {
 	if (this.$xhr != null) {
 		var i;
-		if (this.isOpened()) return Operation.Failed("busy - reset needed");
+		if (this.isOpened()) {
+			this.$requestReset();
+			//return Operation.Failed("busy - reset needed");
+		}
 		
 		this.discardAsync("cancellrequest");
 		this.$op = new Operation();
@@ -381,7 +385,7 @@ LightFetchHttp.prototype.$fetch = function(url, /*encoded*/ reqdata, bodydata) {
 			// Set timeout (allowed between open and send)
 			var tl = this.get_timelimit();
 			if (typeof tl == "number" && tl > 0) {
-				xhr.timeout = tl;
+				xhr.timeout = tl * 1000;
 			}
 			var body = null;
 			if (bodydata != null) {
