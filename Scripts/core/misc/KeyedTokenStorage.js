@@ -10,13 +10,19 @@ KeyedTokenStorage.ImplementProperty("parentStorage");
 
 
 
-KeyedTokenStorage.prototype.registerToken = function( /*KeyedTokenItem|string|RegeExp*/ key_item, /*optional, string*/ token) {
+KeyedTokenStorage.prototype.registerToken = function( /*KeyedTokenItem|string|RegeExp*/ key_item, /*optional, string*/ token, /*optional,string*/ service_name) {
     if (!BaseObject.is(key_item, "KeyedTokenItem")) {
         if (typeof key_item == "string" || key_item instanceof RegExp) {
             if (typeof token != "string" || token == null) {
                 return false;
             }
-            key_item = new KeyedTokenItem(key_item, token);
+            key_item = new KeyedTokenItem(key_item, token, service_name);
+            if (typeof service_name == "string") {
+                if (key_item.isKeyRegExp()) throw "Service name cannot be specified if the key for the token is a regular expression.";
+                if (this.queryServiceUrl(service_name) != null) {
+                    throw "A service with the name " + service_name + " is already registered in this KeyedTokenStorage."
+                }
+            }
             return this.$storage.addElement(key_item);
         } else {
             throw "key_item parameter is not of an expected type (KeyedTokenItem|string)";
@@ -51,4 +57,12 @@ KeyedTokenStorage.prototype.getToken = function(key) { //: KeyewdTokenItem
     if (kti != null) return kti.get_token();
     if (this.get_parentStorage() != null) return this.get_parentStorage().get_token();
     return null;
+}
+KeyedTokenStorage.prototype.queryServiceUrl = function(service_name) {
+    var kti = this.$storage.FirstOrDefault(function(index, item) {
+        if (item.checkServiceName(service_name)) {
+            return item.get_key();
+        }
+        return null;
+    });
 }

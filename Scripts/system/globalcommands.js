@@ -182,6 +182,36 @@ System.DefaultCommands = {
 			}
 		}
 		
+	},
+	"loadbearertoken": function(context, api) {
+		var op = new Operation(null, 20000);
+		var module = api.pullNextToken();
+		var lurl = api.pullNextToken();
+		var bo = new BaseObject();
+		var actualurl = IPlatformUrlMapper.mapModuleUrl(lurl,module);
+		bo.ajaxGetXml(actualurl,null, function(result) {
+			if (result.status.issuccessful) {
+				if (typeof result.data.key == "string" && typeof result.data.token == "string") {
+					var k = result.data.key;
+					var t = result.data.token;
+					var sn = result.data.servicename;
+					if (k.length > 0 && t.length > 0) {
+						if (SystemTokenStorage.Default().storage.registerToken(k,t, (sn?sn:null))) {
+							op.CompleteOperation(true, null);
+						} else {
+							op.CompleteOperation(false, "Failed to register token");
+						}
+					} else {
+						op.CompleteOperation(false, "The token or the key received (or both) is empty.");
+					}
+				} else {
+					op.CompleteOperation(false, "One or both of the required keys 'key' and 'token' is missing in the result.");
+				}
+			} else {
+				op.CompleteOperation(false, "Request for the auth token failed.");
+			}
+		});			
+		return op;
 	}
 };
 
@@ -235,5 +265,6 @@ System.DefaultCommands = {
 	// +V 2.17.6
 	gc.register("set", null, null, defs["set"], "Sets a variable in the current environment context: set varname varvalue");
 	gc.register("unset", null, null, defs["set"], "Unsets a variable in the current environment context: unset varname");
+	gc.register("loadbearertoken", null, null, defs["loadbearertoken"],"Registers a bearer token into the system token register for the specified URL. The command has to be on top of the result stack. ex: registertoken '<modulename>' '<nodeset>/<node>'. Expects key (the url for the token), token (the token) ");
 	// -V 2.17.6
 })();
