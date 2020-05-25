@@ -65,4 +65,5 @@ KeyedTokenStorage.prototype.queryServiceUrl = function(service_name) {
         }
         return null;
     });
+    return kti;
 }

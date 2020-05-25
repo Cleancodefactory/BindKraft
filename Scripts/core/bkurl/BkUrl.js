@@ -523,7 +523,7 @@ BKUrl.dataToURL = function(_url, data, useFragment, _depth, booleanAsNumbers) {
 			}
 		}
 	}
-	if (BaseObject.is(url, "BKUrl")) {
+	if (BaseObject.is(_url, "BKUrl")) {
 		url = _url;
 		rmode = "BKUrl";
 	} else if (typeof _url == "string") {

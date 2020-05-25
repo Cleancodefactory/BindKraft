@@ -130,7 +130,7 @@ LightFetchHttp.prototype.url = function(v) {
 // Encodings
 // Into query string (only this is supported)
 LightFetchHttp.prototype.dataToUrl = function(url, data) {
-	return BKUrl.dataToUrl(url, data, false, this.get_queryMaxDepth(), this.get_queryBoolAsNumber());
+	return BKUrl.dataToURL(url, data, false, this.get_queryMaxDepth(), this.get_queryBoolAsNumber());
 }
 // Into body
 LightFetchHttp.prototype.bodyEncoders = {
