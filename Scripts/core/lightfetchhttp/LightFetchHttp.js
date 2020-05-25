@@ -356,9 +356,13 @@ LightFetchHttp.prototype.$fetch = function(url, /*encoded*/ reqdata, bodydata) {
 			var urlString = null;
 			// TODO: Analysis of the URL requires some url comparison features in BkUrl
 			//			The analysis should be based on needs not completely defined yet.
-			
 			if (BaseObject.is(url,"BKUrl")) {
 				// Encode any query string data
+				if (this.$plugins != null) {
+					for (i = 0; i < this.$plugins.length; i++) {
+						this.$plugins[i].manipulateRequest(this, xhr);
+					}
+				}
 				if (reqdata != null) {
 					this.dataToUrl(url, reqdata);
 				}
@@ -372,11 +376,6 @@ LightFetchHttp.prototype.$fetch = function(url, /*encoded*/ reqdata, bodydata) {
 			for (var h in this.$headers) {
 				if (this.$headers.hasOwnProperty(h)) {
 					xhr.setRequestHeader(h, this.$headers[h]);
-				}
-			}
-			if (this.$plugins != null) {
-				for (i = 0; i < this.$plugins.length; i++) {
-					this.$plugins[i].manipulateRequest(this, xhr);
 				}
 			}
 			// Set timeout (allowed between open and send)
