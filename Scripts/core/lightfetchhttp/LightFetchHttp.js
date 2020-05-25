@@ -257,27 +257,23 @@ LightFetchHttp.prototype.getResponse = function() {
 		if (res.status.issuccessful) {
 			switch (this.get_expectedContent()) {
 				case "string":
+				case "text":
 				case "":
 					res.data = this.$xhr.responseText;
-				break;
-				case "view":
-					res.views = {
-						normal: this.$xhr.responseText
-					};
-				break;
+					break;
 				case "data":
 				case "json":
 					res.data = JSON.parse(this.$xhr.responseText);
 					res.datas = { "default": res.data }; // Link it here also for compatibility with both 0.9 and 1.0
-				break;
-				case "raw":
-					res = this.$xhr.responseText;
-				break;
+					break;
+				case "blob":
+					res = this.$xhr.response;
+					break;
 				case "active":
 					res = new LightFetchHttpActiveResult(this);
 					this.$activeresult = res;
 					return res;
-				break;
+					break;
 				default:
 					res.status.issuccessful = false;
 					res.status.message = "Unknown request type";
@@ -324,6 +320,7 @@ LightFetchHttp.prototype.$settimelimit = function() {
 LightFetchHttp.prototype.$requestReset = function() {
 	if (this.$xhr != null) {
 		this.$xhr.abort();
+		this.$xhr.responseType = "";
 		this.releaseActiveResult();
 		if (this.$op != null) {
 			var op = this.$op;
@@ -401,6 +398,14 @@ LightFetchHttp.prototype.$fetch = function(url, /*encoded*/ reqdata, bodydata) {
 				} else {
 					throw "Unknown value time in postDataEncode. Specify either predefined string encoding name or a callback";
 				}
+			}
+			switch (this.get_expectedContent()) {
+				case "blob":
+					xhr.responseType = "blob";
+				case "text":
+				case "string":
+					xhr.responseType = "text";
+
 			}
 			xhr.send(body);
 			// Add time limit callback (if needed)
