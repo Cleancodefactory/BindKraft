@@ -402,9 +402,11 @@ LightFetchHttp.prototype.$fetch = function(url, /*encoded*/ reqdata, bodydata) {
 			switch (this.get_expectedContent()) {
 				case "blob":
 					xhr.responseType = "blob";
+					break;
 				case "text":
 				case "string":
 					xhr.responseType = "text";
+					break;
 
 			}
 			xhr.send(body);
