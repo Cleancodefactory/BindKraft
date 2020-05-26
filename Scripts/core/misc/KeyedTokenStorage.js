@@ -61,7 +61,7 @@ KeyedTokenStorage.prototype.getToken = function(key) { //: KeyewdTokenItem
 KeyedTokenStorage.prototype.queryServiceUrl = function(service_name) {
     var kti = this.$storage.FirstOrDefault(function(index, item) {
         if (item.checkServiceName(service_name)) {
-            return item.get_key();
+            return item.get_keystring();
         }
         return null;
     });
