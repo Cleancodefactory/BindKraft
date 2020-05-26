@@ -11,7 +11,7 @@ LightFetchHttpBearerPlugin.prototype.manipulateRequest = function(fetcher, xhr) 
         var bkurl = fetcher.get_url();
         //How to compare urls?
         //TODO For now we compare without query strings and fragments
-        var token = this.$storage.getToken(bkurl.composeAsString(true));
+        var token = this.$storage.getToken(bkurl.toString());
         if (token != null) {
             xhr.setRequestHeader("Authorization", "Bearer " + token);
         }

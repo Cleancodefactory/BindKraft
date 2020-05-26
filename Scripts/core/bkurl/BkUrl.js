@@ -317,7 +317,7 @@ BKUrl.prototype.set_decode = function(v) {
 	}));
 }
 
-BKUrl.prototype.composeAsString = function(withoutQuery /* return the string representation without query strings and fragments */) {
+BKUrl.prototype.composeAsString = function() {
 	var r = "";
 	var part,spart;
 	// Manually pass through all parts (can be optimize, but for now ...)
@@ -346,23 +346,20 @@ BKUrl.prototype.composeAsString = function(withoutQuery /* return the string rep
 			r += spart;
 		}
 	}
-	if (!withoutQuery)
-	{
-		// query
-		part = this.get_query();
-		if (BaseObject.is(part,"IBKUrlObject")) {
-			spart = part.composeAsString();
-			if (!this.isempty(spart)) {
-				r += "?" + spart;
-			}
+	// query
+	part = this.get_query();
+	if (BaseObject.is(part,"IBKUrlObject")) {
+		spart = part.composeAsString();
+		if (!this.isempty(spart)) {
+			r += "?" + spart;
 		}
-		// fragment
-		part = this.get_fragment();
-		if (BaseObject.is(part,"IBKUrlObject")) {
-			spart = part.composeAsString();
-			if (!this.isempty(spart)) {
-				r += "#" + spart;
-			}
+	}
+	// fragment
+	part = this.get_fragment();
+	if (BaseObject.is(part,"IBKUrlObject")) {
+		spart = part.composeAsString();
+		if (!this.isempty(spart)) {
+			r += "#" + spart;
 		}
 	}
 	return this.nullIfEmpty(r);
