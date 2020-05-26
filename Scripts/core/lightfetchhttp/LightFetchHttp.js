@@ -356,7 +356,6 @@ LightFetchHttp.prototype.$fetch = function(url, /*encoded*/ reqdata, bodydata) {
 			var urlString = null;
 			// TODO: Analysis of the URL requires some url comparison features in BkUrl
 			//			The analysis should be based on needs not completely defined yet.
-			
 			if (BaseObject.is(url,"BKUrl")) {
 				// Encode any query string data
 				if (reqdata != null) {

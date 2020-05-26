@@ -316,6 +316,7 @@ BKUrl.prototype.set_decode = function(v) {
 		}
 	}));
 }
+
 BKUrl.prototype.composeAsString = function() {
 	var r = "";
 	var part,spart;
