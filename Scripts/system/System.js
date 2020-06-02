@@ -171,6 +171,9 @@ System.prototype.showIFrames = function (forceShow) {
 };
 System.prototype.warningViewTemplate = null;
 System.prototype.closing = false;
+System.CommandLibs = {};
+
+
 // Accessor for file systems
 System.FS = function(fsname) {
 	if (!Registers.Default().registerExists(fsname)) {

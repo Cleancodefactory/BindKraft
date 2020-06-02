@@ -12,13 +12,16 @@ KeyedTokenStorage.ImplementProperty("parentStorage");
 
 KeyedTokenStorage.prototype.registerToken = function( /*KeyedTokenItem|string|RegeExp*/ key_item, /*optional, string*/ token, /*optional,string*/ service_name) {
     if (!BaseObject.is(key_item, "KeyedTokenItem")) {
-        if (typeof key_item == "string" || key_item instanceof RegExp) {
-            if (typeof token != "string" || token == null) {
+        if (typeof key_item == "string" || BaseObject.is(key_item, "BKUrl")) {
+            // Either token or service_name have to be present (or both)
+            if ( 
+                (typeof token != "string" || token.length == 0) &&
+                (typeof service_name != "string" || service_name.length == 0)
+            ) {
                 return false;
             }
             key_item = new KeyedTokenItem(key_item, token, service_name);
             if (typeof service_name == "string") {
-                if (key_item.isKeyRegExp()) throw "Service name cannot be specified if the key for the token is a regular expression.";
                 if (this.queryServiceUrl(service_name) != null) {
                     throw "A service with the name " + service_name + " is already registered in this KeyedTokenStorage."
                 }

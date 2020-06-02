@@ -36,9 +36,7 @@ KeyedTokenItem.prototype.get_keystring = function() {
 KeyedTokenItem.ImplementProperty("token", new Initialize("The token for the strings matching key", null));
 KeyedTokenItem.ImplementProperty("serviceName", new Initialize("Optional service name", null));
 
-KeyedTokenItem.prototype.isKeyRegExp = function() {
-    return (this.$key instanceof RegExp);
-}
+
 KeyedTokenItem.prototype.checkKey = function(key) { // : boolean
     var bkKey = null;
     if (BaseObject.is(key, "BKUrl")) {
@@ -105,16 +103,18 @@ KeyedTokenItem.prototype.checkServiceName = function(sn) {
 KeyedTokenItem.prototype.equals = function(obj) {
     if (!BaseObject.is(obj, this.classDefinition())) return false;
     if (typeof this.$key == "string") {
-        if (obj.$key == this.$key) return true;
-    } else if (this.$key instanceof RegExp) {
-        if (obj.$key instanceof RegExp) {
-            if (this.$key.source == obj.$key.source) {
-                return true; // todo - we can be a bit more precise        
-            } else {
-                return false;
-            }
-        } else {
-            return false;
+        if (typeof obj.$key == "string") {
+            if (obj.$key == this.$key) return true;
+        } else if (BaseObject.is(obj.$key,"BKUrl")) {
+            if (this.$key == obj.$key.toString()) return true;
+        }
+    } else if (BaseObject.is(this.$key, "BKUrl")) {
+        if (typeof obj.$key == "string") {
+            if (obj.$key == this.$key.toString()) return true;
+        } else if (BaseObject.is(obj.$key,"BKUrl")) {
+            // TODO Comparison should be implemented in BKUrl classes
+            if (this.$key.toString() == obj.$key.toString()) return true;
         }
     }
+    return false;
 }

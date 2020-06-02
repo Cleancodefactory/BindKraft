@@ -267,6 +267,8 @@ LightFetchHttp.prototype.getResponse = function() {
 					res.datas = { "default": res.data }; // Link it here also for compatibility with both 0.9 and 1.0
 					break;
 				case "blob":
+					// TODO Change this (**if we decide to**) also change UserProfileAvatarImage - the only code using it to match the change
+					// the change: res.blob = this.$xhr.response;
 					res = this.$xhr.response;
 					break;
 				case "active":
