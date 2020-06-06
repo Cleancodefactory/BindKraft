@@ -142,7 +142,7 @@ LightFetchHttp.prototype.bodyEncoders = {
 	},
 	form: function(data) {
 		var url = new BKUrl();
-		BKUrl.dataToUrl(url, data, false, this.get_queryMaxDepth(), this.get_queryBoolAsNumber());
+		BKUrl.dataToURL(url, data, false, this.get_queryMaxDepth(), this.get_queryBoolAsNumber());
 		return url.get_query().composeAsString();		
 	}
 };
