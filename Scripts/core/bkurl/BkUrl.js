@@ -509,6 +509,16 @@ BKUrl.dataToURL = function(_url, data, useFragment, _depth, booleanAsNumbers) {
 						} else {
 							query.add(kname,v?"true":"false");
 						}
+					} else if (BaseObject.is(v, "Array")) {
+						for (var i = 0; i < v.length; i++) {
+							var x = v[i];
+							if (typeof x == "number") { x = x.toString(10); }
+							else if (BaseObject.is(x, "string")) { x = x; }
+							else if (BaseObject.is(x, "boolean")) { x = (booleanAsNumbers?(x?"1":"0"):(x?"true":"false")); }
+							else if (BaseObject.is(x, "Date")) { x = x.toISOString()}
+							else { x = null; }
+							query.add(kname, x);
+						}
 					} else if (BaseObject.is(v, "Date")) {
 						// TODO: Perhaps this should go through the formatter (ConvertDateTime) and follow some settings.
 						//		However, it seems logical to have separate settings for home and other servers, per-server even.
@@ -518,7 +528,6 @@ BKUrl.dataToURL = function(_url, data, useFragment, _depth, booleanAsNumbers) {
 						query.add(kname,v.toISOString());
 					} else if (BaseObject.is(v,"object")) {
 						_cycleObject(kname, v, qry, level + 1);
-
 					}
 				}
 			}

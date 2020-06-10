@@ -47,7 +47,24 @@ LightFetchHttp.ImplementProperty("expectedContent", new InitializeStringParamete
 LightFetchHttp.ImplementProperty("withCredentials", new InitializeStringParameter("Send cookies for cors", false));
 LightFetchHttp.ImplementProperty("queryBoolAsNumber", new InitializeBooleanParameter("When encoding data in query string, if set to true (default) booleans are sent as 0 and 1, otherwise as true/false", true));
 LightFetchHttp.ImplementProperty("queryMaxDepth", new InitializeNumericParameter("When encoding data in query string, sets the max depth for object traversal, 0 is default", 0));
-LightFetchHttp.ImplementProperty("postDataEncode", new InitializeStringParameter("Specifies how to encode the data for POST, PUT", "json"));
+/**
+ * postDataEncode can be set to:
+ * - string: name of built-in encoding (see the list below)
+ * - callback: Delegate, function that receives the following args: fetcher, xhr, bodydata
+ * 		where
+ * 			fetcher is the instance of this class that calls it
+ * 			xhr is the xmlHTTPRequest object in opened state
+ * 			bodydata is the data passed in by the caller, it needs to be encoded and returned in the encoded form
+ * 		returns the encoded data
+ * 
+ * The callback (and the built-in encoders) can and most often should set some headers (Content-type most notably). More details in the BK docs.
+ * 
+ * The available built-in encoders are:
+ * 	json - encodes the bodydata to json and sets the content-type to 
+ *  raw,
+ *  form,
+ */
+LightFetchHttp.ImplementProperty("postDataEncode", new InitializeStringParameter("Specifies how to encode the data for POST, PUT. See docs for available options.", "json"));
 
 // + Plugins
 /*
@@ -133,17 +150,80 @@ LightFetchHttp.prototype.dataToUrl = function(url, data) {
 	return BKUrl.dataToURL(url, data, false, this.get_queryMaxDepth(), this.get_queryBoolAsNumber());
 }
 // Into body
+// Body encoders receive two parameters
 LightFetchHttp.prototype.bodyEncoders = {
-	json: function(data) {
+	json: function(xhr, data) {
+		this.setHeader("Content-Type","application/json;charset=UTF-8");
 		return JSON.stringify(data);
 	},
-	raw: function(data) {
+	raw: function(xhr, data) {
 		return data;
 	},
-	form: function(data) {
+	form: function(xhr, data) {
 		var url = new BKUrl();
 		BKUrl.dataToURL(url, data, false, this.get_queryMaxDepth(), this.get_queryBoolAsNumber());
+		this.setHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
 		return url.get_query().composeAsString();		
+	},
+	multipart: function(xhr, data) {
+		var fd = new FormData();
+		var depth = this.get_queryMaxDepth() || 0; // TODO A separate limit?
+		var booleanAsNumbers = this.get_queryBoolAsNumber(); // TODO A separate setting?
+
+		function _cycleObject(prefix, obj, level) {
+			if (level > depth) return;
+			var kname;
+			if (typeof obj == "object" && obj != null) { // Work it as plain object, but not require it to be plain too much
+				for (var k in obj) {
+					if (prefix.length > 0) {
+						kname = prefix + "." + k;
+					} else {
+						kname = k;
+					}
+					// Unsupported values are skipped
+					if (obj.hasOwnProperty(k)) {
+						v = obj[k];
+						if (BaseObject.is(v, "number")) {
+							fd.append(kname, v.toString(10));
+							
+						} else if (BaseObject.is(v, "string")) {
+							fd.append(kname, v);
+						} else if (BaseObject.is(v, "boolean")) {
+							if (booleanAsNumbers) {
+								fd.append(kname,v?"1":"0");
+							} else {
+								fd.append(kname,v?"true":"false");
+							}
+						} else if (window.Blob && v instanceof Blob) {
+							if (v instanceof File) {
+								fd.append(kname, v, v.name);
+							} else {
+								fd.append(kname, v, "blob.rawobject"); // TODO May be generate something more or less appropriate from the .type property.
+							}
+						} else if (BaseObject.is(v, "Array")) {
+							for (var i = 0; i < v.length; i++) {
+								var x = v[i];
+								if (typeof x == "number") { x = x.toString(10); }
+								else if (BaseObject.is(x, "string")) { x = x; }
+								else if (BaseObject.is(x, "boolean")) { x = (booleanAsNumbers?(x?"1":"0"):(x?"true":"false")); }
+								else if (BaseObject.is(x, "Date")) { x = x.toISOString()}
+								else { x = null; }
+								if (x != null) fd.append(kname, x);
+							}
+						} else if (BaseObject.is(v, "Date")) {
+							fd.append(kname,v.toISOString());
+						} else if (Object.prototype.toString.call(v) == "[object Object]") {
+							// More strict on recursion
+							_cycleObject(kname, v, level + 1);
+						}
+					}
+				}
+			}
+		}
+		_cycleObject("", data, 0);
+
+		return fd;
+
 	}
 };
 
@@ -370,34 +450,26 @@ LightFetchHttp.prototype.$fetch = function(url, /*encoded*/ reqdata, bodydata) {
 			xhr = this.$xhr;
 			xhr.open(this.$method, urlString, true, this.$httpuser, this.$httppass);
 			xhr.withCredentials = this.get_withCredentials();
-			for (var h in this.$headers) {
-				if (this.$headers.hasOwnProperty(h)) {
-					xhr.setRequestHeader(h, this.$headers[h]);
-				}
-			}
-			if (this.$plugins != null) {
-				for (i = 0; i < this.$plugins.length; i++) {
-					this.$plugins[i].manipulateRequest(this, xhr);
-				}
-			}
+			
 			// Set timeout (allowed between open and send)
 			var tl = this.get_timelimit();
 			if (typeof tl == "number" && tl > 0) {
 				xhr.timeout = tl * 1000;
 			}
+			// Prepare the body
 			var body = null;
 			if (bodydata != null) {
 				var benc = this.get_postDataEncode(); // Body encoding
 				if (typeof benc == "string") {
 					if (typeof this.bodyEncoders[benc] == "function") {
-						body = this.bodyEncoders[benc].call(this, bodydata);
+						body = this.bodyEncoders[benc].call(this, xhr, bodydata);
 					} else {
 						throw "Unknown body data encoding " + benc;
 					}
 				} else if (BaseObject.isCallback(benc)) {
-					body = BaseObject.callCallback(benc);
+					body = BaseObject.callCallback(benc, this, xhr, bodydata);
 				} else {
-					throw "Unknown value time in postDataEncode. Specify either predefined string encoding name or a callback";
+					throw "Unexpected value type in postDataEncode. Specify either predefined string encoding name or a callback";
 				}
 			}
 			switch (this.get_expectedContent()) {
@@ -409,6 +481,16 @@ LightFetchHttp.prototype.$fetch = function(url, /*encoded*/ reqdata, bodydata) {
 					xhr.responseType = "text";
 					break;
 
+			}
+			if (this.$plugins != null) {
+				for (i = 0; i < this.$plugins.length; i++) {
+					this.$plugins[i].manipulateRequest(this, xhr, {preparedBody: body, bodyData: bodydata, requestData: reqdata});
+				}
+			}
+			for (var h in this.$headers) {
+				if (this.$headers.hasOwnProperty(h)) {
+					xhr.setRequestHeader(h, this.$headers[h]);
+				}
 			}
 			xhr.send(body);
 			// Add time limit callback (if needed)

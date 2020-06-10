@@ -144,6 +144,21 @@ MultiDict.prototype.add = function(_k, o) {
 	this.$keys[k].push(o);
 	return this;
 }
+/**
+ * Like add, but if o is an array will add as values its elements (as separate items) and not the whole array as a single value.
+ */
+MultiDict.prototype.addMany = function(_k, o) {
+	var k = _k + "";
+	if (!this.checkValueWith(this.get_keycheck(),k)) throw "Key " + k + " not allowed";
+	if (arguments.length < 2) return this;
+	if (!this.$keys[k]) this.$keys[k] = new Array();
+	if (BaseObject.is(o, "Array")) {
+		this.$keys[k].push.apply(this.$keys[k], o);
+	} else {
+		this.$keys[k].push(o);
+	}
+	return this;
+}
 MultiDict.prototype.remove = function (_k, o) {
 	var k = _k + "";
 	if (!this.checkValueWith(this.get_keycheck(),k)) return this; // Incorrect keys are not searched at all, but silently ignored
