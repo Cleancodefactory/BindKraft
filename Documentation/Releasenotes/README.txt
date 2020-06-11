@@ -1,0 +1,1 @@
+After version 2.19 the release notes published on github are also kept here in this directory.
