@@ -349,7 +349,10 @@ LightFetchHttp.prototype.getResponse = function() {
 				case "blob":
 					// TODO Change this (**if we decide to**) also change UserProfileAvatarImage - the only code using it to match the change
 					// the change: res.blob = this.$xhr.response;
-					res = this.$xhr.response;
+					res.blob = this.$xhr.response;
+					res.blobs = {
+						default: this.$xhr.response
+					};
 					break;
 				case "active":
 					res = new LightFetchHttpActiveResult(this);
