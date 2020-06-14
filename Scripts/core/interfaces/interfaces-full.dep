@@ -23,6 +23,7 @@
 //#using "./IDelayedMessage.js"
 //#using "./IDispatchable.js"
 //#using "./IFreezable.js"
+//#using "./ICloneObject.js"
 //#using "./IFreezableHelper.js"
 //#using "./IInvocationWithArrayArgs.js"
 //#using "./IInvoke.js"

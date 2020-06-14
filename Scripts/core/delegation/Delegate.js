@@ -15,6 +15,7 @@ Delegate.Implement(IInvocationWithArrayArgs);
 Delegate.Implement(IInvoke);
 Delegate.Implement(ITargeted);
 Delegate.Implement(IArgumentManagement);
+Delegate.Implement(ICloneObject);
 Delegate.prototype.get_target = function() {
     return this.object;
 };
@@ -28,6 +29,15 @@ Delegate.prototype.obliterate = function (bFull) {
     if (this.parameters != null) delete this.parameters;
     this.__obliterated = true;
 };
+Delegate.prototype.cloneObject = function(withruntimestate) {
+    var params = null;
+    if (BaseObject.is(this.parameters, "Array")) params = Array.createCopyOf(this.parameters);
+    var d = new Delegate(this.object, this.func, params);
+    if (withruntimestate) {
+        d.called = this.called;
+    }
+    return d;
+}
 Delegate.prototype.invoke = function () {
 	if (this.__obliterated) return null;
     var args = [];
