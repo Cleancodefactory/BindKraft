@@ -1,5 +1,12 @@
 function OperationQueuedCalls(callback, timeout) {
     BaseObject.apply(this,arguments);
+    BaseObject.apply(this,arguments);
+    if (BaseObject.isCallback(callback)) {
+        this.$callback = callback;
+    }
+    if (typeof timeout == "number" && timeout > 0) {
+        this.$timeout = timeout;
+    }
 }
 OperationQueuedCalls.Inherit(BaseObject, "OperationQueuedCalls");
 
