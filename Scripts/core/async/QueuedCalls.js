@@ -43,7 +43,13 @@ if (typeof Promise != "undefined" && Promise.toString().indexOf("[native code]")
                 .catch(req.rejector)
                 .finally(this.$onTryQueue.getWrapper());
         } else if (BaseObject.is(result, "Operation")) {
-            throw "Not implemented yet.";
+            this.$currentCall = new Promise((resolve, reject) => {
+                result
+                    .onsuccess(r => resolve(r))
+                    .onfailure(err => reject(err));
+            }).then(req.resolver)
+              .catch(req.rejector)
+              .finally(this.$onTryQueue.getWrapper());
         } else { // The call is complete
             // Schedule next pick
             req.promise.finally(this.$onTryQueue.getWrapper()); // This will execute after this js loop
