@@ -104,7 +104,7 @@ System.DefaultCommands = {
 		var appclass = api.pullNextToken();
 		if (typeof appclass == "string" && appclass.length > 0) {
 			var app = Shell.getAppByClassName(appclass);
-			if (app != nll) {
+			if (app != null) {
 				return app.ExitApp();
 			}
 		}
