@@ -104,7 +104,9 @@ System.DefaultCommands = {
 		var appclass = api.pullNextToken();
 		if (typeof appclass == "string" && appclass.length > 0) {
 			var app = Shell.getAppByClassName(appclass);
-			return app.ExitApp();
+			if (app != nll) {
+				return app.ExitApp();
+			}
 		}
 	},	
 	"gcallcript": function(ctx,api) {
