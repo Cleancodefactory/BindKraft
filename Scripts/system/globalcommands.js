@@ -100,6 +100,13 @@ System.DefaultCommands = {
 		}
 		return returnOp;
 	},
+	"stopapp": function(ctx, api) {
+		var appclass = api.pullNextToken();
+		if (typeof appclass == "string" && appclass.length > 0) {
+			var app = Shell.getAppByClassName(appclass);
+			return app.ExitApp();
+		}
+	},	
 	"gcallcript": function(ctx,api) {
 		var scriptname = api.pullNextToken();
 		var script = System.BootFS().readScript(scriptname);
@@ -206,6 +213,8 @@ System.DefaultCommands = {
 					defs.innewapp, "Drops the top command context (if any exists)");
 	gc.register("enterapp", "enterfirstapp", null,
 					defs.innewapp, "Finds the first app of the given class and changes to the app's command context");
+	gc.register("stopapp", "exitapp", null,
+					defs.stopapp, "Finds the first app of the given class and stops it. If the app does not currently run, does nothing.");					
 	gc.register("inithistory", "historystart", null,
 					defs.inithistory, "Starts the history tracking");
 	gc.register("alert", "msgbox", null,

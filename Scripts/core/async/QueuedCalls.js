@@ -1,7 +1,7 @@
 if (typeof Promise != "undefined" && Promise.toString().indexOf("[native code]") != -1) {
 
     function QueuedCalls(callback, timeout) {
-        BaseObject.apply(this,arguments);
+        BaseObject.apply(this, arguments);
         if (BaseObject.isCallback(callback)) {
             this.$callback = callback;
         }
@@ -59,12 +59,19 @@ if (typeof Promise != "undefined" && Promise.toString().indexOf("[native code]")
     }
     QueuedCalls.prototype.$onTryQueue = new InitializeMethodDelegate("Delegate calling the $tryQueue", function() {
         // Current call ended
-        if (this.$timeoutId != null) clearTimeout(this.$timeoutId);
+        if (this.$timeoutId != null) {
+            clearTimeout(this.$timeoutId);
+            this.$timeoutId = null;
+        }
         this.$currentCall = null;
         this.$tryQueue();
     });
     QueuedCalls.prototype.$tryQueue = function() {
         if (this.$currentCall == null) {
+            if (this.$timeoutId != null) {
+                clearTimeout(this.$timeoutId);
+                this.$timeoutId = null;
+            }
             // No current call
             var req = this.$queuedCalls.shift();
             if (req != null) {

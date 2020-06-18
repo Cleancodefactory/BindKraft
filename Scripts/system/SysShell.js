@@ -575,7 +575,7 @@ SysShell.prototype.launchEx = function(_appClass, _options,/* callset of argumen
 			}
 		}
 		app.ExitApp = function() {
-			shutdownapp();
+			return shutdownapp();
 		}
 		
 		// Before initialization
@@ -634,6 +634,7 @@ SysShell.prototype.createStdAppWindow = function(_cls /*=BaseWindow*/,_template 
 	.Param("_persister", "A persister for the window state - none by default")
 	.Remarks("flags", "The window is created with draggable, sizable, adjustclient and visible flags.");
 
+// This requires some fiddling...
 SysShell.prototype.shutdownApp = function(appid) {
     var app = this.get_runningapps().FirstOrDefault(function(idx, item) {
         if (item.get_instanceid() == appid) return item;
