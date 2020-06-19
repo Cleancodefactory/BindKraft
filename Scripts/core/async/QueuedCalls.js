@@ -30,6 +30,11 @@ if (typeof Promise != "undefined" && Promise.toString().indexOf("[native code]")
         } catch (ex) { 
             // Non-promise based functions may throw an exception
             // And promise based too - but then they do not return a promise
+            if (this.$timeoutId != null) { // backup finalization is not needed anymore for this call.
+                clearTimeout(this.$timeoutId);
+                this.$timeoutId = null;
+            }
+            this.$currentCall = null;
             // So time for quick bail out
             req.promise.finally(this.$onTryQueue.getWrapper()); // This will execute after this js loop
             req.rejector(ex);
@@ -58,7 +63,7 @@ if (typeof Promise != "undefined" && Promise.toString().indexOf("[native code]")
         }
     }
     QueuedCalls.prototype.$onTryQueue = new InitializeMethodDelegate("Delegate calling the $tryQueue", function() {
-        // Current call ended
+        // Current call ended- clean up just in case
         if (this.$timeoutId != null) {
             clearTimeout(this.$timeoutId);
             this.$timeoutId = null;
