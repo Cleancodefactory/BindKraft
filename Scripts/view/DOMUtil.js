@@ -418,21 +418,23 @@ DOMUtil.filterElements = function(dom,selector) {
 				true  - to stop the recurstion after processing the node
 				undefined - permit further processing
 	@param _result  {accumulator} - usually not passed from outside - recursion accumulator
+	@param _nonroot {boolean-like} - internally used in recursion
 	
 	@returns {Array<HTMLElement>} - an array of the found elements
 */
-DOMUtil.findElements = function(dom,selector,callback, _result) { // callback(node) -> false => stop
+DOMUtil.findElements = function(dom,selector,callback, _result, _nonroot) { // callback(node) -> false => stop
 	var result = _result|| [];
 	var b;
+	var inroot = _nonroot?false:true;
 	if (dom instanceof HTMLElement) {
 		b = null;
-		if (callback != null && (b = callback(dom)) === false) return result; // Skip this branch
+		if (callback != null && (b = callback(dom, inroot)) === false) return result; // Skip this branch
 		if (dom.matches(selector)) {
 			result.push(dom);
 		}
 		if (b === true) return result;
 		if (dom.children != null && dom.children.length > 0) {
-			DOMUtil.findElements(dom.children,selector,callback, result);
+			DOMUtil.findElements(dom.children,selector,callback, result, true);
 		}
 	} else if (dom instanceof HTMLCollection || dom instanceof NodeList || BaseObject.is(dom, "Array")) {
 		for (var i = 0; i < dom.length; i++) {
@@ -441,18 +443,26 @@ DOMUtil.findElements = function(dom,selector,callback, _result) { // callback(no
 	}
 	return result;
 }
-DOMUtil.findElement = function(dom,selector,callback) { // callback(node) -> false => stop
+/**
+ * @param dom 		{*}			dom element or a collection of such to start from
+ * @param selector	{string}	selector to search for
+ * @param callback  {function}	
+ * @param _nonroot	{boolean-like}	Do not pass this argument, it is passed internally in recursions
+ * 									and specifies when the current element is not the root element
+ */
+DOMUtil.findElement = function(dom, selector, callback, _nonroot) { // callback(node) -> false => stop
 	var el;
 	var b;
+	var inroot = _nonroot?false:true;
 	if (dom instanceof HTMLElement) {
 		b = null;
-		if (callback != null && (b = callback(dom)) === false) return null; // Skip this branch
+		if (callback != null && (b = callback(dom,inroot)) === false) return null; // Skip this branch
 		if (dom.matches(selector)) {
 			return dom;
 		}
 		if (b === true) return null;
 		if (dom.children != null && dom.children.length > 0) {
-			return DOMUtil.findElement(dom.children,selector,callback);
+			return DOMUtil.findElement(dom.children,selector,callback, true);
 		}
 		return null;
 	} else if (dom instanceof HTMLCollection || dom instanceof NodeList || BaseObject.is(dom, "Array")) {
@@ -554,6 +564,7 @@ DOMUtil.queryOne = function(node, selector) {
 	if (arguments.length > 1) {
 		return DOMUtil.findElement(node, selector,DOMUtil.BorderCallbacks.DataKeysInViewIn);
 	} else {
+		selector = node;
 		return DOMUtil.findElement(document.body, selector,DOMUtil.BorderCallbacks.DataKeysInViewIn);
 	}
 }
@@ -561,6 +572,7 @@ DOMUtil.queryAll = function(node, selector) {
 	if (arguments.length > 1) {
 		return DOMUtil.findElements(node, selector,DOMUtil.BorderCallbacks.DataKeysInViewIn);
 	} else {
+		selector = node;
 		return DOMUtil.findElements(document.body, selector,DOMUtil.BorderCallbacks.DataKeysInViewIn);
 	}
 }
@@ -655,18 +667,21 @@ DOMUtil.BorderIndicator = {
 	true  - process this node and stop
 */
 DOMUtil.BorderCallbacks = {
-	WindowSlotsIn: function(node) { // window template from root, do not enter template borders and IUIControl-s
+	// This one is a bit questionable
+	WindowSlotsIn: function(node, inroot) { // window template from root, do not enter template borders and IUIControl-s
 		var indicator = DOMUtil.BorderIndicator;
-		if (indicator.templateRoot(node)) return false; // Templates are put in slots - they are not ours
+		if (indicator.templateRoot(node) && !inroot) return false; // Templates are put in slots - they are not ours
 		if (indicator.controlRoot(node)) return false; // Enclosed controls are not enclosed :)
 		// undefined - permitted.
 	},
-	DataKeysInViewIn: function(node) {
+	// used for search toward the leaves
+	DataKeysInViewIn: function(node, inroot) {
 		var indicator = DOMUtil.BorderIndicator;
-		if (indicator.templateRoot(node)) return true; // Templates are put in slots - they are not ours
-		if (indicator.controlRoot(node)) return true; // Enclosed controls are not enclosed :)
+		if (indicator.templateRoot(node) && !inroot) return false; // Templates are put in slots - they are not ours
+		if (indicator.controlRoot(node) && !inroot) return true; // Enclosed controls are not enclosed :)
 	},
-	DataKeysInViewOut: function(node) {
+	// used for search toward the root
+	DataKeysInViewOut: function(node, inroot) {
 		var indicator = DOMUtil.BorderIndicator;
 		if (indicator.templateRoot(node)) return true; // Templates are put in slots - they are not ours
 		if (indicator.controlRoot(node)) return true; // Enclosed controls are not enclosed :)
