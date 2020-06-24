@@ -62,7 +62,8 @@ ITemplateSourceImpl.classInitialize = function(cls, defaultTemplateSelector, opt
 	.Param("options", "A plain object containing various options: legacy - search globaly with the name as selector; nodom - search registers only");
 
 ITemplateSourceImpl.GetGlobalTemplate = function (tn, options) {
-    var tml;
+	var tml;
+	if (typeof tn == "string") tn = ITemplateSourceImpl.ParseTemplateName(tn);
 	if (tn.name != null) {
 		var regtmls = Registers.getRegister("module_templates");
 		if (BaseObject.is(regtmls, "TemplateRegister")) {

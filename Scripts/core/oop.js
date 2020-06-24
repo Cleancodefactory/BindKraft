@@ -870,9 +870,9 @@ Function.prototype.ImplementIndexedProperty = function (pname, Initialize, pstor
         }
 		if (changeCallback != null) {
 			if (typeof changeCallback == "function") {
-				changeCallback.call(this, v);
+				changeCallback.call(this, v, idx, this[pstoreprop]);
 			} else if (typeof changeCallback == "string") {
-				this[changeCallback](v);
+				this[changeCallback](v, idx, this[pstoreprop]);
 			}
             
         }

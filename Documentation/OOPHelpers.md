@@ -51,11 +51,17 @@ function(oldval, newval) {
 ### idxChangeCallback
 
 ```Javascript
-function() { ... }
+function(value, index, store) { ... }
 ```
-It has to be dedicated to this property. Individual value changes are not tracked, because the underlying object or array can referenced from outside for 
-performance reasons, which will leave many changes untracked.
+The easiest way is to dedicate it to this property. Individual value changes are not tracked, because the underlying object or array can be referenced from outside for performance reasons, which will leave many changes out. Still each call to `set_propname(index, value)` will invoke the function. It can be set as a `string` or `in-place function`, like the other callbacks and will be respectively an existing member of the class or function called with the `this` of the class instance. The arguments (available from v2.21.5)
 
+**value** - the value being set
+
+**index** - the index used (see notes below)
+
+**store** - the `store object` used (the one created by the initializer - typically an object or array).
+
+Notes: The property can be called with a single argument in which case the value replaces the `store object`. This is used when the content is changed as a whole and not property by property. This behavior should be considered when writing a callback.
 
 
 
