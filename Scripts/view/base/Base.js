@@ -14,7 +14,8 @@ Base.interfaces = { PBase: true }; // Obsolete - will be removed soon
 Base.Implement(IStructuralQueryRouter)
     .Implement(IStructuralQueryEmiter)
     .Implement(IFindService)
-    .Implement(IDOMConnectedObject);
+    .Implement(IDOMConnectedObject)
+    .Implement(IEventSubscriberImpl);
 
 Base.registerDOMDestructor("activeClass");
 Base.getRelatedElements = function (baseEl, patt) {
@@ -39,6 +40,7 @@ Base.prototype.obliterate = function (bFull) {
     DataHolder.prototype.obliterate.call(this, bFull);
 };
 // Event handling helper
+/* Replaced by implementing IEventSubscriberImpl
 Base.prototype.$generalDispatcherHandlers = null;
 Base.prototype.subscribeFor = function(evenDisp, handler, priority) {
     if (handler != null && BaseObject.is(evenDisp, "IEventDispatcher")) {
@@ -51,6 +53,7 @@ Base.prototype.subscribeFor = function(evenDisp, handler, priority) {
 Base.prototype.unsubscribeAll = function() {
     EventHandlerHelperRegister.On(this, "$generalDispatcherHandlers").unbind();
 }
+*/
 
 // examples 
 // on a Repeater data-async="I10"
