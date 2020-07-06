@@ -3,7 +3,20 @@
 function IEventSubscriberImpl() {}
 IEventSubscriberImpl.InterfaceImpl(IEventSubscriber,"IEventSubscriberImpl");
 IEventSubscriberImpl.classInitialize = function(cls) {
-    cls.prototype.$__generalDispatcherHandlers = null;
+    //cls.prototype.$__generalDispatcherHandlers = null;
+    cls.Obliterator(function() {
+        var regsName = window.JBCoreConstants.EventHelperRegisterProp;
+        if (this[regsName] != null) {
+            var regs = this[regsName];
+            for (var k in regs) {
+                if (regs.hasOwnProperty(k) && regs[k] instanceof EventHandlerHelperRegister) {
+                    regs[k].unbind();
+                    delete regs[k];
+                }
+            }
+        }
+    });
+    
     cls.prototype.subscribeFor = function(evenDisp, handler, priority) {
         if (handler != null && BaseObject.is(evenDisp, "IEventDispatcher")) {
             var handlerHelper = EventHandlerHelperRegister.On(this, "$__generalDispatcherHandlers").bind(this, handler);
