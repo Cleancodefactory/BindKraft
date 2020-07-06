@@ -5,6 +5,7 @@
 
 */
 function IArgumentManagement() { }
+IArgumentManagement.Interface("IArgumentManagement");
 IArgumentManagement.prototype.callArguments = function (/*argument list*/) { }; // from arguments
 IArgumentManagement.prototype.applyArguments = function (argsArray) { }; // from array
 // USe this one to determine if the above feature works
