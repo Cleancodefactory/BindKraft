@@ -20,7 +20,7 @@ FastProcConnector.prototype.resolve = function (callback) {
 	var params = this.get_parameters();
 	if (this.$data.indexOf(FastProcConnector.$lengthPropName) == (this.$data.length - FastProcConnector.$lengthPropName.length)) {
 		f = this.host[this.$data.slice(0, this.$data.length - FastProcConnector.$lengthPropName.length)];
-		this.$resource = f.call(this.host, "length", params);
+		this.$resource = f.call(this.host, "length", params, params);
 		return true;
 	}
 	f = this.host[this.$data];
