@@ -149,11 +149,11 @@ Repeater.prototype.$asyncSetItems = function (asyncOp) {
     el.Empty();
 	if (this.reverseMode) {
 		for (var i = this.$offset; i >= 0 && i < this.$items.length && (this.$limit < 0 || this.$offset - i < this.$limit); i -= this.getAsyncInstruction("items")) {
-			this.asyncOp(this.$asyncSetSomeItems).maxAge(120000).chain(asyncOp).execute(i, el);
+			this.async(this.$asyncSetSomeItems).maxAge(120000).chain(asyncOp).execute(i, el);
 		}
 	} else {
 		for (var i = this.$offset; i < this.$items.length && (this.$limit < 0 || i - this.$offset < this.$limit); i += this.getAsyncInstruction("items")) {
-			this.asyncOp(this.$asyncSetSomeItems).maxAge(120000).chain(asyncOp).execute(i, el);
+			this.async(this.$asyncSetSomeItems).maxAge(120000).chain(asyncOp).execute(i, el);
 		};
 	}
     this.asyncUpdateTargets(null, false, asyncOp);
