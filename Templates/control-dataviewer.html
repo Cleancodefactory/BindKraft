@@ -17,9 +17,9 @@
                       data-key="datanode"
                       data-bind-$alternatetemplate="{read(0) source=__control path=$expanded}"
                       data-bind-$item="{read(1) source=static object=object}">
-                    <a href="#" data-key="default" data-on-click="{bind source=datanode path=ToggleTemplate}">[+] {...}</a>
+                    <a data-key="default" data-on-click="{bind source=datanode path=ToggleTemplate}">[+] {...}</a>
                     <span data-key="alternate">
-                        <a href="#" data-on-click="{bind source=datanode path=ToggleTemplate}">[-]</a>
+                        <a data-on-click="{bind source=datanode path=ToggleTemplate}">[-]</a>
                         {
                         <div data-class="ValueRepeater" data-bind-$items="{read source=__control path=$item}" style="margin-left:16px;" data-async="I100">
                             <span data-bind-text="{read path=$key}"></span><span>:</span>
@@ -40,12 +40,12 @@
                       data-key="datanode"
                       data-bind-$alternatetemplate="{read(0) source=__control path=$expanded}"
                       data-bind-$item="{read(1) source=static object=object}">
-                    <a href="#" data-key="default" data-on-click="{bind source=datanode path=ToggleTemplate}">
+                    <a data-key="default" data-on-click="{bind source=datanode path=ToggleTemplate}">
                         [+] {...}
                         <span data-bind-text="{read source=__control path=$item customformat=__control:FormatObjectBriefInfo}"></span>
                     </a>
                     <span data-key="alternate">
-                        <a href="#" data-on-click="{bind source=datanode path=ToggleTemplate}">[-] <span data-bind-text="{read source=__control path=$item customformat=__control:FormatObjectBriefInfo}"></span></a>
+                        <a  data-on-click="{bind source=datanode path=ToggleTemplate}">[-] <span data-bind-text="{read source=__control path=$item customformat=__control:FormatObjectBriefInfo}"></span></a>
                         {
                         <div data-class="ValueRepeater" data-bind-$items="{read source=__control path=$item}" style="margin-left:16px;" data-async="I10">
                             <span data-bind-text="{read path=$key}"></span><span>:</span>
@@ -66,9 +66,9 @@
                       data-key="datanode"
                       data-bind-$alternatetemplate="{read(0) source=__control path=$expanded}"
                       data-bind-$item="{read(1) source=static object=object}">
-                    <a href="#" data-key="default" data-on-click="{bind source=datanode path=ToggleTemplate}">[+] [...]</a>
+                    <a data-key="default" data-on-click="{bind source=datanode path=ToggleTemplate}">[+] [...]</a>
                     <span data-key="alternate">
-                        <a href="#" data-on-click="{bind source=datanode path=ToggleTemplate}">[-]</a>
+                        <a data-on-click="{bind source=datanode path=ToggleTemplate}">[-]</a>
                         [
                         <div data-class="Repeater" data-bind-$items="{read source=__control path=$item}" style="margin-left:16px;" data-async="I10">
                             <div data-class="TemplateSwitcher templateSource='nodecontent'" data-bind-$item="{read}"
