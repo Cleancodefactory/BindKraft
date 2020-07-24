@@ -1,16 +1,39 @@
-/*
-	By default starting a trap will ignore new start attempts until the trap is finished with gestures.
-	If this is inconvenient use set_alwaysstart(true);
-*/
+/**
+ * A GestureTrap can be created when needed or kept in readiness and used when necessary - whichever
+ * approach makes more sense in your particular scenario.
+ * 
+ * The trap is created with a set of gestures - each configured on its own. The trap procedure for detecting them is
+ * as follows:
+ * 
+ * trap.start(e);   // The trap resets the gestures and starts tracking from the given point or location in the passed (Mouse or Pointer) message.
+ * 
+ * 
+ * By default starting a trap will ignore new start attempts until the trap is finished with gestures.
+ * If this is inconvenient use set_alwaysstart(true);	
+ */
+
+
 /*CLASS*/
-function GestureTrap(owner, gesture1, gesture2,gestureEtc) {
-	BaseObject.apply(this, arguments);
-	this.$owner = owner; // Should be object inherited from Base class at least.
-	this.$gestures = Array.createCopyOf(arguments,1);
+/**
+ * @param sink      {callback|PointerGesture}  
+ * @params          {PointerGesture}    
+ */
+function GestureTrap(sink, gesture1, gesture2,gestureEtc) {
+    BaseObject.apply(this, arguments);
+    if (BaseObject.isCallback(sink)) {
+        this.$sink = sink; // a callback to call with detected gestures
+        this.$gestures = Array.createCopyOf(arguments,1);
+    } else {
+        this.$gestures = Array.createCopyOf(arguments,0);
+    }
+	
+	
 }
 GestureTrap.Inherit(BaseObject,"GestureTrap");
-GestureTrap.Implement(IMouseTracker);
+GestureTrap.Implement(IPointerTracker);
+
 GestureTrap.ImplementProperty("alwaysstart", new InitializeBooleanParameter("If true tells the trap to start trapping from scratch even if there is active trapping at the moment."));
+
 GestureTrap.prototype.handleMouseTrack = function(sender, trackevent) {
 	if (BaseObject.is(trackevent, "MouseTrackerEvent")) {
 		// Main work
@@ -23,19 +46,45 @@ GestureTrap.prototype.handleMouseTrack = function(sender, trackevent) {
 			case "key":
 				g = this.$tryGestures(trackevent);
 				if (g === false) {
-					this.$stopGestures(); // Immediate stop to not waste time.
-				} else if (BaseObject.is(g, "MouseGesture")) {
-					// return g; advise the owner for the detected gesture. 
+                    this.$stopGestures(); // Immediate stop to not waste time.
+                    MouseTracker.Default().stopTracking(this);
+                    if (this.$sink != null) {
+                        // This call is made in case the owner needs it (usually does not)
+                        BaseObject.callCallback(this.$sink, null);
+                    }
+					
+				} else if (BaseObject.is(g, "PointerGesture")) {
+                    // The gestures are not stopped, because this also clears them.
+                    // They are cleared also at start, so nothing is lost
+                    MouseTracker.Default().stopTracking(this);
+                    if (this.$sink != null) {
+                        BaseObject.callCallback(this.$sink, g);
+                    }
+					
 				}
 			break;
 			case "cancel":
+                this.stop();
+            break;
 			case "complete":
-				this.$stopGestures();
+                // Some gestures may require completion of pointer capture
+                g = this.$tryGestures(trackevent);
+                if (BaseObject.is(g, "PointerGesture")) {
+                    // The gestures are not stopped, because this also clears them.
+                    // They are cleared also at start, so nothing is lost
+                    MouseTracker.Default().stopTracking(this);
+                    if (this.$sink != null) {
+                        BaseObject.callCallback(this.$sink, g);
+                    }
+					
+				} else {
+                    this.stop();
+                }
 			break;
 		}
 	}
 }
-GestureTrap.prototype.$owner = null;
+GestureTrap.prototype.$sink = null;
 GestureTrap.prototype.$gestures = new InitializeArray("Array of configured gestures");
 GestureTrap.prototype.$activeGestures = null;
 GestureTrap.prototype.$tryGestures = function(msg) {
@@ -85,9 +134,12 @@ GestureTrap.prototype.stop = function() {
 	}
 	this.$stopGestures();
 }.Description("Stops trapping and reinit to initial state");
+/**
+ * @param e     {MouseEvent|PointerEvent|Point} The start point
+ */
 GestureTrap.prototype.start = function(e) {
 	if (!this.get_alwaysstart() && this.isTrapping()) return false;
-	if (e != null && e.target && e.clientX) {
+	if (e != null && e instanceof Event) {
 		MouseTracker.Default().startTracking(this, e);
 		return true;
 	} else if (BaseObject.is(e, "Point")) {
