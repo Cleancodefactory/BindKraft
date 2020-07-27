@@ -247,6 +247,24 @@ Array.createCopyOf = function(arr, start_index, end_index) {
  .Param("end_index","End index, index of the last element to copy")
  .Returns("array");
 
+Array.createArgumentsArray = function(arr, start_index, end_index, type) {
+    var arr = Array.createCopyOf(arr,start_index,end_index);
+    var result = [];
+    if (arr != null) {
+        function _recurse(x) {
+            if (BaseObject.is(x, "Array")) {
+                for (var i = 0; i < x.length; _recurse(x[i++]));
+            } else {
+                if (BaseObject.is(x, type)) {
+                    result.push(x);
+                }
+            }
+        }
+        _recurse(arr);
+    }
+    return result;
+}
+
 Array.prototype.parent = null;
 Array.classType = "Array";
 

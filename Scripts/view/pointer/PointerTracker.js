@@ -50,7 +50,7 @@ PointerTracker.prototype.$events = PointerTracker.prototype.$eventNames.mouse;
 PointerTracker.keyStates = { ctrlKey: false, altKey: false, metaKey: false, shiftKey: false };
 
 PointerTracker.prototype.$tracking = false; // true when tracking is active
-PointerTracker.prototype.$client = null; // Tracker - the client that requested tracking (BaseObject, IMouseTracker)
+PointerTracker.prototype.$client = null; // Tracker - the client that requested tracking (BaseObject, IPointerTracker)
 PointerTracker.prototype.$lastClientPoint = null; // The last known mouse pos (viewport coordinates)
 PointerTracker.prototype.$lastPagePoint = null; // The last known mouse pos (page coordinates)
 PointerTracker.prototype.$lastKeyState = {}; // The last known mouse pos (page coordinates)
@@ -141,13 +141,13 @@ PointerTracker.prototype.$applyKeyState = function(state) {
 	var i;
 	// If any state is null we consider this full change even if both are nulls
 	if (state == null || this.$lastKeyState == null) {
-		var o = BaseObject.DeepClone(MouseTracker.keyStates);
+		var o = BaseObject.DeepClone(PointerTracker.keyStates);
 		for (i in o) {o[i] = true;}
 		this.$lastKeyState = state?state:{};
 		return o;
 	}
 	var events = {};
-	for (i in MouseTracker.keyStates) {
+	for (i in PointerTracker.keyStates) {
 		if (this.$lastKeyState[i] != state[i]) {
 			events[i] = true;
 		}
@@ -198,15 +198,24 @@ PointerTracker.prototype.startTracking = function(client,initialPoint_or_MouseEv
 			this.adviseClient(msg);
 		} else {
 			this.$clearTrackData();
-			this.LASTERROR(_Errors.compose(),"The client must implement IMouseTracker");
+			this.LASTERROR(_Errors.compose(),"The client must implement IPointerTracker");
 		}
 	}));
 }.Description("Starts tracking/capturing the mouse. Can be supplied with initial mouse event from which it will strip initial coordinates, but will ignore the type of the event")
-	.Param("client","Object supporting IMouseTracker which will be advised for the mouse movements while the tracking operation continues." +
+	.Param("client","Object supporting IPointerTracker which will be advised for the mouse movements while the tracking operation continues." +
 			"Only one tracking operation is allowed at any given moment. Starting a new one will stop (cancel) the current one.")
 	.Param("initialPoint_or_MouseEvent","If mouse event is supplied clientX/Y are stripped from it as lastPoint, if point is supplied it will be used only if there is a container and it will be interpretted in container coordinates.");
-///////// Stop (cancel), Complete tracking
+
+/**
+ * Cancels the tracking and sends to the client a cancel message.
+ * If your usage is complete - use endTracking and not stopTracking.
+ * 
+ * @param callback  {callback | IPointerTracker}    This can be a callback called after the tracking stops to continue some task or
+ *      a reference to the client. If it is a reference to the client, the method will do nothing if the client is already a different one.
+ * 
+ */
 PointerTracker.prototype.stopTracking = function(callback) {
+    if (BaseObject.is(callback, "IPointerTracker") && callback != this.$client) return;
 	if (this.isTracking()) { // Have to stop it indead - this is cancelled 
 		var msg = this.createTrackMessage("cancel"); // No need of keystate changes data - nothing can be changed at this moment.
 		this.adviseClient(msg);
@@ -215,9 +224,38 @@ PointerTracker.prototype.stopTracking = function(callback) {
 	// Currently we call this each time, but some optimizations will come into play in future.
 	if (BaseObject.isCallback(callback)) BaseObject.callCallback(callback);
 }
-PointerTracker.prototype.completeTracking = function(callback, msg) {
+/**
+ * Completes the tracking by initiating it from the tracker side. This can happen
+ * because of internal implementation interpreting the pointer usage as complete regardless
+ * of any tracker client's activities or by a third party that wants to stop the tracker not by
+ * cancelling the process, but by forcibly completing it, which gives the client a chance to finish
+ * its task successfully (if appropriate). An example will be dragging something that can be dropped
+ * at any point of the dragging action. Usually this effect is determined by the client, but the option
+ * is here for all those cases where outside decision my be desired (however rare they might be).
+ * 
+ * @param callback  {callback | IPointerTracker}    This can be a callback called after the tracking stops to continue some task or
+ *      a reference to the client. If it is a reference to the client, the method will do nothing if the client is already a different one.
+ */
+PointerTracker.prototype.completeTracking = function(callback) {
+    if (BaseObject.is(callback, "IPointerTracker") && callback != this.$client) return;
 	if (this.isTracking()) { // Have to stop it indead - this is cancelled 
 		var msg = this.createTrackMessage("complete"); // No need of keystate changes data - nothing can be changed at this moment.
+		this.adviseClient(msg);
+		this.$clearTrackData();
+	}
+	if (BaseObject.isCallback(callback)) BaseObject.callCallback(callback);
+}
+/**
+ * Ends the tracking and sends "end" message to the client. This message should be ignored in most cases, it is provided
+ * mostly for debugging purposes.
+ * 
+ * @param callback  {callback | IPointerTracker}    This can be a callback called after the tracking stops to continue some task or
+ *      a reference to the client. If it is a reference to the client, the method will do nothing if the client is already a different one.
+ */
+PointerTracker.prototype.endTracking = function(callback) {
+    if (BaseObject.is(callback, "IPointerTracker") && callback != this.$client) return;
+	if (this.isTracking()) { // Have to stop it indead - this is cancelled 
+		var msg = this.createTrackMessage("end"); 
 		this.adviseClient(msg);
 		this.$clearTrackData();
 	}
@@ -226,7 +264,7 @@ PointerTracker.prototype.completeTracking = function(callback, msg) {
 
 ////////// Message helpers /////////////
 PointerTracker.prototype.createTrackMessage = function(what, changedstates) {
-	var m = new MouseTrackerEvent(this,what, changedstates);
+	var m = new PointerTrackerEvent(this,what, changedstates);
 	// Fill in stuff from the tracker.
 	m.set_clientpos(this.$lastClientPoint);
 	m.set_pagepos(this.$lastPagePoint);
@@ -239,3 +277,11 @@ PointerTracker.prototype.adviseClient = function(msg) {
 }
 
 //#endregion
+
+
+PointerTracker.Default = function() {
+	if (PointerTracker.$default == null) {
+		PointerTracker.$default = new PointerTracker();
+	}
+	return PointerTracker.$default;
+}

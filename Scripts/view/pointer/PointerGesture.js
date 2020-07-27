@@ -20,10 +20,12 @@ function PointerGesture(data) {
     BaseObject.apply(this,arguments);
     this.set_data(data);
 }
-PointerGesture.Inherit(BaseObject,"PointerGesture");
+PointerGesture.Inherit(BaseObject,"PointerGesture")
+    .ImplementProperty("data", new Initialize("Any kind of user data attached to the gesture for use by the owner of the trap.", null))
+    .ImplementProperty("recognizing", new InitializeBooleanParameter("Indicates if the gesture is still actively recognizing or stopped.", false))
+    .ImplementProperty("initialClientPos", new Initialize("Point - initial in client viewport coords", null))
+    .ImplementProperty("initialPagePos", new Initialize("Point - initial in page coords.", null));
 
-PointerGesture.ImplementProperty("data", new Initialize("Any kind of user data attached to the gesture for use by the owner of the trap.", null))
-PointerGesture.ImplementPeroperty("recoginizing", new InitializeBooleanParameter("Indicates if the gesture is still actively recognizing or stopped.", false));
 PointerGesture.prototype.$clear = function() {
 	this.set_recognizing(false);
 	this.clear();
@@ -32,13 +34,15 @@ PointerGesture.prototype.$clear = function() {
 PointerGesture.prototype.clear = function() {
 	// Override this method as necessary.
 }.Description("Override to clear your spcific recognition data. No need to call this after operation, it will be called first by the start method the next time the gesture is used. Still, to release a little memory it can be called after operation.");
-PointerGesture.prototype.$start = function() {
+PointerGesture.prototype.$start = function(trackevent) {
 	this.clear();
-	this.set_recognizing(true);
-	this.start();
+    this.set_recognizing(true);
+    this.set_initialClientPos(trackevent.get_clientpos());
+    this.set_initialPagePos(trackevent.get_pagepos());
+	this.start(trackevent);
 };
 // Override
-PointerGesture.prototype.start = function() {
+PointerGesture.prototype.start = function(trackevent) {
 	// Override this as necessary
 }.Description("Override to initialize the members your gesture needs during gesture recognition.");
 PointerGesture.prototype.$stop = function() {
@@ -59,5 +63,5 @@ PointerGesture.prototype.$inspectEvent = function(msg) {
 PointerGesture.prototype.inspectMessage = function(msg) {
 	throw "Not implemented";
 }.Description("All mouse events should be passed to this method after clearing the gesture before starting a new trap.")
-	.Param("msg","A MouseTrackerEvent coming from the system MouseTracker.")
+	.Param("msg","A PointerTrackerEvent coming from the system PointerTracker.")
 	.Returns("Empty result means the gesture recognition continues, === false menas cancelled - no longer recognizing, === true gesture detected.");

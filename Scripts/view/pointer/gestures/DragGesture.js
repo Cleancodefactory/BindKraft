@@ -2,7 +2,7 @@
 function DragGesture(distance, timeallotted) {
 	PointerGesture.apply(this,arguments);
 	this.timeallotted = timeallotted || 300; //Default is 300 ms;
-	this.distance = distance || 2;
+	this.distance = distance || 3;
 }
 DragGesture.Inherit(PointerGesture,"DragGesture");
 // Data
@@ -21,8 +21,11 @@ DragGesture.prototype.inspectMessage = function(msg) {
 	if (!this.watch.intervalExpired()) {
 		var pos = msg.get_clientpos();
 		if (pos == null) return false;
-		if (this.initialPos == null) this.initialPos = pos;
-		if (this.initialPos.distance(pos) >= 2) return true;
+		if (this.initialPos == null) {
+            this.initialPos = pos;
+            return null;
+        }
+		if (this.initialPos.distance(pos) >= this.distance) return true;
 		return null;
 	} else {
 		return false; // Signal that we do not want to be asked anymore.

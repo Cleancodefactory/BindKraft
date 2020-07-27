@@ -49,7 +49,7 @@ SimpleStopWatch.prototype.handleExpireInterval = function() {
     if (this.intervalActive()) {
         this.$timeoutId = null;
         if (!this.intervalExpired()) {
-            var m = (new Date()).getMilliseconds();
+            var m = (new Date()).getTime();
             var tm = (this.$marker + this.$interval) - m;
             if (tm > 0) {
                 this.$timeoutId = setTimeout(this.$expireInterval, tm);
@@ -68,7 +68,7 @@ SimpleStopWatch.prototype.startInterval = function(interval, withevents) {
         this.clearInterval();
         var dt = new Date();
         this.$useevents = withevents
-        this.$marker = dt.getMilliseconds();
+        this.$marker = dt.getTime();
         this.$interval = interval;
         if (this.$useevents) {
             this.$timeoutId =  setTimeout(this.$expireInterval, interval);
@@ -84,11 +84,11 @@ SimpleStopWatch.prototype.stopInterval = function() {
     }
     this.$timeoutId = null;
     
-    this.clearTimeout();
+    this.clearInterval();
 }
 SimpleStopWatch.prototype.measure = function() {
 	if (this.intervalActive()) {
-		this.$measure = (new Date()).getMilliseconds() - this.$marker;
+		this.$measure = (new Date()).getTime() - this.$marker;
 		return this.$measure;
 	} else {
 		return null;
@@ -96,7 +96,7 @@ SimpleStopWatch.prototype.measure = function() {
 }
 SimpleStopWatch.prototype.intervalExpired = function() {
 	if (this.intervalActive()) {
-		var m = (new Date()).getMilliseconds();
+		var m = (new Date()).getTime();
 		if (m > this.$marker + this.$interval) return true;
 		return false;
 	} else {
