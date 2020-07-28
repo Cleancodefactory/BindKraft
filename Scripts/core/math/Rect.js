@@ -99,14 +99,6 @@ Rect.fromBoundingClientRectangle = function(_el) {
 		return new Rect(Math.floor(rc.left),Math.floor(rc.top),Math.floor(rc.right - rc.left),Math.floor(rc.bottom - rc.top));
 	}
 	return null;
-	/*
-	var e = $(el);
-	if (e.length > 0) {
-		var rc = e.get(0).getBoundingClientRect();
-		return new Rect(rc.left,rc.top,rc.right - rc.left,rc.bottom - rc.top);
-	}
-	return null;
-	*/
 }.Description("Returns browser's viewport coordinates");
 Rect.fromDOMElementInner = function(_el) { // jq like - client offset from the body + border and RTL scrollbar (if any)
 	var el = DOMUtil.toDOMElement(_el);
