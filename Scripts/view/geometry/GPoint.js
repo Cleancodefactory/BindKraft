@@ -2,6 +2,8 @@
 
 (function() {
 
+    var IGPoint = Interface("IGPoint");
+
     function GPoint(x, y) {
         BaseObject.apply(this, arguments);
         if (BaseObject.is(x, "Array")) {
@@ -18,7 +20,8 @@
         }
     }
     GPoint.Inherit(BaseObject, "GPoint")
-        .Implement(IObjectifiable);
+        .Implement(IObjectifiable)
+        .Implement(IGPoint);
 
     GPoint.prototype.objectifyInstance = function() {
         var o = {
@@ -47,13 +50,13 @@
             return false;
     }
     GPoint.prototype.toString = function () {
-        return ("GPoint(x=" + this.x + ",y=" + this.y + ")");
+        return ("x=" + this.x + ",y=" + this.y);
     };
     GPoint.prototype.subtract = function (p) {
         if (BaseObject.is(p, "GPoint") || BaseObject.is(p, "Point")) {
             return new GPoint(this.x - p.x, this.y - p.y);
         }
-        return new Point(this.x, this.y);
+        return new GPoint(this.x, this.y);
     };
     GPoint.prototype.add = function (p) {
         if (BaseObject.is(p, "GPoint") || BaseObject.is(p, "Point")) {
@@ -68,7 +71,8 @@
         }
         return null;
     }
-    GPoint.prototype.mapRelativeFromTo = function(ptBaseCurrent,ptBaseNew) {
+    // override
+    GPoint.prototype.mapFromTo = function(ptBaseCurrent,ptBaseNew) {
         var curBase, newBase;
         function _rp(pt) {
             if (BaseObject.is(pt,"GPoint") || BaseObject.is(pt,"Point")) {
@@ -79,11 +83,13 @@
         }
         curBase = _rp(ptBaseCurrent);
         newBase = _rp(ptBaseNew);
-        return new Point(curBase.x + this.x - newBase.x, curBase.y + this.y - newBase.y);
-    }.Description("Maps this point from one base to another given by arguments");
-    GPoint.prototype.mapTo = function(pt) {
-        return mapRelativeFromTo(null,pt);
+        return new GPoint(curBase.x + this.x - newBase.x, curBase.y + this.y - newBase.y);
     }
+    // override
+    GPoint.prototype.mapTo = function(pt) {
+        return this.mapFromTo(null,pt);
+    }
+    // override
     GPoint.prototype.mapFromToElements = function(el1, el2) {
         var ref1 = new GPoint(0,0), ref2 = new GPoint(0,0);
         var dom_rect;
@@ -95,7 +101,7 @@
             dom_rect = el2.getBoundingClientRect();
             ref2 = new GPoint(dom_rect.left + el2.clientLeft,dom_rect.top + el2.clientTop);
         }
-        return new Point(ref1.x + this.x - ref2.x, ref1.y + this.y - ref2.y);
+        return new GPoint(ref1.x + this.x - ref2.x, ref1.y + this.y - ref2.y);
     }.Description("maps the point coordinates from el1 space to el2 space, if any of them is null, it is considered to be the viewport (client coordinates of the browser window)")
 
 })();

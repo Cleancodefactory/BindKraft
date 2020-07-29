@@ -2,6 +2,7 @@
 //#using "../dom/dom-full.dep"
 //#using "../DOMUtil.js"
 
+//#using "../geometry/geometry-full.dep"
 //#using "../enumerations/enumerations-full.dep"
 //#using "../interfaces/interfaces-full.dep"
 //#using "../implementors/implementors-full.dep"
