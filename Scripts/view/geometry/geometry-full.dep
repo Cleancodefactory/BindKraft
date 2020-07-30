@@ -6,3 +6,4 @@
 //#using "./GPoint.js"
 //#using "./GSize.js"
 //#using "./GRect.js"
+//#using "./GSizeLimits.js"

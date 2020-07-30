@@ -1,6 +1,8 @@
 (function() {
 
-    var GSize = Class("GSize");
+    var GSize = Class("GSize"),
+        IGSize = Interface("IGSize"),
+        IGPoint = Interface("IGPoint");
 
     /**
      * GSizeLimits(GSize,GSize)
@@ -61,7 +63,7 @@
     GSizeLimits.prototype.$minsize = null;
     GSizeLimits.prototype.get_maxsize = function() {
         if (BaseObject.is(this.$maxsize,"IGSize")) {
-            return this.$maxsize;
+            return new GSize(this.$maxsize);
         } else {
             return new GSize(this);
         }
@@ -78,8 +80,8 @@
         }
     }
     GSizeLimits.prototype.get_minsize = function() {
-        if (BaseObject.is(this.$minsize,"Size")) {
-            return this.$minsize;
+        if (BaseObject.is(this.$minsize,"IGSize")) {
+            return new GSize(this.$minsize);
         } else {
             return new Size(this);
         }
@@ -89,8 +91,8 @@
             this.$minsize = null;
             return;
         }
-        if (BaseObject.is(v,"Size") || BaseObject.is(v,"Point") || BaseObject.is(v,"Rect") || BaseObject.is(v,"object")) {
-            this.$minsize = new Size(v);
+        if (BaseObject.is(v,"IGSize") || BaseObject.is(v,"IGPoint") || BaseObject.is(v,"IGRect") || BaseObject.is(v,"object")) {
+            this.$minsize = new GSize(v);
         } else {
             throw "Unsupported type";
         }

@@ -1,3 +1,5 @@
+(function() {
+
 /**
  * Track math is represented by classes that are first configured with some settings that 
  * typically describe some geometry. Then their method trackPoint is called with a point and 
@@ -17,3 +19,5 @@ TrackMathBase.Inherit(BaseObject, "TrackMathBase");
 TrackMathBase.prototype.trackPoint = function(pt) {
     throw "Not implemented";
 }
+
+})();

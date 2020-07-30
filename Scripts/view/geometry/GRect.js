@@ -204,14 +204,14 @@
 	 * 
 	 */
 	GRect.prototype.center = function (r) {
-		if (BaseObject.is(r, "GRect")) {
+		if (BaseObject.is(r, "IGRect")) {
 			if (r.w != null) {
 				r.x = this.x + this.w / 2 - r.w / 2;
 			}
 			if (r.h != null) {
 				r.y = this.y + this.h / 2 - r.h / 2;
 			}
-		} else if (BaseObject.is(r, "GPoint")) {
+		} else if (BaseObject.is(r, "IGPoint")) {
 			r.x = this.x + this.w / 2;
 			r.y = this.y + this.h / 2;
 		} else if (r == null) {
@@ -229,13 +229,13 @@
 	GRect.prototype.contains = function(pt_or_rect) {
 		var result = false;
 		var r = pt_or_rect;
-		if (BaseObject.is(pt_or_rect,"Point") || BaseObject.is(pt_or_rect,"GPoint")) {
+		if (BaseObject.is(pt_or_rect,"IGPoint") || BaseObject.is(pt_or_rect,"Point")) {
 			result = (r.x >= this.x &&
 				r.x <= this.get_right() &&
 				r.y >= this.y &&
 				r.y <= this.get_bottom());
 		} 
-		if ((BaseObject.is(pt_or_rect,"GRect") || BaseObject.is(pt_or_rect,"Rect"))  && result) {
+		if ((BaseObject.is(pt_or_rect,"IGRect") || BaseObject.is(pt_or_rect,"Rect"))  && result) {
 			result = (r.get_right() >= this.x &&
 					r.get_right() <= this.get_right() &&
 					r.get_bottom() >= this.y &&
@@ -251,13 +251,13 @@
 	 * (copy of this).
 	 */
 	GRect.prototype.innerSpaceFor = function(pt_or_rect) {
-		if (BaseObject.is(pt_or_rect,"GRect") || BaseObject.is(pt_or_rect,"Rect")) {
+		if (BaseObject.is(pt_or_rect,"IGRect") || BaseObject.is(pt_or_rect,"Rect")) {
 			var rin = pt_or_rect;
 			var maxXInner = this.w - rin.w;
 			var maxYInner = this.h - rin.h;
 			if (maxXInner < 0 || maxYInner < 0) return null;
 			return new GRect(this.x,this.y,maxXInner,maxYInner);
-		} else if (BaseObject.is(pt_or_rect,"GPoint") || BaseObject.is(pt_or_rect,"Point")) {
+		} else if (BaseObject.is(pt_or_rect,"IGPoint") || BaseObject.is(pt_or_rect,"Point")) {
 			return new GRect(this);
 		}
 		return null;
@@ -269,9 +269,9 @@
 	 * to the tested rect, while the returned rectangle is in coordinates relative to this rectangle.
 	 */
 	GRect.prototype.innerSpaceForAnchoredRectangle = function(rect, anchor) {
-		if (!(BaseObject.is(rect,"GRect") || BaseObject.is(anchor,"GPoint") ||
+		if (!(BaseObject.is(rect,"IGRect") || BaseObject.is(anchor,"IGPoint") ||
 				BaseObject.is(rect,"Rect") || BaseObject.is(rect,"Point"))) return null;
-		if (!(BaseObject.is(anchor, "GPoint") || BaseObject.is(anchor, "Point"))) return null;
+		if (!(BaseObject.is(anchor, "IGPoint") || BaseObject.is(anchor, "IPoint"))) return null;
 		var result = new GRect( this.x + (anchor.x - rect.x), 
 								this.y + (anchor.y - rect.y),
 								this.w - (rect.w - anchor.x - rect.x),
@@ -287,12 +287,19 @@
 	 * a rectangle with the same size that is still inside this one and is the closest to the one passed
 	 * to the method.
 	 * 
+	 * @param pt_or_rect { IGPoint		The point is anywhere and is mapped to a point in the rect
+	 * 						IGRect}		The rect for which space is to be found
+	 * @param anchor	 {IGPoint}		Required only if pt_or_rect is rect, anchor is in this CS.
+	 * 									Returns the rectangle in 
+	 * 									which the point can be placed in same CS as this
+	 * 
+	 * 
 	 */
 	GRect.prototype.mapToInsides = function(pt_or_rect, anchor) {
 		var result = null;
-		if (BaseObject.is(pt_or_rect,"GRect") || BaseObject.is(pt_or_rect,"Rect")) {
+		if (BaseObject.is(pt_or_rect,"IGRect") || BaseObject.is(pt_or_rect,"Rect")) {
 			var innerspace = null;
-			if (BaseObject.is(anchor,"GPoint") || BaseObject.is(anchor,"Point")) {
+			if (BaseObject.is(anchor,"IGPoint") || BaseObject.is(anchor,"Point")) {
 				innerspace = this.innerSpaceForAnchoredRectangle(pt_or_rect,anchor);
 				if (innerspace != null && innerspace.isRegular()) {
 					var pt = innerspace.mapToInsides(anchor);
@@ -310,7 +317,7 @@
 				result.x = newUL.x;
 				result.y = newUL.y;
 			}
-		} else if (BaseObject.is(pt_or_rect,"GPoint") || BaseObject.is(pt_or_rect,"Point")) {
+		} else if (BaseObject.is(pt_or_rect,"IGPoint") || BaseObject.is(pt_or_rect,"Point")) {
 			var p = pt_or_rect;
 			var result = new GPoint(p);
 			if (result.x < this.x) result.x = this.x;
@@ -327,7 +334,7 @@
 	 * rectangle.
 	 */
 	GRect.prototype.subtract = function (p) {
-		if (BaseObject.is(p, "GPoint") || BaseObject.is(p, "Point")) {
+		if (BaseObject.is(p, "IGPoint") || BaseObject.is(p, "Point")) {
 			return new GRect(this.x - p.x, this.y - p.y, this.w, this.h);
 		}
 		return new GRect(this.x, this.y, this.w, this.h);
@@ -338,7 +345,7 @@
 	 * rectangle
 	 */
 	GRect.prototype.add = function (p) {
-		if (BaseObject.is(p, "GPoint") || BaseObject.is(p, "Point")) {
+		if (BaseObject.is(p, "IGPoint") || BaseObject.is(p, "Point")) {
 			return new GRect(this.x + p.x, this.y + p.y, this.w, this.h);
 		}
 		return new GRect(this.x, this.y, this.w, this.h);
@@ -352,7 +359,7 @@
 		if (BaseObject.is(arr, "Array")) {
 			var mi = -1, ma = 0;
 			for (var i = 0; i < arr.length; i++) {
-				if (BaseObject.is(arr[i], "GRect")) {
+				if (BaseObject.is(arr[i], "IGRect")) {
 					var a = arr[i].surfaceArea();
 					if (a > ma) {
 						ma = a;
@@ -369,7 +376,7 @@
 	};
 
 	GRect.prototype.intersectWith = function (rect) {
-		if (BaseObject.is(rect, "GRect") || BaseObject.is(rect, "Rect")) {
+		if (BaseObject.is(rect, "IGRect") || BaseObject.is(rect, "Rect")) {
 			var fIntersect = (rect.x < (this.x + this.w) &&
 								(rect.x + rect.w) > this.x &&
 								rect.y < (this.y + this.h) &&
@@ -387,7 +394,7 @@
 	};
 
 	GRect.prototype.uniteWith = function (rect) {
-		if (BaseObject.is(rect, "GRect") || BaseObject.is(rect, "Rect")) {
+		if (BaseObject.is(rect, "IGRect") || BaseObject.is(rect, "Rect")) {
 			var x = Math.min(this.x, rect.x);
 			var y = Math.min(this.y, rect.y);
 			var w = Math.max(this.x + this.w, rect.x + rect.w) - x;

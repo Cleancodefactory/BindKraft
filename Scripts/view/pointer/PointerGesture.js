@@ -1,3 +1,8 @@
+(function() {
+
+    var Initialize = Class("Initialize"),
+    InitializeBooleanParameter = Class("InitializeBooleanParameter");
+
 /*
 	Pointer gestures are used by the MouseTrap
 	Setting additional data depends on the implementation, but should be done during construction or initialization.
@@ -65,3 +70,6 @@ PointerGesture.prototype.inspectMessage = function(msg) {
 }.Description("All mouse events should be passed to this method after clearing the gesture before starting a new trap.")
 	.Param("msg","A PointerTrackerEvent coming from the system PointerTracker.")
 	.Returns("Empty result means the gesture recognition continues, === false menas cancelled - no longer recognizing, === true gesture detected.");
+
+
+})();    

@@ -9,7 +9,7 @@
         if (BaseObject.is(x, "Array")) {
             this.x = x[0];
             this.y = x[1];
-        } else if (BaseObject.is(x, "Point") || BaseObject.is(x, "GPoint")) {
+        } else if (BaseObject.is(x, "IGPoint") || BaseObject.is(x, "Point")) {
             this.x = x.x;
             this.y = x.y;
         } else if (x != null && typeof (x) == "object") {
@@ -53,13 +53,13 @@
         return ("x=" + this.x + ",y=" + this.y);
     };
     GPoint.prototype.subtract = function (p) {
-        if (BaseObject.is(p, "GPoint") || BaseObject.is(p, "Point")) {
+        if (BaseObject.is(p, "IGPoint") || BaseObject.is(p, "Point")) {
             return new GPoint(this.x - p.x, this.y - p.y);
         }
         return new GPoint(this.x, this.y);
     };
     GPoint.prototype.add = function (p) {
-        if (BaseObject.is(p, "GPoint") || BaseObject.is(p, "Point")) {
+        if (BaseObject.is(p, "IGPoint") || BaseObject.is(p, "Point")) {
             return new GPoint(this.x + p.x, this.y + p.y);
         }
         return new GPoint(this.x, this.y);
@@ -75,7 +75,7 @@
     GPoint.prototype.mapFromTo = function(ptBaseCurrent,ptBaseNew) {
         var curBase, newBase;
         function _rp(pt) {
-            if (BaseObject.is(pt,"GPoint") || BaseObject.is(pt,"Point")) {
+            if (BaseObject.is(pt,"IGPoint") || BaseObject.is(pt,"Point")) {
                 return GPoint(pt);
             } else {
                 return GPoint(0,0);

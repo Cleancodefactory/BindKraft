@@ -9,10 +9,10 @@
     function GSize(w, h) {
         BaseObject.apply(this,arguments);
         if (arguments.length == 1) {
-            if (BaseObject.is(w,"GPoint") || BaseObject.is(w,"Point")) {
+            if (BaseObject.is(w,"IGPoint") || BaseObject.is(w,"Point")) {
                 this.w = w.x;
                 this.h = w.y;
-            } else if (BaseObject.is(w,"GSize") || BaseObject.is(w,"GRect") || BaseObject.is(w,"Size") || BaseObject.is(w,"Rect")) {
+            } else if (BaseObject.is(w,"IGSize") || BaseObject.is(w,"IGRect") || BaseObject.is(w,"Size") || BaseObject.is(w,"Rect")) {
                 this.w = w.w;
                 this.h = w.h;
             } else if (BaseObject.is(w, "Array")) {

@@ -1,3 +1,6 @@
+(function() {
+
+    var PointerGesture = Class("PointerGesture");
 
 function DragGesture(distance, timeallotted) {
 	PointerGesture.apply(this,arguments);
@@ -31,3 +34,5 @@ DragGesture.prototype.inspectMessage = function(msg) {
 		return false; // Signal that we do not want to be asked anymore.
 	}
 };
+
+})();
