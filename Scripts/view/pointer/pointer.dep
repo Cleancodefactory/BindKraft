@@ -8,3 +8,5 @@
 
 //#using "./gestures/gestures.dep"
 //#using "./trackmath/trackmath.dep"
+
+//#using "./TrackPointer.js"

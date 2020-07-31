@@ -5,8 +5,40 @@
 		IGRect = Interface("IGRect"),
 		IGSize = Interface("IGSize");
 
-	function GRect() {
-
+	function GRect(x, y, w, h) {
+		GPoint.apply(this, arguments);
+		if (BaseObject.is(x, "IGPoint") && !BaseObject.is(x, "IGRect")) {
+			this.x = x.x;
+			this.y = x.y;
+			if (BaseObject.is(y, "IGPoint")) {
+				this.w = y.x - x.x;
+				this.h = y.y - x.y;
+			} else if (typeof (y) == "object") {
+				if (y.x != null && y.y != null) {
+					this.w = y.x - x.x;
+					this.h = y.y - x.y;
+				} else if (y.w != null && y.h != null) {
+					this.w = y.w;
+					this.h = y.h;
+				}
+			}
+		} else if (BaseObject.is(x, "Array")) {
+			this.x = x[0];
+			this.y = x[1];
+			this.w = x[2];
+			this.h = x[3];
+		} else if (x != null && typeof (x) == "object") { // This also covers the Rect case
+			if (x.x != null && x.y != null) {
+				this.x = x.x; this.y = x.y;
+			} else if (x.left != null && x.top != null) {
+				this.x = x.left; this.y = x.top;
+			}
+			this.w = x.w;
+			this.h = x.h;
+		} else {
+			// GPoint already fetched the x and y
+			this.w = w; this.h = h;
+		}
 	}
 	GRect.Inherit(GPoint, "GRect")
 		.Implement(IObjectifiable)
@@ -272,10 +304,10 @@
 		if (!(BaseObject.is(rect,"IGRect") || BaseObject.is(anchor,"IGPoint") ||
 				BaseObject.is(rect,"Rect") || BaseObject.is(rect,"Point"))) return null;
 		if (!(BaseObject.is(anchor, "IGPoint") || BaseObject.is(anchor, "IPoint"))) return null;
-		var result = new GRect( this.x + (anchor.x - rect.x), 
-								this.y + (anchor.y - rect.y),
-								this.w - (rect.w - anchor.x - rect.x),
-								this.h - (rect.h - anchor.y - rect.y));
+		var result = new GRect( this.x + anchor.x, 
+								this.y + anchor.y,
+								this.w - rect.w,
+								this.h - rect.h);
 		if (result.isRegular()) return result;
 		return null;
 	}
@@ -302,12 +334,13 @@
 			if (BaseObject.is(anchor,"IGPoint") || BaseObject.is(anchor,"Point")) {
 				innerspace = this.innerSpaceForAnchoredRectangle(pt_or_rect,anchor);
 				if (innerspace != null && innerspace.isRegular()) {
-					var pt = innerspace.mapToInsides(anchor);
-					if (pt != null) {
-						result = new GRect(pt_or_rect.x = pt_or_rect.x + pt.x - anchor.x,
-										pt_or_rect.y = pt_or_rect.y + pt.y - anchor.y,
-										pt_or_rect.w, pt_or_rect.h);
-					}
+					result = innerspace;
+					// var pt = innerspace.mapToInsides(anchor);
+					// if (pt != null) {
+					// 	result = new GRect(pt_or_rect.x = pt_or_rect.x + pt.x - anchor.x,
+					// 					pt_or_rect.y = pt_or_rect.y + pt.y - anchor.y,
+					// 					pt_or_rect.w, pt_or_rect.h);
+					// }
 				}
 			} else {
 				innerspace = this.innerSpaceFor(pt_or_rect);
@@ -321,9 +354,9 @@
 			var p = pt_or_rect;
 			var result = new GPoint(p);
 			if (result.x < this.x) result.x = this.x;
-			if (result.x >= this.x + this.w) result.x = this.x + this.w - 1;
+			if (result.x >= this.x + this.w) result.x = this.x + this.w;
 			if (result.y < this.y) result.y = this.y;
-			if (result.y >= this.y + this.h) result.y = this.y + this.h - 1;
+			if (result.y >= this.y + this.h) result.y = this.y + this.h;
 		}
 		return result;
 	}

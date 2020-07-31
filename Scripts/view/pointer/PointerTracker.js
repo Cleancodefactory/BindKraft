@@ -1,5 +1,15 @@
 /**
  * We start with mouse, later more will be added
+ * 
+ * Tracker messages:
+ * start    
+ * 
+ * move
+ * key
+ * 
+ * complete
+ * end
+ * cancel
  */
 
 function PointerTracker(eventmode) {

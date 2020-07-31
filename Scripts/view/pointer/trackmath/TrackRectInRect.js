@@ -15,14 +15,15 @@ function TrackRectInRect(outer, inner, anchor) {
     if (BaseObject.is(inner, "IGRect")) {
         this.$inner = inner;
     } else if (inner instanceof HTMLElement) {
-        this.$outer = GRect.fromDOMElementViewport(outer);
+        this.$inner = GRect.fromDOMElementViewport(inner);
     }
     if (BaseObject.is(anchor, "IGPoint")) {
         // Assume point is in rectangle coords
         this.$anchor = anchor;
     } else if (anchor instanceof MouseEvent) {
         // assume point is in viewport coords
-        this.$anchor = new GPoint(anchor.clientX, anchor.clientY);
+        var pt = new GPoint(anchor.clientX, anchor.clientY);
+        this.$anchor = pt.mapFromTo(null, this.$inner);
     }
 
 }
@@ -39,9 +40,12 @@ TrackRectInRect.prototype.isValid = function() {
 
 TrackRectInRect.prototype.trackPoint = function(pt) {
     if (this.isValid()) {
+        // This can be remembered
         var possibleRect = this.$outer.mapToInsides(this.$inner,this.$anchor)
         if (possibleRect != null && possibleRect.isValid()) {
-            return possibleRect.mapToInsides(pt);
+            var pt = possibleRect.mapToInsides(pt);
+            pt = pt.subtract(this.$anchor);
+            return pt.mapFromTo(null, this.$outer);
         }
     }
     return null;

@@ -76,9 +76,9 @@
         var curBase, newBase;
         function _rp(pt) {
             if (BaseObject.is(pt,"IGPoint") || BaseObject.is(pt,"Point")) {
-                return GPoint(pt);
+                return new GPoint(pt);
             } else {
-                return GPoint(0,0);
+                return new GPoint(0,0);
             }
         }
         curBase = _rp(ptBaseCurrent);
