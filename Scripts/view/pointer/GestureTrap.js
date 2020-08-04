@@ -177,7 +177,7 @@ GestureTrap.prototype.start = function(e) {
         this.$startedAt = (new Date()).getTime();
         PointerTracker.Default().startTracking(this, e.originalEvent);
         return true;
-	} else if (BaseObject.is(e, "Point")) {
+	} else if (BaseObject.is(e, "IGPoint") || BaseObject.is(e, "Point")) {
         this.$startedAt = (new Date()).getTime();
         PointerTracker.Default().startTracking(this, e);
         return true;

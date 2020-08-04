@@ -18,14 +18,7 @@ function TrackSizeRectInRect(outer, inner, anchor, side, width) {
         this.$inner = GRect.fromDOMElementViewport(inner);
     }
     inner = this.$inner;
-    if (BaseObject.is(anchor, "IGPoint")) {
-        // Assume point is in rectangle coords
-        this.$anchor = anchor;
-    } else if (anchor instanceof MouseEvent) {
-        // assume point is in viewport coords
-        var pt = new GPoint(anchor.clientX, anchor.clientY);
-        this.$anchor = pt.mapFromTo(null, this.$inner);
-    }
+    
     var width = width || 5;
     this.$side = side;
     switch (side) {
@@ -41,7 +34,14 @@ function TrackSizeRectInRect(outer, inner, anchor, side, width) {
         case "bottom":
             this.$sideRect = new GRect(inner.x, inner.y + inner.h - width, inner.w, width);
         break;
-
+    }
+    if (BaseObject.is(anchor, "IGPoint")) {
+        // Assume point is in rectangle coords
+        this.$anchor = anchor;
+    } else if (anchor instanceof MouseEvent) {
+        // assume point is in viewport coords
+        var pt = new GPoint(anchor.clientX, anchor.clientY);
+        this.$anchor = pt.mapFromTo(null, this.$sideRect);
     }
 
 }
@@ -63,41 +63,42 @@ TrackSizeRectInRect.prototype.isValid = function() {
 TrackSizeRectInRect.prototype.trackPoint = function(pt) {
     if (this.isValid()) {
         // This can be remembered
-        var possibleRect = null;
+        var allowedRect = null;
         switch (this.$side) {
             case "left":
-                possibleRect = new GRect(   this.$outer.x, 
+                allowedRect = new GRect(   this.$outer.x, 
                                             this.$inner.y, 
-                                            this.$inner.x - this.$outer.x + this.$inner.w - this.$sideRect.w, 
+                                            this.$inner.x - this.$outer.x + this.$inner.w, 
                                             this.$inner.h);
             break;
             case "top":
-                possibleRect = new GRect(   this.$inner.x, 
+                allowedRect = new GRect(   this.$inner.x, 
                                             this.$outer.y, 
                                             this.$inner.w, 
-                                            this.$inner.y - this.$outer.y + this.$inner.h - this.$sideRect.h);
+                                            this.$inner.y - this.$outer.y + this.$inner.h);
             break;
             case "right":
-                possibleRect = new GRect(   this.$inner.x, 
-                                            this.$inner.y, 
-                    this.$inner.x - this.$outer.x + this.$inner.w - this.$sideRect.w, 
-                    this.$inner.h);
-                this.$sideRect = new GRect(inner.x + inner.w - width, inner.y, width, inner.h);
+                allowedRect = new GRect(   this.$inner.x, 
+                                            this.$inner.y,
+                                            this.$outer.x + this.$outer.w - this.$inner.x,
+                                            this.$inner.h);
             break;
             case "bottom":
-                this.$sideRect = new GRect(inner.x, inner.y + inner.h - width, inner.w, width);
+                allowedRect = new GRect(   this.$inner.x,
+                                            this.$inner.y,
+                                            this.$inner.w,
+                                            this.$outer.h + this.$outer.y - this.$inner.y);
+                    
             break;
 
-    }
-        }
+        }   
+        if (allowedRect == null || !allowedRect.isValid()) return null;
+        var possibleRect = allowedRect.mapToInsides(this.$sideRect,this.$anchor)
 
-
-
-        var possibleRect = this.$outer.mapToInsides(this.$inner,this.$anchor)
         if (possibleRect != null && possibleRect.isValid()) {
             var pt = possibleRect.mapToInsides(pt);
             pt = pt.subtract(this.$anchor);
-            return pt.mapFromTo(null, this.$outer);
+            return pt.mapFromTo(null, this.$outer);    
         }
     }
     return null;

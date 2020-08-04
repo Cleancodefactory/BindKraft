@@ -143,6 +143,9 @@ Operation.prototype.failure = Operation.prototype.onfailure;
 Operation.prototype.complete = function(anotherOp,result) {
 	return this.whencomplete().complete(anotherOp, result);
 }
+Operation.prototype.transfer = function(anotherOp) {
+	return this.whencomplete().transfer(anotherOp, result);
+}
 Operation.prototype.succeed = function(anotherOp,result) {
 	return this.whencomplete().succeed(anotherOp, result);
 }

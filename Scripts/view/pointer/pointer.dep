@@ -5,8 +5,10 @@
 
 //#using "./GestureTrap.js"
 //#using "./PointerGesture.js"
+//#using "./GestureTaskBase.js"
 
 //#using "./gestures/gestures.dep"
 //#using "./trackmath/trackmath.dep"
+//#using "./gesturetasks/gesturetasks.dep"
 
 //#using "./TrackPointer.js"

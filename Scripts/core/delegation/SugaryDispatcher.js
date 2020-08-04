@@ -81,10 +81,10 @@ SugaryDispatcher.prototype.failure = SugaryDispatcher.prototype.onfailure;
 /**
 	Completes another operation with the specified result
 */
-SugaryDispatcher.prototype.complete = function(anotherOp,result) { // alias
+SugaryDispatcher.prototype.complete = function(anotherOp, result) { // alias
 	this.dispatcher.add(new Delegate(this, this.$complete,[anotherOp, result]));
 	return this;
-}.Description("Completes another operation with the specified result if current operation is successful and with its error infoif unsuccessful.");
+}.Description("Completes another operation with the specified result if current operation is successful and with its error info if unsuccessful.");
 SugaryDispatcher.prototype.$complete = function(op,anotherOp, result) { // alias
 	if (BaseObject.is(anotherOp, "Operation")) {
 		if (!anotherOp.isOperationComplete()) {
@@ -92,6 +92,18 @@ SugaryDispatcher.prototype.$complete = function(op,anotherOp, result) { // alias
 		}
 	}
 }
+SugaryDispatcher.prototype.transfer = function(anotherOp) { // alias
+	this.dispatcher.add(new Delegate(this, this.$complete,[anotherOp]));
+	return this;
+}.Description("Completes another operation with the specified result if current operation is successful and with its error info if unsuccessful.");
+SugaryDispatcher.prototype.$transfer = function(op,anotherOp) { // alias
+	if (BaseObject.is(anotherOp, "Operation")) {
+		if (!anotherOp.isOperationComplete()) {
+			anotherOp.CompleteOperation(op.isOperationSuccessful(), op.isOperationSuccessful()?op.getOperationResult():op.getOperationErrorInfo());
+		}
+	}
+}
+
 SugaryDispatcher.prototype.succeed = function(anotherOp,result) { // alias
 	this.dispatcher.add(new Delegate(this, this.$complete,[anotherOp, result]));
 	return this;

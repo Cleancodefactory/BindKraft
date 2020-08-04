@@ -11,12 +11,24 @@ function DragVHGesture(direction, timeallotted, distance) {
     PointerGesture.apply(this,arguments);
     this.timeallotted = timeallotted || 300; //Default is 300 ms;
     this.distance = distance || 3;
-    this.direction = direction || "H";
+    this.direction = direction || "h";
 }
 DragVHGesture.Inherit(PointerGesture,"DragVHGesture");
 
 // Data
 DragVHGesture.prototype.direction = null;
+/**
+ * Returns beautified direction for result consumer 4 values only: nwse, nesw, h, v
+ */
+DragVHGesture.prototype.get_direction = function() {
+    if (this.direction == "nwse" || this.direction == "nw" || this.direction == "se") {
+        return "nwse";
+    } else if (this.direction == "nesw" || this.direction == "ne" || this.direction == "sw") {
+        return "nesw";
+    } else {
+        return this.direction;
+    }
+}
 
 DragVHGesture.prototype.distance = null;
 DragVHGesture.prototype.timeallotted = null;

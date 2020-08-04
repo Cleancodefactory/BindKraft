@@ -192,14 +192,15 @@ PointerTracker.prototype.$reportMouseMessage = function(e) {
 //#region Tracking control
 
 PointerTracker.prototype.startTracking = function(client,initialPoint_or_MouseEvent) {
+    var GPoint = Class("GPoint");
 	this.stopTracking(this.thisCall(function() {
 		var changedstates = null;
 		if (BaseObject.is(client, "IPointerTracker")) {
 			this.$clearTrackData();
 			this.$client = client;
 			this.$tracking = true;
-			if (BaseObject.is(initialPoint_or_MouseEvent, "Point")) {
-				this.$lastClientPoint = new Point(initialPoint_or_MouseEvent);
+			if (BaseObject.is(initialPoint_or_MouseEvent, "IGPoint") || BaseObject.is(initialPoint_or_MouseEvent, "Point")) {
+				this.$lastClientPoint = new GPoint(initialPoint_or_MouseEvent);
 			} else if (initialPoint_or_MouseEvent != null && initialPoint_or_MouseEvent.target) {
                 // Will set lastClientPoint and strip states
 				changedstates = this.$reportMouseMessage(initialPoint_or_MouseEvent);

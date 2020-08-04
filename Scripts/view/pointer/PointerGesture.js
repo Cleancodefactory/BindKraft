@@ -29,7 +29,8 @@ PointerGesture.Inherit(BaseObject,"PointerGesture")
     .ImplementProperty("data", new Initialize("Any kind of user data attached to the gesture for use by the owner of the trap.", null))
     .ImplementProperty("recognizing", new InitializeBooleanParameter("Indicates if the gesture is still actively recognizing or stopped.", false))
     .ImplementProperty("initialClientPos", new Initialize("Point - initial in client viewport coords", null))
-    .ImplementProperty("initialPagePos", new Initialize("Point - initial in page coords.", null));
+	.ImplementProperty("initialPagePos", new Initialize("Point - initial in page coords.", null))
+	.ImplementProperty("trackMath", new Initialize("A track math to convert coordinates before passing them to the overrides", null));
 
 PointerGesture.prototype.$clear = function() {
 	this.set_recognizing(false);
@@ -39,9 +40,10 @@ PointerGesture.prototype.$clear = function() {
 PointerGesture.prototype.clear = function() {
 	// Override this method as necessary.
 }.Description("Override to clear your spcific recognition data. No need to call this after operation, it will be called first by the start method the next time the gesture is used. Still, to release a little memory it can be called after operation.");
-PointerGesture.prototype.$start = function(trackevent) {
+PointerGesture.prototype.$start = function(_trackevent) {
 	this.clear();
-    this.set_recognizing(true);
+	this.set_recognizing(true);
+	var trackevent = _trackevent.cloneObject(this.get_trackMath());
     this.set_initialClientPos(trackevent.get_clientpos());
     this.set_initialPagePos(trackevent.get_pagepos());
 	this.start(trackevent);
@@ -61,7 +63,8 @@ PointerGesture.prototype.$stop = function() {
 PointerGesture.prototype.stop = function() {
 	return false;
 }.Description("Can be called by inspectEvent to cancel further recognition and directly return === false. Use like: return this.stop();");
-PointerGesture.prototype.$inspectEvent = function(msg) {
+PointerGesture.prototype.$inspectEvent = function(_msg) {
+	var msg = _msg.cloneObject(this.get_trackMath());
 	return this.inspectEvent(msg);
 }
 // Override
