@@ -4,3 +4,4 @@
 //#using "./DefaultDateTimeAggregates.js"
 
 //#using "./FormatInteger.js"
+//#using "./BooleanConverter.js"
