@@ -28,7 +28,7 @@
         }
 
         if (pt != null) {
-            var rect = GRect.fromDOMElementViewport();
+            var rect = GRect.fromDOMElementViewport(this.$domEl);
             if (pt.x > this.$width && pt.x < rect.w - this.$width && pt.y > this.$width && pt.y < rect.h - this.$width) {
                 var op = new Operation();
                 GestureTrap.Trap(pt, new DragGesture()).complete(op, { move: true, anchor: pt });
