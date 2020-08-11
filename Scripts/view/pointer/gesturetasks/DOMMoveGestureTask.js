@@ -3,7 +3,7 @@
 
     var GestureTaskBase = Class("GestureTaskBase"),
         GestureTrap = Class("GestureTrap"),
-        DragGesture = Class("DragVHGesture"),
+        DragGesture = Class("DragGesture"),
         GRect = Class("GRect"),
         GPoint = Class("GRect");
     
