@@ -123,7 +123,9 @@ OperationAggregate.prototype.get_failed = function() {
 	});		
 }
 // Attach, check ...
-OperationAggregate.prototype.attach = function(op) {
+OperationAggregate.prototype.attach = function(_op) {
+	var op = _op;
+	if (BaseObject.is(op, "SugaryDispatcher")) op = op.$operation;
 	if (!BaseObject.is(op,"Operation") || this.get_sealed()) return false;	
 	if (!op.isOperationComplete()) {
 		this.$operations.addElement(op);

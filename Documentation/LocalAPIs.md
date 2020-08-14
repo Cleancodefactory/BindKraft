@@ -210,20 +210,20 @@ Now assuming one has the implementations, they have to be exposed to the system.
 
 ### Shell's support for apps exposing local API
 
-While local API can be exposed "manually", by explicitly registering interface implementation instances into some `LocalAPI` hub (the class LocalAPI is exactly that, LocalAPI.Default() is the system default hub, it is usually the only one, but others can be used for private reasons, mocking etc.), this approach has its setbacks.
+Local API can be exposed "manually"/"actively", by explicitly registering interface implementation instances into some `LocalAPI` hub (the class LocalAPI is exactly that, LocalAPI.Default() is the system default hub, it is usually the only one, but others can be used for private reasons, mocking etc.). Apparently this approach has its setbacks:
 
-The most important reason to depend on the Shell instead of actively registering in the system hub or other hub(s) of your choice, is the nature of the usage of an API. Other apps just find the API and use it, but the question is how they find it?
+The most important reason to depend on the Shell instead of manually/actively registering in the system hub or other hub(s) of your choice, is the nature of the usage of an API. Other apps just find the API and use it, but the question is how they find it?
 
-Without additional means, doing everything on your own, both the servers of an API and clients of the API expose and consume API respectively by using a hub they have to know about explicitly. Then, isn't the system hub (`LocalAPI.Default()`) exactly that? Yes and no - remember that software development also includes various ways of testing code, sometimes sandboxing for various reasons (not limited to testing) and so on. The ability to replace the hub (in this case) and in the general case all kinds of dependencies is not an exotic requirement, but something we prefer to have. This is what the Shell's support gives you.
+Without additional means, doing everything on your own, both the servers of an API and clients of the API expose and consume API respectively by using a hub they have to know about explicitly. Then, isn't the system hub (`LocalAPI.Default()`) exactly that? Yes and no - remember that software development also includes various ways of testing code, sometimes sandboxing for various reasons (not limited to testing) and so on. The ability to replace the hub (in this case) and in the general case all kinds of dependencies is not an exotic requirement, but something we prefer to have when needed. This is what the Shell's support gives you.
 
-SysShell.launchXXX (methods like: launch, launchone, launchEx etc.), visible globally as Shell.launchXXX(...) are responsible for starting and stopping an app. This is internally a complicated process that takes care about many details which remain largely transparent for the developer, but their results are in high demand.
+SysShell.launchXXX (methods like: `launch`, `launchone`, `launchEx` etc.), visible globally as `Shell.launchXXX(...)` are responsible for starting and stopping an app. This is internally a complicated process that takes care about many details which remain largely transparent for the developer, but their results are in high demand.
 
 Exposition of Local API during launch and shutdown:
 
 1. launch procedure starts ...
-2. ... other steps ...
+2. _... other steps ..._
 3. Instance of the app's class is created - **app**
-4. ... other steps ...
+4. _... other steps ..._
 5. List of hubs where the APIs have to be registered is created.
     Currently only one hub is supported. By default this is `LocalAPI.Default()`, but a replacement can be passed in `option.RegisterInLocalAPIHub` when calling `launchEx`. (see SysShell documentation for alternatives and more info)
 6. .. other steps ... one of the steps 7. or 8. happens
@@ -236,7 +236,13 @@ Exposition of Local API during launch and shutdown:
 13. Early in the shutdown sequence, before anything important is done `app.revokeLocalAPI(hub)` is called for each hub (the same hubs previously passed in step 9.). Currently this can be only one hub.
 14. In the revokeLocalAPI method the **app** calls the `hub.revokeAPI` for each previously exposed interface. For the reasons mentioned above the exposed interfaces are usually always the same, but it is possible to have rare exceptions - apps registering different API interfaces depending on some factors (not a recommended pattern).
 
+_On a side note the `AppGate` object the app receives in its constructor, also provides methods for registration and revocation of local API. The hub where this occurs is managed by the Shell appropriately, but this approach is not recommended. The reason to avoid it is in the nature of the app's lifecycle. When using the `IImplementsLocalAPI` the app is called by the Shell when it starts and when it stops to register/revoke the API it provides, i.e. the API is available for the entire life of the app's instance. This is the normal way local API should behave. Using AppGate an app can register/revoke API at any point of its lifecycle which will make the availability of the API unpredictable and undetectable in advance. When done through `IImplementsLocalAPI` all API provided by an app becomes available when it is started, thus a procedure to start the app when its API is needed can be implemented easily by any consumers of the API. This is not possible in the other case (AppGate based), because the availability of the API will depend on some internal logic of the providing app._ 
+
+The feature in AppGate is mostly provided for system apps and should be avoided in any regular app. If the lifecycle of the app has phases during which the API cannot function, this should be implemented as behavior of the API and not as its availability. Do not forget that consumers of the API can obtain it and hold a reference for a long time, during which periods when the API cannot function can exist. In that case clients will be forced to stick to a pattern of API usage in which it is obtained used and immediately released, which is certainly not the best way to treat the consumers of your API.
+
 ### Exposing local API using the IImplementsLocalAPIImpl
+
+`IImplementsLocalAPIImpl` will be deprecated, because the method described above is simple enough and more straightforward.
 
 
 

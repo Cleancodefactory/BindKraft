@@ -11,7 +11,7 @@ function AppBase(appGate) {
     this.set_instancename("AppBase derived application");
 }
 AppBase.Inherit(DataHolder, "AppBase");
-AppBase.Implement(IAppInstance);
+AppBase.Implement(IAppInstance); // Extends IManagedInterface
 AppBase.Implement(IApp); // TODO: move code from IApp here
 AppBase.Implement(IStructuralQueryProcessorImpl, "app", function () { return this.get_approot(); });
 AppBase.Implement(IStructuralQueryRouterImpl, "app", function () { return this.get_approot(); });

@@ -83,13 +83,21 @@ Operation.prototype.onBeforeOperationCompleted = function() {
 }
 // Operation.CompletedOperation = function (ture/false, result/error-string,object) {}
 
+// Methods for wider usage
+
+/**
+ * 	Called when the operation completes (regardless of success). The operation is passed
+ * as argument and can be checked for details.
+ * 
+ *	@param callback callback(op: Operation)
+ */
 Operation.prototype.then = function(callback) {
 	if (BaseObject.isCallback(callback)) {
 		var old = this.get_completionroutine();
 		if (BaseObject.is(old,"SugarryDispatcher")) {
 			old.tell(callback);
 		} else if (BaseObject.isCallback(old)) {
-			var wrapper = new SugaryDispatcher();
+			var wrapper = new SugaryDispatcher(this);
 			this.set_completionroutine(wrapper);
 			if (!this.$handlingdone) {
 				wrapper.tell(old);
@@ -108,13 +116,18 @@ Operation.prototype.then = function(callback) {
 	}
 	return this;
 }.Description("Handles both success and failure through inspectionof the passed operation");
+
+/**
+ * Returns a SugaryDispatcher wrapper that supports the same methods. Most of the methods below
+ * will use the wrapper internally. Sometimes it may be more convenient to obtain the wrapper.
+ */
 Operation.prototype.whencomplete = function() {
 	if (arguments.length != 0) throw "oncomplete takes 0 arguments and returns SugarryDispatcher that can notify multiple handlers by calling tell(handler) on it";
 	var wrapper = this.get_completionroutine();
 	if (BaseObject.is(wrapper,"SugaryDispatcher")) {
 		// All is fine in this case
 	} else {
-		wrapper = new SugaryDispatcher(); // new one
+		wrapper = new SugaryDispatcher(this); // new one
 		oldhandler = this.get_completionroutine();
 		this.set_completionroutine(wrapper);
 		if (this.$handlingdone && this.isOperationComplete()) {
@@ -131,24 +144,52 @@ Operation.prototype.whencomplete = function() {
 	}
 	return wrapper;
 }.Description("Creates an event dispatcher tuned to advise newcomers and returns it - multiple handlers can be advised - see");
+/**
+ * Called id the operation succeeds with its result callback(result)
+ */
 Operation.prototype.onsuccess = function(callback) {
 	return this.whencomplete().onsuccess(callback);
 }
+/**
+ * The same as onsuccess - called id the operation succeeds with its result callback(result) 
+ */
 Operation.prototype.success = Operation.prototype.onsuccess;
+/**
+ * Called if the operation fails with its error info callback(error)
+ */
 Operation.prototype.onfailure = function(callback) {
 	return this.whencomplete().onfailure(callback);
 }
+/**
+ * Called if the operation fails with its error info callback(error)
+ */
 Operation.prototype.failure = Operation.prototype.onfailure;
-
+/**
+ * Completes another operation successfully or not (the same as this one)
+ * with the specified result (and not with the result of this one).
+ * On failure transfers the error info from this operation.
+ */
 Operation.prototype.complete = function(anotherOp,result) {
 	return this.whencomplete().complete(anotherOp, result);
 }
+/**
+ * Completes another operation the same as this one, transfers result or error info
+ * as necessary
+ */
 Operation.prototype.transfer = function(anotherOp) {
 	return this.whencomplete().transfer(anotherOp, result);
 }
+/**
+ * When this operation completes (no matter how), completes successfully another with
+ * the specified result.
+ */
 Operation.prototype.succeed = function(anotherOp,result) {
 	return this.whencomplete().succeed(anotherOp, result);
 }
+/**
+ * When this operation completes (no matter how), completes unsuccessfully another with
+ * the specified error info.
+ */
 Operation.prototype.fail = function(anotherOp,errinfo) {
 	return this.whencomplete().fail(anotherOp, errinfo);
 }

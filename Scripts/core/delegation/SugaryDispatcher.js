@@ -10,15 +10,19 @@
  * it tells about that. You have to determine what arguments are passed to the original callback this object replaces
  * in order to design handlers - the SugaryDispatcher just tranfers them and is agnostic toward them.
  */
-function SugaryDispatcher() {
+function SugaryDispatcher(op) {
+	this.$operation = op;
 	BaseObject.apply(this, arguments);
 	this.dispatcher.set_adviseNewComers(true);
+	
 	// this.sender = sender;
 	// this.args = Array.createCopyOf(arguments,1);
 }
 SugaryDispatcher.Inherit(BaseObject, "SugaryDispatcher");
 SugaryDispatcher.Implement(IInvocationWithArrayArgs);
 SugaryDispatcher.Implement(IInvoke);
+
+SugaryDispatcher.prototype.$operation = null;
 // For success/failure delegation
 SugaryDispatcher.$tellsuccess = function (op,handler) {
 	if (op.isOperationSuccessful()) {
