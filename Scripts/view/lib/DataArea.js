@@ -55,7 +55,7 @@ DataArea.prototype.obliterate = function() {
 // Parameters
 DataArea.ImplementProperty("lastCallProcessing", new InitializeBooleanParameter("Set this to true to instruct the area to use connector in last call mode - concurrent calls are ignored, only the last is actually processed.", false));
 DataArea.prototype.reloadOnChange = new InitializeBooleanParameter("Reload the data area on order change (only with the dedicated methods - not the properties!!!)", true);
-DataArea.prototype.resetDirOnNewOrder = new InitializeBooleanParameter("Reset the order direction to ASC if a new column is set for ordering", false);
+DataArea.ImplementProperty("resetdironneworder",new InitializeBooleanParameter("Reset the order direction to ASC if a new column is set for ordering", false) , "resetDirOnNewOrder");
 DataArea.prototype.limitName = new InitializeStringParameter("The name of the limit parameter sent to the server", "numrows");
 DataArea.prototype.offsetName = new InitializeStringParameter("The name of the limit parameter sent to the server", "startrowindex");
 DataArea.prototype.reportedOffsetName = new InitializeStringParameter("The name of the field in which the server may set the actual offset returned. If not null the DataArea will check this and synch its position accordingly. If the count is determined with separate request this field is expected in the response of that request and not as part of the data!", "startrowindex");

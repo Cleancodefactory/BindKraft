@@ -86,10 +86,11 @@ SugaryDispatcher.prototype.failure = SugaryDispatcher.prototype.onfailure;
 	Completes another operation with the specified result
 */
 SugaryDispatcher.prototype.complete = function(anotherOp, result) { // alias
+	if (BaseObject.is(anotherOp, "SugaryDispatcher")) anotherOp = anotherOp.$operation;
 	this.dispatcher.add(new Delegate(this, this.$complete,[anotherOp, result]));
 	return this;
 }.Description("Completes another operation with the specified result if current operation is successful and with its error info if unsuccessful.");
-SugaryDispatcher.prototype.$complete = function(op,anotherOp, result) { // alias
+SugaryDispatcher.prototype.$complete = function(op, anotherOp, result) { // alias
 	if (BaseObject.is(anotherOp, "Operation")) {
 		if (!anotherOp.isOperationComplete()) {
 			anotherOp.CompleteOperation(op.isOperationSuccessful(), op.isOperationSuccessful()?result:op.getOperationErrorInfo());
@@ -97,6 +98,7 @@ SugaryDispatcher.prototype.$complete = function(op,anotherOp, result) { // alias
 	}
 }
 SugaryDispatcher.prototype.transfer = function(anotherOp) { // alias
+	if (BaseObject.is(anotherOp, "SugaryDispatcher")) anotherOp = anotherOp.$operation;
 	this.dispatcher.add(new Delegate(this, this.$complete,[anotherOp]));
 	return this;
 }.Description("Completes another operation with the specified result if current operation is successful and with its error info if unsuccessful.");
@@ -109,6 +111,7 @@ SugaryDispatcher.prototype.$transfer = function(op,anotherOp) { // alias
 }
 
 SugaryDispatcher.prototype.succeed = function(anotherOp,result) { // alias
+	if (BaseObject.is(anotherOp, "SugaryDispatcher")) anotherOp = anotherOp.$operation;
 	this.dispatcher.add(new Delegate(this, this.$complete,[anotherOp, result]));
 	return this;
 }.Description("Completes another operation with the specified result if current operation is successful and with its error infoif unsuccessful.");
@@ -120,6 +123,7 @@ SugaryDispatcher.prototype.$succeed = function(op,anotherOp, result) { // alias
 	}
 }
 SugaryDispatcher.prototype.fail = function(anotherOp,errinfo) { // alias
+	if (BaseObject.is(anotherOp, "SugaryDispatcher")) anotherOp = anotherOp.$operation;
 	this.dispatcher.add(new Delegate(this, this.$complete,[anotherOp, errinfo]));
 	return this;
 }.Description("Completes another operation with the specified result if current operation is successful and with its error infoif unsuccessful.");
