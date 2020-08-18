@@ -99,7 +99,7 @@ SugaryDispatcher.prototype.$complete = function(op, anotherOp, result) { // alia
 }
 SugaryDispatcher.prototype.transfer = function(anotherOp) { // alias
 	if (BaseObject.is(anotherOp, "SugaryDispatcher")) anotherOp = anotherOp.$operation;
-	this.dispatcher.add(new Delegate(this, this.$complete,[anotherOp]));
+	this.dispatcher.add(new Delegate(this, this.$transfer,[anotherOp]));
 	return this;
 }.Description("Completes another operation with the specified result if current operation is successful and with its error info if unsuccessful.");
 SugaryDispatcher.prototype.$transfer = function(op,anotherOp) { // alias

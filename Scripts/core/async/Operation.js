@@ -177,7 +177,7 @@ Operation.prototype.complete = function(anotherOp,result) {
  * as necessary
  */
 Operation.prototype.transfer = function(anotherOp) {
-	return this.whencomplete().transfer(anotherOp, result);
+	return this.whencomplete().transfer(anotherOp);
 }
 /**
  * When this operation completes (no matter how), completes successfully another with
