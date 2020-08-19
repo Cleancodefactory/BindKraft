@@ -22,6 +22,10 @@
 					this.h = y.h;
 				}
 			}
+		} else if (BaseObject.is(x, "IGRect") || BaseObject.is(x, "Rect")) {
+			this.x = x.x; this.y = x.y;
+			this.w = x.w;
+			this.h = x.h;
 		} else if (BaseObject.is(x, "Array")) {
 			this.x = x[0];
 			this.y = x[1];
@@ -202,7 +206,7 @@
 	// GPoint.mapFromTo works without correcting sizes (which is not expected from a map routine)
 
 	GRect.prototype.mapFromTo = function(ptBaseCurrent, ptBaseNew) {
-		var pt = GPoint.prototype.mapFromTo(ptBaseCurrent, ptBaseNew);
+		var pt = GPoint.prototype.mapFromTo.call(this,ptBaseCurrent, ptBaseNew);
 		return new GRect(pt.x, pt.y, this.w, this.h);
 	}
 
@@ -298,7 +302,7 @@
 	/**
 	 * Returns the (regular) rectangle in which the anchor can be put in this rectangle so that
 	 * the target rect will still be inside this one. The anchor is passed in coordinates relative 
-	 * to the tested rect, while the returned rectangle is in coordinates relative to this rectangle.
+	 * to the tested rect, while the returned rectangle is in browser vp coordinates.
 	 */
 	GRect.prototype.innerSpaceForAnchoredRectangle = function(rect, anchor) {
 		if (!(BaseObject.is(rect,"IGRect") || BaseObject.is(anchor,"IGPoint") ||
@@ -319,11 +323,14 @@
 	 * a rectangle with the same size that is still inside this one and is the closest to the one passed
 	 * to the method.
 	 * 
-	 * @param pt_or_rect { IGPoint		The point is anywhere and is mapped to a point in the rect
-	 * 						IGRect}		The rect for which space is to be found
-	 * @param anchor	 {IGPoint}		Required only if pt_or_rect is rect, anchor is in this CS.
-	 * 									Returns the rectangle in 
-	 * 									which the point can be placed in same CS as this
+	 * @param pt_or_rect { IGPoint		The point is anywhere and is mapped to a point in this rect in this CS
+	 * 						IGRect}		The rect with anchor
+	 * @param anchor	 {IGPoint}		Required only if pt_or_rect is rect, anchor is in pt_or_rect's CS.
+	 * 
+	 * @returns {IGPoint}	In this coordinates 
+	 * 						a) no anchor, pt_or_rect is point -> point corrected to be inside this (in VP coordinates) (anchor is ignored)
+	 * 						b) no anchor, pt_or_rect is rect -> same as innerSpaceFor(rect)
+	 * 						c) anchor, pt_or_rect is rect. IGPoint inside this in VP CS.
 	 * 
 	 * 
 	 */
@@ -334,7 +341,9 @@
 			if (BaseObject.is(anchor,"IGPoint") || BaseObject.is(anchor,"Point")) {
 				innerspace = this.innerSpaceForAnchoredRectangle(pt_or_rect,anchor);
 				if (innerspace != null && innerspace.isRegular()) {
-					result = innerspace;
+					var panchor = new GPoint(anchor.x, anchor.y);
+					panchor = panchor.mapFromTo(pt_or_rect, null);
+					return innerspace.mapToInsides(panchor);
 					// var pt = innerspace.mapToInsides(anchor);
 					// if (pt != null) {
 					// 	result = new GRect(pt_or_rect.x = pt_or_rect.x + pt.x - anchor.x,
@@ -342,13 +351,15 @@
 					// 					pt_or_rect.w, pt_or_rect.h);
 					// }
 				}
-			} else {
+				return null;
+			} else { // No anchor
 				innerspace = this.innerSpaceFor(pt_or_rect);
 				if (innerspace == null || !innerspace.isRegular()) return null;
-				var newUL = innerspace.innerSpaceFor(new Point(pt_or_rect.x,pt_or_rect.y));
-				result = new GRect(this);
-				result.x = newUL.x;
-				result.y = newUL.y;
+				return innerspace
+				// var newUL = innerspace.innerSpaceFor(new Point(pt_or_rect.x,pt_or_rect.y));
+				// result = new GRect(this);
+				// result.x = newUL.x;
+				// result.y = newUL.y;
 			}
 		} else if (BaseObject.is(pt_or_rect,"IGPoint") || BaseObject.is(pt_or_rect,"Point")) {
 			var p = pt_or_rect;
