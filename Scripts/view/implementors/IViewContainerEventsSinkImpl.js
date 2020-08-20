@@ -8,11 +8,11 @@ IViewContainerEventsSinkImpl.InterfaceImpl("IViewContainerEventsSink", "IViewCon
 IViewContainerEventsSinkImpl.RequiredTypes("Base"); // cvan be implemented only on Base derived classes
 IViewContainerEventsSinkImpl.classInitialize = function (cls) {
 	cls.prototype.onViewStateChanged = function (state) { 
-		this.onviewsizechangedevent.invoke(this, state);
+		this.onviewstatechangedevent.invoke(this, state);
 	};
 	// state ::= <state_name> # depends on the host, see the state names
 	cls.prototype.onViewSizeChanged = function (size) { 
-		this.onviewstatechangedevent.invoke(this, size);
+		this.onviewsizechangedevent.invoke(this, size);
 	};
 	// size ::= Size instance x,y can be 0
 	cls.prototype.onViewPosChanged = function (rectOrPoint) {

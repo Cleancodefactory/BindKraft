@@ -37,7 +37,7 @@
             return new GSize(0,0);
         }
     };
-    GSize.fromDOMElement = function (el) {
+    GSize.fromDOMElement = function (_el) {
         var el = DOMUtil.toDOMElement(_el);
 		if (el != null && el instanceof HTMLElement) {
             var r = el.getBoundingClientRect()
@@ -45,7 +45,7 @@
         }
         return null;        
     };
-    GSize.fromDOMElementClient = function (el) {
+    GSize.fromDOMElementClient = function (_el) {
         var el = DOMUtil.toDOMElement(_el);
 		if (el != null && el instanceof HTMLElement) {
             return new GSize(el.clientWidth, el.clientHeight);
