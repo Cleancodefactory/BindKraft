@@ -29,7 +29,39 @@
         }
         return null;
     }
+    DOMSimpleResizeGestureTask.prototype.suggestCursor = function(pt_ot_event) {
+        var loc = this.$checkPlace(pt_ot_event);
+        if (loc != null) {
+            switch(loc.direction) {
+                case "l":
+                case "r":  
+                return PointerCursor.ResizeH();
+                break;
+                case "t":
+                case "b":
+                    return PointerCursor.ResizeV();
+                break;
+            }
+        }
+        return null;
+    }
+    DOMSimpleResizeGestureTask.prototype.$checkPlace = function(pt_ot_event) {
+        var pt = null;
+        if (BaseObject.is(pt_ot_event, "IGPoint")) { // Assume in DOM element's coordinates
+            pt = new GPoint(pt_ot_event);
+        } else if (pt_ot_event instanceof Event) {
+            pt = new GPoint(pt_ot_event.clientX, pt_ot_event.clientY);
+            pt = pt.mapFromToElements(null, this.$domEl);
+        }
 
+        if (pt != null) {
+            var place = this.$calcPlace(pt);
+            if (place != null) {
+                return { direction: place, anchor: pt };
+            }
+        } 
+        return null;
+    }
     DOMSimpleResizeGestureTask.prototype.applyAt = function(pt_ot_event) {
         var pt = null;
         if (BaseObject.is(pt_ot_event, "IGPoint")) { // Assume in DOM element's coordinates

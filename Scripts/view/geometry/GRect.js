@@ -334,32 +334,12 @@
 	 * 
 	 * 
 	 */
-	GRect.prototype.mapToInsides = function(pt_or_rect, anchor) {
+	GRect.prototype.mapToInsides = function(pt_or_rect) {
 		var result = null;
 		if (BaseObject.is(pt_or_rect,"IGRect") || BaseObject.is(pt_or_rect,"Rect")) {
-			var innerspace = null;
-			if (BaseObject.is(anchor,"IGPoint") || BaseObject.is(anchor,"Point")) {
-				innerspace = this.innerSpaceForAnchoredRectangle(pt_or_rect,anchor);
-				if (innerspace != null && innerspace.isRegular()) {
-					var panchor = new GPoint(anchor.x, anchor.y);
-					panchor = panchor.mapFromTo(pt_or_rect, null);
-					return innerspace.mapToInsides(panchor);
-					// var pt = innerspace.mapToInsides(anchor);
-					// if (pt != null) {
-					// 	result = new GRect(pt_or_rect.x = pt_or_rect.x + pt.x - anchor.x,
-					// 					pt_or_rect.y = pt_or_rect.y + pt.y - anchor.y,
-					// 					pt_or_rect.w, pt_or_rect.h);
-					// }
-				}
-				return null;
-			} else { // No anchor
-				innerspace = this.innerSpaceFor(pt_or_rect);
-				if (innerspace == null || !innerspace.isRegular()) return null;
-				return innerspace
-				// var newUL = innerspace.innerSpaceFor(new Point(pt_or_rect.x,pt_or_rect.y));
-				// result = new GRect(this);
-				// result.x = newUL.x;
-				// result.y = newUL.y;
+			var	innerspace = this.innerSpaceForAnchoredRectangle(pt_or_rect,new GPoint(0,0));
+			if (innerspace != null && innerspace.isRegular()) {
+				return innerspace;
 			}
 		} else if (BaseObject.is(pt_or_rect,"IGPoint") || BaseObject.is(pt_or_rect,"Point")) {
 			var p = pt_or_rect;
