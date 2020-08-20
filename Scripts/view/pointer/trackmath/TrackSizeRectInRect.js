@@ -100,10 +100,12 @@ TrackSizeRectInRect.prototype.trackPoint = function(pt) {
 
         }   
         if (allowedRect == null || !allowedRect.isValid()) return null;
+
         
-        var rpt = allowedRect.mapToInsides(this.$sideRect,this.$anchor)
-        pt = rpt.subtract(this.$anchor).mapFromTo(null, allowedRect);
-        
+        var anchorRect = allowedRect.innerSpaceForAnchoredRectangle(this.$sideRect,this.$anchor)
+        var pt = anchorRect.mapToInsides(pt)
+        pt = pt.subtract(this.$anchor);
+        pt = pt.mapFromTo(null, allowedRect);
         var r = null;
         switch (this.$side) {
             case "l":

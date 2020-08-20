@@ -33,7 +33,9 @@
         }
         return null;
     }
-
+    DOMResizeGestureTask.prototype.suggestCursor = function() {
+        return null;
+    }
     DOMResizeGestureTask.prototype.applyAt = function(pt_ot_event) {
         var pt = null;
         if (BaseObject.is(pt_ot_event, "IGPoint")) { // Assume in DOM element's coordinates
