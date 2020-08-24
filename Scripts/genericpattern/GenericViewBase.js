@@ -98,6 +98,10 @@ GenericViewBaseEx.onStructuralQuery("HostCallQuery", function (query, procInstru
     }
     return false;
 });
+GenericViewBaseEx.onStructuralQuery("FindServiceQuery", function (query, procInstructions) {
+    if (FindServiceQuery.handle(this,query)) return true;
+    return false;
+});
 //GenericViewBaseEx.prototype.processStructuralQuery = function(query) {
 //    if (BaseObject.is(query, "HostCallQuery")) {
 //        if (query.command == HostCallCommandEnum.queryrole) {
