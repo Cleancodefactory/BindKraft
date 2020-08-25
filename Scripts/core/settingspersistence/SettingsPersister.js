@@ -12,7 +12,7 @@ function SettingsPersister(key,persistmap /*as string*/) {
 
 SettingsPersister.Inherit(BaseObject, "SettingsPersister");
 SettingsPersister.Implement(ISettingsPersister);
-SettingsPersister.ImplementProperty("persistenceprovider",new Initialize("When set the perister writes through it",null));
+SettingsPersister.ImplementProperty("persistenceprovider",new Initialize("When set the persister writes through it",null));
 SettingsPersister.prototype.$allowmap = null;
 SettingsPersister.prototype.set_allowmap = function(v) { 
 	var arr, i, o = {};

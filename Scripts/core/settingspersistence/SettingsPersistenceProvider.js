@@ -1,6 +1,6 @@
 /**
  * Base class for settings persistence providers.Provides persistence mechanism for persisters forced to use one - see the description of the 
- * ISettingsPersister for more detail how a persiser cooperates with a provider
+ * ISettingsPersister for more detail how a persister cooperates with a provider
  */
 
 function SettingsPersistenceProvider() {
