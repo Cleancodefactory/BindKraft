@@ -12,7 +12,7 @@ TextBox.ImplementProperty("whenreplacingselection", new InitializeStringParamete
 
 TextBox.prototype.enterevent = new InitializeEvent("Fired when enter is pressed, but only if detectenter parameter is set");
 TextBox.prototype.valchangedevent = new InitializeEvent("Fired when the $val property changes");
-TextBox.prototype.init = function() {
+TextBox.ExtendMethod("init", function() {
 	if (this.get_detectenter()) {
 		this.registerAccelerator ({
 			"name" : "enter",
@@ -21,7 +21,7 @@ TextBox.prototype.init = function() {
 		});
 	}
 	this.on("keyup", this.fireValChanged);
-};
+});
 TextBox.prototype.fireValChanged = function(e) {
 	if (this.get_val() != this.$lastval) {
 		this.valchangedevent.invoke(this,{ oldval: this.$lastval, newval: this.get_val()});
