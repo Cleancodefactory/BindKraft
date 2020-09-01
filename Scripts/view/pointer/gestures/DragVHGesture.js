@@ -52,13 +52,13 @@ DragVHGesture.prototype.inspectMessage = function(msg) {
         var x = pos.x - this.initialPos.x;
         var y = pos.y - this.initialPos.y;
         if (this.direction == "nwse" || this.direction == "nw" || this.direction == "se") {
-            if ((x*x + y*y) >= this.distance ** 2 &&
+            if (((x*x + y*y) >= this.distance * this.distance) &&
                 (Math.sign(x) == Math.sign(y)) &&
                 (Math.abs(Math.abs(x) - Math.abs(y)) < this.distance / 2)) {
                 return true;
             }
         } else if (this.direction == "nesw" || this.direction == "ne" || this.direction == "sw") {
-            if ((x*x + y*y) >= this.distance ** 2 &&
+            if ((x*x + y*y) >= this.distance * this.distance &&
                 (Math.sign(x) != Math.sign(y)) &&
                 (Math.abs(Math.abs(x) - Math.abs(y)) < this.distance / 2)) {
                 return true;
