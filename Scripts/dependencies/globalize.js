@@ -1640,4 +1640,4 @@
         return this.findClosestCulture(cultureSelector) || this.culture["default"];
     };
 
-} (this));
+} (window));
