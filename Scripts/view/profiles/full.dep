@@ -13,6 +13,7 @@
 //#using "../jbtrace.js"
 //#using "../binding/binding-full.dep"
 //#using "../bindlib/bindlib-full.dep"
+//#using "../pointer/pointer.dep"
 //#using "../behaviors/behaviors-full.dep"
 //#using "../formatters/formatters-full.dep"
 //#using "../validators/validators-full.dep"
@@ -25,4 +26,3 @@
 //#using "../controls/controls-full.dep"
 //#using "../controls/constructionkit/constructionkit-full.dep"
 //#using "../templatemng/templatemng-all.dep"
-//#using "../pointer/pointer.dep"

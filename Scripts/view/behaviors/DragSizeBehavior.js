@@ -1,5 +1,12 @@
 (function() {
 
+    var ElementBehaviorBase = Class("ElementBehaviorBase"),
+        DOMSimpleResizeGestureTask = Class("DOMSimpleResizeGestureTask"),
+        DOMMoveGestureTask = Class("DOMMoveGestureTask"),
+        TrackSizeRectInRect = Class("TrackSizeRectInRect"),
+        TrackPointer = Class("TrackPointer"),
+        AggregateGestureTask = Class("AggregateGestureTask"),
+        TrackRectInRect = Class("TrackRectInRect");
 
 // Hover behavour
 function DragSizeBehavior(node, phase) {
@@ -36,12 +43,15 @@ DragSizeBehavior.prototype.init = function () {
             new DOMSimpleResizeGestureTask(this.$target, this.get_resizeWidth())
             );
     }
+    //this.$target.addEventListener("mousedown", Delegate.createWrapper(this, this.onDragDo));
+    //this.$target.addEventListener("mousemove", Delegate.createWrapper(this, this.onDragCursor));
     this.on("mousedown", this.onDragDo);
     this.on("mousemove", this.onDragCursor);
 };
 DragSizeBehavior.prototype.onDragDo = function(e, dc) {
     if (this.$dragDetectTask == null) return;
     var el = this.$target;
+    var me = this;
     var _parent = el.offsetParent;
     if (_parent == null) _parent = document;
     this.$dragDetectTask.applyAt(e.originalEvent).onsuccess(
@@ -64,7 +74,7 @@ DragSizeBehavior.prototype.onDragDo = function(e, dc) {
                             rect.toDOMElement(el);
                         }
                     },
-                    new TrackSizeRectInRect(_parent,el, e.originalEvent,r.direction, this.get_resizeWidth())); 
+                    new TrackSizeRectInRect(_parent,el, e.originalEvent,r.direction, me.get_resizeWidth())); 
             }
         }
        
