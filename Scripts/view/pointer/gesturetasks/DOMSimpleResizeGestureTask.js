@@ -4,6 +4,7 @@
         GestureTrap = Class("GestureTrap"),
         DragVHGesture = Class("DragVHGesture"),
         GRect = Class("GRect"),
+        PointerCursor = Class("PointerCursor"),
         GPoint = Class("GRect");
     
     function DOMSimpleResizeGestureTask(domEl, width) {
