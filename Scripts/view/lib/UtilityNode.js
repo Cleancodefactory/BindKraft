@@ -88,6 +88,20 @@ UtilityNode.prototype.toggleUI = function(e_sender, dc, bind) {
         this.LASTERROR(_Errors.compose(),"Cannot determine the name of the property to enable.")
     }
 }
+UtilityNode.prototype.toggleAll = function(e_sender, dc, bind) {
+    var state = null;
+    for (var k in this.$enableui) {
+        if (this.$enableui.hasOwnProperty(k)) {
+            if (state === null) state = this.$enableui[k];
+            if (state) {
+                this.$enableui[k] = false;
+            } else {
+                this.$enableui[k] = true;
+            }
+        }
+    }
+    this.enabledui_changed.invoke(this, null);
+}
 
 
 
