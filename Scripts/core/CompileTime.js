@@ -33,8 +33,8 @@
 		'Z';
     
 	};
-	ltypes = ["log","warn","err","info","notice","trace"];
-	ltypesnmap = {
+	var ltypes = ["log","warn","err","info","notice","trace"];
+	var ltypesnmap = {
 		"w": 1,
 		"l": 0,
 		"":0,

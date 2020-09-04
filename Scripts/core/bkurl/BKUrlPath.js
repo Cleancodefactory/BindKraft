@@ -92,7 +92,7 @@ BKUrlPath.prototype.readAsString = function(v) {
 			this.clear();
 			return true;
 		}
-		arr = String.reGroups2(str,BKUrlPath.$reParsePath,"abs","segment1","slash","segment");
+		var arr = String.reGroups2(str,BKUrlPath.$reParsePath,"abs","segment1","slash","segment");
 		var parts = [];
 		var abs = false;
 		var hasfilepart = false;

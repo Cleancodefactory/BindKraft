@@ -15,7 +15,8 @@ IInfoDisplayWindowImpl.classInitialize = function (cls, useTemplate, options) {
     }
 	// Private get template proc
 	function _gettemplate(name_or_connector) {
-		var tmlName = name_or_connector;
+        var tmlName = name_or_connector;
+        var tml;
 		if (BaseObject.is(tmlName, "Connector")) { // Load through clonned connector
 			if (!tmlName.isAsync) return tmlName.createNewConnector().bind();
 			return null;

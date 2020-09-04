@@ -109,7 +109,7 @@ Validator.prototype.$buildRulesFromData = function(v) {
 	}
 	if (!BaseObject.is(arr, "Array")) arr = [arr];
 	if (BaseObject.is(arr, "Array")) { // A bit crazy, eh?
-		rules = arr.Select(function(idx, item) {
+		var rules = arr.Select(function(idx, item) {
 			if (BaseObject.is(item, "ValidateValue")) {
 				// The rule must be prepared and parametrized.
 				return item;
@@ -151,7 +151,7 @@ Validator.prototype.$buildRulesFromDedicatedAtttributes = function() {
             }
             if (clsDesc != null) {
                 if (Class.is(Function.classes[clsDesc.className], "ValidateValue")) {
-                    rule = new Function.classes[clsDesc.className](this);
+                    var rule = new Function.classes[clsDesc.className](this);
                     this.$rules.push(rule);
                     JBUtil.parametrize.call(rule, this.root, this, clsDesc.parameters);
                 }

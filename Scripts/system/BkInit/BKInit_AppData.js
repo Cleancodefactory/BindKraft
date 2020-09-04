@@ -22,12 +22,12 @@ BkInit_AppData.prototype.content = function(filename, contentType, content) {
 }
 BkInit_AppData.prototype.newContent = function(filename, contentType, content) {
 		// Add/replace
-		f = new ContentMemoryFile(contentType, content);
+		var f = new ContentMemoryFile(contentType, content);
 		this.$dir.register(filename, f);
 }
 BkInit_AppData.prototype.object = function(filename, content) {
 		if (!BaseObject.is(content, "object")) throw "The content is not an object";
 		// Add/replace
-		f = new ContentMemoryFile("memory/object", content);
+		var f = new ContentMemoryFile("memory/object", content);
 		this.$dir.register(filename, f);
 }

@@ -498,7 +498,7 @@ SysShell.prototype.launchEx = function(_appClass, _options,/* callset of argumen
 		// Having both will be confusing to say the least ...
 		function plugLocalAPIs() {
 			if (app.is("IUsingLocalAPI")) {
-				lapiclient = new LocalAPIClient(app.getLocalAPIImportDefinition(),apiHubs);
+				var lapiclient = new LocalAPIClient(app.getLocalAPIImportDefinition(),apiHubs);
 				app.setLocalAPIClient(lapiclient);
 			}
 		}

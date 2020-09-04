@@ -127,7 +127,7 @@ CLEngine.prototype.processLine = function(arr) {
 	for (var i = 0; i < arr.length; i++) {
 		_next = null;
 		if (i < arr.length - 1) _next = arr[i+1];
-		item = arr[i];
+		var item = arr[i];
 		if (item.rype == "literal") {
 			_vstack.push(item);
 		} else {

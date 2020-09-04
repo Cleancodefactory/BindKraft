@@ -5,7 +5,7 @@
         GestureTrap = Class("GestureTrap"),
         DragGesture = Class("DragGesture"),
         GRect = Class("GRect"),
-        GPoint = Class("GRect")
+        GPoint = Class("GRect"),
         PointerCursor = Class("PointerCursor");
     
     function DOMMoveGestureTask(domEl, width, cursor) {

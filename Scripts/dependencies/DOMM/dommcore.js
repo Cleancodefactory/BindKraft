@@ -2039,7 +2039,7 @@ var _ = DOMM;
 
 
 (function () {
-	DOMMNode = function (element) {
+	window.DOMMNode = function (element) {
 		this._node = null; 
 		if (!element) return;
 
@@ -2757,7 +2757,7 @@ var _ = DOMM;
 		}
 	};
 
-	_removeProperty = function (prop) {
+	var _removeProperty = function (prop) {
 		if (!this._node || typeof prop != "string") return this;
 
 			delete this._node[prop];
@@ -2969,7 +2969,7 @@ var _ = DOMM;
 	};
 })();
 (function () {
-DOMMNodeCollection = function (inputNodeCollection) {
+window.DOMMNodeCollection = function (inputNodeCollection) {
 	ImmutableCollection.call(this);
 	var nodeCollection = inputNodeCollection;
 

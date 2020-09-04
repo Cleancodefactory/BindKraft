@@ -1,7 +1,7 @@
 (function(){
 
     var GRect = Class("GRect"),
-        TrackMathBase = Class("TrackMathBase")
+        TrackMathBase = Class("TrackMathBase"),
         GPoint = Class("GPoint");
         
 

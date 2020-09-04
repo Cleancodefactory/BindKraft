@@ -303,6 +303,7 @@ DOMUtil.obliterateDom = function(dom, bAndSelf) { // public, recursive
 	}
 }
 DOMUtil.empty = function(dom) {
+	var i;
 	if (dom instanceof HTMLElement) {
 		while (dom.firstChild) {
 			dom.removeChild(dom.firstChild);
@@ -319,6 +320,7 @@ DOMUtil.Empty = function(dom) {
 	DOMUtil.empty(dom);
 }
 DOMUtil.remove = function(dom) {
+	var i;
 	DOMUtil.empty(dom);
 	if (dom instanceof HTMLElement) {
 		DOMUtil.detach(dom);

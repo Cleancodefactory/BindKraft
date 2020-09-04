@@ -5,7 +5,7 @@ BkInit_Shortcuts.Inherit(BkInit_FSBase,"BkInit_Shortcuts");
 BkInit_Shortcuts.prototype.add = function(shortcutname, cmdline, displayname) {
 	if (typeof shortcutname == "object") {
 		var p = shortcutname;
-		shk = new ShellShortcut(p.cmdline, (p.displayname != null)?p.displayname:p.name);
+		var shk = new ShellShortcut(p.cmdline, (p.displayname != null)?p.displayname:p.name);
 		if (p.icon != null && p.iconmodule != null) shk.icon(p.iconmodule,p.icon);
 		if (p.description) shk.description(p.description);
 		if (p.appclass) shk.appclass(p.appclass);

@@ -43,7 +43,7 @@ System.DefaultCommands = {
 		alert(msg);
 	},
 	"startshell": function(ctx, api){
-		Shell = new SysShell($$("#container").first());
+		window.Shell = new SysShell($$("#container").first());
 	},
 	"enterapp": function(ctx, api) {
 		// TODO: Resolve the app management mess at least to some degree and do this

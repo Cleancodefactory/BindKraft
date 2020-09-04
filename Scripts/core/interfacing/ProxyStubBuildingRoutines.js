@@ -30,7 +30,7 @@ var ProxyStubBuildingRoutines = {
 		var className = classDef.classType;
 		var proxyName = baseProxyDef.classType;
 		var ifaceName = ifaceDef.classType;
-		proxyClassName = proxyName + "_" + ifaceName + "_" + className;
+		var proxyClassName = proxyName + "_" + ifaceName + "_" + className;
 		var cls = Class.getClassDef(proxyClassName);
 		if (cls == null) {
 			// Not created yet - create it now

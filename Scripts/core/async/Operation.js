@@ -128,7 +128,7 @@ Operation.prototype.whencomplete = function() {
 		// All is fine in this case
 	} else {
 		wrapper = new SugaryDispatcher(this); // new one
-		oldhandler = this.get_completionroutine();
+		var oldhandler = this.get_completionroutine();
 		this.set_completionroutine(wrapper);
 		if (this.$handlingdone && this.isOperationComplete()) {
 			// Ivoke it forcibly because we missed the completion and wrapper did not exist then

@@ -182,7 +182,7 @@ LightFetchHttp.prototype.bodyEncoders = {
 					}
 					// Unsupported values are skipped
 					if (obj.hasOwnProperty(k)) {
-						v = obj[k];
+						var v = obj[k];
 						if (BaseObject.is(v, "number")) {
 							fd.append(kname, v.toString(10));
 							
@@ -448,7 +448,7 @@ LightFetchHttp.prototype.$fetch = function(url, /*encoded*/ reqdata, bodydata) {
 			} else {
 				throw "The url is not processed";
 			}
-			xhr = this.$xhr;
+			var xhr = this.$xhr;
 			xhr.open(this.$method, urlString, true, this.$httpuser, this.$httppass);
 			xhr.withCredentials = this.get_withCredentials();
 			

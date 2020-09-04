@@ -27,7 +27,7 @@ GenerateCommandUrlAPI.prototype.$getAlias = function(name, appcls, id) {
 // +IGenerateCommandUrl
 GenerateCommandUrlAPI.prototype.getAliasesForApp = function(appcls, id) {
 	var classname = Class.getClassName(appcls);
-	aliasdir = System.FS("appfs").cd("system/urlcommands/aliases");
+	var aliasdir = System.FS("appfs").cd("system/urlcommands/aliases");
 	var aliases = aliasdir.get_files(); // [{ key: filename, value: file }]
 	if (aliases != null) {
 		var r = {};

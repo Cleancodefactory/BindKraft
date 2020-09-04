@@ -21,7 +21,7 @@ FormatDateTime.prototype.$getGlobalizer = function(args,o) {
 	var culture = this.get_culture();
 	if (culture == null) culture = System.Default().settings.CurrentLang;
 	for (var i = 0; i < args.length; i++) {
-		arg = args[i];
+		var arg = args[i];
 		if (/^\[\w{2}(-\w{2})?\]$/.test(arg)) {
 			culture = arg.slice(1,-1);
 		} else if(/default|utc|none|local/.test(arg)) {

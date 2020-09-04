@@ -55,5 +55,4 @@ LengthValidatorRule.prototype.validateValue = function (validator, value, bindin
 	}
 	return this.validationResult(result);
 };
-LengthValidatorControl = LengthValidatorRule;
 //////////////////////END/////////////////////////////
