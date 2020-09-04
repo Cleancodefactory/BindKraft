@@ -13,7 +13,27 @@
 function UtilityNode() {
     Base.apply(this,arguments);
 }
-UtilityNode.Inherit(Base, "UtilityNode");
+UtilityNode.Inherit(Base, "UtilityNode")
+.Implement(ICustomParameterizationStdImpl, "enabled", "disabled");
+UtilityNode.ImplementProperty("enabled", new InitializeStringParameter("Initially enabled", ""));
+UtilityNode.ImplementProperty("disabled", new InitializeStringParameter("Initially disabled", ""));
+
+UtilityNode.prototype.finalinit = function() {
+    var i,arr, v = this.get_enabled();
+    if (typeof v == "string") {
+        arr = v.split(",");
+        if (arr != null && arr.length > 0) {
+            for (i = 0; i < arr.length; this.$enableui[arr[i++]] = true);
+        }
+    }
+    v = this.get_disabled();
+    if (typeof v == "string") {
+        arr = v.split(",");
+        if (arr != null && arr.length > 0) {
+            for (i = 0; i < arr.length; this.$enableui[arr[i++]] = false);
+        }
+    }
+}
 
 //#region Enable UI - show hide elements by binding their visibility/display to a property with arbitrary name
 
