@@ -244,6 +244,7 @@ Function.prototype.Interface = function (pname, /*multiple*/ extendsInterfaces) 
 
 Function.prototype.InterfaceImpl = function (pname, _implementerName) {
 	var implementerName = _implementerName || this.name;
+	var e;
 	if (typeof pname == "string") {
 		var s = pname;
 		pname = Class.getInterfaceDef(pname);
