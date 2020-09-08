@@ -39,6 +39,7 @@ Expander.prototype.animation = new InitializeStringParameter("Body animation: sl
 Expander.prototype.radioSet = new InitializeStringParameter("parent[/child*] set of expanders to collapse automatically", null);
 Expander.prototype.updateMode = new InitializeNumericParameter("If set to non-zero value will cause the expander to perform updateTargets only when opened.", 0);
 Expander.prototype.liveParts = new InitializeNumericParameter("If set to non-zero value will cause the parts of the expander to be determined anew each time something happens", 0);
+Expander.prototype.noClick = new InitializeBooleanParameter("Does not listen for clicks, can turn only programmatically.", false);
 //Example for disabled: #disabled='1'
 // evnets
 Expander.prototype.statechangedevent = new InitializeEvent("Fired when the expander opens or closes. The data is true/false meaning open/close");
@@ -50,8 +51,10 @@ Expander.prototype.obliterate = function() {
     Panel.prototype.obliterate.call(this);
 };
 Expander.prototype.init = function() {
-    this.on(this.activeHeader, "click", this.Collapse);
-    this.on(this.inactiveHeader, "click", this.Expand);
+    if (!this.noClick) {
+        this.on(this.activeHeader, "click", this.Collapse);
+        this.on(this.inactiveHeader, "click", this.Expand);
+    }
     this.$activeHeader = this.getRelatedElements(this.activeHeader);
     this.$inactiveHeader = this.getRelatedElements(this.inactiveHeader);
     this.$bodyElement = this.getRelatedElements(this.bodyElement);
