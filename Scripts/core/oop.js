@@ -244,6 +244,7 @@ Function.prototype.Interface = function (pname, /*multiple*/ extendsInterfaces) 
 
 Function.prototype.InterfaceImpl = function (pname, _implementerName) {
 	var implementerName = _implementerName || this.name;
+	var e;
 	if (typeof pname == "string") {
 		var s = pname;
 		pname = Class.getInterfaceDef(pname);
@@ -688,9 +689,10 @@ Function.prototype.$Implement = function (protClass, options /*argument list to 
  
 // Accessors for important values created by common wrappers
 // Extracts the $wrapperResult from the caller. This value is set by wrappers that create method groups exposed as a single method externally.
-function overridenReturnValue() {
-	return arguments.callee.caller.arguments.callee.caller.$wrapperResult;
-}
+//Commented out because of #use strict
+// function overridenReturnValue() {
+// 	return arguments.callee.caller.arguments.callee.caller.$wrapperResult;
+// }
 
 // Used over methods of a class. Replaces the method with a proxy that calls both the original method and the supplied withMethod.
 // The original result is returned in all cases, but those in which the original method does not return anything and the withMethod returns something different
@@ -723,7 +725,8 @@ Function.prototype.ExtendMethod = function(method, withMethod, bRunFirst, bRetur
 				} else {
 					this.prototype[method] = function() {
 						var r = old_m.apply(this, arguments);
-						arguments.callee.$wrapperResult = r;
+						//Commented out because of #use strict
+						//arguments.callee.$wrapperResult = r;
 						var r2 = m.apply(this, arguments);
 						if (bReturnFromOverride) return r2;
 						if (typeof r == "undefined") r = r2;

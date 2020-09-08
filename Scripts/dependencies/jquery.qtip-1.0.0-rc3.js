@@ -1743,7 +1743,7 @@
         };
 
         // Adjust positions of the tooltips on window resize or scroll if enabled
-        var adjustTimer;
+        var adjustTimer, i;
         $(window).bind('resize scroll layoutChanged desktopChanged', function (event) {
             clearTimeout(adjustTimer);
             adjustTimer = setTimeout(function () {
