@@ -17,7 +17,7 @@ function Expander() {
 
 Expander.Inherit(Panel, "Expander");
 Expander.Implement(IDisablable);
-Expander.$rootParameters = ["activeHeader","disabled", "inactiveHeader", "bodyElement", "initialState", "animation", "radioSet", "disabled", "updateMode", "liveParts"];
+Expander.$rootParameters = ["activeHeader","disabled", "inactiveHeader", "bodyElement", "initialState", "animation", "radioSet", "disabled", "updateMode", "liveParts", "noClick"];
 Expander.prototype.setObjectParameter = function(name, value) {
     if (name.inSet(Expander.$rootParameters)) {
 		return true;
