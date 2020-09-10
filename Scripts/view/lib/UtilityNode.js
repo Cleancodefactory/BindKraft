@@ -18,6 +18,7 @@ UtilityNode.Inherit(Base, "UtilityNode")
 UtilityNode.ImplementProperty("enabled", new InitializeStringParameter("Initially enabled", ""));
 UtilityNode.ImplementProperty("disabled", new InitializeStringParameter("Initially disabled", ""));
 
+
 UtilityNode.prototype.finalinit = function() {
     var i,arr, v = this.get_enabled();
     if (typeof v == "string") {
