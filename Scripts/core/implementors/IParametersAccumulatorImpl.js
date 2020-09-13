@@ -51,7 +51,7 @@ IParametersAccumulatorImpl.classInitialize = function(cls,_accsets) {// accsets 
 			}
 		}
 	}
-	cls.prototype.combainAccumulatedParameters = function(accset, params) { 
+	cls.prototype.combineAccumulatedParameters = function(accset, params) { 
 		return this.setAccumulatedParameters(accset, params);
 	}
 	
