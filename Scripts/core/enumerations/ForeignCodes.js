@@ -91,7 +91,6 @@ var ForeignCodesFlags = {
 			if (this[k] === o) return k;
 		}
 		return "unknown";
-	},
-	Success: function() { return 0x000000;}
+	}
 	
 };

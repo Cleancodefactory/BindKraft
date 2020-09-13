@@ -23,8 +23,7 @@ var KeyboardEnum = {
 		'down':     40,
 		'ins':      45,
 		'del':      46,
-		'meta':     91,
-		'meta':     93,
+		'meta':     91, // Meta 93?
 		
 		'0': 96,
 		'1': 97,
