@@ -41,7 +41,7 @@ TrackRectInRect.prototype.isValid = function() {
 TrackRectInRect.prototype.trackPoint = function(pt) {
     if (this.isValid()) {
         // This can be remembered
-        var possibleRect = this.$outer.innerSpaceForAnchoredRectangle(this.$inner,this.$anchor)
+        var possibleRect = this.$outer.innerSpaceForAnchoredRectangle(this.$inner,this.$anchor);
         if (possibleRect != null && possibleRect.isValid()) {
             var pt = possibleRect.mapToInsides(pt);
             pt = pt.subtract(this.$anchor);
