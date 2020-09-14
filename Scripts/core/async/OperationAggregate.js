@@ -72,6 +72,20 @@ OperationAggregate.prototype.seal = function() {
 	this.set_sealed(true);
 	return this;
 }
+/**
+ * Should be used only in specific circumstances where the aggregated operations can be expected to complete immediately.
+ * 
+ * @returns {Operation|boolean} If the operations complete immediately it returns true or false, depending on the overall success. If
+ * 								some are not complete it returns self.
+ */
+OperationAggregate.prototype.syncSeal = function() {
+	this.$sealed = true;
+	this.$operationFinished();
+	if (this.isOperationComplete()) {
+		return this.isOperationSuccessful()?true:false;
+	}
+	return this;
+}
 OperationAggregate.prototype.unseal = function() {
 	this.set_sealed(false);
 	return this;

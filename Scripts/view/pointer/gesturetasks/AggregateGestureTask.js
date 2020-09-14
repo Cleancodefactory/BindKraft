@@ -37,7 +37,7 @@
                 rop.CompleteOperation(false, "unrecognized");
             }
         });
-        op.seal();
+        op.syncSeal();
         return rop;
     }
 
