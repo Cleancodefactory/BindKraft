@@ -51,7 +51,7 @@ IObjectifiable.objectifyToAs = function(o,inst,cls) {
 				o.$__className = inst.classType();
 			}
 			for (var i in x) {
-				if (o.hasOwnProperty(i) && i != "$__className") {
+				if (x.hasOwnProperty(i) && i != "$__className") {
 					o[i] = x[i];
 				}
 			}
