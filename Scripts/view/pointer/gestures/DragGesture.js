@@ -4,7 +4,7 @@
 
 function DragGesture(distance, timeallotted) {
 	PointerGesture.apply(this,arguments);
-	this.timeallotted = timeallotted || 300; //Default is 300 ms;
+	this.timeallotted = timeallotted || 800; //Default is 300 ms;
 	this.distance = distance || 3;
 }
 DragGesture.Inherit(PointerGesture,"DragGesture");

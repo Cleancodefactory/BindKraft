@@ -19,18 +19,25 @@ function PointerTracker(eventmode) {
 }
 PointerTracker.Inherit(BaseObject, "PointerTracker");
 
+PointerTracker.prototype.get_defaultMode = function() {
+	var m = window.JBCoreConstants.TrackingDefaultMode;
+	return (m != null?m:"mouse");
+}
 //#region Public properties
 PointerTracker.prototype.get_eventmode = function() {
-    if (this.$events == this.$eventNames.pointer) return "pointer";
-    return "mouse";
+	if (this.$events == this.$eventNames.pointer) return "pointer";
+	if (this.$events == this.$eventNames.mouse) return "mouse";
+    return null; // Let it roll and cause exceptions if the configuration is impossible.
 }
 PointerTracker.prototype.set_eventmode = function(v) {
     this.$uninitTracker();
     if (v == "pointer") {
         this.$events = this.$eventNames.pointer;
-    } else {
+    } else if (v == "mouse") {
         this.$events = this.$eventNames.mouse;
-    }
+    } else {
+		this.$events = this.$eventNames[this.get_defaultMode()];
+	}
     this.$initTracker();
 }
 

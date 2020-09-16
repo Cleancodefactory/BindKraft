@@ -29,7 +29,7 @@ function GestureTrap(sink, gesture1, gesture2,gestureEtc) {
 }
 GestureTrap.Inherit(BaseObject,"GestureTrap");
 GestureTrap.Implement(IPointerTracker);
-GestureTrap.prototype.$maxinterval = 1000; // Maximum time for a gesture to complete
+GestureTrap.prototype.$maxinterval = 2500; // Maximum time for a gesture to complete
 GestureTrap.prototype.$startedAt = null; // When was the trap started
 GestureTrap.ImplementProperty("alwaysstart", new InitializeBooleanParameter("If true tells the trap to start trapping from scratch even if there is active trapping at the moment."));
 
