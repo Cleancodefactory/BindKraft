@@ -6,7 +6,8 @@
         TrackSizeRectInRect = Class("TrackSizeRectInRect"),
         TrackPointer = Class("TrackPointer"),
         AggregateGestureTask = Class("AggregateGestureTask"),
-        TrackRectInRect = Class("TrackRectInRect");
+        TrackRectInRect = Class("TrackRectInRect"),
+        PointerCursor = Class("PointerCursor");
 
 // Hover behavour
 function DragSizeBehavior(node, phase) {
@@ -65,7 +66,8 @@ DragSizeBehavior.prototype.onDragDo = function(e, dc) {
                         el.style.right = null;
                         el.style.bottom = null;
                     }            
-                    ,new TrackRectInRect(_parent, el, e.originalEvent)
+                    ,new TrackRectInRect(_parent, el, e.originalEvent),
+                    (new PointerCursor("grabbing")).defaultElement(me.root)
                 );
             } else if (r.direction != null) {
                 TrackPointer.Track(e.originalEvent,
