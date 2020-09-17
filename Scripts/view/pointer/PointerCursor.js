@@ -42,16 +42,30 @@
         s += this.$kind;
         return s;
     }
+
+    PointerCursor.prototype.$defaultElement = null;
+    /**
+     * Use only for short lived cursor instances created for specific purpose. Apply/unapply will apply 
+     * the cursor to this element ic called without arguments. This is convenient when the cursor has to be changed temporarily.
+     */
+    PointerCursor.prototype.defaultElement = function(el) {
+        if (el == null) {
+            this.$defaultElement = null;
+        } else if (el instanceof HTMLElement) {
+            this.$defaultElement = el;    
+        }
+        return this;
+    }
     /**
      * Applies this cursor to the specified element or body (if el == null)
-     * Remembers the old cursor setting (only from style) for potential unapply later.
+     * Remembers the old cursor setting (only from style) for potential unapply later - a little convenience.
      */
     PointerCursor.prototype.applyTo = function(el) {
         var x = null;
         if (el instanceof HTMLElement) {
             x = el;
         } else if (el == null) {
-            x = document.body;
+            x = this.$defaultElement || document.body;
         }
         if (x != null) {
             var old = x.style.cursor;
@@ -66,7 +80,7 @@
         if (el instanceof HTMLElement) {
             x = el;
         } else if (el == null) {
-            x = document.body;
+            x = this.$defaultElement || document.body;
         }
         if (x != null) {
             x.style.cursor = this.$rememberedCursor?this.$rememberedCursor:null;
