@@ -14,9 +14,12 @@ function UtilityNode() {
     Base.apply(this,arguments);
 }
 UtilityNode.Inherit(Base, "UtilityNode")
-.Implement(ICustomParameterizationStdImpl, "enabled", "disabled");
+.Implement(ICustomParameterizationStdImpl, "enabled", "disabled", "zorder", "zorderMin");
 UtilityNode.ImplementProperty("enabled", new InitializeStringParameter("Initially enabled", ""));
 UtilityNode.ImplementProperty("disabled", new InitializeStringParameter("Initially disabled", ""));
+UtilityNode.ImplementProperty("zorder", new InitializeStringParameter("Perform zordering on these", null));
+UtilityNode.ImplementProperty("zorderMin", new InitializeNumericParameter("Minimal z-order", 100));
+
 
 
 UtilityNode.prototype.finalinit = function() {
@@ -124,6 +127,33 @@ UtilityNode.prototype.toggleAll = function(e_sender, dc, bind) {
     this.enabledui_changed.invoke(this, null);
 }
 
+// Zorderging
+UtilityNode.prototype.$getOrderlings = function() {
+    if (typeof this.get_zorder() == "string") {
+        var els = this.getRelatedElements(this.get_zorder());
+        // To simplify jq removal
+        var arr = []
+        for (var i = 0; i < els.length; i++) {
+            arr.push(els.get(i));
+        }
+        return arr;
+    }
+    return [];
+}
+UtilityNode.prototype.onMoveTop = function(e_s, dc, bind) {
+    if (BaseObject.is(bind,"Binding")) {
+        var el = bind.get_target();
+        var ords = this.$getOrderlings();
+        if (ords != null && ords.length > 0) {
+            for (var i = 0; i < ords.length; i++) {
+                if (ords[i] != el) {
+                    ords[i].style.zIndex = i + this.get_zorderMin();
+                }
+            }
+            el.style.zIndex = i + this.get_zorderMin();
+        }
 
+    }
+}
 
 })();
