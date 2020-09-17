@@ -29,6 +29,19 @@ ConvertDateTime.prototype.ToDate = {
 			}
 		}
 		return null;
+	},
+	TICKS: function(val) {
+		var v = null;
+		if (typeof val == "string") {
+			v = parseInt(val,10);
+		} else if (typeof val == "number") {
+			v = val;
+		}
+		if (v != null) {
+			return new Date(v);
+		} else {
+			return null;
+		}
 	}
 };
 ConvertDateTime.prototype.FromDate = {
@@ -37,6 +50,12 @@ ConvertDateTime.prototype.FromDate = {
 	},
 	MS: function(val) {
 		return "\\/Date(" + val.getTime().toString() + ")\\/";
+	},
+	TICKS: function(val) {
+		if (BaseObject.is(val, "Date")) {
+			return val.getTime();
+		}
+		return null; // TODO: This is extremely rare, but still -- is this the right behavior?
 	}
 	
 };

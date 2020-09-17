@@ -20,7 +20,8 @@ function TrackPointer(callback, trackmath, operation) {
     });
 }
 TrackPointer.Inherit(BaseObject, "TrackPointer")
-    .Implement(IPointerTracker);
+    .Implement(IPointerTracker)
+    .ImplementProperty("cursor", new Initialize("Optional cursor to apply during", null));
 
 TrackPointer.prototype.$callback = null;
 TrackPointer.prototype.$trackmath = null;
@@ -98,7 +99,7 @@ TrackPointer.prototype.handleMouseTrack = function(sender, trackevent) {
  * The callback can complete the operation at any moment or rely on the PointerTracker's completion.
  * 
  */
-TrackPointer.Track = function(startpoint, callback, trackmath) {
+TrackPointer.Track = function(startpoint, callback, trackmath, trackcursor) {
     var op = new Operation();
     var tr = new TrackPointer(callback, trackmath, op);
     PointerTracker.Default().startTracking(tr, startpoint);

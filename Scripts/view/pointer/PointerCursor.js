@@ -9,9 +9,9 @@
         var x = []
         for (var i = 1; i < arguments.length; i++) {
             var arg = arguments[i];
-            if (typeof arg == "string") {
+            if (typeof arg == "string") { // Collecting as any number of fall back url
                 this.$urls.push(arg);
-            } else if (typeof arg == "number") {
+            } else if (typeof arg == "number") { // only 2 make sense as anchor point of the cursor (currently used for all the images)
                 x.push(Math.floor(arg));
             }
         }
@@ -41,6 +41,37 @@
         if (s.length > 0) s+= ", ";
         s += this.$kind;
         return s;
+    }
+    /**
+     * Applies this cursor to the specified element or body (if el == null)
+     * Remembers the old cursor setting (only from style) for potential unapply later.
+     */
+    PointerCursor.prototype.applyTo = function(el) {
+        var x = null;
+        if (el instanceof HTMLElement) {
+            x = el;
+        } else if (el == null) {
+            x = document.body;
+        }
+        if (x != null) {
+            var old = x.style.cursor;
+            x.style.cursor = this.getStyle();
+            if (typeof old == "string" && old.length == null) old = null;
+            this.$rememberedCursor = old;
+        }
+    }
+    PointerCursor.prototype.$rememberedCursor = null;
+    PointerCursor.prototype.unapplyTo = function(el) {
+        var x = null;
+        if (el instanceof HTMLElement) {
+            x = el;
+        } else if (el == null) {
+            x = document.body;
+        }
+        if (x != null) {
+            x.style.cursor = this.$rememberedCursor?this.$rememberedCursor:null;
+            this.$rememberedCursor = null;
+        }
     }
 
     PointerCursor.Move = function () {
