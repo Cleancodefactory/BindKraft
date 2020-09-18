@@ -2813,8 +2813,8 @@ var _ = DOMM;
 		if(this._node){
 			this._node.style.display = (this.properties('data-DOMM-display')) ? this.properties('data-DOMM-display') : 'block';
 
-						if(this.properties('data-DOMM-display')){
-				_removeProperty('data-DOMM-display');
+			if(this.properties('data-DOMM-display')){
+				_removeProperty.call(this,'data-DOMM-display');
 			}
 
 		}

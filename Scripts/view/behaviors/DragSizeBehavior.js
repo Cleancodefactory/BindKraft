@@ -61,10 +61,12 @@ DragSizeBehavior.prototype.onDragDo = function(e, dc) {
                 TrackPointer.Track(
                     e.originalEvent,
                     function(op, pt)  {
-                        el.style.left = pt.x + "px";
-                        el.style.top = pt.y + "px";
-                        el.style.right = null;
-                        el.style.bottom = null;
+                        if (pt != null) {
+                            el.style.left = pt.x + "px";
+                            el.style.top = pt.y + "px";
+                            el.style.right = null;
+                            el.style.bottom = null;
+                        }
                     }            
                     ,new TrackRectInRect(_parent, el, e.originalEvent),
                     (new PointerCursor("grabbing")).defaultElement(me.root)
