@@ -140,7 +140,7 @@ Validator.prototype.$buildRulesFromDedicatedAtttributes = function() {
 	var attrs = this.$().getAttributes("data-validate-(\\S+)");
     var clsDesc;
     if (attrs != null) {
-        for (attr in attrs) {
+        for (var attr in attrs) {
             if (Validator.validatorsRegistry[attr] != null) {
                 clsDesc = {
                     className: Validator.validatorsRegistry[attr],
