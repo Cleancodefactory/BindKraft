@@ -28,6 +28,7 @@ DragSizeBehavior.ImplementProperty("dragWidth", new InitializeNumericParameter("
 DragSizeBehavior.ImplementProperty("drag", new InitializeNumericParameter("", true));
 DragSizeBehavior.ImplementProperty("size", new InitializeNumericParameter("", true));
 DragSizeBehavior.prototype.$dragDetectTask = null;
+DragSizeBehavior.prototype.$doing = false;
 DragSizeBehavior.prototype.init = function () {
     
     var t = this;
@@ -58,6 +59,7 @@ DragSizeBehavior.prototype.onDragDo = function(e, dc) {
     this.$dragDetectTask.applyAt(e.originalEvent).onsuccess(
         function(r) {
             if (r.move) {
+                me.$doing = true;
                 TrackPointer.Track(
                     e.originalEvent,
                     function(op, pt)  {
@@ -70,22 +72,25 @@ DragSizeBehavior.prototype.onDragDo = function(e, dc) {
                     }            
                     ,new TrackRectInRect(_parent, el, e.originalEvent),
                     (new PointerCursor("grabbing")).defaultElement(me.$target)
-                );
+                ).then(function() {
+                    me.$doing = false;
+                });
             } else if (r.direction != null) {
+                me.$doing = true;
                 TrackPointer.Track(e.originalEvent,
                     function(op, rect) {
                         if (rect != null) {
                             rect.toDOMElement(el);
                         }
                     },
-                    new TrackSizeRectInRect(_parent,el, e.originalEvent,r.direction, me.get_resizeWidth())); 
+                    new TrackSizeRectInRect(_parent,el, e.originalEvent,r.direction, me.get_resizeWidth())).then(function() {me.$doing = false;}); 
             }
         }
        
     );
 }
 DragSizeBehavior.prototype.onDragCursor = function(e, dc) {
-    if (this.$dragDetectTask != null) {
+    if (this.$dragDetectTask != null && !this.$doing) {
         this.$dragDetectTask.cursorAt(e.originalEvent, this.$target);
     }
 }
