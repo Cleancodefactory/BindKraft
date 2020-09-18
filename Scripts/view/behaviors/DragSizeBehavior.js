@@ -69,7 +69,7 @@ DragSizeBehavior.prototype.onDragDo = function(e, dc) {
                         }
                     }            
                     ,new TrackRectInRect(_parent, el, e.originalEvent),
-                    (new PointerCursor("grabbing")).defaultElement(me.root)
+                    (new PointerCursor("grabbing")).defaultElement(me.$target)
                 );
             } else if (r.direction != null) {
                 TrackPointer.Track(e.originalEvent,

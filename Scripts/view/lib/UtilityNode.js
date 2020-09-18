@@ -115,7 +115,7 @@ UtilityNode.prototype.toggleUI = function(e_sender, dc, bind) {
 UtilityNode.prototype.toggleAll = function(e_sender, dc, bind) {
     var state = null;
     for (var k in this.$enableui) {
-        if (this.$enableui.hasOwnProperty(k)) {
+        if (this.$enableui.hasOwnProperty(k) && k != "") {
             if (state === null) state = this.$enableui[k];
             if (state) {
                 this.$enableui[k] = false;
@@ -126,6 +126,56 @@ UtilityNode.prototype.toggleAll = function(e_sender, dc, bind) {
     }
     this.enabledui_changed.invoke(this, null);
 }
+UtilityNode.prototype.get_someenabled = function() {
+    for (var k in this.$enableui) {
+        if (this.$enableui.hasOwnProperty(k) && k != "") {
+            if (this.$enableui[k]) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+UtilityNode.prototype.get_allenabled = function() {
+    for (var k in this.$enableui) {
+        if (this.$enableui.hasOwnProperty(k) && k != "") {
+            if (!this.$enableui[k]) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+UtilityNode.prototype.enableAll = function(e_sender, dc, bind) {
+    for (var k in this.$enableui) {
+        if (this.$enableui.hasOwnProperty(k) && k != "") {
+                this.$enableui[k] = true;
+        }
+    }
+    this.enabledui_changed.invoke(this, null);
+}
+UtilityNode.prototype.disableAll = function(e_sender, dc, bind) {
+    for (var k in this.$enableui) {
+        if (this.$enableui.hasOwnProperty(k) && k != "") {
+                this.$enableui[k] = false;
+        }
+    }
+    this.enabledui_changed.invoke(this, null);
+}
+UtilityNode.prototype.smartEnableDisableAll = function(e_sender, dc, bind) {
+    var some = this.get_someenabled();
+    for (var k in this.$enableui) {
+        if (this.$enableui.hasOwnProperty(k) && k != "") {
+                if (some) {
+                    this.$enableui[k] = false;
+                } else {
+                    this.$enableui[k] = true;
+                }
+        }
+    }
+    this.enabledui_changed.invoke(this, null);
+}
+
 
 // Zorderging
 UtilityNode.prototype.$getOrderlings = function() {
