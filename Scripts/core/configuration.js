@@ -45,7 +45,7 @@ var JBFrameworkVersion = {
 		JQFallBack: false, // OBSOLETE, will be removed soon. Where available use the JQuery fallbacks. This will be removed when all dependencies on jquery are removed.
 		DontCatchTickerExceptions: false, // v:2.21.0
 		EventHelperRegisterProp: "$__eventHelperRegister", // Root object on which helper registers attach (this enables us to reserve only a single name on the main this)
-		TrackingDefaultMode: "pointer", // Sets the PointerTracker to simulate capture with mouse or pointer messages (or touch ad hoc implementation in future)
+		TrackingDefaultMode: "mouse", // Sets the PointerTracker to simulate capture with mouse or pointer messages (or touch ad hoc implementation in future)
 		TrackTouchEvents: true // Enable disable touch events tracking by PointerTracker and all the dependent classes
 	};
 	
