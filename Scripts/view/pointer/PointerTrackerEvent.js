@@ -17,7 +17,7 @@
 	complete
 	
 */
-function PointerTrackerEvent(sender, what, changekeydstates) {
+function PointerTrackerEvent(sender, what, changekeydstates, isTouch) {
 	BaseObject.apply(this,arguments);
 	this.set_what(what);
 	this.set_clientpos(sender.$lastClientPoint);
@@ -25,6 +25,7 @@ function PointerTrackerEvent(sender, what, changekeydstates) {
 	this.set_keystate(sender.$lastKeyState);
     this.set_keystatechanges(changekeydstates);
     this.$tracker = sender;
+    this.$istouch = isTouch;
 }
 PointerTrackerEvent.Inherit(BaseObject, "PointerTrackerEvent")
     .Implement(ICloneObject);
@@ -34,6 +35,7 @@ PointerTrackerEvent.ImplementProperty("pagepos", new InitializeObject("The posit
 PointerTrackerEvent.ImplementProperty("keystate", new InitializeObject("last key state - alt, ctrl, shift ..."));
 PointerTrackerEvent.ImplementProperty("keystatechanges", new InitializeObject("object with props indicating what has just changed in the state of the 4 special keys."));
 PointerTrackerEvent.ImplementProperty("key", new InitializeNumericParameter("Valid only for key event - key code."));
+PointerTrackerEvent.ImplementProperty("istouch", new InitializeBooleanParameter("Indicates that this is coming from a touch event."));
 
 PointerTrackerEvent.prototype.cloneObject = function(_trackMath) { 
     var trackmath = null;
@@ -56,3 +58,9 @@ PointerTrackerEvent.prototype.cloneObject = function(_trackMath) {
     }
 }
 
+// Wrappers - only provide convenience
+
+function TouchTrackerEvent(sender, what, changekeydstates) {
+    PointerTrackerEvent.call(this,sender, what, changekeydstates, true);
+}
+TouchTrackerEvent.Inherit(PointerTrackerEvent, "TouchTrackerEvent")

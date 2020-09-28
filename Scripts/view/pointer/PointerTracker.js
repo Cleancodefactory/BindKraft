@@ -14,8 +14,8 @@
 
 function PointerTracker(eventmode) {
 	BaseObject.apply(this,arguments);
+	if (window.JBCoreConstants.TrackTouchEvents && window.TouchEvent) this.$touchOn = true;
 	this.set_eventmode(eventmode);
-	if (window.TouchEvent) this.$touchOn = true;
 	this.$clearTrackData();
 }
 PointerTracker.Inherit(BaseObject, "PointerTracker");
@@ -84,6 +84,7 @@ PointerTracker.prototype.$clearTrackData = function() {
 	this.$lastKeyState = {};
 	this.$client = null;
 	this.$tracking = false;
+	this.$mainTouchId = null;
 }.Description("Clears all the dynamic tracking data");
 
 PointerTracker.prototype.$uninitTracker = function() { // It is not clear if we will ever need this.
@@ -92,6 +93,12 @@ PointerTracker.prototype.$uninitTracker = function() { // It is not clear if we 
 	body.removeEventListener(this.$events.down, this.$handleMouseDown,true);
 	body.removeEventListener(this.$events.up, this.$handleMouseUp,true);
 	body.removeEventListener("keyup",this.$handleKeyUp,true);
+	if (this.$touchOn) {
+		body.removeEventListener("touchstart", this.$handleTouchStart, {capture: true});
+		body.removeEventListener("touchmove", this.$handleTouchMove, {capture: true});
+		body.removeEventListener("touchend", this.$handleTouchEnd, {capture: true});
+		body.removeEventListener("touchcancel", this.$handleTouchCancel, {capture: true});
+	}
 }
 PointerTracker.prototype.$initTracker = function() {
 	var body = window.document.body;
@@ -99,6 +106,13 @@ PointerTracker.prototype.$initTracker = function() {
 	body.addEventListener(this.$events.down, this.$handleMouseDown,true);
 	body.addEventListener(this.$events.up, this.$handleMouseUp,true);
 	body.addEventListener("keyup",this.$handleKeyUp,true);
+	if (this.$touchOn) {
+		body.addEventListener("touchstart", this.$handleTouchStart, {capture: true, passive: false});
+		body.addEventListener("touchmove", this.$handleTouchMove, {capture: true, passive: false});
+		body.addEventListener("touchend", this.$handleTouchEnd, {capture: true, passive: false});
+		body.addEventListener("touchcancel", this.$handleTouchCancel, {capture: true, passive: false});
+	}
+	
 }
 PointerTracker.prototype.isTracking = function() {
 	return (this.$client && this.$tracking);
@@ -112,6 +126,14 @@ PointerTracker.prototype.$handleMouseMove = new InitializeMethodCallback("Handle
 PointerTracker.prototype.$handleMouseDown = new InitializeMethodCallback("Handle mouse down on the body","handleMouseDown");
 PointerTracker.prototype.$handleMouseUp = new InitializeMethodCallback("Handle mouse up on the body","handleMouseUp");
 PointerTracker.prototype.$handleKeyUp = new InitializeMethodCallback("Handle key up on the body","handleKeyUp");
+
+PointerTracker.prototype.$handleTouchStart = new InitializeMethodCallback("Handle key up on the body","handleTouchStart");
+PointerTracker.prototype.$handleTouchMove = new InitializeMethodCallback("Handle key up on the body","handleTouchMove");
+PointerTracker.prototype.$handleTouchEnd = new InitializeMethodCallback("Handle key up on the body","handleTouchEnd");
+PointerTracker.prototype.$handleTouchCancel = new InitializeMethodCallback("Handle key up on the body","handleTouchCancel");
+
+
+
 
 ///////////// Mouse/pointer Handlers /////////////////
 PointerTracker.prototype.handleMouseMove = function(e) {
@@ -161,6 +183,7 @@ PointerTracker.prototype.$getMainTouch = function(e) {
 	}
 }
 PointerTracker.prototype.handleTouchStart = function(e) {
+	if (!this.isTracking()) return;
 	if (e.touches && e.touches.length > 1) {
 		// Temporary solution
 		this.stopTracking(); // The client should not start new tracking during handling.	
@@ -169,7 +192,7 @@ PointerTracker.prototype.handleTouchStart = function(e) {
 	var touch = this.$getMainTouch(e);
 	if (touch == null) {
 		this.stopTracking(); // The client should not start new tracking during handling.	
-		e.preventDefault();
+		return;
 	}
 	var changedstates = this.$reportTouchMessage(e, touch);
 	var msg = this.createTrackMessage("move",changedstates); // TODO: Is move ok without marking buttons and stuff?
@@ -177,21 +200,59 @@ PointerTracker.prototype.handleTouchStart = function(e) {
 	e.preventDefault();
 }
 PointerTracker.prototype.handleTouchMove = function(e) {
+	if (!this.isTracking()) return;
 	var touch = this.$getMainTouch(e);
 	if (touch == null) {
 		this.stopTracking(); // The client should not start new tracking during handling.	
-		e.preventDefault();
+		return;
 	}
 	var changedstates = this.$reportTouchMessage(e, touch);
-	var msg = this.createTrackMessage("move",changedstates); // TODO: Is move ok without marking buttons and stuff?
+	var msg = this.createTouchTrackMessage("move",changedstates); // TODO: Is move ok without marking buttons and stuff?
 	this.adviseClient(msg);
 	e.preventDefault();
 }
 PointerTracker.prototype.handleTouchEnd = function(e) {
-	
+	if (!this.isTracking()) return;
+	// The ended touch is no longer in touches
+	if (e.changedTouches != null && e.changedTouches.length > 0) {
+		var i, touch = null;
+		for (i = 0; i < e.changedTouches.length; i++) {
+			if (e.changedTouches[i].identifier == this.$mainTouchId) {
+				touch = e.changedTouches[i];
+				break;
+			}
+		}
+		if (touch != null) {
+			var changedstates = this.$reportTouchMessage(e, touch);
+			var changedstates = this.$reportMouseMessage(e);
+			this.completeTracking(); // The client should not start new tracking during handling.	
+			e.preventDefault();
+		} else {
+			// To simplify future extensions let us analyze the situation
+			// out main touch is not in changed - this is another touch which will bw future concern.
+			// However if the main touch is not still in the touches, there must be something wrong and we will cancel
+			if (e.touches != null && e.touches.length > 0) {
+				for (i = 0; i < e.touches.length; i++) {
+					if (e.touches[i].identifier == this.$mainTouchId) {
+						touch = e.touches[i];
+						break;
+					}
+				}
+			}
+			if (touch == null) { // The fate of the main touch is unknown - cancel
+				this.stopTracking();
+				return;
+			}
+			// In all other cases we assume a secondary touch ended (future concern)
+		}
+	}
+	// TODO: Should we stop tracking just in case?
 }
 PointerTracker.prototype.handleTouchCancel = function(e) {
-	
+	if (!this.isTracking()) return;
+	// Any cancel is currently treated as cancellation of the entire operation
+	// TODO: Secondary touches should not be fatal.
+	this.stopTracking();
 }
 
 
@@ -247,12 +308,14 @@ PointerTracker.prototype.$getKeyState = function(e) {
 */
 PointerTracker.prototype.$reportMouseMessage = function(e) {
 	if (e.clientX != null && e.clientY != null) {
+		var GPoint = Class("GPoint");
 		this.$lastClientPoint = new GPoint(e.clientX,e.clientY);
 		this.$lastPagePoint = new GPoint(e.pageX,e.pageY);
 	}
 	return this.$applyKeyStateFromEvent(e);
 }
 PointerTracker.prototype.$reportTouchMessage = function(touchEvent, touch) {
+	var GPoint = Class("GPoint");
 	if (touch.clientX != null && touch.clientY != null) {
 		this.$lastClientPoint = new GPoint(touch.clientX,touch.clientY);
 		this.$lastPagePoint = new GPoint(touch.pageX,touch.pageY);
@@ -270,9 +333,9 @@ PointerTracker.prototype.$reportTouchMessage = function(touchEvent, touch) {
 //#region Tracking control
 
 PointerTracker.prototype.startTracking = function(client,initialPoint_or_MouseEvent) {
-    var GPoint = Class("GPoint");
+	var GPoint = Class("GPoint");
 	this.stopTracking(this.thisCall(function() {
-		var changedstates = null;
+		var changedstates = null, isTouch = false;
 		if (BaseObject.is(client, "IPointerTracker")) {
 			this.$clearTrackData();
 			this.$client = client;
@@ -285,6 +348,7 @@ PointerTracker.prototype.startTracking = function(client,initialPoint_or_MouseEv
 					var touch = initialPoint_or_MouseEvent.touches[0];
 					if (touch instanceof Touch) {
 						changedstates = this.$reportTouchMessage(initialPoint_or_MouseEvent, touch);
+						isTouch = true;
 					}
 				} else {
 					return;// See the comment above
@@ -293,7 +357,7 @@ PointerTracker.prototype.startTracking = function(client,initialPoint_or_MouseEv
                 // Will set lastClientPoint and strip states
 				changedstates = this.$reportMouseMessage(initialPoint_or_MouseEvent);
 			}
-			var msg = this.createTrackMessage("start",changedstates); // move
+			var msg = this.createTrackMessage("start", changedstates, isTouch); // move
 			this.adviseClient(msg);
 		} else {
 			this.$clearTrackData();
@@ -362,12 +426,15 @@ PointerTracker.prototype.endTracking = function(callback) {
 }
 
 ////////// Message helpers /////////////
-PointerTracker.prototype.createTrackMessage = function(what, changedstates) {
-	var m = new PointerTrackerEvent(this,what, changedstates);
+PointerTracker.prototype.createTrackMessage = function(what, changedstates, isTouch) {
+	var m = new PointerTrackerEvent(this,what, changedstates, isTouch);
 	// Fill in stuff from the tracker.
 	m.set_clientpos(this.$lastClientPoint);
 	m.set_pagepos(this.$lastPagePoint);
 	return m;
+}
+PointerTracker.prototype.createTouchTrackMessage = function(what, changedstates) {
+	return this.createTrackMessage(what, changedstates, true);
 }
 PointerTracker.prototype.adviseClient = function(msg) {
 	if (this.isTracking() && msg != null) {
