@@ -72,7 +72,7 @@ PointerGesture.prototype.inspectMessage = function(msg) {
 	throw "Not implemented";
 }.Description("All mouse events should be passed to this method after clearing the gesture before starting a new trap.")
 	.Param("msg","A PointerTrackerEvent coming from the system PointerTracker.")
-	.Returns("Empty result means the gesture recognition continues, === false menas cancelled - no longer recognizing, === true gesture detected.");
+	.Returns("Empty result means the gesture recognition continues, === false means cancelled - no longer recognizing, === true gesture detected.");
 
 
 })();    
