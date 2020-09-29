@@ -1,23 +1,4 @@
-/*!
- * jQuery JavaScript Library v1.10.2
- * http://jquery.com/
- *
- * Includes Sizzle.js
- * http://sizzlejs.com/
- *
- * Copyright 2005, 2013 jQuery Foundation, Inc. and other contributors
- * Released under the MIT license
- * http://jquery.org/license
- *
- * Date: 2013-07-03T13:48Z
- */
 (function( window, undefined ) {
-
-// Can't do this because several apps including ASP.NET trace
-// the stack via arguments.caller.callee and Firefox dies if
-// you try to trace through "use strict" call chains. (#13335)
-// Support: Firefox 18+
-//"use strict";
 var
 	// The deferred used on DOM ready
 	readyList,
@@ -999,16 +980,6 @@ function isArraylike( obj ) {
 
 // All jQuery objects should point back to these
 rootjQuery = jQuery(document);
-/*!
- * Sizzle CSS Selector Engine v1.10.2
- * http://sizzlejs.com/
- *
- * Copyright 2013 jQuery Foundation, Inc. and other contributors
- * Released under the MIT license
- * http://jquery.org/license
- *
- * Date: 2013-07-03
- */
 (function( window, undefined ) {
 
 var i,
