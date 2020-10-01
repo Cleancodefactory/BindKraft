@@ -542,6 +542,7 @@ SysShell.prototype.launchEx = function(_appClass, _options,/* callset of argumen
 						
 		app.placeWindow = function(w,options) {
 			if (BaseObject.is(w, "BaseWindow")) {
+				w.set_approot(app);
 				if (options != null && options.role == "shell") {
 					if (typeof options.position == "string") {
 						_shell.workspaceWindow.addChild(w,options.position);
@@ -553,7 +554,6 @@ SysShell.prototype.launchEx = function(_appClass, _options,/* callset of argumen
 					lastPlacedWindow = w;
 				}
 				w.registerExternalHandler("Close", displaceNotify);
-				w.set_approot(app);
 				w.updateTargets();
 				w.activateWindow();
 				_shell.workspaceWindow.updateTargets();

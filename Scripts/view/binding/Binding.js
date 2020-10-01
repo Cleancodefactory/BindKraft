@@ -2222,6 +2222,8 @@ Binding.prototype.writeData = function (e, dc, binding, param) {
 Binding.prototype.$autoBind = function (elIn, evnts, proc, priority /*bUnbind - scrapped */) {
 	if ( this.__obliterated ) { return; }
     if (!BaseObject.is(evnts, "string")) return false;
+    // Currently I think that this should fail and if this is wrong we have to correct the reason for the failure.
+    // if (elIn == null) return false; // Will cause continued attempts to attach
     var el = elIn;
     var arr = evnts.split(",");
     for (var i = 0; i < arr.length; i++) {
