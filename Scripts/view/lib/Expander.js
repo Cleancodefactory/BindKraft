@@ -17,7 +17,7 @@ function Expander() {
 
 Expander.Inherit(Panel, "Expander");
 Expander.Implement(IDisablable);
-Expander.$rootParameters = ["activeHeader","disabled", "inactiveHeader", "bodyElement", "initialState", "animation", "radioSet", "disabled", "updateMode", "liveParts", "noClick"];
+Expander.$rootParameters = ["activeHeader","disabled", "inactiveHeader", "bodyElement", "initialState", "animation", "radioSet", "disabled", "updateMode", "liveParts", "noClick", "allowCollapse"];
 Expander.prototype.setObjectParameter = function(name, value) {
     if (name.inSet(Expander.$rootParameters)) {
 		return true;
@@ -36,7 +36,8 @@ Expander.prototype.inactiveHeader = new InitializeStringParameter("parent[/child
 Expander.prototype.bodyElement = new InitializeStringParameter("parent[/child] key of the body element", "./Body");
 Expander.prototype.initialState = new InitializeStringParameter("Initial state of the expander, can be 'collapsed' (default) or 'expanded'", "collapsed");
 Expander.prototype.animation = new InitializeStringParameter("Body animation: slow, fast, none", "none");
-Expander.prototype.radioSet = new InitializeStringParameter("parent[/child*] set of expanders to collapse automatically", null);
+Expander.prototype.radioSet = new InitializeStringParameter("parent[/child*] set of expanders to collapse automatically, collapse is diabled, use allowCollapse=true if needed.", null);
+Expander.prototype.allowCollapse = new InitializeBooleanParameter("Allows collapse when it is disabled by default", false);
 Expander.prototype.updateMode = new InitializeNumericParameter("If set to non-zero value will cause the expander to perform updateTargets only when opened.", 0);
 Expander.prototype.liveParts = new InitializeNumericParameter("If set to non-zero value will cause the parts of the expander to be determined anew each time something happens", 0);
 Expander.prototype.noClick = new InitializeBooleanParameter("Does not listen for clicks, can turn only programmatically.", false);
@@ -111,7 +112,9 @@ Expander.prototype.Expand = function(e, dc) {
 };
 Expander.prototype.Collapse = function(e, dc) {
     if (e != null) {
-        if (this.radioSet != null || this.$disabledUI) return;
+        if (!this.allowCollapse) {
+            if (this.radioSet != null || this.$disabledUI) return;
+        }
     }
     this.$isopen = false;
     if (this.updateMode) this.updateSources();
