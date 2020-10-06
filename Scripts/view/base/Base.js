@@ -231,6 +231,12 @@ Base.prototype.OnBeforeDataContextChanged = function () {
 Base.prototype.OnDataContextChanged = function () {
     // todo: handle data context changed
 };
+// +VERSION 2.21+
+// Default handlers for dummy handling
+Base.prototype.onSwallowEvent = function(e, dc) {
+    // This handler does nothing - use it when you want to use only some binding option.
+}
+// -VERSION 2.21+
 
 // END Overridables
 // Delayer
