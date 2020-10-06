@@ -47,8 +47,8 @@ DragSizeBehavior.prototype.init = function () {
     }
     //this.$target.addEventListener("mousedown", Delegate.createWrapper(this, this.onDragDo));
     //this.$target.addEventListener("mousemove", Delegate.createWrapper(this, this.onDragCursor));
-    this.on("mousedown", this.onDragDo);
-    this.on("mousemove", this.onDragCursor);
+    this.on("pointerdown", this.onDragDo);
+    this.on("pointermove", this.onDragCursor);
 };
 DragSizeBehavior.prototype.onDragDo = function(e, dc) {
     if (this.$dragDetectTask == null) return;
