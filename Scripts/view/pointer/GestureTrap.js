@@ -33,6 +33,9 @@ GestureTrap.prototype.$maxinterval = 2500; // Maximum time for a gesture to comp
 GestureTrap.prototype.$startedAt = null; // When was the trap started
 GestureTrap.ImplementProperty("alwaysstart", new InitializeBooleanParameter("If true tells the trap to start trapping from scratch even if there is active trapping at the moment."));
 
+GestureTrap.prototype.get_allowdefault = function() {
+	return false;
+}
 GestureTrap.prototype.handleMouseTrack = function(sender, trackevent) {
     var t = (new Date()).getTime();
     if (this.$startedAt != null && (t - this.$startedAt > this.$maxinterval)) {
