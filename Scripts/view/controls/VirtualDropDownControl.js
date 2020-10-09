@@ -284,8 +284,11 @@ VirtualDropDownControl.prototype.goActive = function (e, dc) {
 	if (f != null && f.length > 0) {
 		f.focus();
 	}
-    this.openevent.invoke(this, null);
-    this.set_bodyVisible(true);
+	this.openevent.invoke(this, null);
+	this.set_bodyVisible(true);
+	if (this.root.scrollIntoView) {
+		this.root.scrollIntoView(true);
+	}
 };
 VirtualDropDownControl.prototype.goInactive = function (e, dc) {
     if (!this.get_bodyVisible()) return;
