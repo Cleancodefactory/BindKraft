@@ -12,32 +12,32 @@ BrowserHistoryTracker.prototype.$lastPushedId = -1;
 BrowserHistoryTracker.prototype.$lastPushedState = null;
 
 //+IHistoryTracker
-BrowserHistoryTracker.prototype.pushHistoryState = function (_app, appstate) {
-	if (!DummyInterfaceProxyBuilder.isProxy(_app)) {
-		this.LASTERROR(_Errors.general("arg"),"pushHistoryState requires the sending the app as first argument.");
-		return;
-	}
-	var app = _app.Dereference();
-	if (!BaseObject.is(app, "IAppBase")) {
-		this.LASTERROR(_Errors.compose(),"The pushHistoryState expects an app as first argument. Nothing was done.");
-		return;
-	}
+BrowserHistoryTracker.prototype.pushHistoryState = function (_app, appstate, entryTitle) {
+    if (!DummyInterfaceProxyBuilder.isProxy(_app)) {
+        this.LASTERROR(_Errors.general("arg"), "pushHistoryState requires the sending the app as first argument.");
+        return;
+    }
+    var app = _app.Dereference();
+    if (!BaseObject.is(app, "IAppBase")) {
+        this.LASTERROR(_Errors.compose(), "The pushHistoryState expects an app as first argument. Nothing was done.");
+        return;
+    }
     //Check if appstate is string and throw exception
     if (typeof appstate !== 'string') {
-		this.LASTERROR(_Errors.general("t"),"The pushHistoryState expects appstate argument to be of type string. typeof appstate=" + typeof appstate);
-		return;
+        this.LASTERROR(_Errors.general("t"), "The pushHistoryState expects appstate argument to be of type string. typeof appstate=" + typeof appstate);
+        return;
         // throw 'appstate should be of type string';
     }
+    var title =  entryTitle || (app.get_caption() + '');
     this.$historyState = {
         entryType: 'app_state',
         className: app.classType(),
-        //title: app.get_caption(),
-        title: app.classType(),
+        title: title.length > 0 ? title: app.classType(),
         instId: app.$__instanceId,
-        url: '#' + app.classType(),
+        url: '#' + (appstate ? appstate : app.classType()),
         state: appstate
     };
-	if (this.$lastPushedState != this.$historyState.className + this.$historyState.state) {
+    if (this.$lastPushedState != this.$historyState.className + this.$historyState.state) {
         this.handleHistoryStatus(this.$historyState);
     }
 };
@@ -49,11 +49,11 @@ BrowserHistoryTracker.prototype.onWindowActivated = function (sender, dc) {
         if (rootAppWnd !== null) {
             var appRoot = rootAppWnd.get_approot();
             if (!BaseObject.is(appRoot, 'IAppHistorySupport') || appRoot.get_allowhistory()) {
+                var title =  appRoot.get_caption() + '';
                 this.$historyState = {
                     entryType: 'nav',
                     className: appRoot.classType(),
-                    //title: appRoot.get_caption(),
-                    title: appRoot.classType(),
+                    title: title.length > 0 ? title: appRoot.classType(),
                     instId: appRoot.$__instanceId,
                     url: '#' + appRoot.classType(),
                     state: null
@@ -90,7 +90,7 @@ BrowserHistoryTracker.Default = (function () {
                 inst.$historyState = {
                     entryType: 'session_start',
                     className: '',
-                    title: 'KraftApps', //Eventually get a general name like KraftApps TODO: Please do not act like Ivo Shabarkov!
+                    title: System.Default().get_workspaceName(),
                     instId: 0,
                     url: '#',
                     state: null
@@ -143,7 +143,7 @@ BrowserHistoryTracker.prototype.onPopstateHandler = function (event) {
         }
         this.Navigate(event.state);
     } else {
-		this.LASTERROR(_Errors.general("a"), "event has no state", "onPopstateHandler");
+        this.LASTERROR(_Errors.general("a"), "event has no state", "onPopstateHandler");
         // console.log("onPopstateHandler is null!");
     }
     this.$lastPushedId = -1;
@@ -162,7 +162,7 @@ BrowserHistoryTracker.prototype.handleHistoryStatus = function (state) {
                 {
                     if (this.$lastPushedId !== state.instId) {
                         window.history.pushState(state, state.title, state.url);
-                        console.log("HandleHistoryStatus- entryType: " + state.entryType + ' title: ' + state.title + ' url: ' + state.url + ' className: ' + state.className);
+                        //console.log("HandleHistoryStatus- entryType: " + state.entryType + ' title: ' + state.title + ' url: ' + state.url + ' className: ' + state.className);
                     }
                     break;
                 }
@@ -176,17 +176,17 @@ BrowserHistoryTracker.prototype.handleHistoryStatus = function (state) {
                         // empty string ("")
                         // 0
                         // false
-                        window.history.pushState(state, state.title, state.url + '/' + state.state);
+                        window.history.pushState(state, state.title, state.url);
                         this.$lastPushedState = state.className + state.state
                     }
-                    console.log("HandleHistoryStatus- entryType: " + state.entryType + ' title: ' + state.title + ' url: ' + state.url + ' className: ' + state.className);
+                    //console.log("HandleHistoryStatus- entryType: " + state.entryType + ' title: ' + state.title + ' url: ' + state.url + ' className: ' + state.className);
                     break;
                 }
             default:
                 {
-                    console.log("HandleHistoryStatus-EntryType not known: " + state.entryType);
+                    //console.log("HandleHistoryStatus-EntryType not known: " + state.entryType);
                 }
         }
-		this.$lastPushedId = state.instId;
+        this.$lastPushedId = state.instId;
     }
 };
