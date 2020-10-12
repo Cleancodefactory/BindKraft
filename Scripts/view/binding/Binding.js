@@ -1048,21 +1048,8 @@ Binding.prototype.$traceBinding = function (act, data) {
 //    return null;
 //};
 Binding.prototype.$findDataContext = function () {
-	if ( this.__obliterated ) { return; }
-    var cur;
-    if (this.$useParentContext) {
-        cur = $(this.$target).parent();
-    } else {
-        cur = $(this.$target);
-    }
-
-    while (cur != null) {
-        cur = cur.get(0);
-        if (cur == null) break;
-        if (cur.dataContext != null || cur.hasDataContext === true) return cur.dataContext;
-        cur = $(cur).parent();
-    }
-    return null;
+    if ( this.__obliterated ) { return; }
+    return JBUtil.findDataContext(this.$target, this.$useParentContext);
 }.Description("...")
  .Returns("object or null");
 
