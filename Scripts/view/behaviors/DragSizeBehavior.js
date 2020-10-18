@@ -23,8 +23,8 @@ DragSizeBehavior.bindBehavior = function (node, behParams, phase) {
     }
 	return null;
 };
-DragSizeBehavior.ImplementProperty("resizeWidth", new InitializeNumericParameter("", 10));
-DragSizeBehavior.ImplementProperty("dragWidth", new InitializeNumericParameter("", 10));
+DragSizeBehavior.ImplementProperty("resizeWidth", new InitializeNumericParameter("", 15));
+DragSizeBehavior.ImplementProperty("dragWidth", new InitializeNumericParameter("", 15));
 DragSizeBehavior.ImplementProperty("drag", new InitializeNumericParameter("", true));
 DragSizeBehavior.ImplementProperty("size", new InitializeNumericParameter("", true));
 DragSizeBehavior.prototype.$dragDetectTask = null;
