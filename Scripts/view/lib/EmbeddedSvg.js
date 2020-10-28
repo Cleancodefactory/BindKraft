@@ -48,19 +48,21 @@
             if (x == EmbeddedSvg.$failedEntry) return EmbeddedSvg.$loadSVG(EmbeddedSvg.$defaultName);
             if (BaseObject.is(x, "Operation")) return x;
             if (x instanceof Node && !(x instanceof Document)) {
-                if (x.documentElement != null) return x;
+                return x;
             }
             if (typeof x == "string") { // Convert it to nodes immediately
-                var fr = DOMUtil.fragmentFromHTML(x);
+                var fr = DOMUtil.fragmentFromHTML(x,true);
                 if (fr != null) {
                     var nodes = DOMUtil.filterElements(fr.childNodes,null, Element);
                     if (nodes != null && nodes.length > 0) {
                         return nodes[0];
                     } else { // Empty
+                        if (url == EmbeddedSvg.$defaultName) throw "The default SVG image cannot be parsed";
                         this.$register[url] = EmbeddedSvg.$failedEntry;
                     }
                 } else {
                     // Not parsable, set it to failed to prevent future attempts of any kind
+                    if (url == EmbeddedSvg.$defaultName) throw "The default SVG image cannot be parsed";
                     this.$register[url] = EmbeddedSvg.$failedEntry;
                 }
             }
@@ -70,7 +72,7 @@
         
         var op = new Operation(); // This one is returned or stored in the register
         var opsave = new Operation(null, EmbeddedSvg.loadTimeOut);
-        opsave.onsuccess = function(r) {
+        opsave.onsuccess(function(r) {
             if (r instanceof Node) {
                 EmbeddedSvg.$register[url] = r;
                 op.CompleteOperation(true, r);
@@ -78,7 +80,7 @@
                 EmbeddedSvg.$register[url] = EmbeddedSvg.$failedEntry;
                 op.CompleteOperation(true, EmbeddedSvg.$loadSVG(EmbeddedSvg.$defaultName));
             }
-        }
+        });
         var xhr = new XMLHttpRequest();
         xhr.open("GET", url);
         xhr.onload = function(progEvent) {
@@ -128,7 +130,7 @@
         }
     }
     EmbeddedSvg.prototype.updateSvg = function() {
-        var r = EmbeddedSvg.$loadSVG(this.get_svgpath());
+        var r = EmbeddedSvg.$loadSVG(EmbeddedSvg.mapPath(this.get_svgpath()));
         if (r != null) {
             if (BaseObject.is(r, "Operation")) {
                 r.onsuccess(new Delegate(this, this.$updateSvg));

@@ -21,6 +21,18 @@ Delegate.prototype.get_target = function() {
 };
 Delegate.prototype.called = false; // Set to true when the delegate is called
 Delegate.prototype.parameters = new Initialize("Array of parameters passed to the function after the explicit ones passed through invoke", null);
+Delegate.prototype.$eqaulsParameters = function(otherParameters) {
+    if (this.parameters == null && otherParameters == null) return true;
+    if (this.parameters != null && otherParameters != null) {
+        if (this.parameters.length == otherParameters.length) {
+            for (var i = 0; i < this.parameters.length;i++) {
+                if (!BaseObject.equals(this.parameters[i], otherParameters[i])) return false;
+            }
+            return true;
+        }
+    }
+    return false;
+}
 Delegate.prototype.obliterate = function (bFull) {
     if (bFull) {
         BaseObject.obliterate(this.object, this.parameters); // Without bFull to avoid cyclic obliteration and nuclear winter.
@@ -84,7 +96,7 @@ Delegate.prototype.invokeOnWithArgsArray = function (thisObj, args) {
 
 Delegate.prototype.equals = function (obj) {
     if (BaseObject.is(obj,"Delegate")) {
-        if (this.object == obj.object && this.func == obj.func) return true;
+        if (this.object == obj.object && this.func == obj.func) return this.$eqaulsParameters(obj.parameters);
     }
     return false;
 }.Description("Checks if delegates are equal")

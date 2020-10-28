@@ -9,7 +9,7 @@
 */
 
 var JBFrameworkVersion = { 
-	core: { major: 2, minor: 21, revision: 5 }
+	core: { major: 2, minor: 22, revision: 0 }
 };
 // Apply default settings, can be overriten (see in the header of the file how)
 (function() {
