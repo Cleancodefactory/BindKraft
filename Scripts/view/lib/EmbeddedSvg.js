@@ -4,6 +4,7 @@
     }
     EmbeddedSvg.Inherit(Base, "EmbeddedSvg")
         .Implement(ICustomParameterizationStdImpl, "svgpath", "usedefault", "width", "height")
+        .Implement(IPlatformUrlMapperImpl)
         .ImplementProperty("svgpath", new InitializeStringParameter("The path of the Svg image", null), null, "OnUpdate")
         .ImplementProperty("usedefault", new InitializeBooleanParameter("Should the control use default svg if the main one is not found or leave it empty (false)", true))
         .ImplementProperty("width", new InitializeStringParameter("Input for init width of the svg", null),null,"OnUpdate")
@@ -11,7 +12,7 @@
 
     EmbeddedSvg.loadTimeOut = 30000;
     EmbeddedSvg.mapPath = function(url) {
-        return mapPath(url)
+        return mapPath(url);
     }
 
     EmbeddedSvg.$register = {
@@ -29,6 +30,13 @@
         'V4.1c0.7,0.1,1.3,0.3,1.8,0.6c0.7,0.4,1.3,1,1.7,1.7c0.4,0.7,0.6,1.4,0.6,2.2C14.6,9.1,14.5,9.7,14.3,10.2z"/>' +
         '</svg>'
     }; // Loaded SVGs
+    EmbeddedSvg.cacheSvgString = function(url, svg) {
+        if (typeof svg == "string") {
+            this.$register[url] = svg;
+        } else {
+            throw "SVG can be cached only as string."
+        }
+    }
     EmbeddedSvg.$failedEntry = { failed: true };
     EmbeddedSvg.$defaultName = "default"; // Must exist
 
@@ -55,6 +63,7 @@
                 if (fr != null) {
                     var nodes = DOMUtil.filterElements(fr.childNodes,null, Element);
                     if (nodes != null && nodes.length > 0) {
+                        this.$register[url] = nodes[0];
                         return nodes[0];
                     } else { // Empty
                         if (url == EmbeddedSvg.$defaultName) throw "The default SVG image cannot be parsed";
@@ -82,7 +91,7 @@
             }
         });
         var xhr = new XMLHttpRequest();
-        xhr.open("GET", url);
+        xhr.open("GET", EmbeddedSvg.mapPath(url));
         xhr.onload = function(progEvent) {
             var xml = null;
             try {
@@ -130,7 +139,7 @@
         }
     }
     EmbeddedSvg.prototype.updateSvg = function() {
-        var r = EmbeddedSvg.$loadSVG(EmbeddedSvg.mapPath(this.get_svgpath()));
+        var r = EmbeddedSvg.$loadSVG(this.mapResourceUrl(this.get_svgpath()));
         if (r != null) {
             if (BaseObject.is(r, "Operation")) {
                 r.onsuccess(new Delegate(this, this.$updateSvg));
