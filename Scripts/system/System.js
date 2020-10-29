@@ -28,6 +28,7 @@ function System() {
     this.loadSystemSettings();
 };
 System.Inherit(BaseObject, "System");
+System.ImplementProperty('workspaceName', new InitializeStringParameter('', 'Unnamed Workspace - please set in init.js'));
 System.Default = (function () {
 	var $instance = null;
 	return function() {

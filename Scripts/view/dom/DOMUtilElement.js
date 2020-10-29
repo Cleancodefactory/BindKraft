@@ -39,8 +39,18 @@ DOMUtilElement.prototype.reInit = function(el, bClone) {
 	return false;
 }
 DOMUtilElement.prototype.get_isempty = function() {
-	return (this.$element != null);
+	if (this.$element != null) {
+		if (this.$element.childNodes.length > 0) return false;
+	}
+	return true;
 }
+DOMUtilElement.prototype.get_haschildren = function() {
+	if (this.$element != null) {
+		if (this.$element.children.length > 0) return true;
+	}
+	return false;
+}
+
 DOMUtilElement.prototype.get_element = function() {
 	return this.$element;
 }

@@ -23,8 +23,8 @@ DragSizeBehavior.bindBehavior = function (node, behParams, phase) {
     }
 	return null;
 };
-DragSizeBehavior.ImplementProperty("resizeWidth", new InitializeNumericParameter("", 10));
-DragSizeBehavior.ImplementProperty("dragWidth", new InitializeNumericParameter("", 10));
+DragSizeBehavior.ImplementProperty("resizeWidth", new InitializeNumericParameter("", 15));
+DragSizeBehavior.ImplementProperty("dragWidth", new InitializeNumericParameter("", 15));
 DragSizeBehavior.ImplementProperty("drag", new InitializeNumericParameter("", true));
 DragSizeBehavior.ImplementProperty("size", new InitializeNumericParameter("", true));
 DragSizeBehavior.prototype.$dragDetectTask = null;
@@ -47,8 +47,8 @@ DragSizeBehavior.prototype.init = function () {
     }
     //this.$target.addEventListener("mousedown", Delegate.createWrapper(this, this.onDragDo));
     //this.$target.addEventListener("mousemove", Delegate.createWrapper(this, this.onDragCursor));
-    this.on("mousedown", this.onDragDo);
-    this.on("mousemove", this.onDragCursor);
+    this.on("pointerdown", this.onDragDo);
+    this.on("pointermove", this.onDragCursor);
 };
 DragSizeBehavior.prototype.onDragDo = function(e, dc) {
     if (this.$dragDetectTask == null) return;

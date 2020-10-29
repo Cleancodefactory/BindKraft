@@ -32,7 +32,9 @@ TrackPointer.prototype.get_operation = function() {
 
 
 //#region IPointerTracker
-
+TrackPointer.prototype.get_allowdefault = function() {
+	return false;
+}
 TrackPointer.prototype.handleMouseTrack = function(sender, trackevent) {
     if (!BaseObject.isCallback(this.$callback)) {
         if (this.$operation != null && !this.$operation.isOperationComplete()) {

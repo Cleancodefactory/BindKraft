@@ -56,5 +56,8 @@ var BkInit = {
 		if (appname == null) throw "Cannot find class name";
 		fn(new BkInit_AppInfo(appname));
 		return this;
+	},
+	WorkspaceName: function(name){
+		System.Default().set_workspaceName(name);
 	}
 };
