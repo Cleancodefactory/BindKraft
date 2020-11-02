@@ -134,7 +134,9 @@
                 if (this.get_width() != null) clone.setAttribute("width", this.get_width() + "");
                 if (this.get_height() != null) clone.setAttribute("height", this.get_height() + "");
             }
-            this.root.appendChild(clone);
+            if (this.root instanceof HTMLElement) {
+                this.root.appendChild(clone);
+            }
         } else if (this.get_usedefault()) {
             this.$updateSvg(EmbeddedSvg.$loadDefaultSVG());
         }
