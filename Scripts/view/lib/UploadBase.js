@@ -49,7 +49,6 @@ UploadBase.prototype.init = function () {
 }
 
 UploadBase.prototype.finalinit = function() {
-    debugger;
     if (this.get_filesfield() == null || this.get_filesfield() == undefined) return;
 
     var filesField = $$(this.get_filesfield()).first();
@@ -98,7 +97,6 @@ UploadBase.prototype.SubmitFiles = function () {
 }
 
 UploadBase.prototype.SendRequest = function(formData){
-    debugger;
     if(formData == null || formData == undefined) return;
     if(!this.get_filesfield().value) return;
 
