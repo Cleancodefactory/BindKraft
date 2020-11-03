@@ -1,8 +1,13 @@
 
-
-
-
-/*CLASS*/
+/**
+ * Repeats the template === itemTemplate for each item or for the item on offset index to the specified limit.
+ * 
+ * optimizeupdates currently does not work with non-zero offset and any limit. This requires to add additional properties
+ * to remember the old actual item count in order to check if the update can be done without need to materialize new items.
+ * Will be implemented in later versions, for now if you need optimization, make sure the whole array is displayed.
+ *
+ * @param {*} viewRootElement
+ */
 function Repeater(viewRootElement) {
     ViewBase.apply(this, arguments);
     //Repeater.instanceNum = (Repeater.instanceNum != null)? Repeater.instanceNum + 1:1;
@@ -18,7 +23,7 @@ Repeater.prototype.obliterate = function() {
 }.Description("Destructor");
 
 Repeater.prototype.itemschangedevent = new InitializeEvent("Fired when the items collection changes");
-Repeater.ImplementProperty("optimizeitemupdates", new InitializeBooleanParameter("If set to true the repeater will try to avoid rematerializing the items when possible.",false));
+Repeater.ImplementProperty("optimizeitemupdates", new InitializeBooleanParameter("If set to true the repeater will try to avoid re-materializing the items when possible.",false));
 Repeater.prototype.itemTemplate = null;
 Repeater.prototype.storeIndexIn = new InitializeStringParameter("A name of a property to create in each item and store its index in it.", Initialize.DontInit);
 Repeater.prototype.reverseMode = new InitializeStringParameter("If true like the items are shown in reverse order", false);
@@ -68,7 +73,7 @@ Repeater.prototype.$init = function() {
     this.init();
     this.initializedevent.invoke(this,null);
     this.rebind(); // Default behaviour, items controls should override this
-	this.templatenotapplied = true;
+	this.$templatenotapplied = true;
     this.$isInitialized = true;
 }.Description( "Initializes the Repeater, copies from template and raizes an event" );
 
@@ -129,7 +134,7 @@ Repeater.prototype.set_items = function (newData) {
     } else {
         //if (!BaseObject.equals(newData,this.$items)) {
         // Recreate, rebind and update
-		if (this.get_optimizeitemupdates() && countnotchanged && !this.templatenotapplied && this.$limit < 0 && this.$offset == 0 /*TODO: we have to account for offset and limit also */) {
+		if (this.get_optimizeitemupdates() && countnotchanged && !this.$templatenotapplied && this.$limit < 0 && this.$offset == 0 /*TODO: we have to account for offset and limit also */) {
 			this.$createChildren(true);
 		} else {
 			this.$createChildren();

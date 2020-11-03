@@ -5,3 +5,4 @@
 
 //#using "./FormatInteger.js"
 //#using "./BooleanConverter.js"
+//#using "./IntegerConverter.js"
