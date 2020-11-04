@@ -295,9 +295,13 @@ ViewBase.materialize = function (htmlEl_in, template, how) { // how: prepend|app
     return null;
 };
 
-ViewBase.cloneTemplate = function (container, contentTemplate, data, bGroupElements) {
+ViewBase.cloneTemplate = function (container, contentTemplate, data, bGroupElements, how) {
     var item = $(contentTemplate).clone(); // $($(contentTemplate).clone());
-    $(container).append(item);
+    if (how == "prepend") {
+        $(container).prepend(item);
+    } else {
+        $(container).append(item);
+    }
     if (bGroupElements && item.length > 1) {
         new ElementGroup(item);
     }

@@ -902,9 +902,9 @@ Base.prototype.rebind = function (ignoreTemplateRoot, asyncResult) {
         this.discardAsync(["rebind","update_descendants","update_bindings","update_targets"]);
         var asynch_rebind = this.async(this.$recursiveBind).chainOnOrCurrent(asyncResult).key("rebind").maxAge(JBCoreConstants.ClientViewTasksMaxAge);
         if (this.isTemplateRoot()) {
-            asynch_rebind.execute(this.root, true, true, true, async_rebuild);
+            asynch_rebind.execute(this.root, true, true, true, asynch_rebind);
         } else {
-            asynch_rebind.execute(this.root, true, ignoreTemplateRoot, false, async_rebuild);
+            asynch_rebind.execute(this.root, true, ignoreTemplateRoot, false, asynch_rebind);
         }
         ar = (asyncResult != null) ? asyncResult : CallContext.currentAsyncResult();
         if (ar == null) ar = asynch_rebind;

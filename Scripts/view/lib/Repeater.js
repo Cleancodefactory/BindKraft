@@ -229,6 +229,73 @@ Repeater.prototype.get_itemsCount = function() {
 }.Description( "Returns the count of the items or -1 if there are none" )
  .Returns("number");
 
+// Region item by items
+Repeater.prototype.addItem = function(dataItem, how) {
+	if (BaseObject.is(dataItem, "Array")) {
+		for (var i = 0; i < dataItem.length; i++) this.addItem(dataItem[i], how);
+	} else { // Assume single item
+		var item = this.addTemplate(how);
+		var i;
+		for (i = 0; i < item.length; i++) {
+			this.recursiveBind(item[i], false, false, true);
+		}
+		// We have the bindings created
+		this.$configureBindings(); // sorting according to priority - concerns all bindings not only the new ones
+		this.OnRebind();
+		this.boundevent.invoke(this, null);
+		// Apply the data
+		for (i = 0; i < item.length; i++) {
+			Binding.updateElementTargets(item[i],null);
+		}
+	}
+}
+/**
+ * Materializes a new template and sets its data context to null, no updateTargets is applied, so this method should be followed by
+ * some data assignment code that also updates the bindings over the new elements (only!).
+ * 
+ * @param how {"append"|"prepend"|null} 	Optional instruction to prepend, if missing template will be appended
+ */
+Repeater.prototype.addTemplate = function(/*prepend|append*/how) {
+	var el = $(this.root);
+	o = ViewBase.cloneTemplate(el, this.get_itemTemplate(), null, this.multiTemplate, how); // var o = $(this.itemTemplate).clone();
+	return ElementGroup.getElementSet(o);
+}
+/**
+ * Index among the materialized templates NOT the data items.
+ * 
+ * This method always returns an array containing single dom element or 
+ * all dom elements from a sibling group (see ElementGroup)
+ * 
+ * @param index {integer}	The index in the materialized templates (not the data items)
+ */
+Repeater.prototype.getItemElements = function(/*integer*/index) {
+	var root = $(this.root); // JQ
+	var els = root.children();
+	if (els.length > 0) {
+		var item_element = els.get(0); // JQuery
+		var g = ElementGroup.getElementSet(item_element); // array of elements
+		var step = g.length;
+		var startIndex = index * step;
+		if (startIndex >= 0 && startIndex < els.length) {
+			return ElementGroup.getElementSet(els.get(startIndex));
+		}
+	}
+	return [];
+}
+/**
+ * Simplified version of getItemElements for when multiTemplate is false (or groups are redundant - single element in group)
+ * Indexes among the materialized templates NOT the data items.
+ * 
+ * @returns {HTMLElement} The element at index
+ */
+Repeater.prototype.getItemElement = function(index) {
+	var r = this.getItemElements(index);
+	if (r.length > 1 || r.length < 1) return null;
+	return r[0];
+}
+
+// End region item by item
+
 Repeater.prototype.$createChildren = function(setdataonly) {
 	this.$templatenotapplied = false;
 	var item, $items;
