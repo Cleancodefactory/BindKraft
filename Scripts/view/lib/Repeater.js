@@ -234,20 +234,31 @@ Repeater.prototype.materializeItem = function(dataItem, how) {
 	if (BaseObject.is(dataItem, "Array")) {
 		for (var i = 0; i < dataItem.length; i++) this.materializeItem(dataItem[i], how);
 	} else { // Assume single item
-		var item = this.addTemplate(how);
+		var BindingResultsContainer = Class("BindingResultsContainer");
+		var createdBindings = new BindingResultsContainer();
+		var item = this.materializeItemTemplate(how);
 		var i;
 		for (i = 0; i < item.length; i++) {
-			item.dataContext = dataItem;
-			item.hasDataContext = true;
-			this.recursiveBind(item[i], false, false, true);
+			item[i].dataContext = dataItem;
+			item[i].hasDataContext = true;
+			this.$recursiveBind(item[i], false, false, true, null, createdBindings);
 		}
 		// We have the bindings created
 		this.$configureBindings(); // sorting according to priority - concerns all bindings not only the new ones
 		this.OnRebind();
 		this.boundevent.invoke(this, null);
-		// Apply the data
-		for (i = 0; i < item.length; i++) {
-			Binding.updateElementTargets(item[i],null);
+		// Apply the data - update the newly created bindings
+		var bs = createdBindings.bindings;
+		if (bs != null && bs.length > 0) {
+			for (i = 0; i < bs.length; i++) {	
+				bs[i].updateTarget();
+			}
+		}
+		bs = createdBindings.bindingDescendants;
+		if (bs != null && bs.length > 0) {
+			for (i = 0; i < bs.length; i++) {	
+				bs[i].updateTargets();
+			}
 		}
 	}
 }
@@ -263,7 +274,7 @@ Repeater.prototype.deMaterializeItem = function(dataItem) {
 			// i is the index of the item we want to remove.
 			var index = i - this.get_offset();
 			var els = this.getItemElements(index);
-			$(els).Clear();
+			$(els).Remove();
 			this.$items.splice(i,1);
 		}
 	}
@@ -303,7 +314,7 @@ Repeater.prototype.$getItemElements = function(/*integer*/index) {
 }
 Repeater.prototype.getItemElements = function(index) {
 	if (typeof index == "number") {
-		if (index >= this.get_offset() && index < this.get_limit()) {
+		if (index >= this.get_offset() && (this.get_limit() < 0 || index < this.get_limit())) {
 			var idx = index - this.get_offset();
 			return this.$getItemElements(idx);
 		}

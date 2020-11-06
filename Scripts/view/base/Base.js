@@ -662,13 +662,17 @@ Base.prototype.throwDownStructuralQuery = function (query, processInstructions) 
 Base.prototype.findService = function (iface, reason) {
     return FindServiceQuery.findService(this, iface, reason);
 };
-Base.prototype.$registerBinding = function (binding, bNoList) {
+Base.prototype.$registerBinding = function (binding, bNoList, bindingResults) {
     if (binding != null) {
         if (this.bindings == null) this.bindings = [];
-        if (!bNoList) this.bindings.push(binding);
+        if (!bNoList) {
+            this.bindings.push(binding);
+            if (bindingResults != null) bindingResults.bindings.push(binding);
+        }
         if (binding.bindingName != null) {
             if (this.namedBindings == null) this.namedBindings = {};
             this.namedBindings[binding.bindingName] = binding;
+            if (bindingResults != null) bindingResults.namedBindings[binding.bindingName] = binding;
         }
     }
 };
@@ -751,7 +755,7 @@ Base.eachClass = function (domel, cond, callback, depth, param) {
 }.Description("Allows traversing the DOM tree from certain start element in leaves direction. For more details see the instance method eachClass.")
 Base.prototype.onPhaseBinding = function (node, cls) { };
 // override to Implement additional logic
-Base.prototype.$recursiveBind = function (n, skipThisDataContext, ignoreTemplateRoot, processOwnBindings, asyncResult) {
+Base.prototype.$recursiveBind = function (n, skipThisDataContext, ignoreTemplateRoot, processOwnBindings, asyncResult, bindingResults) {
     var node, nodeRaw;
     if (BaseObject.is(n, "Base")) {
         node = $(n.root);
@@ -762,7 +766,7 @@ Base.prototype.$recursiveBind = function (n, skipThisDataContext, ignoreTemplate
     var ctx, o;
     ctx = node.attr("data-context");
     if (ctx != null && ctx.length > 0 && !skipThisDataContext) {
-        this.$registerBinding(new Binding(nodeRaw, null, "datacontext", ctx, true));
+        this.$registerBinding(new Binding(nodeRaw, null, "datacontext", ctx, true), false, bindingResults);
         nodeRaw.hasDataContext = true;
     }
     ctx = node.attr("data-context-border");
@@ -774,7 +778,7 @@ Base.prototype.$recursiveBind = function (n, skipThisDataContext, ignoreTemplate
     if (processOwnBindings) {
         attrs = node.getAttributes("data-bind-(\\S+)");
         for (attr in attrs) {
-            this.$registerBinding(new Binding(nodeRaw, null, attr, attrs[attr], false));
+            this.$registerBinding(new Binding(nodeRaw, null, attr, attrs[attr], false), false, bindingResults);
         }
     }
     attrs = node.getAttributes("data-on-(\\S+)");
@@ -788,7 +792,8 @@ Base.prototype.$recursiveBind = function (n, skipThisDataContext, ignoreTemplate
 					// Although the search for the source of the handler is done each time thevent occurs we call updateTarget and not
 					// set_targetValue only - some implementations may need this!
                     o.updateTarget(); // TODO: really? Be careful if change is decided on - this makes handlers available after bind.
-					this.handlers.push(o);
+                    this.handlers.push(o);
+                    if (bindingResults != null) bindingResults.handlers.push(o);
                 }
             }
         }
@@ -827,15 +832,20 @@ Base.prototype.$recursiveBind = function (n, skipThisDataContext, ignoreTemplate
         if (BaseObject.is(oraw.activeClass, "Base")) {
             if (ignoreTemplateRoot || (!oraw.activeClass.isTemplateRoot())) {
                 this.bindingDescendants.push(oraw.activeClass);
+                if (bindingResults != null) bindingResults.bindingDescendants = oraw.activeClass;
                 attrs = o.getAttributes("data-bind-(\\S+)");
                 for (attr in attrs) {
-                    this.$registerBinding(new Binding(oraw, null, attr, attrs[attr], false));
+                    this.$registerBinding(new Binding(oraw, null, attr, attrs[attr], false), false,  bindingResults);
                 }
-                oraw.activeClass.rebind(false, asyncResult);
+                if (bindingResults != null && bindingResults.descend) {
+                    oraw.activeClass.rebind(false, asyncResult, bindingResults);
+                } else {
+                    oraw.activeClass.rebind(false, asyncResult);
+                }
             }
         } else {
             if (ibattr != null) continue;
-            this.$recursiveBind(o, false, false, true, asyncResult);
+            this.$recursiveBind(o, false, false, true, asyncResult, bindingResults);
         }
     }
     for (attr in behaviorAttrs) {
@@ -868,7 +878,7 @@ Base.prototype.$recursiveBind = function (n, skipThisDataContext, ignoreTemplate
 //        }
 //}
 //Base.prototype.$finalInitPending = true; // This is negative indication - the field is deleted when found
-Base.prototype.rebind = function (ignoreTemplateRoot, asyncResult) {
+Base.prototype.rebind = function (ignoreTemplateRoot, asyncResult, bindingResults) {
     var i;
     /*
     if (this.bindings != null) {
@@ -894,7 +904,8 @@ Base.prototype.rebind = function (ignoreTemplateRoot, asyncResult) {
     ctx = $(this.root).attr("data-context");
     if (ctx != null && ctx.length > 0) {
         this.contextBinding = new Binding(this.root, null, "datacontext", ctx, true);
-        this.$registerBinding(this.contextBinding, true);
+        this.$registerBinding(this.contextBinding, true, bindingResults);
+        if (bindingResults != null) bindingResults.contextBinding = this.contextBinding;
         this.root.hasDataContext = true;
     }
 	var ar = null;
@@ -902,17 +913,17 @@ Base.prototype.rebind = function (ignoreTemplateRoot, asyncResult) {
         this.discardAsync(["rebind","update_descendants","update_bindings","update_targets"]);
         var asynch_rebind = this.async(this.$recursiveBind).chainOnOrCurrent(asyncResult).key("rebind").maxAge(JBCoreConstants.ClientViewTasksMaxAge);
         if (this.isTemplateRoot()) {
-            asynch_rebind.execute(this.root, true, true, true, asynch_rebind);
+            asynch_rebind.execute(this.root, true, true, true, asynch_rebind, bindingResults);
         } else {
-            asynch_rebind.execute(this.root, true, ignoreTemplateRoot, false, asynch_rebind);
+            asynch_rebind.execute(this.root, true, ignoreTemplateRoot, false, asynch_rebind, bindingResults);
         }
         ar = (asyncResult != null) ? asyncResult : CallContext.currentAsyncResult();
         if (ar == null) ar = asynch_rebind;
     } else {
         if (this.isTemplateRoot()) {
-            this.$recursiveBind(this.root, true, true, true);
+            this.$recursiveBind(this.root, true, true, true, null, bindingResults);
         } else {
-            this.$recursiveBind(this.root, true, ignoreTemplateRoot, false);
+            this.$recursiveBind(this.root, true, ignoreTemplateRoot, false, null, bindingResults);
         }
     }
     this.afterAsync(ar, function () {
