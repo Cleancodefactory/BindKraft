@@ -118,6 +118,7 @@
     }
 
     EmbeddedSvg.prototype.OnUpdate = function(prop, oldv, newv) {
+        if (this.__obliterated) return;
         // This should be possible at any time regardless of bindings.
         // However it will cause inconsistencies if width/height and svgpath are bound differently (parameter vs normal binging)
         this.discardAsync("update");
@@ -133,12 +134,15 @@
                 if (this.get_width() != null) clone.setAttribute("width", this.get_width() + "");
                 if (this.get_height() != null) clone.setAttribute("height", this.get_height() + "");
             }
-            this.root.appendChild(clone);
+            if (this.root instanceof HTMLElement) {
+                this.root.appendChild(clone);
+            }
         } else if (this.get_usedefault()) {
             this.$updateSvg(EmbeddedSvg.$loadDefaultSVG());
         }
     }
     EmbeddedSvg.prototype.updateSvg = function() {
+        if (this.__obliterated) return;
         var r = EmbeddedSvg.$loadSVG(this.mapResourceUrl(this.get_svgpath()));
         if (r != null) {
             if (BaseObject.is(r, "Operation")) {

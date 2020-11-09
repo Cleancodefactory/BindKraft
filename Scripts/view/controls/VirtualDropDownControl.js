@@ -52,6 +52,7 @@ VirtualDropDownControl.ImplementProperty("multiselectdisplay", new InitializeStr
 VirtualDropDownControl.ImplementProperty("noselection", new InitializeStringParameter("What to show when nothing is selected", "(please select)"));
 VirtualDropDownControl.ImplementProperty("itemsselectedtext", new InitializeStringParameter("N items selected", " selected"));
 VirtualDropDownControl.ImplementProperty("showclear", new InitializeBooleanParameter("Show clear button (if available in the template)", false));
+VirtualDropDownControl.ImplementProperty("scrollintoview", new InitializeBooleanParameter("Try to scroll into view when opened. null - do nothing, true - position at the top, false - position at the bottom.", null));
 
 VirtualDropDownControl.prototype.itemdisabledCssClass = new InitializeStringParameter("CSS class used to display the disabled items", "disable");
 
@@ -287,7 +288,9 @@ VirtualDropDownControl.prototype.goActive = function (e, dc) {
 	this.openevent.invoke(this, null);
 	this.set_bodyVisible(true);
 	if (this.root.scrollIntoView) {
-		this.root.scrollIntoView(true);
+		if (typeof this.get_scrollintoview() != null) {
+			this.root.scrollIntoView(this.get_scrollintoview()?true:false);
+		}
 	}
 };
 VirtualDropDownControl.prototype.goInactive = function (e, dc) {
