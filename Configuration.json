@@ -9,7 +9,6 @@
                         "InterfaceAsString": "Ccf.Ck.SysPlugins.Interfaces.IDataIteratorPlugin, Ccf.Ck.SysPlugins.Interfaces",
                         "Default": true,
                         "CustomSettings": {
-                            "MyCustomsetting": "Iterator"
                         }
                     },
                     "NodesDataLoader": [

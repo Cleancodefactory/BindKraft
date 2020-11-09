@@ -2,7 +2,7 @@ function Scrollable() {
 	Base.apply(this, arguments);
 }
 Scrollable.Inherit(Base, "Scrollable");
-Scrollable.Implement(IUIControl);
+// Scrollable.Implement(IUIControl);
 Scrollable.ImplementProperty("direction", new InitializeStringParameter("Direction - H or V - only the first letter matters","H"));
 Scrollable.ImplementProperty("carefor", new InitializeStringParameter("child elements to care for. Null for all of them.",null));
 

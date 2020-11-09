@@ -657,7 +657,7 @@ DOMUtil.BorderIndicator = {
 		return BaseObject.is(node.activeClass, "IUIControl");
 	},
 	dataContextRoot: function(node) {
-		return (he.dataContext != null || he.hasDataContext);
+		return (node.dataContext != null || node.hasDataContext);
 	}
 };
 
