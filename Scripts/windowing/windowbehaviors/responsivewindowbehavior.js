@@ -12,6 +12,10 @@ ResponsiveWindowBehavior.Inherit(WindowBehaviorBase, "ResponsiveWindowBehavior")
 ResponsiveWindowBehavior.prototype.$toggleStyleFlagsMask = 0;
 ResponsiveWindowBehavior.prototype.$toggleStyleFlagsState = 0;
 
+ResponsiveWindowBehavior.prototype.on_FirstShown = function (msg) {
+    this.$setWindowSize(msg.target);
+}.Description("");
+
 ResponsiveWindowBehavior.prototype.on_SizeChanged = function (msg) {
     this.$setWindowSize(msg.target);
 }.Description("");
