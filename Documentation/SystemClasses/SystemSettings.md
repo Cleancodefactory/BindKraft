@@ -17,7 +17,7 @@ The object described below starts from the root (i.e. `System.Default().settings
 
 ```Javascript
 {
-    /** Current system language, e.g. en, en-US etc.
+    /** Current system locale (and language), e.g. en, en-US etc.
      */
     CurrentLang: "<string>",
     /** The default Date encoding used in JSON requests and responses.
