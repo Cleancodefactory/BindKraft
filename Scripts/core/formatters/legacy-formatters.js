@@ -793,7 +793,6 @@ function SentenceFormatter() { }
 SentenceFormatter.Inherit(BaseObject, "SentenceFormatter");
 SentenceFormatter.re = /%(?!%)\S+%/g;
 SentenceFormatter.ToTarget = function (v, binding) {
-    debugger;
     var fmt = binding.bindingParameter;
     if (fmt == null) return "[The binding parameter is not set!!!]";
     var s = new String(fmt);

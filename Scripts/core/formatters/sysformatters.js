@@ -302,7 +302,6 @@ SysFmtToBoolean.GetResult = function(v){
     else if(typeof v == 'string'){
         if(v.length == 0) return false;
         if(isNaN(parseInt(v))){
-            //debugger;
             if(regEx.test(v)){
                 //SysFmtToBoolean.regEx.lastIndex = 0; // TODO: In case of using static regEx pattern, set manually lastIndex to 0!!!
                 return true;

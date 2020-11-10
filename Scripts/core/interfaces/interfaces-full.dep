@@ -96,3 +96,4 @@
 //#using "./IEventSubscriber.js"
 //#using "./IQueryTokenStorage.js"
 //#using "./IDelegate.js"
+//#using "./IDataStateManager.js"

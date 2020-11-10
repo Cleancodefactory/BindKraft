@@ -2,7 +2,7 @@
 //#using "ActionRuleRegisterScopeEnum.js"
 //#using "ActionRulesResultEnum.js"
 //#using "BehaviorPhaseEnum.js"
-//#using "DataStateEnum.js"
+//// "DataStateEnum.js" moved to core/enumerations
 //#using "HostCallCommandFlags.js"
 //#using "InfoMessageTypeEnum.js"
 //#using "ParameterTypeEnum.js"

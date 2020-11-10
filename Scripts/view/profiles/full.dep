@@ -8,6 +8,8 @@
 //#using "../implementors/implementors-full.dep"
 
 //#using "../ViewUtil.js"
+
+//#using "../ViewUtil-legacy.js"
 //#using "../Materialize.js"
 //#using "../base/base-full.dep"
 //#using "../jbtrace.js"

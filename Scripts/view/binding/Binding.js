@@ -1048,21 +1048,8 @@ Binding.prototype.$traceBinding = function (act, data) {
 //    return null;
 //};
 Binding.prototype.$findDataContext = function () {
-	if ( this.__obliterated ) { return; }
-    var cur;
-    if (this.$useParentContext) {
-        cur = $(this.$target).parent();
-    } else {
-        cur = $(this.$target);
-    }
-
-    while (cur != null) {
-        cur = cur.get(0);
-        if (cur == null) break;
-        if (cur.dataContext != null || cur.hasDataContext === true) return cur.dataContext;
-        cur = $(cur).parent();
-    }
-    return null;
+    if ( this.__obliterated ) { return; }
+    return JBUtil.findDataContext(this.$target, this.$useParentContext);
 }.Description("...")
  .Returns("object or null");
 
@@ -1769,7 +1756,6 @@ Binding.prototype.$set_targetValue = function (vin) {
 
     } catch (ex) {
         if (window.g_JDebug) {
-            //debugger;
             Base.$resetUpdateTransaction();
             throw (ex + "<br/>\n ERROR in Binding.prototype.$set_targetValue of " +
 					((this.$targetAction != null)?this.$targetAction + "--":"") +
@@ -1827,7 +1813,6 @@ Binding.prototype.$get_targetValue = function (bRaw) { // if bRaw is present and
             }
         } catch (ex) {
             if (window.g_JDebug) {
-                //debugger;
                 Base.$resetUpdateTransaction();
                 throw (ex + "<br/>\n ERROR in Binding.prototype.$get_targetValue of " +
 						((this.$targetAction != null)?this.$targetAction + "--":"") +
@@ -1873,7 +1858,6 @@ Binding.prototype.$get_sourceValue = function (bFormat) { // The source is consi
         if (bFormat) return this.$formatToTarget(result);
     } catch (ex) {
         if (window.g_JDebug) {
-            //debugger;
             Base.$resetUpdateTransaction();
             throw (ex + "<br/>\n ERROR in Binding.prototype.$get_sourceValue of " + this.$expression + "<br/>\n HTML extract: " + this.$get_htmlExtractForErrorInfo());
         } else {
@@ -1947,7 +1931,6 @@ Binding.prototype.$set_sourceValue = function (val, bFormat, bDontMarkState) {
         }
     } catch (ex) {
         if (window.g_JDebug) {
-            //debugger;
             Base.$resetUpdateTransaction();
             throw (ex + "<br/>\n ERROR in Binding.prototype.$set_sourceValue of " + this.$expression + "<br/>\n HTML extract: " + this.$get_htmlExtractForErrorInfo());
         } else {

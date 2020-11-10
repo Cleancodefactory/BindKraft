@@ -24,6 +24,7 @@
 //#using "./UploadControl.js"
 //#using "./UploadBase.js"
 //#using "./SvgY.js"
+//#using "./EmbeddedSvg.js"
 //#using "./UtilityNode.js"
 
 //#using "./TextBox.js"

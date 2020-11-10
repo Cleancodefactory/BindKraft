@@ -98,6 +98,7 @@ System.prototype.$showLoadingIndicator = function (domEl, kind) {
     }
 };
 // Load system configuration - stub. Override in the conf (recommended) or the boot file to load the system settings as appropriate for the system.
+// Preliminary defaults are loaded in sysconfig.js, this method is no longer used and is kept only to prevent failures of code that may still call it
 /*virtual*/ System.prototype.loadSystemSettings = function () {
     this.settings = {};
 };

@@ -56,7 +56,7 @@ DelegateRev.prototype.invokeOnWithArgsArray = function (thisObj, args) {
  
 DelegateRev.prototype.equals = function (obj) {
     if (BaseObject.is(obj,"DelegateRev")) {
-        if (this.object == obj.object && this.func == obj.func) return true;
+        if (this.object == obj.object && this.func == obj.func) return this.$eqaulsParameters(obj.parameters);
     }
     return false;
 }.Description("Checks if delegates are equal")

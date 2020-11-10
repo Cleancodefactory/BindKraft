@@ -298,7 +298,7 @@ DOMUtil.obliterateDom = function(dom, bAndSelf) { // public, recursive
 		}
 	} else if (dom instanceof HTMLCollection || dom instanceof NodeList) {
 		for (i = 0; i < dom.length; i++) {
-			DOMUtil.obliterateDom(dom[i]);
+			DOMUtil.obliterateDom(dom[i], bAndSelf);
 		}		
 	}
 }
@@ -386,20 +386,22 @@ DOMUtil.matchesSelector = function(dom, selector) {
 /**
 	@param dom* {NodeList|HTMLCollection|Array<HTMLElement>}	- set of elements - only HTMLElement-s are processed, the others will never pass.
 	@param dom** {HTMLElement} - Single element.
-	@param selector {string} - CSS selector
+	@param selector {string} - (optional) CSS selector, any element matches if omitted or null (useful for filtering by node type).
+	@param elType {object} (optional) Type to filter, HTMLElement is assumed if omitted. Example types: Node, Element, HTMLElement 
 	
 	@returns in case * the dom element if it matches the selector, otherwise null. in case ** an array of the elements that match the selector
 */
-DOMUtil.filterElements = function(dom,selector) {
-	if (dom instanceof HTMLElement) {
-		if (dom.matches(selector)) {
+DOMUtil.filterElements = function(dom,selector,elType) {
+	var _ElementType = elType || HTMLElement;
+	if (dom instanceof _ElementType) {
+		if (selector == null || dom.matches(selector)) {
 			return dom;
 		}
 	} else if (dom instanceof NodeList || dom instanceof HTMLCollection || BaseObject.is(dom, "Array")) {
 		var el,result = [];
 		for (var i = 0; i < dom.length; i++) {
-			if (dom[i] instanceof HTMLElement) {
-				el = this.filterElements(dom[i], selector);
+			if (dom[i] instanceof _ElementType) {
+				el = this.filterElements(dom[i], selector,_ElementType);
 				if (el) result.push(el);
 			}
 		}
@@ -655,7 +657,7 @@ DOMUtil.BorderIndicator = {
 		return BaseObject.is(node.activeClass, "IUIControl");
 	},
 	dataContextRoot: function(node) {
-		return (he.dataContext != null || he.hasDataContext);
+		return (node.dataContext != null || node.hasDataContext);
 	}
 };
 

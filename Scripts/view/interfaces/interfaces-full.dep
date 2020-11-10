@@ -10,7 +10,7 @@
 //#using "./IConnectorToItemsContent.js"
 //#using "./IConnectorToItemsCount.js"
 //#using "./ICustomParameterization.js"
-//#using "./IDataStateManager.js"
+//// "./IDataStateManager.js" moved to core/interfaces
 //#using "./IDisablable.js"
 //#using "./IDOMConnectedObject.js"
 //#using "./IFilterDataSource.js"

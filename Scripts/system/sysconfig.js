@@ -45,10 +45,12 @@
 		fs.mkdir("appinfo"); // here go one dir per app - each named after its class.
 	}
 	
-	// AppData-like
+	// AppData-like, 
 	// AppFS - Globally executable code should be avoided, but in-app CL scripts are welcome. 
-	//			This FS is for application data, each app chould create a folder and can put in it whatever data it needs stored.
+	//			This FS is for application data, EACH APP SHOULD create a folder and can put in it whatever data it needs stored.
 	//			Persistence mechanisms for this FS may be implemented in future. This FS is somewhat similar to the appdata in Windows or user directory in unix.
+	//		All data is stored per app (app class name), a dir with the class name is created and files stored in it and subdirs (if necessary).
+	//		system directory is reserved for system data, some conventions apply to both apps and system
 	// appfs: system\ - reserved for system data
 	if (!Registers.Default().registerExists("appfs")) {
 		Registers.Default().addRegister( new MemoryFSDirectory("appfs"));
@@ -72,10 +74,20 @@
 		});
 		dir.mkdir("scripts");
 		dir.mkdir("aliases");
+	// appfs: <app>\localization - subdirectory for localization files. Each file is named after the locale it represents.
+	//			API supporting this exists
 		
 		
 	}
 	
+	// System settings preliminary defaults
+	var settings = System.Default().settings;
+	settings = {
+		CurrentLang: "en",
+		DefaultTransferDateEncoding: "ISO",
+		UltimateFallBackLocale: "en"
+	}
+
 	
 	document.addEventListener("DOMContentLoaded", function (event) {
 		// Before boot complete compilation phase

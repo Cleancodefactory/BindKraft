@@ -50,7 +50,9 @@
 
 [TemplateConnector](CoreClasses/TemplateConnector.md)
 
-## Geometry helpers
+## Geometry helpers (deprecated)
+
+New classes in the [ViewClasses](ViewClasses.md) scripts/view/geometry replace the old ones. The new classes will work with the old ones where appropriate, but new code should use the new classes!.
 
 [Point](CoreClasses/Point.md) | [Rect](CoreClasses/Rect.md) | [Size](CoreClasses/Size.md) | [SizeLimits](CoreClasses/SizeLimits.md)
 
