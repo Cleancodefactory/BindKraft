@@ -59,5 +59,11 @@ var BkInit = {
 	},
 	WorkspaceName: function(name){
 		System.Default().set_workspaceName(name);
+	},
+	Translation: function(appClass, fn) {
+		if (Class.getClassName(appClass) == null) {
+			throw "No such class";
+		}
+		fn(new BKInit_Translation(appClass));
 	}
 };

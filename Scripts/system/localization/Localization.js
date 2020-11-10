@@ -1,11 +1,21 @@
 (function() {
 
-    function Localization(appClass) {
+    /**
+     * Constructs as necessary and provides access to translations of a specified app and locale. The class caches statically and
+     * provides access from an instance, so it is lightweight to use in any number if instances, each configured as needed.
+     * 
+     * @param appClass  {string}    Required, name of the app class to which this translation belongs
+     * @param lang      {string}    Optional locale name. If set the locale name can be omitted in the public methods.
+     */
+    function Localization(appClass, lang) {
         BaseObject.apply(this,arguments);
-        if (typeof appClass == "string" && !/^\s*$/.test(appClass)) {
+        if (typeof appClass == "function") {
+            appClass = Class.getTypeName(appClass);
+        }
+        if (typeof appClass == "string" && (appClass == "system" || Class.getClassName(appClass) != null)) {
             this.$appClass = appClass; // TODO check the class
         } else {
-            throw "Localization can be created only for a specific app class or the system.";
+            throw "Localization can be created only for a specific class or the system. The class should be preferably an app class if at all possible.";
         }
         var memfs = Registers.Default().getRegister("appfs");
         if (!BaseObject.is(memfs, "MemoryFSDirectory")) throw "Cannot find the appfs: file system. Check if system/sysconfig.js is not corrupted.";
@@ -14,6 +24,7 @@
         var locdir = dir.cd("localization"); // Make sure localization directory exists and change to it.
         if (!BaseObject.is(locdir, "MemoryFSDirectory")) throw "Cannot find the localization directory for " + appClass;
         this.$dir = locdir;
+        this.$lang = lang || System.Default().settings.CurrentLang;
 
     }
     Localization.Inherit(BaseObject, "Localization");
@@ -41,6 +52,7 @@
 
 
     Localization.prototype.$appClass = null;
+    Localization.prototype.$lang = null;
     Localization.prototype.$dir = null;
     Localization.prototype.$loadTranslation = function(locale) {
         var f = this.$dir.item("translations/locale");
@@ -50,11 +62,13 @@
 		}
         return null;
     }
+
+    Localization.$translations = {};
     
-    Localization.prototype.$translations = new InitializeObject("Object containing the loaded translations");
     Localization.prototype.$loadTranslationLocale = function(locale) {
         var arrTrans = [];
         var t, loc;
+        var $translations = this.get_translations();
 
         while (loc != null) {
             t = this.$loadTranslation(loc);
@@ -63,21 +77,49 @@
         }
         if (arrTrans.length > 0) {
             t = BaseObject.CombineObjects.apply(null, arrTrans);
-            this.$translations[locale] = t;
+            $translations[locale] = t;
             return t;
         }
         return null;
     }
-    Localization.prototype.get_translation = function(locale) {
-        var loc = this.$translations[locale];
+
+    // +PUBLIC
+
+    /**
+     * Returns and creates if necessary a branch for the app specified in the constructor
+     * 
+     * @returns {object}    Plain object containing all the loaded translations for the app.
+     */
+    Localization.prototype.get_translations = function() {
+        if (Localization.$translations[this.$appClass] == null) {
+            Localization.$translations[this.$appClass] = {};
+        }
+        return Localization.$translations[this.$appClass];
+    }
+    /**
+     * Returns an object with the translations for the specified locale.
+     * 
+     * @param _locale {string}  Optional. If omitted the lang (locale) was specified in the constructor will be used. If no local has been
+     *                          given to the constructor the system CurrentLang will be used.
+     */
+    Localization.prototype.get_translation = function(_locale) {
+        var locale = _locale || this.$lang;
+        if (typeof locale != "string" || !/^\w{2}(-.*)?$/.test(locale)) {
+            this.LASTERROR(_Errors.compose(), "Invalid locale", "get_translation");
+            return null; // Invalid locale
+        }
+        var $translations = this.get_translations();
+
+        var loc = $translations[locale];
         if (loc == null) {
             loc = this.$loadTranslationLocale(locale);
         }
         if (loc == null) {
-            loc = this.get_locale(System.Default().get_settings("UltimateFallBackLocale"))
+            loc = this.get_translation(System.Default().get_settings("UltimateFallBackLocale"))
         }
         return loc;
     }
+    // -PUBLIC
     
 
 })();

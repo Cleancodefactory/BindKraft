@@ -10,3 +10,4 @@
 //#using "./BkInit_CommandUrlGlobal.js"
 //#using "./BkInit_AppData.js"
 //#using "./BKInit_AppInfo.js"
+//#using "./BKInit_Translation.js"

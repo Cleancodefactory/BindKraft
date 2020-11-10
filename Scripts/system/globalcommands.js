@@ -196,7 +196,9 @@ System.DefaultCommands = {
 		}
 		
 	},
-	"loadbearertoken": System.CommandLibs.TokenStorage
+	"loadbearertoken": System.CommandLibs.TokenStorage,
+	"loadtranslation": System.CommandLibs.LoadTranslation,
+	"loadtranslations": System.CommandLibs.LoadTranslations,
 };
 
 
