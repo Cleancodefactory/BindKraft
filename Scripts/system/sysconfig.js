@@ -82,11 +82,10 @@
 	
 	// System settings preliminary defaults
 	var settings = System.Default().settings;
-	settings = {
-		CurrentLang: "en",
-		DefaultTransferDateEncoding: "ISO",
-		UltimateFallBackLocale: "en"
-	}
+	settings.CurrentLang = "en";
+	settings.DefaultTransferDateEncoding = "ISO";
+	settings.UltimateFallBackLocale = "en";
+	
 
 	
 	document.addEventListener("DOMContentLoaded", function (event) {

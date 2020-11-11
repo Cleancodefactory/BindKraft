@@ -19,7 +19,7 @@
         }
         var memfs = Registers.Default().getRegister("appfs");
         if (!BaseObject.is(memfs, "MemoryFSDirectory")) throw "Cannot find the appfs: file system. Check if system/sysconfig.js is not corrupted.";
-        var dir = this.$fs.cd(appClass); // Make sure the app dir exists and changes to it.
+        var dir = memfs.cd(appClass); // Make sure the app dir exists and changes to it.
         if (dir == null) throw "App directory does not exist in appfs: for " + appClass;
         var locdir = dir.cd("localization"); // Make sure localization directory exists and change to it.
         if (!BaseObject.is(locdir, "MemoryFSDirectory")) throw "Cannot find the localization directory for " + appClass;
@@ -55,7 +55,7 @@
     Localization.prototype.$lang = null;
     Localization.prototype.$dir = null;
     Localization.prototype.$loadTranslation = function(locale) {
-        var f = this.$dir.item("translations/locale");
+        var f = this.$dir.item("translations/" + locale);
         if (BaseObject.is(f, "IMemoryFileContent")) {
 			// Ignores the availability
 				return f.get_content();
@@ -65,15 +65,16 @@
 
     Localization.$translations = {};
     
-    Localization.prototype.$loadTranslationLocale = function(locale) {
+    Localization.prototype.$loadTranslationLocale = function(_locale) {
+        var locale = _locale || this.$lang;
         var arrTrans = [];
-        var t, loc;
+        var t;
         var $translations = this.get_translations();
 
-        while (loc != null) {
-            t = this.$loadTranslation(loc);
+        while (locale != null) {
+            t = this.$loadTranslation(locale);
             if (t != null) arrTrans.unshift(t);
-            loc = Localization.truncateLocaleTag(loc)
+            locale = Localization.truncateLocaleTag(locale)
         }
         if (arrTrans.length > 0) {
             t = BaseObject.CombineObjects.apply(null, arrTrans);
@@ -95,6 +96,15 @@
             Localization.$translations[this.$appClass] = {};
         }
         return Localization.$translations[this.$appClass];
+    }
+    /**
+     * Static version
+     */
+    Localization.get_translations = function(appClass) {
+        if (Localization.$translations[appClass] == null) {
+            Localization.$translations[appClass] = {};
+        }
+        return Localization.$translations[appClass];
     }
     /**
      * Returns an object with the translations for the specified locale.
@@ -119,6 +129,25 @@
         }
         return loc;
     }
+
+    Localization.get_translation = function(appClass, _locale) {
+        var locale = _locale || System.Default().get_settings("CurrentLang");
+        if (typeof locale != "string" || !/^\w{2}(-.*)?$/.test(locale)) {
+            return null; // Invalid locale
+        }
+        var $translations = Localization.get_translations(appClass);
+
+        var loc = $translations[locale];
+        if (loc == null) {
+            var l = new Localization(appClass);
+            loc = l.$loadTranslationLocale(locale);
+        }
+        if (loc == null && locale != System.Default().get_settings("UltimateFallBackLocale")) {
+            loc = Localization.get_translation(appClass, System.Default().get_settings("UltimateFallBackLocale"))
+        }
+        return loc;
+    }
+
     // -PUBLIC
     
 

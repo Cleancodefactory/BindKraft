@@ -1,7 +1,7 @@
 function BKInit_Translation(appClass) {
     BaseObject.apply(this,arguments);
     this.appClass = appClass;
-    this.manager = new LocalizationManagement(appClass);
+    this.manager = new (Class("LocalizationManagement"))(appClass);
 }
 BKInit_Translation.Inherit(BaseObject,"BKInit_Translation");
 BKInit_Translation.prototype.add = function(locale, content) {

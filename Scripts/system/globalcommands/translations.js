@@ -1,6 +1,8 @@
 
 
 System.CommandLibs.LoadTranslation = (function() {
+    var LocalizationManagement = Class("LocalizationManagement");
+
     return function(context, api) {
         var op = new Operation(null, 20000);
         var arg = api.pullNextToken();
@@ -25,7 +27,7 @@ System.CommandLibs.LoadTranslation = (function() {
 
         var mng = new LocalizationManagement(appClass);
 
-		var actualurl = IPlatformUrlMapper.mapModuleUrl(url.slice(arg.indexOf(":") + 1),url.slice(0,arg.indexOf(":")));
+		var actualurl = IPlatformUrlMapper.mapModuleUrl(url.slice(url.indexOf(":") + 1),url.slice(0,url.indexOf(":")));
         var bo = new BaseObject();
         bo.ajaxGetXml(actualurl,null, function(result) {
 			if (result.status.issuccessful) {
@@ -40,8 +42,10 @@ System.CommandLibs.LoadTranslation = (function() {
 		});
         return op;
     }
-});
+})();
 System.CommandLibs.LoadTranslations =(function() {
+    var LocalizationManagement = Class("LocalizationManagement");
+
     return function(context, api) {
         var op = new Operation(null, 20000);
         var appClass = api.pullNextToken();
@@ -54,7 +58,7 @@ System.CommandLibs.LoadTranslations =(function() {
 
         var mng = new LocalizationManagement(appClass);
 
-		var actualurl = IPlatformUrlMapper.mapModuleUrl(url.slice(arg.indexOf(":") + 1),url.slice(0,arg.indexOf(":")));
+		var actualurl = IPlatformUrlMapper.mapModuleUrl(url.slice(url.indexOf(":") + 1),url.slice(0,url.indexOf(":")));
         var bo = new BaseObject();
         bo.ajaxGetXml(actualurl,null, function(result) {
 			if (result.status.issuccessful) {
@@ -75,4 +79,4 @@ System.CommandLibs.LoadTranslations =(function() {
 		});
         return op;
     }
-});
+})();

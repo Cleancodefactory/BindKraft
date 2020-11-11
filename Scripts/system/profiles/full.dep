@@ -27,13 +27,14 @@
 //#using "../surrogateapps/surrogateapps-full.dep"
 //#using "../base/base-full.dep"
 //#using "../apis/apis-full.dep"
+//#using "../localization/localization.dep"
 
 //#using "../globalcommands/globalcommands.dep"
 //#using "../globalcommands.js"
 
 //#using "../BkInit/bkinit-full.dep"
 
-//#using "../localization/localization.dep
+
 // This must be the last file to include
 //#using "../sysconfig.js"
 //#using "../sysstartup.js"

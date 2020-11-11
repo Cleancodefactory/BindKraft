@@ -9,12 +9,13 @@
         }
         var memfs = Registers.Default().getRegister("appfs");
         if (!BaseObject.is(memfs, "MemoryFSDirectory")) throw "Cannot find the appfs: file system. Check if system/sysconfig.js is not corrupted.";
-        var dir = this.$fs.mkdir(appClass); // Make sure the app dir exists and changes to it.
+        var dir = memfs.mkdir(appClass); // Make sure the app dir exists and changes to it.
         var locdir = dir.mkdir("localization"); // Make sure localization directory exists and change to it.
+        var trasndir = locdir.mkdir("translations");
         if (!BaseObject.is(locdir, "MemoryFSDirectory")) throw "Cannot find/create the localization directory for " + appClass;
         this.$dir = locdir;
     }
-    LocalizationManagement.Inherit(BaseObject, "LocalizationManagement")
+    LocalizationManagement.Inherit(BaseObject, "LocalizationManagement");
     LocalizationManagement.prototype.$appClass = null;
     LocalizationManagement.prototype.$dir = null;
     LocalizationManagement.prototype.$getfile = function(name) {
@@ -37,6 +38,7 @@
         var f = this.$getfile(name);
         if (f == null) {
             f = new ContentMemoryFile("memory/object", content);
+            this.$dir.register(name, f)
         } else { // Override the content for now
             f.set_content(content);
             f.set_contenttype("memory/object");

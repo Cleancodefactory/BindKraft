@@ -70,7 +70,7 @@ Binding.prototype.obliterate = function (bFull) {
  .Param("bFull","...");
 
 //Binding.$tempRegEx = /(bind|read|probe)\b(?:\((\d+)\))*|(?:(source|service)=(\S+))|(?:(path)=(\S+))|(?:(format|inverseformat)=(\S+))|(?:(customformat|inversecustomformat)=(\S+))|(?:options=(\S+))|(?:flags=(\S+))|(?:(create|createleaf)=(\S+))|(?:checkstate=(\S+))|(?:readdata=(\S+))|(?:writedata=(\S+))|(?:[ref|reference]\[(.*?)\]=(\S+))|(?:debug=(\S+))|(?:(text|number)=\'(.*?)\')|(?:(object)=(\S+))|(?:validator=\'(\S+)\')|(?:name=(\S+))|(?:trace=(\S+))|(?:(onload|onenter|onleave|onclose)=(\S+))|(?:(parameter|argument)=\'(\S+)\')/gi;
-Binding.$regExpSource = /(source|service|shellcommand)=(\S+)/i;
+Binding.$regExpSource = /(source|service|shellcommand|translation)=(\S+)/i;
 Binding.$regExpPath = /(path|trigger)\=(\S+)/i;
 Binding.$regExpLiteral = /(text|number|object)\=\'(.*?)\'/i;
 Binding.$regExpLiteralObject = /(object)\=(\S+)/i;
@@ -697,7 +697,7 @@ Binding.prototype.$parseExpression = function (expr) {
                         this.$sourceType = arr[1].trim();
                 }
             } else {
-                this.$sourceType = s; // for now it can be only "service" or "shellcommand"
+                this.$sourceType = s; // for now it can be only "service", "translation" or "shellcommand"
             }
         } else {
             this.$source = null;
@@ -1109,6 +1109,10 @@ Binding.prototype.$setupSource = function () {
             p = FindServiceQuery.findService(this.$target, "IAppletStorage");
             if (p != null) this.$sourceObject = p.get_appletstorage();
             
+            break;
+        case "translation":
+            p = Class("Localization").get_translation(this.$source)
+            this.$sourceObject = p;
             break;
         default:
             this.$sourceObject = this.$findDataContext();
