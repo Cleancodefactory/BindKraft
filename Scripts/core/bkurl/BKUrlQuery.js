@@ -17,11 +17,11 @@ BKUrlQuery.FromMultiDict = function(v) {
 BKUrlQuery.prototype.$urlkeychar = "?";
 
 // MultiDict bridge
-BKUrlQuery.prototype.remove = function(k, o) { return this.$store.remove(k, o); };
-BKUrlQuery.prototype.add = function(k, o) { return this.$store.add(k, o); };
-BKUrlQuery.prototype.set = function(k, o) { return this.$store.set(k, o); };
-BKUrlQuery.prototype.get = function(k, idx) { return this.$store.get(k, idx); };
-BKUrlQuery.prototype.keys = function(pat) { return this.$store.keys(pat); };
+BKUrlQuery.prototype.remove = function(k, o) { return this.$store.remove.apply(this.$store,arguments); };
+BKUrlQuery.prototype.add = function(k, o) { return this.$store.add.apply(this.$store,arguments); };
+BKUrlQuery.prototype.set = function(k, o) { return this.$store.set.apply(this.$store,arguments); };
+BKUrlQuery.prototype.get = function(k, idx) { return this.$store.get.apply(this.$store, arguments); };
+BKUrlQuery.prototype.keys = function(pat) { return this.$store.keys.apply(this.$store,arguments); };
 
 // IBKUriObject ========================================================
 

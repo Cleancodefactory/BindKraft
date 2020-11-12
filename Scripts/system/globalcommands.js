@@ -13,9 +13,11 @@ System.DefaultCommands = {
 		if(typeof culture != "string"){
 			throw "The culture name must be string";
 		}
-		//if (!System.Default().settings.CurrentLang) {
+		if (culture == '' || culture == "*" || culture == "selected") {
+			// Leave what we have - use syslang to set from parameters
+		} else if (/^\w{2}(-.*)?$/.test(culture)) {
 			System.Default().settings.CurrentLang = culture;
-		//}
+		}
 		if (typeof window.g_UTCDate == "undefined") {
 			window.g_UTCDate = false;//default UTC time
 		}
@@ -199,6 +201,21 @@ System.DefaultCommands = {
 	"loadbearertoken": System.CommandLibs.TokenStorage,
 	"loadtranslation": System.CommandLibs.LoadTranslation,
 	"loadtranslations": System.CommandLibs.LoadTranslations,
+	"syslang": function(ctx, api) {
+		var paramname = api.pullNextToken();
+		if (paramname == "default") paramname = "culture";
+		if (typeof window.g_ApplicationCulture == "string" && /^\w{2}(-.+)?$/.test(window.g_ApplicationCulture)) {
+			System.Default().CurrentLang = window.g_ApplicationCulture;
+		} else {
+			if (window.g_ApplicationStartFullUrl != null) {
+				var url = new BKUrl(window.g_ApplicationStartFullUrl);
+				var culture = url.get_query().get(paramname) + "";
+				if (culture != "" && /^\w{2}(-.+)?$/.test(culture)) {
+					System.Default().settings.CurrentLang = culture;
+				}
+			}
+		}
+	}
 };
 
 
@@ -253,8 +270,10 @@ System.DefaultCommands = {
 	// +V 2.17.6
 	gc.register("set", null, null, defs["set"], "Sets a variable in the current environment context: set varname varvalue");
 	gc.register("unset", null, null, defs["set"], "Unsets a variable in the current environment context: unset varname");
-	gc.register("loadbearertoken", null, null, defs["loadbearertoken"],"Registers bearer token(s) into the system token register from the specified URL. ex: registertoken '<modulename>' '<nodeset>/<node>'. Expects 2 arguments logicalurl, modulename ");
-	gc.register("loadtranslation", "lt", null, defs["loadtranslation"], "Loads translation for a single language. usage: loadtranslation <appClass>/<locale> <modulename>:<nodeset>[/<node1>.<node2>...]");
-	gc.register("loadtranslations", "lts", null, defs["loadtranslations"], "Loads all translations for an app. usage: loadtranslations <appClass> <modulename>:<nodeset>[/<node1>.<node2>...]");
 	// -V 2.17.6
+	gc.register("loadbearertoken", null, null, defs["loadbearertoken"],"Registers bearer token(s) into the system token register from the specified URL. ex: registertoken '<modulename>' '<nodeset>/<node>'. Expects 2 arguments logicalurl, modulename ");
+	gc.register("loadtranslation", "lt", null, defs["loadtranslation"], "Loads translation for a single language. A %locale% in the second parameter will be replaced with the selected system locale. usage: loadtranslation <appClass>/<locale> <modulename>:<nodeset>[/<node1>.<node2>...]");
+	gc.register("loadtranslations", "lts", null, defs["loadtranslations"], "Loads all translations for an app. usage: loadtranslations <appClass> <modulename>:<nodeset>[/<node1>.<node2>...]");
+	gc.register("syslang", "systemlocale", null, defs["syslang"], "Sets the system language from query parameter with specified name or the built-in name if default is specified. If the parameter is missing the g_ApplicationCulture is used. If that is missing too - en is set. usage: syslang <paramname>|default");
+	
 })();

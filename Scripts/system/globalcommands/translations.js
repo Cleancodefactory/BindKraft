@@ -12,6 +12,9 @@ System.CommandLibs.LoadTranslation = (function() {
         if (arr.length == 2) {
             appClass = arr[0];
             locale = arr[1];
+        } else if (arr.length == 1) {
+            appClass = arr[0];
+            locale = System.Default().settings.CurrentLang;
         } else {
             op.CompleteOperation(false, "usage: loadtranslation <appClass>/<locale> <modulename>:<nodeset>[/<node1>.<node2>...] {appclass or locale is incorrect}");
         }
@@ -24,7 +27,7 @@ System.CommandLibs.LoadTranslation = (function() {
             op.CompleteOperation(false, "usage: loadtranslation <appClass>/<locale> <modulename>:<nodeset>[/<node1>.<node2>...] {appClass is not defined}");
             return op;
         }
-
+        url = url.replace(/%locale%/,locale)
         var mng = new LocalizationManagement(appClass);
 
 		var actualurl = IPlatformUrlMapper.mapModuleUrl(url.slice(url.indexOf(":") + 1),url.slice(0,url.indexOf(":")));

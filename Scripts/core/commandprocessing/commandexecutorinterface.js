@@ -37,7 +37,7 @@ CommandExecutorInterface.prototype.getContextFrom = function(source) {
 CommandExecutorInterface.prototype.pullResult = function() {
 	return this.pullResult();
 }
-CommandExecutorInterface.prototype.pushNextToken = function() {
+CommandExecutorInterface.prototype.pushNextToken = function(outmetacb) {
 	var r = this.pullNextToken(outmetacb);
 	this.pushResult(r);
 	return r;
