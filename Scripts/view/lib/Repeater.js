@@ -258,7 +258,7 @@ Repeater.prototype.materializeItem = function(dataItem, how) {
 		for (i = 0; i < item.length; i++) {
 			item[i].dataContext = dataItem;
 			item[i].hasDataContext = true;
-			this.$recursiveBind(item[i], false, false, true, null, createdBindings);
+			this.$recursiveBind(item[i], false, false, false, null, createdBindings, true);
 		}
 		// We have the bindings created
 		this.$configureBindings(); // sorting according to priority - concerns all bindings not only the new ones

@@ -754,71 +754,78 @@ Base.eachClass = function (domel, cond, callback, depth, param) {
     }
 }.Description("Allows traversing the DOM tree from certain start element in leaves direction. For more details see the instance method eachClass.")
 Base.prototype.onPhaseBinding = function (node, cls) { };
+/**
+ * processAsChild is incompatible with processOwnBindings
+ */
 // override to Implement additional logic
-Base.prototype.$recursiveBind = function (n, skipThisDataContext, ignoreTemplateRoot, processOwnBindings, asyncResult, bindingResults) {
-    var node, nodeRaw;
-    if (BaseObject.is(n, "Base")) {
-        node = $(n.root);
-    } else {
-        node = $(n);
-    }
-    nodeRaw = node.get(0);
-    var ctx, o;
-    ctx = node.attr("data-context");
-    if (ctx != null && ctx.length > 0 && !skipThisDataContext) {
-        this.$registerBinding(new Binding(nodeRaw, null, "datacontext", ctx, true), false, bindingResults);
-        nodeRaw.hasDataContext = true;
-    }
-    ctx = node.attr("data-context-border");
-    if (ctx != null) {
-        nodeRaw.hasDataContext = true;
-    }
+Base.prototype.$recursiveBind = function (n, skipThisDataContext, ignoreTemplateRoot, processOwnBindings, asyncResult, bindingResults, processAsChild) {
+    var node, nodeRaw, cs, behaviorAttrs;
+    if (!processAsChild) {
+        if (BaseObject.is(n, "Base")) {
+            node = $(n.root);
+        } else {
+            node = $(n);
+        }
+        nodeRaw = node.get(0);
+        var ctx, o;
+        ctx = node.attr("data-context");
+        if (ctx != null && ctx.length > 0 && !skipThisDataContext) {
+            this.$registerBinding(new Binding(nodeRaw, null, "datacontext", ctx, true), false, bindingResults);
+            nodeRaw.hasDataContext = true;
+        }
+        ctx = node.attr("data-context-border");
+        if (ctx != null) {
+            nodeRaw.hasDataContext = true;
+        }
 
-    var attrs, attr;
-    if (processOwnBindings) {
-        attrs = node.getAttributes("data-bind-(\\S+)");
+        var attrs, attr;
+        if (processOwnBindings) {
+            attrs = node.getAttributes("data-bind-(\\S+)");
+            for (attr in attrs) {
+                this.$registerBinding(new Binding(nodeRaw, null, attr, attrs[attr], false), false, bindingResults);
+            }
+        }
+        attrs = node.getAttributes("data-on-(\\S+)");
         for (attr in attrs) {
-            this.$registerBinding(new Binding(nodeRaw, null, attr, attrs[attr], false), false, bindingResults);
-        }
-    }
-    attrs = node.getAttributes("data-on-(\\S+)");
-    for (attr in attrs) {
-        if (BaseObject.is(attrs[attr], "string")) {
-            var exprs = JBUtil.getEnclosedTokens("{", "}", "\\", attrs[attr]); // var behs = expr.match(BehaviorBinder.reParseBehaviors);
-            if (exprs != null) {
-                for (var i = 0; i < exprs.length; i++) {
-                    o = new Handler(nodeRaw, null, attr, exprs[i], false);
-					// For handlers (Events) set_targetValue does the actual attachment to the event source
-					// Although the search for the source of the handler is done each time thevent occurs we call updateTarget and not
-					// set_targetValue only - some implementations may need this!
-                    o.updateTarget(); // TODO: really? Be careful if change is decided on - this makes handlers available after bind.
-                    this.handlers.push(o);
-                    if (bindingResults != null) bindingResults.handlers.push(o);
+            if (BaseObject.is(attrs[attr], "string")) {
+                var exprs = JBUtil.getEnclosedTokens("{", "}", "\\", attrs[attr]); // var behs = expr.match(BehaviorBinder.reParseBehaviors);
+                if (exprs != null) {
+                    for (var i = 0; i < exprs.length; i++) {
+                        o = new Handler(nodeRaw, null, attr, exprs[i], false);
+                        // For handlers (Events) set_targetValue does the actual attachment to the event source
+                        // Although the search for the source of the handler is done each time thevent occurs we call updateTarget and not
+                        // set_targetValue only - some implementations may need this!
+                        o.updateTarget(); // TODO: really? Be careful if change is decided on - this makes handlers available after bind.
+                        this.handlers.push(o);
+                        if (bindingResults != null) bindingResults.handlers.push(o);
+                    }
                 }
             }
         }
-    }
-	/* TODO: This should be done with data-on-$reboundevent
-	ctx = node.attr("data-push");
-    if (ctx != null && ctx.length > 0) {
-        if (BaseObject.is(ctx, "string")) {
-            var exprs = JBUtil.getEnclosedTokens("{", "}", "\\", ctx); // var behs = expr.match(BehaviorBinder.reParseBehaviors);
-            if (exprs != null) {
-                for (var i = 0; i < exprs.length; i++) {
-                    o = new Handler(nodeRaw, null, "activeClass", exprs[i], false);
-                    this.handlers.push(o);
-                    o.updateTarget(); // TODO: really? Be careful if change is decided on - this makes handlers available after bind.
+        /* TODO: This should be done with data-on-$reboundevent
+        ctx = node.attr("data-push");
+        if (ctx != null && ctx.length > 0) {
+            if (BaseObject.is(ctx, "string")) {
+                var exprs = JBUtil.getEnclosedTokens("{", "}", "\\", ctx); // var behs = expr.match(BehaviorBinder.reParseBehaviors);
+                if (exprs != null) {
+                    for (var i = 0; i < exprs.length; i++) {
+                        o = new Handler(nodeRaw, null, "activeClass", exprs[i], false);
+                        this.handlers.push(o);
+                        o.updateTarget(); // TODO: really? Be careful if change is decided on - this makes handlers available after bind.
+                    }
                 }
             }
+        }*/
+        behaviorAttrs = node.getAttributes("data-behavior(?:-(\\S*))?");
+        for (attr in behaviorAttrs) {
+            BehaviorBinder.$bindBehaviors(node, attr, behaviorAttrs[attr], BehaviorPhaseEnum.bind);
         }
-    }*/
-    var behaviorAttrs = node.getAttributes("data-behavior(?:-(\\S*))?");
-    for (attr in behaviorAttrs) {
-        BehaviorBinder.$bindBehaviors(node, attr, behaviorAttrs[attr], BehaviorPhaseEnum.bind);
+        this.onPhaseBinding(node, nodeRaw.activeClass);
+        cs = node.children();
+    } else {
+        cs = $(n);
     }
-    this.onPhaseBinding(node, nodeRaw.activeClass);
-
-    var cs = node.children();
+    
     var o, oraw, ibattr;
     for (var i = 0; i < cs.length; i++) {
         // Check if this is a classed object
@@ -832,7 +839,7 @@ Base.prototype.$recursiveBind = function (n, skipThisDataContext, ignoreTemplate
         if (BaseObject.is(oraw.activeClass, "Base")) {
             if (ignoreTemplateRoot || (!oraw.activeClass.isTemplateRoot())) {
                 this.bindingDescendants.push(oraw.activeClass);
-                if (bindingResults != null) bindingResults.bindingDescendants = oraw.activeClass;
+                if (bindingResults != null) bindingResults.bindingDescendants.push(oraw.activeClass);
                 attrs = o.getAttributes("data-bind-(\\S+)");
                 for (attr in attrs) {
                     this.$registerBinding(new Binding(oraw, null, attr, attrs[attr], false), false,  bindingResults);
@@ -848,8 +855,10 @@ Base.prototype.$recursiveBind = function (n, skipThisDataContext, ignoreTemplate
             this.$recursiveBind(o, false, false, true, asyncResult, bindingResults);
         }
     }
-    for (attr in behaviorAttrs) {
-        BehaviorBinder.$bindBehaviors(node, attr, behaviorAttrs[attr], BehaviorPhaseEnum.postbind);
+    if (!processAsChild) {
+        for (attr in behaviorAttrs) {
+            BehaviorBinder.$bindBehaviors(node, attr, behaviorAttrs[attr], BehaviorPhaseEnum.postbind);
+        }
     }
     // this.onPhasePostBinding(node, nodeRaw.activeClass);
 };
