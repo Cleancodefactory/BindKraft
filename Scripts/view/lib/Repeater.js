@@ -232,8 +232,25 @@ Repeater.prototype.get_itemsCount = function() {
 // Region item by items
 Repeater.prototype.materializeItem = function(dataItem, how) {
 	if (BaseObject.is(dataItem, "Array")) {
-		for (var i = 0; i < dataItem.length; i++) this.materializeItem(dataItem[i], how);
+		if (how == "prepend") {
+			for (var i = dataItem.length - 1; i >= 0; i--) this.materializeItem(dataItem[i], how);
+		} else {
+			for (var i = 0; i < dataItem.length; i++) this.materializeItem(dataItem[i], how);
+		}
 	} else { // Assume single item
+		if (this.get_items() != null) { // Assume it is an array
+			var pos = null;
+			if (how == "prepend") {
+				pos = this.get_offset();
+			} else {
+				if (this.get_limit() < 0) { 
+					pos = this.$items.length; 
+				} else {
+					pos = this.get_offset() + this.get_limit();
+				}
+			}
+			this.$items.splice(pos, 0, dataItem);
+		}
 		var BindingResultsContainer = Class("BindingResultsContainer");
 		var createdBindings = new BindingResultsContainer();
 		var item = this.materializeItemTemplate(how);

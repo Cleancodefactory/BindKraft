@@ -160,8 +160,16 @@ This can go much further in more complex web sites - e.g. the directories can be
 BKInit.AppData(AppName, function (data) {
     data.content("contentname", optionalcontenttype,content);
     data.object("filename", {... something ...});
+    data.folder("foldername1");
+    data.folder("foldername1/foldername2");
 };
 ```
+
+Adds a memory "file" to the `appfs:` for the specific app. `AppName` must be the name of the app's main class (_the class instead of the name can be used as well_). Internally this creates in appfs: a directory for your app and puts content under it (including sub-folders if created)
+
+Both `content` and `object` methods take as first argument the name of the memory file. That name can start with a subdirectory path eg. `"settings/devices"`, the subdirectory must exist.
+
+To create a directory, use the `folder` method.
 
 ### BKInit.AppInfo
 
@@ -171,3 +179,35 @@ BKInit.AppInfo(AppName, function (data) {
     data.object("filename", {... something ...});
 };
 ```
+
+### BKInit.WorkspaceName
+
+```Javascript
+    BKInit.WorkspaceName("My magical set of apps");
+```
+
+### BKInit.WorkspaceName
+
+```Javascript
+    BKInit.WorkspaceName("My magical set of apps");
+```
+Sets the workspace name, accessible through System.set/get_`workskapceName`
+
+### BKInit.Translation
+
+```Javascript
+    BKInit.Translation("MyClass", function(trans) {
+        trans.add("en", {
+            caption: "My great app",
+            confirmBtn: "Confirm",
+            cancelBtn: "Cancel"
+        });
+        trans.add("bg", {
+            caption: "Моята страхотна апликация",
+            confirmBtn: "Потвърди",
+            cancelBtn: "Отказ"
+        });
+    }
+```
+
+A simple way to add translations of short texts to the system. This approach is mostly for development time, the translations for production should be loaded from NodeSets, see `loadtranslation` and `loadtranslations` commands.

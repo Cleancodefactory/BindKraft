@@ -78,7 +78,7 @@ Not yet included in this documentation.
 * [List of system Local API](LocalAPIList.md)
 * [System settings](SystemSettings.md) |
 * [BKInit - instance configuration](BkInit.md)
-
+* [System CL commands](SystemClasses/globalcommands.md)
 ### [Data types/formats](DataTypes/DataTypes.md) - the structures for various purposes. Non-strict Javscript data consisting of objects, arrays and values arranged according to the conventions described in the section.
 
 ### [Others](OtherClasses.md) - Specific classes and interfaces that do not fit into other categories.
