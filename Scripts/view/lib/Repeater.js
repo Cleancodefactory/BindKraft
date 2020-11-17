@@ -296,6 +296,9 @@ Repeater.prototype.deMaterializeItem = function(dataItem) {
 		}
 	}
 }
+Repeater.prototype.resetUpdateOptimization = function() {
+	this.$templatenotapplied = true;
+}
 /**
  * Materializes a new template and sets its data context to null, no updateTargets is applied, so this method should be followed by
  * some data assignment code that also updates the bindings over the new elements (only!).
