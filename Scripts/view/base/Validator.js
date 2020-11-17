@@ -50,6 +50,7 @@ Validator.Implement(IDisablable);
 Validator.ImplementProperty("throwqueryonvaliditychanged", new InitializeStringParameter("Any string will enable that, values of view, window, app will limit it to the corresponding scope (ignored for now)",null));
 
 Validator.prototype.validitychanged = new InitializeEvent("Fired whenever the validity changes");
+Validator.prototype.validating = new InitializeEvent("Fired before performing validation");
 
 Validator.validatorsRegistry = {};
 Validator.reRegistrationNameCheck = /^[a-z0-9]+$/;
@@ -506,6 +507,7 @@ Validator.prototype.$asyncCallBack = null;
 
 Validator.prototype.validate = function (bIndicate, fCallBack) { // fCallBack proto: function(result, isAsynch);
     if (this.get_disabled()) return ValidationResultEnum.correct;
+    this.validating.invoke(this, null);
     var r = this.result;
     this.waitReport = 0;
     if (fCallBack != null) {
