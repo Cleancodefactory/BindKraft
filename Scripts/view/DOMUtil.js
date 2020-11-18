@@ -353,6 +353,72 @@ DOMUtil.closestParent = function(dom, selector, bAndSelf) {
 	return null;
 }
 */
+DOMUtil.ownText = function(dom) {
+	var i;
+	if (dom instanceof HTMLElement) {
+		var s = ""
+		for (i = 0; i < dom.childNodes.length; i++) {
+			if (dom.ChildNodes[i].nodeType == 3) {
+				s += dom.ChildNodes[i].textContent;
+			}
+		}
+		return s;
+	} else if (dom instanceof Node) {
+		return dom.textContent;
+	} else if (dom instanceof NodeList || dom instanceof HTMLCollection || BaseObject.is(dom, "Array")) {
+		var s = "";
+		for (i = 0; i < dom.length; i++) {
+			if (dom[i] instanceof HTMLElement) {
+				s += this.ownText(dom[i]);
+			}
+		}
+		return s;
+	}
+	return "";
+}
+DOMUtil.clearTextNodes = function(dom, depth) {
+	depth = depth || 0;
+	var i;
+	if (dom instanceof HTMLElement) {
+		var nodes = [];
+		for (i = 0; i < dom.childNodes.length; i++) {
+			if (dom.childNodes[i].nodeType == 3) {
+				nodes.push(dom.childNodes[i]);
+			}
+		}
+		for (i = nodes.length - 1; i >= 0; i++) {
+			try {
+				dom.removeChild(nodes[i]);
+			} catch (e) {	}
+		}
+		depth --;
+		if (depth < 0) return;
+		for (i = 0; i < dom.childNodes.length; i++) {
+			if (dom instanceof HTMLElement) {
+				this.clearTextNodes(dom.childNodes[i],depth - 1);
+			}
+		}
+	} else if (dom instanceof NodeList || dom instanceof HTMLCollection || BaseObject.is(dom, "Array")) {
+		for (i = 0; i < dom.length; i++) {
+			if (dom[i] instanceof HTMLElement) {
+				this.clearTextNodes(dom[i], depth);
+			}
+		}
+	}
+}
+DOMUtil.setTextWithElements = function(dom, text) {
+	if (dom instanceof HTMLElement) {
+		DOMUtil.clearTextNodes(dom,0);
+		
+		////////////////////////
+	} else if (dom instanceof NodeList || dom instanceof HTMLCollection || BaseObject.is(dom, "Array")) {
+		for (i = 0; i < dom.length; i++) {
+			if (dom[i] instanceof HTMLElement) {
+				this.setTextWithElements(dom[i], text);
+			}
+		}
+	}
+}
 /**
 	Checks if the element or set of elements all match a selector or at least one of the selectors (if array of
 	selectors is supplied

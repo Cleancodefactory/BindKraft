@@ -138,6 +138,17 @@ Binding.TargetOperations = {
 			}
 
 		},
+		textaroundelements: {
+			indexed: false,
+			read: function(){
+
+				return this.textContent;
+			},
+			write: function(v){
+				this.textContent = (v != null)?v:null;
+			}
+
+		},
 		val: {
 			indexed: false,
 			read: function(){
@@ -484,6 +495,15 @@ Binding.TargetOperations = {
 					DOMUtil.attr(this, idx, v);
 				}
 			}
+		},
+		placeholder: {
+			read: function(bind) {
+				return DOMUtil.attr(this, "placeholder");
+			},
+			write: function(v, bind) {
+				DOMUtil.attr(this, "placeholder", v);
+			}
 		}
+
 	}
 };
