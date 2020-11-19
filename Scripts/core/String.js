@@ -183,7 +183,6 @@ String.prototype.splitQuotedList = function () {
     }
     return result;
 };
-
 (function() {
 	// Internal hidden utilities
 	function _toregex(re) {
@@ -320,6 +319,72 @@ String.reGroups2 = function(str, _re, /*names for the outputs*/name1, name2) {
 			}
 		}
 	}
+	return result;
+}
+/**
+ * Splits string int objects holding both the parts found and the separators.
+ * The separators (their matches to be exact) can be optionally processed through a callback,
+ * then the reported separators are whatever the callback returns
+ * 
+ * @param str {string}  String to split
+ * @param _re {RegEx|string} Split by what, the RegEx must be global, the RegEx can have capture groups
+ *                           but they will not impact the result unless the callback is using them.
+ * @param callback {callback} Optional callback delegate or function.
+ * @param callbackParam {any} Optional, passed to the callback
+ * 
+ * callback:
+ *  function(matchinfo) : any
+ * 
+ * matchinfo: {
+ *  part: <string> // The part between this match and the previous (or the start)
+ *  separator: <natch> // The array returned by Regex.exec
+ * }
+ * 
+ * @returns {matchresult}
+ * 
+ * matchresult: [
+ *  { part, separator }
+ * ]
+ */
+String.parseSplit = function(str, _re, callback, callbackParam) {
+    var re = _toregex(_re);
+	var result = [];
+	result.hasmatches = 0;
+    if (re == null || str == null) return result;
+    if (!re.global) {
+        BaseObject.LASTERROR("Split RegExp must be global", "String.parseSplit");
+        return result;
+    }
+    var arr;
+    var _str = str + "";
+    re.lastIndex = 0;
+    var lastIndex = -1;
+    var o;
+    while (arr = re.exec(_str)) {
+        result.hasmatches ++;
+        if (lastIndex < 0) lastIndex = 0;
+        o = {
+            part: _str.slice(lastIndex,arr.index),
+            separator: arr
+        };
+        if (BaseObject.isCallback(callback)) {
+            o.separator = BaseObject.callCallback(callback, o);
+        } else {
+            o.separator = arr[0];
+        }
+        result.push(o);
+        lastIndex = re.lastIndex;
+    }
+    if (lastIndex < _str.length) {
+        o = {
+            part: _str.slice(lastIndex),
+            separator: null
+        };
+        if (BaseObject.isCallback(callback)) {
+            o.separator = BaseObject.callCallback(callback, o);
+        }
+        result.push(o);
+    }
 	return result;
 }
 

@@ -18,7 +18,7 @@ Another usage of short scripts is "app sequences" - apps starting other apps and
 
 `startshell` - Starts the SysShell instance for the workspace
 
-`syslang` - Sets the system language (see [system settings](SystemSettings.md)) by inspecting the specified query string parameter and if it is not available the `window.g_ApplicationCulture` variable (from the server). If neither is available 'en' will be used.
+`syslang` - Sets the system language (see [system settings](SystemClasses/SystemSettings.md)) by inspecting the specified query string parameter and if it is not available the `window.g_ApplicationCulture` variable (from the server). If neither is available 'en' will be used.
 
 **Typical usage**
 

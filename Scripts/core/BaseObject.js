@@ -144,6 +144,9 @@ BaseObject.prototype.LASTERROR = function(code, text, method) {
 	if (arguments.length == 0) {
 		return BaseObject.lastError;
 	} else {
+        if (typeof code == "string") {
+            return this.LASTERROR(_Errors.compose(), code, text);
+        }
 		return BaseObject.lastError.report(code, text, this.classType(), method);
 	}
 }
@@ -151,6 +154,9 @@ BaseObject.LASTERROR = function(code, text, method) {
 	if (arguments.length == 0) {
 		return BaseObject.lastError;
 	} else {
+        if (typeof code == "string") {
+            return this.LASTERROR(_Errors.compose(), code, text);
+        }
 		return BaseObject.lastError.report(code, text, "static", method);
 	}
 };

@@ -386,7 +386,7 @@ DOMUtil.clearTextNodes = function(dom, depth) {
 				nodes.push(dom.childNodes[i]);
 			}
 		}
-		for (i = nodes.length - 1; i >= 0; i++) {
+		for (i = nodes.length - 1; i >= 0; i--) {
 			try {
 				dom.removeChild(nodes[i]);
 			} catch (e) {	}
@@ -409,8 +409,49 @@ DOMUtil.clearTextNodes = function(dom, depth) {
 DOMUtil.setTextWithElements = function(dom, text) {
 	if (dom instanceof HTMLElement) {
 		DOMUtil.clearTextNodes(dom,0);
-		
-		////////////////////////
+		if (typeof text == "string") {
+			var res = String.parseSplit(text, /\{(?:(\w+):)?(\d+)\}/g, function(o) {
+				var x, tag, nodematch;
+				if (o.separator != null) {
+					if (o.separator[1] != null) {
+						tag = o.separator[1];
+						x = parseInt(o.separator[2],10);
+						// not using xpath because of IE
+						nodematch = -1;
+						for (var i = 0; i < dom.childNodes.length; i++) {
+							if (dom.childNodes[i].tagName && dom.childNodes[i].tagName.toLowerCase() == tag) {
+								nodematch++;
+								if (nodematch == x) {
+									return dom.childNodes[i];
+								}
+							}
+						}
+						return null;
+					} else {
+						x = parseInt(o.separator[2],10);
+						if (x >= 0 && x < dom.childNodes.length) {
+							return dom.childNodes[x];
+						} else {
+							return null;
+						}
+					}
+				} else {
+					return null;
+				}
+			});
+			if (res.length > 0) {
+				for (var j = 0;j < res.length; j++) {
+					var r = res[j];
+					if (r.separator == null) {
+						dom.appendChild(document.createTextNode(r.part));
+					} else if (r.separator instanceof HTMLElement) {
+						dom.insertBefore(document.createTextNode(r.part),r.separator);
+					}
+				}
+			} else {
+				dom.textContent = text;
+			}
+		}
 	} else if (dom instanceof NodeList || dom instanceof HTMLCollection || BaseObject.is(dom, "Array")) {
 		for (i = 0; i < dom.length; i++) {
 			if (dom[i] instanceof HTMLElement) {

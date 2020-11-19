@@ -141,13 +141,11 @@ Binding.TargetOperations = {
 		textaroundelements: {
 			indexed: false,
 			read: function(){
-
-				return this.textContent;
+				return DOMUtil.ownText(this);
 			},
 			write: function(v){
-				this.textContent = (v != null)?v:null;
+				DOMUtil.setTextWithElements(this, (v != null)?v:null)
 			}
-
 		},
 		val: {
 			indexed: false,
