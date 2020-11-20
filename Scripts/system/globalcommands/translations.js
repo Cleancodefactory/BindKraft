@@ -39,6 +39,8 @@ System.CommandLibs.LoadTranslation = (function() {
                     op.CompleteOperation(true,null);
                     return;
                 }
+            } else {
+                BaseObject.LASTERROR("loadtranslation received error response:" + result.status.message)    
             }
     		op.CompleteOperation(false, "Request for a translation failed or returned unexpected data (object was expected).");
 
@@ -75,6 +77,8 @@ System.CommandLibs.LoadTranslations =(function() {
                     }
                     op.CompleteOperation(true,null);
                     return;
+                } else {
+                    BaseObject.LASTERROR("loadtranslations received error response:" + result.status.message)    
                 }
             }
     		op.CompleteOperation(false, "Request for a translation failed or returned unexpected data (object with sub-objects named after locale codes was expected).");

@@ -70,11 +70,11 @@
         var arrTrans = [];
         var t;
         var $translations = this.get_translations();
-
-        while (locale != null) {
-            t = this.$loadTranslation(locale);
+        var xlocale = locale;
+        while (xlocale != null) {
+            t = this.$loadTranslation(xlocale);
             if (t != null) arrTrans.unshift(t);
-            locale = Localization.truncateLocaleTag(locale)
+            xlocale = Localization.truncateLocaleTag(xlocale)
         }
         if (arrTrans.length > 0) {
             t = BaseObject.CombineObjects.apply(null, arrTrans);
