@@ -67,6 +67,33 @@ DOMUtilElement.prototype.set_classes = function(v) {
 	}
 	return null;
 }
+DOMUtilElement.prototype.get_text = function() {
+	if (this.$element instanceof HTMLElement) {
+		return this.$element.textContent;
+	}
+	return null;
+}
+DOMUtilElement.prototype.set_text = function(v) {
+	if (this.$element instanceof HTMLElement) {
+		this.$element.textContent = v;
+	}
+}
+DOMUtilElement.prototype.get_owntext = function() {
+	if (this.$element instanceof HTMLElement) {
+		return DOMUtil.ownText(this.$element);
+	}
+	return null;
+}
+DOMUtilElement.prototype.setTextAroundElements = function(text) {
+	if (this.$element instanceof HTMLElement) {
+		DOMUtil.setTextWithElements(this.$element, text);
+	}
+}
+DOMUtilElement.prototype.clearTextNodes = function(depth) {
+	if (this.$element instanceof HTMLElement) {
+		DOMUtil.clearTextNodes(this.$element, depth);
+	}
+}
 DOMUtilElement.prototype.addClass = function(cls) {
 	if (this.$element instanceof HTMLElement) {
 		return DOMUtil.addClass(this.$element, cls);

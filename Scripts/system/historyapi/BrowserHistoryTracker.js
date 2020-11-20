@@ -29,12 +29,18 @@ BrowserHistoryTracker.prototype.pushHistoryState = function (_app, appstate, ent
         // throw 'appstate should be of type string';
     }
     var title =  entryTitle || (app.get_caption() + '');
+    var _url = '#' + (appstate ? appstate : app.classType()); 
+    if (BaseObject.is(app, "IApplicationState2")) {
+        if (app.get_appstateversion() >= 0) {
+            _url = appstate;
+        }
+    }
     this.$historyState = {
         entryType: 'app_state',
         className: app.classType(),
         title: title.length > 0 ? title: app.classType(),
         instId: app.$__instanceId,
-        url: '#' + (appstate ? appstate : app.classType()),
+        url: _url,
         state: appstate
     };
     if (this.$lastPushedState != this.$historyState.className + this.$historyState.state) {

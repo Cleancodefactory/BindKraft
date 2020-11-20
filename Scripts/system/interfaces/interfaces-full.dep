@@ -19,6 +19,7 @@
 //#using "./IAppHistorySupport.js"
 //#using "./IHistoryTracker.js"
 //#using "./IApplicationState.js"
+//#using "./IApplicationState2.js"
 //#using "./ILocalAPIImports.js"
 
 // Backward compatibility temporary interface markers
