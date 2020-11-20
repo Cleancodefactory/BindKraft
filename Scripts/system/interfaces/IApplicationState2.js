@@ -7,8 +7,8 @@
  */
 
 function IApplicationState2() {}
-IApplicationState.Interface("IApplicationState2", "IApplicationState");
-IApplicationState.RequiredTypes('IAppBase');
+IApplicationState2.Interface("IApplicationState2", "IApplicationState");
+IApplicationState2.RequiredTypes('IAppBase');
 // Version 0
-IApplicationState.prototype.get_appstateversion = function() { return 0;  };
+IApplicationState2.prototype.get_appstateversion = function() { return 0;  };
 // Version ?
