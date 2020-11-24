@@ -204,16 +204,16 @@ System.DefaultCommands = {
 	"syslang": function(ctx, api) {
 		var paramname = api.pullNextToken();
 		if (paramname == "default") paramname = "culture";
+		if (window.g_ApplicationStartFullUrl != null) {
+			var url = new BKUrl(window.g_ApplicationStartFullUrl);
+			var culture = url.get_query().get(paramname) + "";
+			if (culture != "" && /^\w{2}(-.+)?$/.test(culture)) {
+				System.Default().settings.CurrentLang = culture;
+				return;
+			}
+		}
 		if (typeof window.g_ApplicationCulture == "string" && /^\w{2}(-.+)?$/.test(window.g_ApplicationCulture)) {
 			System.Default().CurrentLang = window.g_ApplicationCulture;
-		} else {
-			if (window.g_ApplicationStartFullUrl != null) {
-				var url = new BKUrl(window.g_ApplicationStartFullUrl);
-				var culture = url.get_query().get(paramname) + "";
-				if (culture != "" && /^\w{2}(-.+)?$/.test(culture)) {
-					System.Default().settings.CurrentLang = culture;
-				}
-			}
 		}
 	}
 };
