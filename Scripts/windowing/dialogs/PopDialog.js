@@ -35,7 +35,14 @@ PopDialog.prototype.get_dialogwindow = function () {
 
 PopDialog.prototype.openDialog = function (workdata, placement) {
     var op = new ChunkedOperation();
-
+    var view = null;
+    var directData = null;
+    if (typeof this.$configuration.view == "string") { // Empty templates are no actual use, but we permit them for now
+        view = this.$configuration.view;
+    }
+    if (this.$configuration.directData != null) {
+        directData = this.$configuration.directData;
+    }
     if (this.$dialog != null) {
         op.CompleteOperation(false, IOperation.errorname("singleinstance"));
         this.$dialog.activateWindow();
@@ -49,6 +56,8 @@ PopDialog.prototype.openDialog = function (workdata, placement) {
         this.get_hostwindow(),
         {
             url: this.$configuration.url,
+            view: view,
+            directData: directData,
             on_ReportResult: function (msg) {
                 if (!op.isOperationComplete()) {
                     op.ReportOperationChunk(msg.data.result, msg.data.resultData);
