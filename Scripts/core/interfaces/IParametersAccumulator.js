@@ -15,7 +15,7 @@
 	accset - name of the accumulator - potentially many accumulators may be needed by the same instance. 
 	params - the params to be remembered. No specific type is assumed here, only in specific implementations types can be defined for all or specific accsets
 	
-	The above implies that combineAccumulatedParameters cannot be mandatory method and MUST be implemented by default to do the same as setAccumulatedParameters (i.e. the only combaining is replacement).
+	The above implies that combineAccumulatedParameters cannot be mandatory method and MUST be implemented by default to do the same as setAccumulatedParameters (i.e. the only combining is replacement).
 	It is probably already obvious that the implementation of this interface mostly serves internal purposes and as interface serves certain integration and aggregation
 	features for certain sets of classes covering specific functionality. So the interface usage may be needed for the integration, but will remain almost entirely hidden
 	from any external users of these classes - only the developers of the classes will typically have to deal with the interface. This fact allows the interface to be fairly
@@ -29,4 +29,4 @@ IParametersAccumulator.prototype.getAccumulatedParameters = function(accset) { t
 IParametersAccumulator.prototype.setAccumulatedParameters = function(accset, params) { throw "Not implemented"; }
 IParametersAccumulator.prototype.removeAccumulatedParameters = function(accset) { throw "Not implemented"; }
 IParametersAccumulator.prototype.removeAllAccumulatedParameters = function() { throw "Not implemented"; }
-IParametersAccumulator.prototype.combainAccumulatedParameters = function(accset, params) { throw "Not supported"; }
+IParametersAccumulator.prototype.combineAccumulatedParameters = function(accset, params) { throw "Not supported"; }

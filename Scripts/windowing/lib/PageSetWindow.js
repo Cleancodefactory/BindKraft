@@ -112,7 +112,7 @@ PageSetWindow.prototype.addPage = function (page,options) {
             msgdata.active = false;
         }
     } else if (typeof options == "object") {
-        msgdata = BaseObject.CombainObjects(msgdata, options);
+        msgdata = BaseObject.CombineObjects(msgdata, options);
     }
     WindowingMessage.fireOn(this, PageSetEventEnum.addPage, msgdata);
     return this;
