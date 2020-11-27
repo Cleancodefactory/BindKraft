@@ -288,7 +288,7 @@ VirtualDropDownControl.prototype.goActive = function (e, dc) {
 	this.openevent.invoke(this, null);
 	this.set_bodyVisible(true);
 	if (this.root.scrollIntoView) {
-		if (typeof this.get_scrollintoview() != null) {
+		if (this.get_scrollintoview() != null) {
 			this.root.scrollIntoView(this.get_scrollintoview()?true:false);
 		}
 	}
