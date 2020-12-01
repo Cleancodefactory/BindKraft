@@ -264,6 +264,7 @@ IViewHostWindowImpl.classInitialize = function (cls) {
                             }
                         }
                         this.updateTargets();
+                        // TODO: This should be moved in afterasync
                         WindowingMessage.fireOn(this, WindowEventEnum.ViewLoaded, initData);
 						this.afterAsync(arSetViewData, function () {
 						   if (BaseObject.is(this.currentView, "IViewContainerEventsSink")) {
