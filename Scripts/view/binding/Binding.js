@@ -677,6 +677,7 @@ Binding.prototype.$parseExpression = function (expr) {
                         this.$sourceType = "systemsettings";
                         break;
 					case "~":
+                    case "builtin":
 						this.$source = null;
                         this.$sourceType = "builtin";
 						break;
