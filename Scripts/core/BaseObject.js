@@ -1071,8 +1071,8 @@ BaseObject.prototype.ajaxPostJson = function (url, data, callback) {
  .Param("callback","Method / function to be executed on success");
 
 
-BaseObject.prototype.getDelegatedProperty = function (proppath, calcCallback) {
-    return new PropertyDelegate(this, proppath, calcCallback);
+BaseObject.prototype.getDelegatedProperty = function (proppath, calcCallback, autoRefresh) {
+    return new PropertyDelegate(this, proppath, calcCallback, autoRefresh);
 }.Description("...")
  .Param("proppath","...")
  .Param("calcCallback","...")
