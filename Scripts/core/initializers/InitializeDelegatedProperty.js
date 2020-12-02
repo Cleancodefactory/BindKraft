@@ -28,7 +28,7 @@ function InitializeDelegatedProperty(desc, calcCallback, path, autoRefresh) {
     Initialize.call(this, desc, null);
     this.type = "Property delegate";
     this.calcCallback = calcCallback;
-    if (typeof path == "string") {
+    if (typeof path == "string" || path == null) {
         this.path = path;
         this.autoRefresh = autoRefresh;
     } else if (typeof path == "number") {

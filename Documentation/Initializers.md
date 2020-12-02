@@ -63,6 +63,29 @@ DeepClone is performed on the passed object when new instance is produced. Keep 
 
 ### InitializeDelegatedProperty
 
+Usages:
+```Javascript
+MyClass.prototype.myprop = new InitializeDelegatedProperty("description", calcCallback, path, autoRefresh);
+MyClass.prototype.myprop = new InitializeDelegatedProperty("description", calcCallback, autoRefresh);
+MyClass.prototype.myprop = new InitializeDelegatedProperty("description", calcCallback);
+```
+
+The member `myprop` will contain a [PropertyDelegate](CoreClasses/PropertyDelegate.md) in each instance of the class.
+
+The arguments:
+
+`calcCallback` - Can be a callback (Delegate, function etc.) or a string specifying the name of a normal member method of the class. It will be called
+each time the value needs re-calculation/fetching
+
+`path` - An optional string (null if tou want to omit it). If specified a field with that name will be created over the instances of the class in which the fetched 
+value will be stored. This is usually better to avoid, but in some cases where performance as to be achieved at all costs and the value can be a little out of date 
+or even wrong, this can help. Advise: If you do not have clear idea how this will help you, better leave it out.
+
+autoRefresh {integer} The milliseconds after which the value is considered dirty and calculated again. Can be omitted when the value is invalidated explicitly by calling
+`PropertyDelegate.prototype.clear()`.
+
+For more information on how to use calculated properties see `PropertyDelegate`.
+
 ### InitializeEvent
 
 Usages:
