@@ -359,7 +359,13 @@ BKUrlPath.prototype.get_pathname = function() {
 		}
 	}
 	return s;
-}.Description("Gets the current path only. Will leave out any file part. Not very useful on relative paths")
+}.Description("Gets the current path only. Will leave out any file part. Not very useful on relative paths");
+BKUrlPath.prototype.get_filename = function() {
+	if (this.$pathparts.length > 0 && this.$hasfilepart) {
+		return this.$pathparts[this.$pathparts.length - 1];
+	}
+	return null;
+}
 // Mapped getter/setter
 /**
  * (unfinished)

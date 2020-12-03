@@ -114,6 +114,14 @@ Delegate.prototype.getWrapper = function () {
         return localThis.invoke.apply(localThis, args);
     }.Obliterable();
 }.Description("...");
+Delegate.prototype.getAsyncWrapper = function () {
+    var wrp = this.getWrapper();
+    var localThis = this;
+    return function() {
+        localThis.async(wrp).apply(arguments);
+        return undefined;
+    }
+}.Description("...");
 
 Delegate.createWrapper = function (obj, func, params) {
     return (new Delegate(obj, func, params)).getWrapper();
@@ -122,6 +130,10 @@ Delegate.createWrapper = function (obj, func, params) {
  .Param("func","Function for the delegate")
  .Param("params","Params with which the delegate will be executed")
  .Returns("object");
+
+ Delegate.createAsyncWrapper = function (obj, func, params) {
+    return (new Delegate(obj, func, params)).getAsyncWrapper();
+ }
 
 Delegate.wrapCallback = function (cb) {
     if (BaseObject.is(cb, "Delegate")) return cb.getWrapper();
