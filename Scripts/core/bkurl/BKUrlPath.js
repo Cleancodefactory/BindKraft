@@ -14,7 +14,33 @@ BKUrlPath.Inherit(BKUrlObjectBaseChild,"BKUrlPath");
 BKUrlPath.prototype.$pathparts = new InitializeArray("All path parts - segments");
 BKUrlPath.prototype.$abs = false; // Absolute path (empty paths can be absolute if other parts of hte whole URL exist)
 BKUrlPath.prototype.$hasfilepart = false; // No trailing slash - the last segment is "file"
-
+BKUrlPath.prototype.get_segementscount = function() {
+	return this.$pathparts.length;
+}
+BKUrlPath.prototype.get_pathnamesegementscount = function() {
+	if (!this.$hasfilepart) {
+		return this.$pathparts.length;
+	} else {
+		var c = this.$pathparts.length;
+		return ((c >= 0)?c:0);
+	}
+}
+BKUrlPath.prototype.get_allsegments = function() {
+	return Array.createCopyOf(this.$pathparts);
+}
+BKUrlPath.prototype.get_pathnamesegements = function() {
+	var s = []];
+	for (var i = 0; i <this.$pathparts.length;i++) {
+		if (i == this.$pathparts.length-1) {
+			if (!this.$hasfilepart) {
+				s.push(this.$pathparts[i]);
+			}				
+		} else {
+			s.push(this.$pathparts[i]);
+		}
+	}
+	return s;
+}
 BKUrlPath.prototype.get_hasfilepart = function() {
 	if (this.$pathparts != null && this.$pathparts.length > 0) {
 		return this.$hasfilepart;
