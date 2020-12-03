@@ -451,7 +451,50 @@ BKUrl.prototype.get_pathUrl = function() {
 	return b;
 }.Description("Gets a copy of the URL with query string and fragment stripped down");
 
+BKUrl.basePath = function() {
+	var s = window.g_ApplicationBasePath;
+	if (s.charAt(0) != "/") s = "/" + s;
+	if (s.charAt(s.length-1) != "/") s = s + "/";
+	return s;
+}
+BKUrl.getBasePathAsUrl = function() {
+	var url = new BKUrl();
+	if (!url.get_scheme().readAsString(window.location.protocol.replace(/:$/,""))) return null;
+	if (!url.get_authority().set_host(window.location.hostname)) return null;
+	if (window.location.port != null && window.location.port.length > 0) {
+		if (!url.get_authority().set_port(window.location.port)) return null;
+	}
+	if (typeof g_ApplicationBasePath == "string" && g_ApplicationBasePath.length > 0) {
+		if (!url.get_path().readAsString(g_ApplicationBasePath)) return null;
+	}
+	return url;
+}
+BKUrl.getInitialFullUrl = function() {
+	var url = new BKUrl();
+	if (!url.readAsString(window.g_ApplicationStartFullUrl)) return null;
+	return url;
+}
+BKUrl.getInitialUrl = function() {
+	var url = this.getInitialFullUrl();
+	if (url != null) {
+		return url.readAsString.get_pathUrl();
+	}
+	return url;
+}
+BKUrl.getInitialBaseUrl = function() {
+	var url = this.getInitialFullUrl();
+	if (url != null) {
+		return url.readAsString.get_baseUrl();
+	}
+	return url;
+}
+
 // Static methods that have no good place elsewhere
+/**
+ * @returns {string}	Returns composed full baseURL
+ * 
+ * 
+ */
 BKUrl.baseURL = function() {
 	// The easy way
 	if (document.baseURI) return document.baseURI;
@@ -467,7 +510,7 @@ BKUrl.baseURL = function() {
 	// No base - construct it from location (port is a problem in IE)
 	var url = new BKUrl();
 	if (!url.get_scheme().readAsString(window.location.protocol.replace(/:$/,""))) return null;
-	if (!url.get_authority().set_host(window.location.host)) return null;
+	if (!url.get_authority().set_host(window.location.hostname)) return null;
 	if (window.location.port != null && window.location.port.length > 0) {
 		if (!url.get_authority().set_port(window.location.port)) return null;
 	}
@@ -558,4 +601,21 @@ BKUrl.dataToURL = function(_url, data, useFragment, _depth, booleanAsNumbers) {
 		return null; // Don't know how to encode the data
 	}
 	return null;
+}
+/**
+ * Converts to BKUrl and returns a BKUrl object no matter what. The result can be empty if the parameter
+ * cannot be converted, but it will be BKUrl anyway.
+ */
+BKUrl.Url = function(url) {
+	if (typeof url == "string") {
+		return new BKUrl(url);
+	} else if (BaseObject.is(url, "BKUrl")) {
+		return url;
+	} else if (BaseObject.is(url, "IBKUrlObject")) {
+		var bku = new BKUrl();
+		bku.set_nav(url);
+		return bku; // Will be empty if nav failed
+	} else {
+		return new BKUrl(url + "");
+	}
 }

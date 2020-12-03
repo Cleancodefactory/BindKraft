@@ -1,6 +1,13 @@
 /*
 	Startup synchronous tasks, excuted immediately after sysconfig.js
 	This file execs after the bare minimum of configuration is initialized in case it is needed
+
+	Global constants:
+	g_ApplicationStartFullUrl - the initial URL "as-is" without any changes
+	g_ApplicationStartUrl - The initial URL cur to the path part, without query string or fragment
+	g_ApplicationBasePath - Base path of the workspace in the Web site (normally passed by the server)
+
+
 	
 */
 // Deal with the workspace base URL and path
