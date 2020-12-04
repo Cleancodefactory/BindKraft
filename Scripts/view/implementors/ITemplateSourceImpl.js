@@ -118,3 +118,16 @@ ITemplateSourceImpl.ParseTemplateName = function( tname) {
 	}
 	return r;
 }
+/**
+ * Should be called in init or $init in simple components
+ */
+ITemplateSourceImpl.InstantiateTemplate = function(/*Base*/ comp) {
+	if (BaseObject.is(comp, "Base") && BaseObject.is(comp, "ITemplateSource")) {
+		var el = new DOMUtilElement(comp.root);
+        var tml = comp.get_template();
+        if (tml != null) {
+            el.Empty();
+            el.append(tml);
+        }
+	}
+}
