@@ -80,7 +80,7 @@ Binding.$regExpContent = /\{(bind|read|probe)(?:\((\d+)\))?\s*(.*)\}/i;
 Binding.$regExpFormatter = /(inverseformat|inversecustomformat|format|customformat)=((?:(?:[^\(\s]+)|(?:\((?:[^\)]|\)\))*\)))+)/i;
 Binding.$regExpSingleFormatter = /([^\(]+)(?:\(((?:[^\)]|\)\))*)\))?/i;
 Binding.$regExpFlags = /(flags)=(\S+)/i;
-Binding.$regExpOptions = /(options)=(\S+)/i; // currently supported: nonpersistable, disabled, async, asyncread, asyncwrite, freezesite, persistable, operation, (nodefault, preventdefault), (stoppropagation, nopropagation)
+Binding.$regExpOptions = /(options|option)=(\S+)/i; // currently supported: nonpersistable, disabled, async, asyncread, asyncwrite, freezesite, persistable, operation, (nodefault, preventdefault), (stoppropagation, nopropagation)
 Binding.$regExpName = /(name)=(\S+)/i;
 Binding.$regExpCreate = /(create|createleaf)=(\S+)/i;
 Binding.$regExpCreateLeafs = { create: false, createleaf: true };
