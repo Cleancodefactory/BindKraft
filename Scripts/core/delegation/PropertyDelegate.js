@@ -139,8 +139,7 @@ PropertyDelegate.prototype.set = function (v) {
 				me.$fetching = null;
 			} else {
 				// Failure - we have to do something here
-				me.$available = true;
-				me.$lastset = Date.now();
+				me.$available = false;
 				me.propertyavailable.invoke(false, v.getOperationErrorInfo());
 				me.$fetching = null;
 			}
