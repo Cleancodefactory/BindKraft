@@ -29,7 +29,7 @@ BKUrlPath.prototype.get_allsegments = function() {
 	return Array.createCopyOf(this.$pathparts);
 }
 BKUrlPath.prototype.get_pathnamesegements = function() {
-	var s = []];
+	var s = [];
 	for (var i = 0; i <this.$pathparts.length;i++) {
 		if (i == this.$pathparts.length-1) {
 			if (!this.$hasfilepart) {
