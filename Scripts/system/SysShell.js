@@ -610,7 +610,7 @@ SysShell.prototype.launchEx = function(_appClass, _options,/* callset of argumen
 	Creates typical app main window (MainWindow) with its default template. These can be overwritten, but it is rarely needed -
 	apps that use untypical main windows usually go farther than that and create them from scratch.
 */
-SysShell.prototype.createStdAppWindow = function(_cls /*=BaseWindow*/,_template /*=?*/,_persister /*=null*/) {
+SysShell.prototype.createStdAppWindow = function(_cls /*=MainWindo*/,_template /*=?*/,_persister /*=null*/) {
 	var cls = _cls || "MainWindow";
 	// TODO: Correct the default template
 	var template = (BaseObject.is(_template, "Connector")?_template:null);

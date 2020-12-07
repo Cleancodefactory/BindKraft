@@ -15,6 +15,7 @@
 //#using "../String.js"
 //#using "../Date.js"
 //#using "../Term.js"
+//#using "../SmartPropertyBase.js"
 //#using "../util/util-full.dep"
 
 //#using "../mappath.js"
