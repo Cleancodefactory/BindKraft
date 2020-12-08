@@ -132,7 +132,7 @@ PropertyDelegate.prototype.set = function (v) {
 		this.$fetching = v;
 		v.whencomplete().tell(function(v) {
 			if (v.isOperationComplete() && v.isOperationSuccessful()) {
-				this.$saveValue(v.getOperationResult());
+				me.$saveValue(v.getOperationResult());
 				me.$available = true;
 				me.$lastset = Date.now();
 				me.propertyavailable.invoke(true, v.getOperationResult());

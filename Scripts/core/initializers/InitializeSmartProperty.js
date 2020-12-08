@@ -11,7 +11,7 @@ function InitializeSmartProperty(desc, stype, args) {
 }
 InitializeSmartProperty.Inherit(Initialize, "InitializeSmartProperty");
 InitializeSmartProperty.prototype.produceDefaultValue = function (obj) {
-    var cls = Class(this.stype);
+    var cls = Class.getClassDef(this.stype);
     var inst = new cls(obj,this.defaultValue);
     return inst;
 };
