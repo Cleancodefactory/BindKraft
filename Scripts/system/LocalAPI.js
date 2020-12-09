@@ -118,6 +118,7 @@ LocalAPI.prototype.revokeAPI = function(iface, cookie) {
 	if (this.$apis != null) {
 		var ifname = Class.getInterfaceName(iface);
 		if (this.$apis[ifname] != null) {
+			var k;
 			for (k in this.$apis[ifname]) {
 				var reg = this.$apis[ifname][k];
 				if (reg.cookie != null && reg.cookie == cookie) {
