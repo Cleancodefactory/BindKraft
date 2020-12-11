@@ -35,9 +35,10 @@ IValidatableImpl.classInitialize = function(cls, _customValidation, _alwaysReset
 	var customValidation, grpName = null, alwaysReset = false;
 	for (var i = 1; i < arguments.length; i++) {
 		if (BaseObject.isCallback(arguments[i])) {
-		} else if (typeof arguments[i] == "srtring") {
+			customValidation = arguments[i];
+		} else if (typeof arguments[i] == "string") {
 			grpName = arguments[i];
-		} else if (arguments[i] == true) {
+		} else if (arguments[i] === true) {
 			alwaysReset = true;
 		}
 	}

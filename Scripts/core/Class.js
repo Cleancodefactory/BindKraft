@@ -295,6 +295,18 @@ var Class = {
 			return result;
 		},
 	// -V: 2.15.1
+	// +V: 2.23.3
+		interfaces: function(filterproc) {
+		var result = [];
+		for (var cls in Function.interfaces) {
+			if (!Function.interfaces.hasOwnProperty(cls)) continue;
+			if (typeof filterproc != "function" || filterproc(cls)) {
+				result.push(cls);
+			}
+		}
+		return result;
+	},
+	// -V: 2.23.3
 	// +V: 2.18.0
 		// selfdoc runtime systeminfo (non-doc)
 		returnTypeOf: function(def, method) {

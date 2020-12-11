@@ -647,6 +647,25 @@ Base.prototype.validate = function (fCallBack, vgrp) {
     }
     return r;
 }.Description("Invokes all the validators in the view or only the validators of a given group (if the second param vgrp is a non-empty string)");
+Base.prototype.validateAsync = function(vgrp, bCriticalOnly) {
+    var op = new Operation();
+    this.validate(function(r){
+        if (bCriticalOnly) {
+            if (r > ValidationResultEnum.incorrect) {
+                op.CompleteOperation(false,"Validation errors" );
+            } else {
+                op.CompleteOperation(true, r);
+            }
+        } else {
+            if (r > ValidationResultEnum.correct) {
+                op.CompleteOperation(false,"Validation errors" );
+            } else {
+                op.CompleteOperation(true, r);
+            }
+        }
+    });
+    return op;
+}
 Base.prototype.createExplicitBinding = function (targetElement, targetAction, source, sourcePath, formatter) {
     var b = new Binding(targetElement, null, targetAction, { source: source, path: sourcePath, formatter: formatter });
     this.$registerBinding(b);
