@@ -235,6 +235,7 @@ Binding.$entityTreeStateInfo = function (dc, r, newState) { // recursor
             r.Unchanged++;
         }
         for (var k in dc) {
+            if (!dc.hasOwnProperty(k)) continue;
             itm = dc[k];
             if (BaseObject.is(itm, "Array") || typeof itm == "object") Binding.$entityTreeStateInfo(itm, r, newState);
         }
