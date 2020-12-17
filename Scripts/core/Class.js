@@ -297,15 +297,35 @@ var Class = {
 	// -V: 2.15.1
 	// +V: 2.23.3
 		interfaces: function(filterproc) {
-		var result = [];
-		for (var cls in Function.interfaces) {
-			if (!Function.interfaces.hasOwnProperty(cls)) continue;
-			if (typeof filterproc != "function" || filterproc(cls)) {
-				result.push(cls);
+			var result = [];
+			for (var cls in Function.interfaces) {
+				if (!Function.interfaces.hasOwnProperty(cls)) continue;
+				if (typeof filterproc != "function" || filterproc(cls)) {
+					result.push(cls);
+				}
 			}
-		}
-		return result;
-	},
+			return result;
+		},
+		classDefinitions: function(filterproc) {
+			var result = [];
+			for (var cls in Function.classes) {
+				if (!Function.classes.hasOwnProperty(cls)) continue;
+				if (typeof filterproc != "function" || filterproc(Function.classes[cls])) {
+					result.push(Function.classes[cls]);
+				}
+			}
+			return result;
+		},
+		interfaceDefinitions: function(filterproc) {
+			var result = [];
+			for (var cls in Function.interfaces) {
+				if (!Function.interfaces.hasOwnProperty(cls)) continue;
+				if (typeof filterproc != "function" || filterproc(Function.interfaces[cls])) {
+					result.push(Function.interfaces[cls]);
+				}
+			}
+			return result;
+		},
 	// -V: 2.23.3
 	// +V: 2.18.0
 		// selfdoc runtime systeminfo (non-doc)
