@@ -306,7 +306,7 @@ var Class = {
 			}
 			return result;
 		},
-		implementers: function(filterproc) {
+		interfaceImplementers: function(filterproc) {
 			var result = [];
 			for (var cls in Function.interfaceImplementers) {
 				if (!Function.interfaceImplementers.hasOwnProperty(cls)) continue;
