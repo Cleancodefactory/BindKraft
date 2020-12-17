@@ -306,6 +306,16 @@ var Class = {
 			}
 			return result;
 		},
+		implementers: function(filterproc) {
+			var result = [];
+			for (var cls in Function.interfaceImplementers) {
+				if (!Function.interfaceImplementers.hasOwnProperty(cls)) continue;
+				if (typeof filterproc != "function" || filterproc(cls)) {
+					result.push(cls);
+				}
+			}
+			return result;
+		},
 		classDefinitions: function(filterproc) {
 			var result = [];
 			for (var cls in Function.classes) {
@@ -322,6 +332,16 @@ var Class = {
 				if (!Function.interfaces.hasOwnProperty(cls)) continue;
 				if (typeof filterproc != "function" || filterproc(Function.interfaces[cls])) {
 					result.push(Function.interfaces[cls]);
+				}
+			}
+			return result;
+		},
+		implementerDefinitions: function(filterproc) {
+			var result = [];
+			for (var cls in Function.interfaceImplementers) {
+				if (!Function.interfaceImplementers.hasOwnProperty(cls)) continue;
+				if (typeof filterproc != "function" || filterproc(Function.interfaceImplementers[cls])) {
+					result.push(Function.interfaceImplementers[cls]);
 				}
 			}
 			return result;
