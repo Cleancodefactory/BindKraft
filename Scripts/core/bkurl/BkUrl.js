@@ -451,6 +451,8 @@ BKUrl.prototype.get_pathUrl = function() {
 	return b;
 }.Description("Gets a copy of the URL with query string and fragment stripped down");
 
+
+// Static stuff
 BKUrl.basePath = function() {
 	var s = window.g_ApplicationBasePath;
 	if (s.charAt(0) != "/") s = "/" + s;
@@ -469,6 +471,23 @@ BKUrl.getBasePathAsUrl = function() {
 	}
 	return url;
 }
+BKUrl.mapToBaseUrl = function(str) {
+	var basePath = this.basePath();
+	var str = (str.indexOf(basePath) == 0)?str.slice(basePath.length):str;
+	str = str.replace(/^\/+/,"");
+	var url = this.getBasePathAsUrl();
+	url.set_nav(str);
+	return url
+}
+BKUrl.mapToBase = function(str) {
+	return this.mapToBaseUrl(str).composeAsString();
+}
+BKUrl.mapToBaseVirtual = function(str) {
+	var url = this.mapToBaseUrl(str);
+	url.get_authority().clear();
+	url.get_scheme().clear();
+	return url.composeAsString();
+}
 BKUrl.getInitialFullUrl = function() {
 	var url = new BKUrl();
 	if (!url.readAsString(window.g_ApplicationStartFullUrl)) return null;
@@ -484,7 +503,7 @@ BKUrl.getInitialUrl = function() {
 BKUrl.getInitialBaseUrl = function() {
 	var url = this.getInitialFullUrl();
 	if (url != null) {
-		return url.readAsString.get_baseUrl();
+		return url.readAsString(url).get_baseUrl();
 	}
 	return url;
 }
