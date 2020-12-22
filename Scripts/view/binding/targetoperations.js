@@ -245,6 +245,30 @@ Binding.TargetOperations = {
 				this.style.setProperty(idx,v);
 			}
 		},
+		setstyle: { // Good for development time only
+			indexed: false,
+			read: function(){
+				return this.getAttribute("style");
+			},
+			write: function(v, bind){
+				var t = "",f = "",s = bind.bindingParameter;
+				if (s == null || /^\s*$/.test(s)) {
+					t = "";
+					f = "";
+				} else {
+					var m = /^\s*\[([^\]]*)\]\s*(?:\[([^\]]*)\]\s*)?$/.exec(s);
+					if (m) {
+						t = m[1] || "";
+						f = m[2] || "";
+					}
+				}
+				if (v) {
+					this.setAttribute("style",t)
+				} else {
+					this.setAttribute("style",f)
+				}
+			}
+		},
 		src: {
 			indexed: false,
 			read: function(bind){
