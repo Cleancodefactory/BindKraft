@@ -213,7 +213,7 @@ System.DefaultCommands = {
 			}
 		}
 		if (typeof window.g_ApplicationCulture == "string" && /^\w{2}(-.+)?$/.test(window.g_ApplicationCulture)) {
-			System.Default().CurrentLang = window.g_ApplicationCulture;
+			System.Default().settings.CurrentLang = window.g_ApplicationCulture;
 		}
 	}
 };
