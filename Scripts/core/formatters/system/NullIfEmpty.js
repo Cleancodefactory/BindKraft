@@ -31,7 +31,7 @@ NullIfEmpty.prototype.Read = function(val, bind, params) {
             return val;
         default:
             if (val != null && (val + "").length == 0) return null;
-            if (typeof val == "string" || val.length == 0) return null;
+            if (typeof val == "string" && val.length == 0) return null;
             return val;
     }
 }
@@ -45,7 +45,8 @@ NullIfEmpty.prototype.Write = function(val, bind, params) {
             if (!val) return null;
             return val;
         default:
-            if (typeof val == "string" || val.length == 0) return null;
+            if (val != null && (val + "").length == 0) return null;
+            if (typeof val == "string" && val.length == 0) return null;
             return val;
     }
 }
