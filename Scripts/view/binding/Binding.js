@@ -1465,7 +1465,7 @@ Binding.HSourcePathPart.prototype.resolve = function (obj, binding) {
 				} else {
 					if (obj == null) return ("$" + this.prop);
 					o = obj["get_" + this.prop];
-					if (typeof o != "function") throw "get_" + this.prop + " does not exist";
+					if (typeof o != "function") console.warn("get_" + this.prop + " does not exist");
 					return o.call(obj);
 				}
             } else {
