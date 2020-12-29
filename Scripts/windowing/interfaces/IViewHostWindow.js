@@ -35,7 +35,7 @@ IViewHostWindow.prototype.hostClientCSSStyles = null;
 IViewHostWindow.prototype.hostClientCSSClasses = null;
 
 IViewHostWindow.prototype.get_viewcontainerelement = function() {}
-
+IViewHostWindow.prototype.get_currentview = function () {throw "not implemented";}
 IViewHostWindow.prototype.viewService = function(svcName) {}
 IViewHostWindow.prototype.viewDelegate = function (func, params) {}
 IViewHostWindow.prototype.connectToViewEvent = function (eventname, handler) {}

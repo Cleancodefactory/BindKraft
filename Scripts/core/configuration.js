@@ -9,15 +9,17 @@
 */
 
 var JBFrameworkVersion = { 
-	core: { major: 2, minor: 23, revision: 3 }
+	core: { major: 2, minor: 23, revision: 4 }
 };
 // Apply default settings, can be overriten (see in the header of the file how)
 (function() {
-	var settings = window.JBCoreConstants || {};
+	var settings = window.g_BindKraftConfiguration || window.JBCoreConstants || {};
 	
 	// Add new constants here and describe them.
 	// Copy the list in the settings example file 
 	var defaults = {
+		InstanceData: {},
+		Debug: false,
 		LastErrorConsoleLog: true,
 		CheckTypeDuplicates: true, // Enforces a number of checks for defined types - duplicate type names, method names (when implementing interfaces) etc. Will throw exceptions (not all at once)
 		SystemSchedulerFreq: 25, // 25 milliseconds for the system task scheduler
