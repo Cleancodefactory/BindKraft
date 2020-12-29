@@ -326,6 +326,9 @@ IViewHostWindowImpl.classInitialize = function (cls) {
     cls.prototype.get_containerposition = function () {
         return null;
     };
+    cls.prototype.get_currentview = function() {
+        return this.currentView;
+    }
     //    // Retranslators for IViewContainerEventsSink enabled views
     //    cls.prototype.viewHost_onSizeChanged = function() {
     //    }
