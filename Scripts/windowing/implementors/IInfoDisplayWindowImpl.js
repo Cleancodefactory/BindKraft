@@ -126,7 +126,7 @@ IInfoDisplayWindowImpl.classInitialize = function (cls, useTemplate, options) {
         var maxp = this.get_maxinfomessagepriority();
         var thisp = (query.priority != null) ? query.priority : 0;
         if (thisp > maxp && this.throwDownStructuralQuery(query)) return true;
-        if (!this.get_isinfodisplayactive()) {
+        if (this.get_isinfodisplayactive()) {
             this.infoDisplayAdd(query);
             return true;
         }
