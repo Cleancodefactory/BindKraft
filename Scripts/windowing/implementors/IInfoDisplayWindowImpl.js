@@ -127,19 +127,9 @@ IInfoDisplayWindowImpl.classInitialize = function (cls, useTemplate, options) {
         var thisp = (query.priority != null) ? query.priority : 0;
         if (thisp > maxp && this.throwDownStructuralQuery(query)) return true;
         if (!this.get_isinfodisplayactive()) {
-            if (!this.throwDownStructuralQuery(query)) {
-                // The message is still not shown anywhere - skip everything and try something else
-                if (BaseObject.is(window.Shell, "Shell")) {
-					var w = Shell.get_workspacewindow();
-					if (w != null && BaseObject.is(w, "IInfoDisplay")) {
-						w.infoDisplayAdd(query);
-					}
-                }
-                return true;
-            }
-        } else {
             this.infoDisplayAdd(query);
             return true;
         }
+
     });
 };
