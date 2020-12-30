@@ -28,3 +28,37 @@ ICustomParameterizationStdImpl.classInitialize = function(cls, params) {
 		return false;*/
 	}
 }
+// Helper methods for adding/removing parameters to declarations
+// Mostly useful for implementers, but classes can use it too - especially removeParameters when
+// they want to forbid a parameter usage which is by default allowed.
+ICustomParameterizationStdImpl.addParameters = function(inst, parameters) {
+	var arr = Array.createCopyOf(arguments, 1);
+	if (arr.length > 0) {
+		if (inst != null && BaseObject.is(inst.prototype.$customParameterizationAllowedParamsList,"Array")) {
+			for (var i = 0; i < arr.length; i++) {
+				if (typeof arr[i] == "string" && 
+					arr[i].length > 0 && 
+					inst.prototype.$customParameterizationAllowedParamsList.indexOf(arr[i]) < 0) {
+						inst.prototype.$customParameterizationAllowedParamsList.push(arr[i]);
+					}
+			}
+		}
+	}
+}
+ICustomParameterizationStdImpl.removeParameters = function(inst, parameters) {
+	var n, arr = Array.createCopyOf(arguments, 1);
+	if (arr.length > 0) {
+		if (inst != null && BaseObject.is(inst.prototype.$customParameterizationAllowedParamsList,"Array")) {
+			for (var i = 0; i < arr.length; i++) {
+				if (typeof arr[i] == "string" && 
+					arr[i].length > 0) {
+						n = inst.prototype.$customParameterizationAllowedParamsList.indexOf(arr[i]);
+						if (n >= 0) {
+							inst.prototype.$customParameterizationAllowedParamsList.splice(n,1);
+						}
+						
+					}
+			}
+		}
+	}
+}

@@ -157,6 +157,7 @@ IPlatformUtility.standardModuleUrlMap = function(url, parsedURL, bWithMethod) {
 	// Can we do some clever error handling here?
 	var murlproc = ((parsedURL.server != null)?IPlatformUtility.servers[parsedURL.server]:IPlatformUtility.moduleUrl);
 	var mpart = murlproc(parsedURL.module, parsedURL.action,parsedURL.pack,parsedURL.nodepath);
+	if (mpart == null) BaseObject.LASTERROR("Failed to map a node logical URL. url=" + url,"IPlatformUtility.standardModuleUrlMap");
 	var result = mpart + url.slice(parsedURL.length);
 	if (bWithMethod && parsedURL.method != "get") {
 		return (parsedURL.method + ":" + result);
@@ -208,6 +209,7 @@ IPlatformUtility.standardResourceUrlMap = function(url, parsedURL, bWithMethod) 
 	// Can we do some clever error handling here?
 	var murlproc = ((parsedURL.server != null)?IPlatformUtility.resourceservers[parsedURL.server]:IPlatformUtility.resourceUrl);
 	var mpart = murlproc(parsedURL.module, parsedURL.action,parsedURL.restype,parsedURL.respath);
+	if (mpart == null) BaseObject.LASTERROR("Failed to map a resource logical URL. url=" + url,"IPlatformUtility.standardResourceUrlMap");
 	var result = mpart + url.slice(parsedURL.length);
 	if (bWithMethod && parsedURL.method != "get") {
 		return (parsedURL.method + ":" + result);
