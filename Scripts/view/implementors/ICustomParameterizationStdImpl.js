@@ -34,12 +34,12 @@ ICustomParameterizationStdImpl.classInitialize = function(cls, params) {
 ICustomParameterizationStdImpl.addParameters = function(inst, parameters) {
 	var arr = Array.createCopyOf(arguments, 1);
 	if (arr.length > 0) {
-		if (inst != null && BaseObject.is(inst.$customParameterizationAllowedParamsList,"Array")) {
+		if (inst != null && BaseObject.is(inst.prototype.$customParameterizationAllowedParamsList,"Array")) {
 			for (var i = 0; i < arr.length; i++) {
 				if (typeof arr[i] == "string" && 
 					arr[i].length > 0 && 
-					inst.$customParameterizationAllowedParamsList.indexOf(arr[i]) < 0) {
-						inst.$customParameterizationAllowedParamsList.push(arr[i]);
+					inst.prototype.$customParameterizationAllowedParamsList.indexOf(arr[i]) < 0) {
+						inst.prototype.$customParameterizationAllowedParamsList.push(arr[i]);
 					}
 			}
 		}
@@ -48,13 +48,13 @@ ICustomParameterizationStdImpl.addParameters = function(inst, parameters) {
 ICustomParameterizationStdImpl.removeParameters = function(inst, parameters) {
 	var n, arr = Array.createCopyOf(arguments, 1);
 	if (arr.length > 0) {
-		if (inst != null && BaseObject.is(inst.$customParameterizationAllowedParamsList,"Array")) {
+		if (inst != null && BaseObject.is(inst.prototype.$customParameterizationAllowedParamsList,"Array")) {
 			for (var i = 0; i < arr.length; i++) {
 				if (typeof arr[i] == "string" && 
 					arr[i].length > 0) {
-						n = inst.$customParameterizationAllowedParamsList.indexOf(arr[i]);
+						n = inst.prototype.$customParameterizationAllowedParamsList.indexOf(arr[i]);
 						if (n >= 0) {
-							inst.$customParameterizationAllowedParamsList.splice(n,1);
+							inst.prototype.$customParameterizationAllowedParamsList.splice(n,1);
 						}
 						
 					}
