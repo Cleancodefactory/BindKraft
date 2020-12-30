@@ -28,6 +28,7 @@ ITemplateSourceImpl.ForbiddenTypes("BaseWindow");
 ITemplateSourceImpl.classInitialize = function(cls, defaultTemplateSelector, options) {
 	// For backward compatibility reasons we use this.templateName
 	cls.ImplementProperty("templateName", new InitializeStringParameter("module/templatename",defaultTemplateSelector),"templateName");
+	ICustomParameterizationStdImpl.addParameters(cls, "templateName");
 	cls.prototype.get_template = function() {
 		var tml = this.$template;
 		// If a template has been set explicitly - use that one
