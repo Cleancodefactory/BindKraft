@@ -51,6 +51,7 @@ IInfoDisplayWindowImpl.classInitialize = function (cls, useTemplate, options) {
             this.$infoDisplayView = ViewBase.materialize($(cc), idisp, "prepend");
 			if (this.$infoDisplayView != null) this.$infoDisplayView.rebind();
             if (BaseObject.is(this.$infoDisplayView, "IInfoDisplayPanel")) {
+                this.$infoDisplayView.set_infodisplayautoclear(this.get_infodisplayautoclear());
                 // Attach to the events
                 this.$infoDisplayView.dataexhaustedevent.add(new Delegate(this, function () {
                     this.$infoDisplayDestroy();
