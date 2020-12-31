@@ -65,6 +65,6 @@ IInfoDisplayPanelImpl.prototype.get_infomessagesavailable = function() {
 	if (dc != null && dc.length > 0) return true;
 	return false;
 }
-IInfoDisplayPanel.prototype.$infodisplayautoclear = 0;
-IInfoDisplayPanel.prototype.get_infodisplayautoclear = function() { return this.$infodisplayautoclear; }
-IInfoDisplayPanel.prototype.set_infodisplayautoclear = function(v) { this.$infodisplayautoclear = v; }
+IInfoDisplayPanelImpl.prototype.$infodisplayautoclear = 0;
+IInfoDisplayPanelImpl.prototype.get_infodisplayautoclear = function() { return this.$infodisplayautoclear; }
+IInfoDisplayPanelImpl.prototype.set_infodisplayautoclear = function(v) { this.$infodisplayautoclear = v; }
