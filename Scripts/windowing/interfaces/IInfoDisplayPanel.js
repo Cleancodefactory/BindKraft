@@ -8,6 +8,8 @@ IInfoDisplayPanel.prototype.get_reversedc = function () { throw "not impl";}.Des
 IInfoDisplayPanel.prototype.onRemoveMessage = function (e, item, binding) { throw "not impl"; }
 IInfoDisplayPanel.prototype.onClearMessages = function (e, dc, binding, bparam) { throw "not impl";}
 IInfoDisplayPanel.prototype.get_infomessagesavailable = function() { throw "not impl"; }
+IInfoDisplayPanel.prototype.get_infodisplayautoclear = function() { throw "not impl."; }
+IInfoDisplayPanel.prototype.set_infodisplayautoclear = function(v) { throw "not impl."; }
 	
 
 

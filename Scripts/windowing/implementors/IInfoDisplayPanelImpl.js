@@ -25,8 +25,15 @@ IInfoDisplayPanelImpl.prototype.get_reversedc = function () {
     if (BaseObject.is(dc, "Array")) dc = dc.reverse().slice(0, 10);
     return dc;
 };
+IInfoDisplayPanelImpl.prototype.$setupAutoClear = function() {
+	this.discardAsync("autoclear");
+	if (this.get_infodisplayautoclear() > 0) {
+		this.async(this.onClearMessages).key("autoclear").after(this.get_infodisplayautoclear() * 1000).execute();
+	}
+}
 IInfoDisplayPanelImpl.prototype.addEntry = function (info) {
-    var dc = this.get_data();
+	var dc = this.get_data();
+	this.$setupAutoClear();
     if (dc == null) {
         dc = [info];
     } else {
@@ -41,6 +48,7 @@ IInfoDisplayPanelImpl.prototype.onRemoveMessage = function (e, item, binding, bp
     if (BaseObject.is(dc, "Array")) {
         dc.removeElement(item);
         if (dc.length <= 0) {
+			this.discardAsync("autoclear");
             this.dataexhaustedevent.invoke(this, null);
         } else {
             this.updateTargets();
@@ -48,7 +56,8 @@ IInfoDisplayPanelImpl.prototype.onRemoveMessage = function (e, item, binding, bp
     }
 };
 IInfoDisplayPanelImpl.prototype.onClearMessages = function (e, dc, binding, bparam) {
-    this.set_data([]);
+	this.set_data([]);
+	this.discardAsync("autoclear");
     this.dataexhaustedevent.invoke(this, null);
 };
 IInfoDisplayPanelImpl.prototype.get_infomessagesavailable = function() {
@@ -56,4 +65,6 @@ IInfoDisplayPanelImpl.prototype.get_infomessagesavailable = function() {
 	if (dc != null && dc.length > 0) return true;
 	return false;
 }
-
+IInfoDisplayPanel.prototype.$infodisplayautoclear = 0;
+IInfoDisplayPanel.prototype.get_infodisplayautoclear = function() { return this.$infodisplayautoclear; }
+IInfoDisplayPanel.prototype.set_infodisplayautoclear = function(v) { this.$infodisplayautoclear = v; }

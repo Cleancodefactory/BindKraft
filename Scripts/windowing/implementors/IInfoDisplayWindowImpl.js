@@ -8,6 +8,7 @@ IInfoDisplayWindowImpl.InterfaceImpl(IInfoDisplay, "IInfoDisplayWindowImpl");
 // IInfoDisplayWindowImpl.classType = "IInfoDisplay";
 IInfoDisplayWindowImpl.RequiredTypes("BaseWindow", "IStructuralQueryProcessor,IStructuralQueryEmiter");
 IInfoDisplayWindowImpl.defaultInfoDisplayTemplate = "bindkraft/defaultinfodisplaytemplate";
+IInfoDisplayWindowImpl.ImplementProperty("infodisplayautoclear", new InitializeNumericParameter("0 do not clear, > 0 seconds to clear after the last message", 0));
 IInfoDisplayWindowImpl.ImplementProperty("infodisplayelement", new InitializeStringParameter("data-key of an element in the window caption area that implements the infodisplay. The element must have data class implementing IInfoDisplayPanel.",null));
 IInfoDisplayWindowImpl.classInitialize = function (cls, useTemplate, options) {
     if (BaseObject.is(useTemplate, "string") && useTemplate.length > 0) {
@@ -120,6 +121,7 @@ IInfoDisplayWindowImpl.classInitialize = function (cls, useTemplate, options) {
         if (this.isWindowVisible()) return true;
         return false;
     };
+    cls.prototype.set_isinfodisplayactive = function (v) { this.$isinfodisplayactive = v; }
     cls.$infomessageDisplayFromQuery = function (query) {
     };
     cls.onStructuralQuery("InfoMessageQuery", function (query, procInstructions) {
