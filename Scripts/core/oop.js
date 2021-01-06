@@ -828,10 +828,10 @@ Function.prototype.ImplementActiveProperty = function (pname, initialize, pstore
 	var args = Array.createCopyOf(arguments,2);
 	this.prototype["$__smartpropertyholder_" + pname] = new InitializeSmartProperty("smart property", propClass, args);
 	this.prototype["get_" + pname] = function() {
-		return this["$__smartpropertyholder_" + pname].get.apply(this, arguments);
+		return this["$__smartpropertyholder_" + pname].get.apply(this["$__smartpropertyholder_" + pname], arguments);
 	}
 	this.prototype["set_" + pname] = function(v) {
-		return this["$__smartpropertyholder_" + pname].set.apply(this, arguments);
+		return this["$__smartpropertyholder_" + pname].set.apply(this["$__smartpropertyholder_" + pname], arguments);
 	}
 	return this;
  }
