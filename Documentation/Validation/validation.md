@@ -1,0 +1,15 @@
+# Validation (of user input etc.)
+
+**Validation** is set of classes and techniques that enable the programmer to validate state of certain UI or part(s) of UI. Typically this is associated with forms filled by the user, but it usually goes further and covers more than just the user input. In any modern application the user input can be part of a variety of interactions with the software and they are certainly not limited to filling a number of fields and clicking "submit" in the end. This is why it is better to think about validation of the state of the UI and not just the user input.
+
+## Goals of the validation
+
+The validation infrastructure provides:
+
+* Means to configure one or more rules, including custom ones, and assign them to a single validation "unit"/container, which we call a `validator`. Each `validator` can be invoked in various ways to perform validation by applying the configured rules over supplied value(s) and/or binding(s). Almost all standard rules and most custom ones deal with single value or sometimes set of values, but the `validator` also supports _lower level_ access to the data being validated by providing access to the bindings that move the data to the rules that need this. See [Inline syntax](InlineSyntax.md), [Reusing rule sets and templates](AdvancedSyntax.md)
+
+* Options to configure each `validator` for automatic invocation that follows the user and in rare cases non-user invoked changes of the UI state. This is achieved by support for invocation on configurable list of events for each separate `validator`.
+
+* Methods for programmatic invocation of all `validators` in certain scope or part of them by grouping. Any code that needs to ensure data validity before using it can use the methods to determine if it should proceed or not. This includes also a number of methods and properties that enable more detailed analysis of the validation if needed - e.g. it is possible to get all the failed `validators` or all those that succeeded, check which rules have failed and so on. Usually validation is used exactly because one wants to put the details out of the way, but nothing is perfect in life and sometimes dealing with details is unavoidable, this is why the validation API includes a number of methods and properties which are not for everyday use, but are there for those rare cases when they would be needed.
+
+* Means to provide templates that display the state of each `validator` in the UI and means to query each `validator` in order to display its state somewhere else if necessary. The `validators` are containers based on the `Base` class and are visual elements which gives them the ability to use the provided templates to automatically display their (resulting) state when they are invoked. This make it possible to skip dealing with validation messages and just invoke the validation, counting on it to provide the user automatically with the necessary visual feedback.
