@@ -78,7 +78,31 @@ var Class = {
         s = cls.classType + ((s.length > 0) ? ("::" + s) : "");
         if (cls.parent != null && cls.parent.constructor != Object) return Class.fullClassType(cls.parent.constructor, s);
         return s;
-    },
+	},
+	inheritedClasses: function(_cls) {
+		var cls = Class.getClassDef(_cls);
+		var results = [];
+		function _(__) {
+			if (__.parent != null && __.parent.constructor != Object) {
+				results.push(Class.getClassName(__.parent.constructor));
+				return _(__.parent.constructor);
+			}
+		}
+		_(cls);
+		return results;
+	},
+	inheritedClassDefs: function(_cls) {
+		var cls = Class.getClassDef(_cls);
+		var results = [];
+		function _(__) {
+			if (__.parent != null && __.parent.constructor != Object) {
+				results.push(Class.getClassDef(__.parent.constructor));
+				return _(__.parent.constructor);
+			}
+		}
+		_(cls);
+		return results;
+	},
     supportedInterfaces: function (_cls, arr, extending) {
 		var cls = Class.getClassDef(_cls);
         var cur = cls;
