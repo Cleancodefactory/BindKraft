@@ -833,6 +833,7 @@ Function.prototype.ImplementActiveProperty = function (pname, initialize, pstore
 	this.prototype["set_" + pname] = function(v) {
 		return this["$__smartpropertyholder_" + pname].set.apply(this, arguments);
 	}
+	return this;
  }
 
 Function.prototype.ImplementReadProperty = function (pname, initialize, pstore) {
