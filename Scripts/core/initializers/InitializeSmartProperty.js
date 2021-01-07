@@ -1,6 +1,10 @@
 /**
  *  This initializer is not intended for direct use. It is possible, but not advisable, because of the
  *  less descriptive resulting code.
+ * 
+ * @param desc {string} Description
+ * @param stype {string|type} The class name or the class itself
+ * @param args {Array<any>} The arguments for the constructor.
  */
 
 /*CLASS*/

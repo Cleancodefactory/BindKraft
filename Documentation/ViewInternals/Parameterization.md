@@ -6,6 +6,19 @@ This is the form currently obtained by calling JBUtil.pareParameters and then us
 
 While the general form will be kept without serious changes, decoupling these a little seems likely in near future.
 
+## Parameterization syntax
+
+```HTML
+
+<div data-class="MyClass param1='some string' #param2='123' @param3={read source=parentx/childy path=something}"
+    data-parameters="param4='something'"
+></div>
+
+```
+
+
+
+
 ## JBUtil.parseParameters
 
 `parseParameters` deals with both - string form and object forms. The string form comes from various cases in the markup, e.g.
