@@ -343,7 +343,12 @@ LightFetchHttp.prototype.getResponse = function() {
 					break;
 				case "data":
 				case "json":
-					res.data = JSON.parse(this.$xhr.responseText);
+					try{
+						res.data = JSON.parse(this.$xhr.responseText);
+					}
+					catch(e) {
+						res.data = null;
+					}					
 					res.datas = { "default": res.data }; // Link it here also for compatibility with both 0.9 and 1.0
 					break;
 				case "blob":
