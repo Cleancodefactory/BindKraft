@@ -47,5 +47,5 @@ InfoMessageQuery.emit = function (objectOn, msg_obj, numCode, msgType, priority)
     if (BaseObject.is(wkspc, "IStructuralQueryEmiter")) {
         if (wkspc.throwStructuralQuery(msg)) return;
     }
-    msg.alert();
+    // msg.alert(); // Should not appear if no displays are found.
 };
