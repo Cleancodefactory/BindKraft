@@ -33,7 +33,8 @@ This all probably sounds simple and sound if it is not for the similarities of t
 The callback in the case of the TemplateSwitcher will be something like:
 
 ```Javascript
-MyView.prototype.onSelectNamesTemplate = function(switcher, dataitem) {
+MyView.prototype.onSelectNamesTemplate = function(switcher, template) {
+    var dataitem = switcher.get_item();
     if (typeof dataitem.company != "undefined") {
         return switcher.getTemplateByKey("company");
     } else {
@@ -42,6 +43,6 @@ MyView.prototype.onSelectNamesTemplate = function(switcher, dataitem) {
 }
 ```
 
-The first argument is the switcher itself and the second is the data being set to its `get/set_item` property. Yes `dataitem` is a bit redundant as you can get it by calling `switcher.get_item()`, but is provided for convenience. This clearly shows the primary purpose of the component - to switch the template depending on the data being displayed in it.
+The first argument is the switcher itself and the second is the whole template, containing the parts one of which has to be selected. The data being set to the switcher'ss `get/set_item` property can be obtained by calling `switcher.get_item()`. Yes `template` is a historical artefact and is kept for legacy compatibility. Using the `getTemplateByKey` method is obviously easier and more convenient, finding the template yourself can be quite difficult - it is just an HTML text after all.
 
 > _In real world scenarios the choice that the `select` callback must make is usually more complicated and may depend on both the data and the state of the class of which the callback is a member (view or a component/control). This is not a problem as the `this` will point correctly to it when the callback is called. References are not supported in contrast to the event handlers and this is intentional (adding support will be literally a line of code). The reason behind this is that `TemplateSwitcher` changes part of the view - destroys whatever is held in it and materializes the selected template from scratch. Under these circumstances and especially in case of usage of nested switchers passing references to short-lived elements/objects is an easy mistake and thanks to the fact that this changes the view its consequences can be much greater than in the case of handlers. Hiding the binding object from the callback forces the developer to find more stable ways to build the necessary logic and avoid such problems._
