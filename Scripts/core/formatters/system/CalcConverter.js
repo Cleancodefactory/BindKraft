@@ -47,6 +47,9 @@ CalcConverter.$parseExpression = function(expr) {
             } else if (a.charAt(0) == "$") {
             	prg.unshift({ i: "$", o: 1});
                 prg.unshift({ i: "push", o: a.slice(1)});
+            } else if (a.charAt(0) == "@") {
+            	prg.unshift({ i: "@", o: 1});
+                prg.unshift({ i: "push", o: a.slice(1)});
             } else {
                 prg.unshift({ i: "push", o: a});
             }
@@ -119,7 +122,12 @@ CalcConverter.$execExpression = function(prg,resolver) {
                     st.push(!st.pop());
                 break;
                 case "#":
-                    st.push(parseInt(st.pop(),10));
+                    v = parseInt(st.pop(),10);
+                    if (v == null || isNaN(v)) v = 0;
+                    st.push(v);
+                break;
+                case "@":
+                    st.push((st.pop() != null)?1:0);
                 break;
                 case "$":
                     st.push(st.pop() + "");
