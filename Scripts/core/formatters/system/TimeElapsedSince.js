@@ -18,7 +18,7 @@ TimeElapsedSince.prototype.Read = function(val, bind, params) {
     if (val instanceof Date) {
         var now = Date.now();
         var msec = now - val.getTime();
-        sec = msec / 1000;
+        var sec = msec / 1000;
         var s = "";
         if (sec < 60) {
             return Math.floor(sec) + " seconds";
@@ -32,7 +32,7 @@ TimeElapsedSince.prototype.Read = function(val, bind, params) {
             return Math.floor(sec / (24 * 3600)) + " days";
         }
     }
-    return "--"
+    return "--";
 }
 TimeElapsedSince.prototype.Write = function(val, bind, params) {
             return val;
