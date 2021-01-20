@@ -31,9 +31,7 @@ System.DefaultCommands = {
 		if(typeof template != "string"){
 			throw "The template name must be string";
 		}
-		if (template == "default") {
-			WorkspaceWindow.useTemplateConnector = new TemplateConnector("bindkraftstyles/window-workspacewindow-simple");
-		} else {
+		if (template != "default") {
 			WorkspaceWindow.useTemplateConnector = new TemplateConnector(template);
 		}
 		Shell.workspaceWindow = WorkspaceWindow.Default();
