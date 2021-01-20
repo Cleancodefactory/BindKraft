@@ -21,15 +21,15 @@ TimeElapsedSince.prototype.Read = function(val, bind, params) {
         sec = msec / 1000;
         var s = "";
         if (sec < 60) {
-            return sec + " seconds";
+            return Math.floor(sec) + " seconds";
         } else if (sec < 60 * 60) {
-            return (sec / 60) + " minutes";
+            return Math.floor(sec / 60) + " minutes";
         } else if (sec < 24 * 60 * 60) {
-            s += (sec / 3600) + " hours"
-            s += " and " + (sec / 60) + " minutes";
+            s += Math.floor(sec / 3600) + " hours"
+            s += " and " + Math.floor(sec / 60) + " minutes";
             return s;
         } else {
-            return (sec / (24 * 3600)) + " days";
+            return Math.floor(sec / (24 * 3600)) + " days";
         }
     }
     return "--"
