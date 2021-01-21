@@ -212,7 +212,18 @@ var Class = {
 			return Class.doesextend("IRequestInterface");
 			// TODO: Extend the logic - all of the extended interfaces also have to be requestable
 		},
+		interfaceKinds: function(iface) {
+			var arr = ["interface"];
+			if (this.isrequestable(iface)) arr.push("requestable");
+			if (this.ismanaged(iface)) arr.push("managed");
+			return arr;
+		},
 		// -V: 2.7.1
+		// + V: 2.23.6
+		ismanaged: function(iface) {
+			return Class.doesextend("IManagedInterface");
+		},
+		// - V: 2.23.6
 		// + V: 2.18.0
 		typeKind: function(def) {
 			var d = Class.getClassDef(def);
