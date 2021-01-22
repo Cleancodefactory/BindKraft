@@ -25,6 +25,35 @@ SysShell.Implement(IAjaxContextParameters);
 SysShell.Implement(IStructuralQueryProcessorImpl);
 SysShell.Implement(IDOMConnectedObject);
 SysShell.Implement(IStructuralQueryRouterImpl,"sysshell",function(){ return null;});
+
+//#region Shell customizers
+SysShell.prototype.$customizers = new InitializeObject("All the customizers.");
+SysShell.prototype.addCustomizer = function(iface, cust) {
+	var iface_name = Class.getInterfaceName(iface);
+	if (iface_name == null || cust == null) return;
+	var IShellCustomizer = Interface("IShellCustomizer");
+	if (BaseObject.is(cust, iface) && Class.doesextend(iface, IShellCustomizer)) {
+		this.$customizers[iface_name] = cust;
+		cust.set_shell(this);
+		cust.set_workspacewindow(this.get_workspacewindow());
+	} else {
+		throw "Failed to add the shell customizer " + ((cust != null)?cust.classType():"null") + ", because it is not based on IShellCustomizer interface";
+	}
+}
+SysShell.prototype.removeCustomizer = function(iface) {
+	var iface_name = Class.getInterfaceName(iface);
+	if (iface_name != null) {
+		delete this.$customizers[iface_name];
+	}
+}
+SysShell.prototype.getCustomizer = function(iface) {
+	var iface_name = Class.getInterfaceName(iface);
+	if (iface_name != null) {
+		return this.$customizers[iface_name];
+	}
+	return null;
+}
+//#endregion
 SysShell.prototype.shellLocalApi = null;
 // BEGIN IAjaxContextParameters - implementation
 SysShell.prototype.get_localajaxcontextparameter = function(param) {
@@ -543,12 +572,18 @@ SysShell.prototype.launchEx = function(_appClass, _options,/* callset of argumen
 		app.placeWindow = function(w,options) {
 			if (BaseObject.is(w, "BaseWindow")) {
 				w.set_approot(app);
-				if (options != null && options.role == "shell") {
-					if (typeof options.position == "string") {
-						_shell.workspaceWindow.addChild(w,options.position);
-					}
+				var cust = _shell.getCustomizer("IShellCustomizerPlacer");
+				if (cust != null) {
+					// TODO: It will be better to relieve the apps from setting the options
+					cust.placeWindow(w,options);
 				} else {
-					_shell.workspaceWindow.addChild(w);
+					if (options != null && options.role == "shell") {
+						if (typeof options.position == "string") {
+							_shell.workspaceWindow.addChild(w,options.position);
+						}
+					} else {
+						_shell.workspaceWindow.addChild(w);
+					}
 				}
 				if (lastPlacedWindow == null) {
 					lastPlacedWindow = w;

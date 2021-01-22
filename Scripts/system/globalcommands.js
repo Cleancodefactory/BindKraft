@@ -34,8 +34,10 @@ System.DefaultCommands = {
 		if (template != "default") {
 			WorkspaceWindow.useTemplateConnector = new TemplateConnector(template);
 		}
-		Shell.workspaceWindow = WorkspaceWindow.Default();
-		Shell.workspaceWindow.setFinalAuthority(true);
+		if (window.Shell) {
+			Shell.workspaceWindow = WorkspaceWindow.Default();
+		}
+		WorkspaceWindow.Default().setFinalAuthority(true);
 		Messenger.OnLoad();
 	},
 	"msgbox": function(ctx, api){
@@ -44,6 +46,15 @@ System.DefaultCommands = {
 	},
 	"startshell": function(ctx, api){
 		window.Shell = new SysShell($$("#container").first());
+		Shell.workspaceWindow = WorkspaceWindow.Default();
+		
+	},
+	"customizeshell": function(ctx, api) {
+		var iface = Class.getInterfaceDef(api.pullNextToken());
+		var cls = Class.getClassDef(api.pullNextToken());
+		if (iface != null && cls != null) {
+			window.Shell.addCustomizer(iface, cls);
+		}
 	},
 	"enterapp": function(ctx, api) {
 		// TODO: Resolve the app management mess at least to some degree and do this
