@@ -28,6 +28,7 @@
 //#using "../base/base-full.dep"
 //#using "../apis/apis-full.dep"
 //#using "../localization/localization.dep"
+//#using "../shellcustomizers/shellcustomizers.dep"
 
 //#using "../globalcommands/globalcommands.dep"
 //#using "../globalcommands.js"
