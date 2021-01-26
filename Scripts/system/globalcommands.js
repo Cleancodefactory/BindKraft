@@ -46,7 +46,8 @@ System.DefaultCommands = {
 	},
 	"startshell": function(ctx, api){
 		window.Shell = new SysShell($$("#container").first());
-		Shell.workspaceWindow = WorkspaceWindow.Default();
+		// Hard separation between creation of workspace and sysshell - we need this in order to make ws creation controlled by createworkspace command!
+		//Shell.workspaceWindow = WorkspaceWindow.Default();
 		
 	},
 	"customizeshell": function(ctx, api) {
