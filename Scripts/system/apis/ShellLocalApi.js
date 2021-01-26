@@ -48,3 +48,11 @@ ShellLocalApi.prototype.getRunningAppsClassNames = function() {
 		if (!this.indexOf(app.classType()) >= 0) return app.classType();
 	});
 }
+
+ShellLocalApi.prototype.launchOne = function(appcls) { 
+	return this.$shell.launchOne.apply(this.$shell,arguments);
+
+}
+ShellLocalApi.prototype.launchApp = function(appcls) { 
+	return this.$shell.launch.apply(this.$shell,arguments);
+}
