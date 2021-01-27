@@ -11,3 +11,5 @@
 //#using "./IsValueEqualToParameter.js"
 //#using "./CalcConverter.js"
 //#using "./TimeElapsedSince.js"
+//#using "./AppendFormatter.js"
+//#using "./NormalizeConverter.js"
