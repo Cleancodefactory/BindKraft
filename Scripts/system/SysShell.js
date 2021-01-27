@@ -16,7 +16,7 @@ function SysShell(shellspace) {
     }
 	this.$dispatcherLeasing = new EventDispatchLeasing("IAppBase");
     $(document).bind("keydown", Delegate.createWrapper(this, this.$sysKeyBindings));
-    System.Default().shutdownevent.add(new Delegate(this, this.shutdown));
+    System.Default().windowunloadevent.add(new Delegate(this, this.shutdown));
 	this.shellLocalApi = new ShellLocalApi(this);
 	LocalAPI.Default().registerAPI(IShellApi,this.shellLocalApi);
 }
