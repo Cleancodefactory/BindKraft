@@ -676,10 +676,9 @@ SysShell.prototype.shutdownApp = function(appid) {
         return null;
     });
     if (app != null) {
-        if (app.appshutdown()) {
-            this.get_runningapps().removeElement(app);
-        }
-    }
+        return app.ExitApp();
+	}
+	return Operation.From(null);
 };
 SysShell.prototype.killAll = function () { // Shutdown everything
     var app, apps = this.get_runningapps();
