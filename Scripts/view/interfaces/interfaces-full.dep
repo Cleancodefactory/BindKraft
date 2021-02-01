@@ -46,3 +46,4 @@
 //#using "./IDisplayDataSupplier.js"
 //#using "./IDisplayDataConsumer.js"
 //#using "./IOpenCloseFunctionality.js"
+//#using "./IUIControlReadiness.js"
