@@ -2,7 +2,7 @@
     var IUIControlReadiness = Interface("IUIControlReadiness");
 
     function IUIControlReadinessImpl() {}
-    IUIControlReadinessImpl.InterfaceImpl(IUIControlReadiness);
+    IUIControlReadinessImpl.InterfaceImpl(IUIControlReadiness, "IUIControlReadinessImpl");
 
     IUIControlReadinessImpl.prototype.$controlreadystate = true;
     IUIControlReadinessImpl.prototype.get_controlreadystate = function() {
