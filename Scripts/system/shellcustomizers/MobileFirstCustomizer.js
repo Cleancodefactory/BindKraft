@@ -1,4 +1,6 @@
 (function(){
+    var IShellCustomizerPlacer = Interface("IShellCustomizerPlacer");
+
     function MobileFirstCustomizer() {
         BaseObject.apply(this, arguments);
     }
