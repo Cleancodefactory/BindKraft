@@ -53,7 +53,7 @@ System.DefaultCommands = {
 		var iface = Class.getInterfaceDef(api.pullNextToken());
 		var cls = Class.getClassDef(api.pullNextToken());
 		if (iface != null && cls != null) {
-			window.Shell.addCustomizer(iface, cls);
+			window.Shell.addCustomizer(iface, new cls());
 		}
 	},
 	"enterapp": function(ctx, api) {
@@ -259,6 +259,7 @@ System.DefaultCommands = {
 
 	gc.register("startshell", null, null, defs.startshell, "");
 
+	gc.register("customizeshell", null, null, defs.customizeshell, "Registers a specific customizer with SysShell. Parameters <interface> <implementation>")
 	// gc.register("grunscript", "grun", null,
 	//						 defs.gcallcript, "Runs a script read from the top result - runs uncontrollably, returns immediately without waiting");
 	gc.register("gcallscript", "gcall", null,
