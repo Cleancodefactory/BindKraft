@@ -9,4 +9,4 @@ will behave somewhat like an app, but is never unloaded (shuts down with the sys
 workspace management previously delegated to the WorkspaceWindow.
 
 The reasons behind this is that SysShell began handling functions which are beyond its responsibilities and are innate for 
-a window manager. Designing a workspace manager component that
+a window manager. Designing a "workspace manager" component that will take over tasks like placing windows, managing them and so on.
