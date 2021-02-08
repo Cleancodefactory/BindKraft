@@ -181,6 +181,9 @@ var Class = {
 			if (Class.getInterfaceName(inspected) == Class.getInterfaceName(iface)) return true;
 			if (def.extendsInterfaces) {
 				if (Class.getInterfaceName(iface) in def.extendsInterfaces) return true;
+				for (var k in def.extendsInterfaces) {
+					if (Class.doesextend(def.extendsInterfaces[k], iface)) return true;
+				}
 			}
 			return false;
 		},

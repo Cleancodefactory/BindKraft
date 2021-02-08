@@ -12,8 +12,8 @@ AppBaseEx.Inherit(AppBase,"AppBaseEx");
  * @param {*} args	The parameters passed to the application
  * @returns {Operation} to signal when the initialization is complete
  */
-AppBaseEx.prototype.initialize = function(/* callset */ args) { throw "Not implemented";}
-AppBaseEx.prototype.appinitialize = function(callback, /* callset */ args) {
+AppBaseEx.prototype.initialize = function(/* *[] */ args) { throw "Not implemented";}
+AppBaseEx.prototype.appinitialize = function(callback, args) {
 	var op = this.initialize.apply(this, Array.createCopyOf(arguments, 1));
 	var me = this;
 	op.then(function(o) {

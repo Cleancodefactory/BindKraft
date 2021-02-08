@@ -97,3 +97,6 @@
 //#using "./IQueryTokenStorage.js"
 //#using "./IDelegate.js"
 //#using "./IDataStateManager.js"
+
+//#using "./IRunningComponent.js"
+//#using "./IRunningComponentSuspendable.js"

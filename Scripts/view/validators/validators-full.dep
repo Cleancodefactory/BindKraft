@@ -22,6 +22,9 @@
 //#using "../validatorrules/SameValuesValidatorRule.js"
 //#using "../validatorrules/ValidDateFieldValidatorRule.js"
 //#using "../validatorrules/CheckValidationRule.js"
+//#using "../validatorrules/WaitControlReadiness.js"
+//#using "../validatorrules/WaitValidator.js"
+
 
 //#using "../validatorrules/ValidatorRuleReferenceImplementation.js"
 

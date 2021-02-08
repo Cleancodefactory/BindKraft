@@ -1,0 +1,45 @@
+<!--container-->
+<table class="bk-pager-container" data-bind-elementvisibility="{read source=__control path=$visible readdata=$pagerupdateevent}">
+    <!--class="c_width_207"-->
+    <tr>
+        <td class="bk-pager-element-holder" style="cursor:pointer;">
+            <!--go to first button-->
+            <div data-class="SvgY svgpath='/node/raw/bindkraftstyles/images/angleDouble-left-icon.svg' width='25px' height='25px'" style="padding-top:5px;" class="bk-svg-avatar-box "
+                 data-bind-elementdisabled="{read source=__control path=$hasprevpage format=InverseFormatter readdata=$pagerupdateevent}"
+                 data-on-click="{bind source=__control path=gotoFirstPage}"></div><!--class="c_pager_double_left"-->
+        </td>
+        <td class="bk-pager-element-holder" style="cursor:pointer;">
+            <!--go to previous button-->
+            <div data-class="SvgY svgpath='/node/raw/bindkraftstyles/images/angle-left-icon.svg' width='25px' height='25px'" style="padding-top:5px; " class="bk-svg-avatar-box "
+                 data-bind-elementdisabled="{read source=__control path=$hasprevpage format=InverseFormatter readdata=$pagerupdateevent}"
+                 data-on-click="{bind source=__control path=gotoPrevPage}"></div><!--class="c_pager_one_left"--></td>
+
+
+        <td class="bk-pager-element-holder" style="cursor:pointer;">
+            <!--class="padding_left_6 c_padding_right_6" style="padding-left:3px;"-->
+            <!--drop down control-->
+            <div data-class="VirtualDropDownControl keyproperty='key' descproperty='value' templateName='bindkraftstyles/control-vdropdown'"
+                 data-key="allPages"
+                 class="bk-margin-normal"
+		         data-bind-$items="{read source=__control path=$pages readdata(1)=$pagerupdateevent}"
+			     data-bind-$value="{read(10) source=__control path=$currentpage readdata(2)=$pagerupdateevent writedata=__control:$applypageevent format=IntegerFormatter}" 
+				 data-on-$activatedevent="{bind source=__control path=OnTriggerApplyPage ref[page]=self@value }">
+            </div>
+        </td>
+        <td class="bk-pager-element-holder" style="cursor:pointer;">
+            <!--style="padding-right:0px;"-->
+            <!--go to next button-->
+            <div data-class="SvgY svgpath='/node/raw/bindkraftstyles/images/angle-right-icon.svg' width='25px' height='25px'" style="padding-top:5px;" class="bk-svg-avatar-box "
+                 data-bind-elementdisabled="{read source=__control path=$hasnextpage format=InverseFormatter readdata=$pagerupdateevent}"
+                 data-on-click="{bind source=__control path=gotoNextPage}">
+                <!--class="c_pager_one_right"-->
+                </div>
+</td>
+        <td class="bk-pager-element-holder"  style="cursor:pointer;">
+            <!--style="padding-left:0px"-->
+            <!--go to last button-->
+            <div data-class="SvgY svgpath='/node/raw/bindkraftstyles/images/angleDouble-right-icon.svg' width='25px' height='25px'" style="padding-top:5px;" class="bk-svg-avatar-box "
+                 data-bind-elementdisabled="{read source=__control path=$haslastpage format=InverseFormatter readdata=$pagerupdateevent}"
+                 data-on-click="{bind source=__control path=gotoLastPage}"></div><!--class="c_pager_double_right"--></td>
+    </tr>
+</table>

@@ -6,9 +6,9 @@ PagerControl.Inherit(Base, "PagerControl");
 PagerControl.Implement(IUIControl);
 //PagerControl.Implement(ITemplateSourceImpl, "bindkraftstyles/control-pager");
 PagerControl.Implement(ICustomParameterization);
-PagerControl.Implement(ITemplateSourceImpl, new Defaults("templateName", "bindkraft/control-pager"));
+PagerControl.Implement(ITemplateSourceImpl, new Defaults("templateName", "bindkraft/control-shortpager"));
 PagerControl.$defaults = {
-	templateName: "bindkraft/control-pager" // id="bindkraft_control-pager"
+	templateName: "bindkraft/control-shortpager" // id="bindkraft_control-pager"
 };
 
 PagerControl.parameterNames = ["dataarea","normalize","maxpageitems","templateName","templateSource","autolink"];
