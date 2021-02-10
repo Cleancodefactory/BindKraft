@@ -15,9 +15,16 @@
         this.updateTargets();
         msg.handled = true;
     };
-    WorkspaceWindow.prototype.on_Create = function () {
-        this.springTrigger = new SpringTrigger(new Delegate(this, this.onBrowserResize), 100);
-        $(window).resize(Delegate.createWrapper(this, this.windUp));
-    
+    WorkspaceWindowBase.prototype.on_Create = function () {
+        if (window.addEventListener) {
+            window.addEventListener("resize",Delegate.createWrapper(this.BrowserResize, this.BrowserResize,windup));
+        } else if (window.attachEvent) {
+            window.attachEvent("resize",Delegate.createWrapper(this.BrowserResize, this.BrowserResize,windup));
+        }
     };
+
+    WorkspaceWindow.prototype.BrowserResize = new InitializeMethodTrigger("triggers resize event", function() {
+        WindowingMessage.fireOn(this, WindowEventEnum.SizeChanged, {});
+    }, 200);
+    
 })();

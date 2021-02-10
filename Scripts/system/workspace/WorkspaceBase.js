@@ -4,6 +4,13 @@
     }
     WorkspaceBase.Inherit(BaseObject, "WorkspaceBase");
 
+    //#region Internal members 
+    /**
+     * The workspace window must be put here
+     */
+    WorkspaceBase.prototype.$workspacewindow = null;
+    //#endregion
+
     // Main API methods
 
     /**

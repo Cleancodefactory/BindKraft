@@ -882,3 +882,4 @@ DOMUtil.toDOMM = function(inp) {
 		return new DOMMCollection();
 	}
 };
+

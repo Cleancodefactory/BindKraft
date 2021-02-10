@@ -147,20 +147,31 @@ BaseWindow.findArgs = function (args, kind) {
 
 // Misc utilities as static methods
 BaseWindow.getElementPositionRect = function (domEl) {
+    var IGRect = Interface("IGRect"), GRect = Class("GRect");
+    return GRect.fromDOMElementOffset(DOMUtil.toDOMElement(domEl));
+    /*
     var el = $(domEl);
     var result = new Rect(el.position());
     result.w = el.width();
     result.h = el.height();
     return result;
-}.Description ( "Returns the {h,w} position of element domEl ( string ) " );
+    */
+}.Description ( "Returns the {h,w} position of element domEl as GRect " );
 
 BaseWindow.setElementPositionRect = function (domEl, rect) {
+    var el = DOMUtil.toDOMElement(domEl);
+    var IGRect = Interface("IGRect"), GRect = Class("GRect");
+    if (BaseObject.is(rect, "IGRect")) {
+        rect.toDOMElement(el);
+    }
+    /*
     var el = $(domEl);
     if (rect.x != null) el.css({ left: rect.x });
     if (rect.y != null) el.css({ top: rect.y });
     if (rect.w != null) el.width(rect.w);
     if (rect.h != null) el.height(rect.h);
-}.Description ( "Sets the position of element domEl (string) with rect ( {h,w} )" );
+    */
+}.Description ( "Sets the position of element domEl (HTMLElement) with rect ( IGRect )" );
 BaseWindow.$parentlessWindows = [];
 BaseWindow.updateParentlessWindows = function(wnd) {
 	if (wnd.$windowparent == null && !wnd.get_destroyedwindow()) {
@@ -1276,6 +1287,19 @@ BaseWindow.prototype.get_windowrect = function () {
     return BaseWindow.getElementPositionRect(this.root);
 };
 BaseWindow.prototype.set_windowrect = function (rect) {
+    var GRect = Class("GRect"), GPoint = Class("GPoint");
+    if (BaseObject.is(rect, "IGRect") || BaseObject.is(rect, "Rect")) {
+        var r = new GRect(rect);
+        r.toDOMElement(this.root);
+        WindowingMessage.fireOn(this, WindowEventEnum.PosChanged, {});
+        WindowingMessage.fireOn(this, WindowEventEnum.SizeChanged, {});
+    } else if (BaseObject.is("IGPoint") || BaseObject.is(rect, "Point")) {
+        var p = new GPoint(rect);
+        p.toDOMElement(this.root);
+        WindowingMessage.fireOn(this, WindowEventEnum.PosChanged, {});
+    }
+
+    /*
     BaseWindow.setElementPositionRect(this.root, rect);
     if (BaseObject.is(rect, "Point")) {
         if (rect.x != null && rect.y != null) {
@@ -1287,6 +1311,7 @@ BaseWindow.prototype.set_windowrect = function (rect) {
             }
         }
     }
+    */
 };
 BaseWindow.prototype.get_zorder = function () {
     var w = this.get_windowelement();
@@ -1341,8 +1366,10 @@ BaseWindow.prototype.get_isvisible = function() {
 // --------------------- END SECTION -------------------------------------
 
 BaseWindow.prototype.get_clientrect = function (param) {
+    var GRect = Class("GRect");
     var cel = this.get_clientcontainer(param);
-    return BaseWindow.getElementPositionRect(cel);
+    var cel = DOMUtil.toDOMElement(cel);
+    return GRect.fromDOMElementClient(cel);
 };
 BaseWindow.prototype.get_destroyedwindow = function () {
     return this.$destroyedWindow;

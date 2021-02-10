@@ -7,6 +7,8 @@
 //#using "../interfaces/interfaces-full.dep"
 //#using "../implementors/implementors-full.dep"
 
+//#using "../DOMUtil2.js"
+
 //#using "../ViewUtil.js"
 
 //#using "../ViewUtil-legacy.js"
