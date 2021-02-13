@@ -93,7 +93,7 @@ Binding.$regExpRules = /(onload|onenter|onleave|onclose)=(\S+)/gi;
 Binding.$regCheckState = /(checkstate)=(\S+)/i; // comma separated list of events on which to check if the binding will change the object state if the sources were updated
 Binding.$regAutoRead = /(readdata)(?:\((\d+)\))?=(\S+)/i; // comma separated list of events on the SOURCE at which to update the target
 Binding.$regAutoWrite = /(writedata)(?:\((\d+)\))?=(\S+)/i; // comma separated list of events on TARGET at which to update the source
-Binding.$regExpParam = /(parameter|argument|controlparam)\=\'(.*?)\'/i;
+Binding.$regExpParam = /(parameter|argument|controlparam|controlparameter)\=\'(.*?)\'/i;
 Binding.$regRefs = /\b(?:ref|reference)\[([a-zA-Z0-9_]+)\]=(\S+)/gi; // Search for reference definitions
 Binding.$regReplacements = /\%\%([A-Za-z0-9_]+)\%\%/gi; // Replacements before doing anything
 Binding.$regExpColor = /\#([0-9a-fA-F]{6})/i;
@@ -913,7 +913,7 @@ Binding.prototype.$parseExpression = function (expr) {
         arr = Binding.$regExpParam.exec(cnt);
         if (arr != null) {
             this.bindingParameter = arr[2].trim();
-            if (arr[1] == "controlparam") {
+            if (arr[1] == "controlparam" || arr[1] == "controlparameter") {
                 this.$controlParameterName = this.bindingParameter;
                 this.$resolveBindingParameter = this.$resolveControlParameter;
             }

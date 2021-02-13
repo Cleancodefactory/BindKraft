@@ -35,6 +35,7 @@
 //#using "./ITemplateConsumer.js"
 //#using "./ITemplateSource.js"
 //#using "./IUIControl.js"
+//#using "./IUIClosedControl.js"
 //#using "./IUserData.js"
 //#using "./IValidator.js"
 //#using "./IValidatable.js"
