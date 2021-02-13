@@ -9,6 +9,16 @@
 */
 
 /*CLASS*/
+/**
+ * Creates and object instance initializer.
+ * @class
+ * @param {string|null} [desc]  Description of the object's purpose
+ * @param {string} [stype=object] Specifies the type of object to initialize. Can be object or any BK class. 
+ *                                Special value of Initialize.DontInit will prevent creating instance (useful if the initializer is specified only to provide documentation )
+ * @param {...any} [defVal] Optional arguments (up to 10) for the object's constructor.
+ * 
+ * 
+ */
 function InitializeObject(desc, stype, defVal) {
 	// Since defaultValue is no longer used we design it only for use with the documenting functionality
     // deprecate: Initialize.call(this, desc, defVal);
