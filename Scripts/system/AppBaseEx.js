@@ -14,7 +14,7 @@ AppBaseEx.Inherit(AppBase,"AppBaseEx");
  */
 AppBaseEx.prototype.initialize = function(/* *[] */ args) { throw "Not implemented";}
 AppBaseEx.prototype.appinitialize = function(callback, args) {
-	var op = this.initialize.apply(this, args);
+	var op = this.initialize.apply(this, Array.createCopyOf(arguments, 1));
 	var me = this;
 	op.then(function(o) {
 		if (o.isOperationSuccessful()) {

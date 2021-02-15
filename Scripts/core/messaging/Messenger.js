@@ -27,7 +27,7 @@ Messenger.prototype.OnLoad = function () {
     this.$registerForGlobalEvents();
     this.$loadMessengers();
     this.registerWindow(this);
-	System.Default().shutdownevent.add(new Delegate(this, this.OnUnload));
+	System.Default().windowunloadevent.add(new Delegate(this, this.OnUnload));
 };
 Messenger.prototype.OnUnLoad = function () {
     this.unregisterWindow(this);

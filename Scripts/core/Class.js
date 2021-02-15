@@ -78,7 +78,31 @@ var Class = {
         s = cls.classType + ((s.length > 0) ? ("::" + s) : "");
         if (cls.parent != null && cls.parent.constructor != Object) return Class.fullClassType(cls.parent.constructor, s);
         return s;
-    },
+	},
+	inheritedClasses: function(_cls) {
+		var cls = Class.getClassDef(_cls);
+		var results = [];
+		function _(__) {
+			if (__.parent != null && __.parent.constructor != Object) {
+				results.push(Class.getClassName(__.parent.constructor));
+				return _(__.parent.constructor);
+			}
+		}
+		_(cls);
+		return results;
+	},
+	inheritedClassDefs: function(_cls) {
+		var cls = Class.getClassDef(_cls);
+		var results = [];
+		function _(__) {
+			if (__.parent != null && __.parent.constructor != Object) {
+				results.push(Class.getClassDef(__.parent.constructor));
+				return _(__.parent.constructor);
+			}
+		}
+		_(cls);
+		return results;
+	},
     supportedInterfaces: function (_cls, arr, extending) {
 		var cls = Class.getClassDef(_cls);
         var cur = cls;
@@ -157,6 +181,9 @@ var Class = {
 			if (Class.getInterfaceName(inspected) == Class.getInterfaceName(iface)) return true;
 			if (def.extendsInterfaces) {
 				if (Class.getInterfaceName(iface) in def.extendsInterfaces) return true;
+				for (var k in def.extendsInterfaces) {
+					if (Class.doesextend(def.extendsInterfaces[k], iface)) return true;
+				}
 			}
 			return false;
 		},
@@ -188,7 +215,18 @@ var Class = {
 			return Class.doesextend("IRequestInterface");
 			// TODO: Extend the logic - all of the extended interfaces also have to be requestable
 		},
+		interfaceKinds: function(iface) {
+			var arr = ["interface"];
+			if (this.isrequestable(iface)) arr.push("requestable");
+			if (this.ismanaged(iface)) arr.push("managed");
+			return arr;
+		},
 		// -V: 2.7.1
+		// + V: 2.23.6
+		ismanaged: function(iface) {
+			return Class.doesextend("IManagedInterface");
+		},
+		// - V: 2.23.6
 		// + V: 2.18.0
 		typeKind: function(def) {
 			var d = Class.getClassDef(def);

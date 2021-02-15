@@ -128,7 +128,11 @@ IInfoDisplayWindowImpl.classInitialize = function (cls, useTemplate, options) {
     cls.onStructuralQuery("InfoMessageQuery", function (query, procInstructions) {
         var maxp = this.get_maxinfomessagepriority();
         var thisp = (query.priority != null) ? query.priority : 0;
-        if (thisp > maxp && this.throwDownStructuralQuery(query)) return true;
+        // TODO: The old code is controversial, regarding the old code - we should probably let it go further in that case
+        // Check this carefully when possible. Old code:
+        // if (thisp > maxp && this.throwDownStructuralQuery(query)) return true;
+        // Now we just leave the query to continue until it finds a place to show, but there could be discrepancies, it is a very old code.
+        if (thisp > maxp) return false;
         if (this.get_isinfodisplayactive()) {
             this.infoDisplayAdd(query);
             return true;

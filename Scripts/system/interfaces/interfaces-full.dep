@@ -6,6 +6,9 @@
 //#using "./IAppManager.js"
 //#using "./IAppManager2.js"
 
+//#using "./IShellCustomizer.js"
+//#using "./IShellCustomizerPlacer.js"
+
 // Moved to core/env
 //  IAppEnvironment -> IEnvironmentContext // Considered more general than application/daemon
 

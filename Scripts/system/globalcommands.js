@@ -31,13 +31,13 @@ System.DefaultCommands = {
 		if(typeof template != "string"){
 			throw "The template name must be string";
 		}
-		if (template == "default") {
-			WorkspaceWindow.useTemplateConnector = new TemplateConnector("bindkraftstyles/window-workspacewindow-simple");
-		} else {
+		if (template != "default") {
 			WorkspaceWindow.useTemplateConnector = new TemplateConnector(template);
 		}
-		Shell.workspaceWindow = WorkspaceWindow.Default();
-		Shell.workspaceWindow.setFinalAuthority(true);
+		if (window.Shell) {
+			Shell.workspaceWindow = WorkspaceWindow.Default();
+		}
+		WorkspaceWindow.Default().setFinalAuthority(true);
 		Messenger.OnLoad();
 	},
 	"msgbox": function(ctx, api){
@@ -46,6 +46,16 @@ System.DefaultCommands = {
 	},
 	"startshell": function(ctx, api){
 		window.Shell = new SysShell($$("#container").first());
+		// Hard separation between creation of workspace and sysshell - we need this in order to make ws creation controlled by createworkspace command!
+		//Shell.workspaceWindow = WorkspaceWindow.Default();
+		
+	},
+	"customizeshell": function(ctx, api) {
+		var iface = Class.getInterfaceDef(api.pullNextToken());
+		var cls = Class.getClassDef(api.pullNextToken());
+		if (iface != null && cls != null) {
+			window.Shell.addCustomizer(iface, new cls());
+		}
 	},
 	"enterapp": function(ctx, api) {
 		// TODO: Resolve the app management mess at least to some degree and do this
@@ -250,6 +260,7 @@ System.DefaultCommands = {
 
 	gc.register("startshell", null, null, defs.startshell, "");
 
+	gc.register("customizeshell", null, null, defs.customizeshell, "Registers a specific customizer with SysShell. Parameters <interface> <implementation>")
 	// gc.register("grunscript", "grun", null,
 	//						 defs.gcallcript, "Runs a script read from the top result - runs uncontrollably, returns immediately without waiting");
 	gc.register("gcallscript", "gcall", null,

@@ -525,7 +525,7 @@ Base.prototype.findParent = function (key) {
  .Param("key", "The data-key to look for")
  .Returns("The parent with the requested data-key or null if not found. The returned parent will be Base class if the element has data-class specified or the element itself if data-class is not specified on it.")
  .Problem("Search does not obey the template borders!");
-Base.prototype.get_validators = function (vgrp_in, bReturnDeiabled) {
+Base.prototype.get_validators = function (vgrp_in, bReturnDisabled) {
 // +V:2.20.1 - retiring the old code in favor of faster andmore precise one
 	var vgrp = ((typeof vgrp_in == "string" && vgrp_in.length > 0) ? vgrp_in:null);
 	var arr = this.cascadeInstances("IValidator",IUIControl,IValidator); // Validators in sub-components are not included - their components should deal with them
@@ -533,7 +533,7 @@ Base.prototype.get_validators = function (vgrp_in, bReturnDeiabled) {
     for (var i = 0; i < arr.length; i++) {
         v = arr[i];
 		if (vgrp != null) {
-			if (v.isOfGroup(vgrp) && (bReturnDeiabled || !v.get_disabled())) results.push(v);
+			if (v.isOfGroup(vgrp) && (bReturnDisabled || !v.get_disabled())) results.push(v);
 		} else {
 			results.push(v);
 		}

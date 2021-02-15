@@ -16,7 +16,7 @@ function SysShell(shellspace) {
     }
 	this.$dispatcherLeasing = new EventDispatchLeasing("IAppBase");
     $(document).bind("keydown", Delegate.createWrapper(this, this.$sysKeyBindings));
-    System.Default().shutdownevent.add(new Delegate(this, this.shutdown));
+    System.Default().windowunloadevent.add(new Delegate(this, this.shutdown));
 	this.shellLocalApi = new ShellLocalApi(this);
 	LocalAPI.Default().registerAPI(IShellApi,this.shellLocalApi);
 }
@@ -25,6 +25,35 @@ SysShell.Implement(IAjaxContextParameters);
 SysShell.Implement(IStructuralQueryProcessorImpl);
 SysShell.Implement(IDOMConnectedObject);
 SysShell.Implement(IStructuralQueryRouterImpl,"sysshell",function(){ return null;});
+
+//#region Shell customizers
+SysShell.prototype.$customizers = new InitializeObject("All the customizers.");
+SysShell.prototype.addCustomizer = function(iface, cust) {
+	var iface_name = Class.getInterfaceName(iface);
+	if (iface_name == null || cust == null) return;
+	var IShellCustomizer = Interface("IShellCustomizer");
+	if (BaseObject.is(cust, iface) && Class.doesextend(iface, IShellCustomizer)) {
+		this.$customizers[iface_name] = cust;
+		cust.set_shell(this);
+		cust.set_workspacewindow(this.get_workspacewindow());
+	} else {
+		throw "Failed to add the shell customizer " + ((cust != null)?cust.classType():"null") + ", because it is not based on IShellCustomizer interface";
+	}
+}
+SysShell.prototype.removeCustomizer = function(iface) {
+	var iface_name = Class.getInterfaceName(iface);
+	if (iface_name != null) {
+		delete this.$customizers[iface_name];
+	}
+}
+SysShell.prototype.getCustomizer = function(iface) {
+	var iface_name = Class.getInterfaceName(iface);
+	if (iface_name != null) {
+		return this.$customizers[iface_name];
+	}
+	return null;
+}
+//#endregion
 SysShell.prototype.shellLocalApi = null;
 // BEGIN IAjaxContextParameters - implementation
 SysShell.prototype.get_localajaxcontextparameter = function(param) {
@@ -543,12 +572,18 @@ SysShell.prototype.launchEx = function(_appClass, _options,/* callset of argumen
 		app.placeWindow = function(w,options) {
 			if (BaseObject.is(w, "BaseWindow")) {
 				w.set_approot(app);
-				if (options != null && options.role == "shell") {
-					if (typeof options.position == "string") {
-						_shell.workspaceWindow.addChild(w,options.position);
-					}
+				var cust = _shell.getCustomizer("IShellCustomizerPlacer");
+				if (cust != null) {
+					// TODO: It will be better to relieve the apps from setting the options
+					cust.placeWindow(w,options);
 				} else {
-					_shell.workspaceWindow.addChild(w);
+					if (options != null && options.role == "shell") {
+						if (typeof options.position == "string") {
+							_shell.workspaceWindow.addChild(w,options.position);
+						}
+					} else {
+						_shell.workspaceWindow.addChild(w);
+					}
 				}
 				if (lastPlacedWindow == null) {
 					lastPlacedWindow = w;
@@ -641,10 +676,9 @@ SysShell.prototype.shutdownApp = function(appid) {
         return null;
     });
     if (app != null) {
-        if (app.appshutdown()) {
-            this.get_runningapps().removeElement(app);
-        }
-    }
+        return app.ExitApp();
+	}
+	return Operation.From(null);
 };
 SysShell.prototype.killAll = function () { // Shutdown everything
     var app, apps = this.get_runningapps();

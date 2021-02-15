@@ -425,7 +425,7 @@ Function.prototype.$Implement = function (protClass, options /*argument list to 
 		}
 		if (baseprot.extendsInterfaces != null) {
 			for (e in protClass.extendsInterfaces) {
-				this.Implement(protClass.extendsInterfaces[e]); // recursively will implement other base interfaces as needed.
+				this.ImplementEx(protClass.extendsInterfaces[e]); // recursively will implement other base interfaces as needed.
 				// Nothing should repeat, because if the given interface was already implemented the Implement will do nothing,
 				// effectively stopping the recursion from the particular interface further.
 			}
@@ -828,11 +828,12 @@ Function.prototype.ImplementActiveProperty = function (pname, initialize, pstore
 	var args = Array.createCopyOf(arguments,2);
 	this.prototype["$__smartpropertyholder_" + pname] = new InitializeSmartProperty("smart property", propClass, args);
 	this.prototype["get_" + pname] = function() {
-		return this["$__smartpropertyholder_" + pname].get.apply(this, arguments);
+		return this["$__smartpropertyholder_" + pname].get.apply(this["$__smartpropertyholder_" + pname], arguments);
 	}
 	this.prototype["set_" + pname] = function(v) {
-		return this["$__smartpropertyholder_" + pname].set.apply(this, arguments);
+		return this["$__smartpropertyholder_" + pname].set.apply(this["$__smartpropertyholder_" + pname], arguments);
 	}
+	return this;
  }
 
 Function.prototype.ImplementReadProperty = function (pname, initialize, pstore) {

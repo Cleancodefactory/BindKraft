@@ -39,7 +39,7 @@ Function.prototype.registerValidator = function (validatorName) {
                 throw "registerValidator: the name is already used. name:" + validatorName + ", class: " + this.classType;
             }
         } else {
-            throw "registerValidator: incorrect reistration name:" + validatorName + ". Only small caps alphanumeric names are allowed";
+            throw "registerValidator: incorrect registration name:" + validatorName + ". Only small caps alphanumeric names are allowed";
         }
     } else {
         throw "registerValidator: Only descendants of ValidateValue can be registered. Class: " + this.classType;

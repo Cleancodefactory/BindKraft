@@ -38,7 +38,10 @@
                     arr.pop();
                 }
                 for (var i = arr.length - 1; i >= 0; i--) {
-                    if (arr[i].length == 1) arr.pop();
+                    if (arr[i].length == 1) {
+                        arr.pop();
+                        break;
+                    }
                 }
                 if (arr.length > 0) {
                     return arr.join("-");
@@ -46,6 +49,20 @@
             }
         } 
         return null;
+    }
+    /**
+     * @param locale {string}   The locale for which we want to find a match in the availableLocales
+     * @param availableLocales {Array<string>} The list of locales to consider
+     * @param bUltimate {Boolean} If True will return the ultimate fallback locale instead of null in case match is not found.
+     */
+    Localization.findClosestSuitableLocale = function(locale, availableLocales, bUltimate) {
+        if (!BaseObject.is(availableLocales, "Array") || availableLocales.length == 0) return bUltimate?System.Default().get_settings("UltimateFallBackLocale"):null;
+        var al = availableLocales.Select(function(idx, l) {return l.toLowerCase();});
+        while (locale != null && al.indexOf(locale) < 0) {
+            locale = this.truncateLocaleTag(locale);
+        }
+        if (locale == null) bUltimate?System.Default().get_settings("UltimateFallBackLocale"):null;
+        return locale;
     }
     // - Utilities
 
@@ -85,7 +102,9 @@
     }
 
     // +PUBLIC
-
+    Localization.prototype.get_culture = function() {
+        return this.$lang;
+    }
     /**
      * Returns and creates if necessary a branch for the app specified in the constructor
      * 

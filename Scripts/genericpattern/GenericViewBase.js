@@ -40,6 +40,9 @@ GenericViewBaseEx.prototype.set_isDirty = function (v) {
 GenericViewBaseEx.prototype.set_isdirty = function (v) {
 	this.set_isDirty(v);
 }
+GenericViewBaseEx.prototype.makeViewDirty = function() {
+    this.set_isdirty(true);
+}
 GenericViewBaseEx.prototype.viewdirtystatechanged = new InitializeEvent("Fired whenever the isdirty changes state");
 
 GenericViewBaseEx.prototype.get_roleid = function () {

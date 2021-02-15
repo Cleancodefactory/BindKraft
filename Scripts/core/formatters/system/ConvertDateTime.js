@@ -13,7 +13,7 @@ ConvertDateTime.$reMS = /\/Date\(([+-]?\d+)\)\//i;
 ConvertDateTime.prototype.ToDate = {
 	ISO: function(val) {
 		// Limitator - intentionally limiting the syntax  to the one widely agreed upon.
-		if (typeof val == "string" && /^\d{4}-\d{1,2}-\d{1,2}T\d{1,2}:\d{1,2}:\d{1,2}(?:\.\d+)?Z$/.test(val)) {
+		if (typeof val == "string" && /^\d{4}-\d{1,2}-\d{1,2}(?:T|\s)\d{1,2}:\d{1,2}:\d{1,2}(?:\.\d+)?Z$/.test(val)) {
 			return new Date(val);
 		}
 		return null;

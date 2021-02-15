@@ -48,8 +48,11 @@ LengthValidatorRule.prototype.validateValue = function (validator, value, bindin
 	if (!this.get_allowEmptySpaces())
 		value = value.trim();
 	
-	if (!IsNull(value) && (!IsNull(min)) && (!IsNull(max))) {
-		if ((value.length < min) || (max < value.length)) {
+	if (!IsNull(value)) {
+		if (typeof min == "number" && !isNaN(min) && value.length < min) {
+			result = ValidationResultEnum.incorrect;
+		}
+		if (typeof max == "number" && !isNaN(max) && value.length > max) {
 			result = ValidationResultEnum.incorrect;
 		}
 	}
