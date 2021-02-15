@@ -57,6 +57,7 @@
     MediaQueryTracker.prototype.onQueryChange = new InitializeMethodCallback("Handles events from mediaquery lists", function(e) {
         //////////
     });
+    //#region Media query registration
     MediaQueryTracker.prototype.$connectQuery = function(q) {
         if (q.addListener) {
             q.addListener(this.onQueryChange);
@@ -89,4 +90,9 @@
         }
         for (var i = 0; i < arr.length; this.$queries[arr[i++]] = null);
     }
+    //#endregion Media query registration
+
+    //#region Notificator registrations
+    
+    //#endregion Notificator registrations    
 })();
