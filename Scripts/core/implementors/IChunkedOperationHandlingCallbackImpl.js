@@ -43,7 +43,7 @@ IChunkedOperationHandlingCallbackImpl.classInitialize = function(cls) {
 	cls.prototype.$chunks = new InitializeArray("Chunks for processing"); // { succes:, data: } All chunks are added to the queue and remoced when processed.
 	cls.prototype.ReportOperationChunk = function(/*bool*/ success, errorinfo_or_data) { 
 		if (this.isOperationComplete()) { 
-			throw "The operation is already comlete. Chunks can be reported only on incomplete operation.";
+			throw "The operation is already complete. Chunks can be reported only on incomplete operation.";
 		}
 		this.$chunks.push({	
 			success: success, 
