@@ -447,10 +447,17 @@ JBUtil.getRelatedElements = function (baseEl, patt, details) {
     return result;
 };
 JBUtil.getRelatedObjects = function(baseEl, patt, arrTypes_or_types) {
-	var details = {};
+	var details = { arrayResult: true };
 	var result = null;
 	var els = JBUtil.getRelatedElements(baseEl, patt, details);
 	var types = [];
+    if (BaseObject.is(arrTypes_or_types, "Array")) {
+        types = arrTypes_or_types;
+    } else if (typeof arrTypes_or_types == "string") {
+        types = arrTypes_or_types.split(",").Select(function(i,p) {
+            return p.replace(/(^\s+)|(\s+$)/g,"");
+        })
+    }
 	var i, itm;
 	for (i = 2; i < arguments.length; i++) {
 		var t = arguments[i];
