@@ -36,6 +36,11 @@ SysShell.prototype.addCustomizer = function(iface, cust) {
 		this.$customizers[iface_name] = cust;
 		cust.set_shell(this);
 		cust.set_workspacewindow(this.get_workspacewindow());
+		var op = cust.initialize();
+		if (!BaseObject.is(op,"Operation")) {
+			return Operation.From(op);
+		}
+		return op;
 	} else {
 		throw "Failed to add the shell customizer " + ((cust != null)?cust.classType():"null") + ", because it is not based on IShellCustomizer interface";
 	}
