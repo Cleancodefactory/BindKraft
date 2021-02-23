@@ -459,10 +459,10 @@ JBUtil.getRelatedObjects = function(baseEl, patt, arrTypes_or_types) {
         })
     }
 	var i, itm;
-	for (i = 2; i < arguments.length; i++) {
+	for (i = 3; i < arguments.length; i++) {
 		var t = arguments[i];
 		if (typeof t == "string") {
-			types.push(t);
+			types.push(t.replace(/(^\s+)|(\s+$)/g,""));
 		} else if (BaseObject.is(t, "Array")) {
 			types = types.concat(t);
 		} 

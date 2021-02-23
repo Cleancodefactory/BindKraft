@@ -9,7 +9,7 @@ function GenericViewBaseEx(el) {
 GenericViewBaseEx.Inherit(ViewBase, "GenericViewBaseEx");
 GenericViewBaseEx.Implement(ITemplateRoot);
 GenericViewBaseEx.Implement(IAjaxContextParameters);
-GenericViewBaseEx.Implement(IViewContainerEventsSink);
+GenericViewBaseEx.Implement(InterfaceImplementer("IViewContainerEventsSinkEmptyImpl"));
 GenericViewBaseEx.Implement(IOpionatedView);
 GenericViewBaseEx.Implement(IStructuralQueryProcessorImpl);
 
