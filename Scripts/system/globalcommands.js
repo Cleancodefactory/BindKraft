@@ -225,9 +225,30 @@ System.DefaultCommands = {
 		if (typeof window.g_ApplicationCulture == "string" && /^\w{2}(-.+)?$/.test(window.g_ApplicationCulture)) {
 			System.Default().settings.CurrentLang = window.g_ApplicationCulture;
 		}
+	},
+	"mediatracker": function(ctx, api) {
+		var MediaQueryTracker = Class("MediaQueryTracker");
+		MediaQueryTracker.Default();
+	},
+	"mediaquery": function(ctx, api) {
+		var MediaQueryTracker = Class("MediaQueryTracker");
+		var name = api.pullNextToken();
+		var query = api.pullNextToken();
+		MediaQueryTracker.Default().add(name, query);
+	},
+	"medianotify": function(ctx, api) {
+		var MediaQueryTracker = Class("MediaQueryTracker");
+		var name = api.pullNextToken();
+		var expression = api.pullNextToken();
+		MediaQueryTracker.Default().addNotificator(name, expression);
+	},
+	"mediamessenger": function(ctx, api) {
+		var MediaQueryTracker = Class("MediaQueryTracker");
+		var name = api.pullNextToken();
+		var expression = api.pullNextToken();
+		MediaQueryTracker.Default().addNotificator(name, expression, "MediaQueryNotificatorBroadcaster");
 	}
 };
-
 
 // Register the default global commands here.
 // Additional commands are registered from outside as:
@@ -287,4 +308,10 @@ System.DefaultCommands = {
 	gc.register("loadtranslations", "lts", null, defs["loadtranslations"], "Loads all translations for an app. usage: loadtranslations <appClass> <modulename>:<nodeset>[/<node1>.<node2>...]");
 	gc.register("syslang", "systemlocale", null, defs["syslang"], "Sets the system language from query parameter with specified name or the built-in name if default is specified. If the parameter is missing the g_ApplicationCulture is used. If that is missing too - en is set. usage: syslang <paramname>|default");
 	
+	// +V 2.23.8
+	gc.register("mediatracker", null, null, defs["mediatracker"], "Ensures that the media tracker is running and registered with the LocalAPI. syntax: mediatracker");
+	gc.register("mediaquery", null, null, defs["mediaquery"], "Registers a media query. syntax: mediaquery name query");
+	gc.register("medianotify", null, null, defs["medianotify"], "Registers a basic media notificator. syntax: medianotify name expression");
+	gc.register("mediamessenger", null, null, defs["mediamessenger"], "Registers a media notificator which also posts Messenger notification MediaChangedQuery. syntax: mediamessenger name expression");
+	// -V 2.23.8
 })();

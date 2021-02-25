@@ -11,6 +11,7 @@
 //#using "../urlactions/urlactions-full.dep"
 //#using "../tokenstorage/tokenstorage-full.dep"
 
+//#using "../queries/queries.dep"
 //#using "../AppBase.js"
 //#using "../AppBaseEx.js"
 //#using "../System.js"
@@ -27,6 +28,7 @@
 //#using "../surrogateapps/surrogateapps-full.dep"
 //#using "../base/base-full.dep"
 //#using "../apis/apis-full.dep"
+//#using "../mediaquery/mediaquery.dep"
 //#using "../localization/localization.dep"
 //#using "../shellcustomizers/shellcustomizers.dep"
 

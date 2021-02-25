@@ -2,6 +2,7 @@
 
 
 // Workspace (the desktop) features are defined by this Interface
+// This interface will probably be obsoleted.
 function IWorkspaceWindow() {
 }
 IWorkspaceWindow.Interface("IWorkspaceWindow");
