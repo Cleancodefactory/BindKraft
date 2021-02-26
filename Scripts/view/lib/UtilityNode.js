@@ -14,13 +14,50 @@ function UtilityNode() {
     Base.apply(this,arguments);
 }
 UtilityNode.Inherit(Base, "UtilityNode")
-.Implement(ICustomParameterizationStdImpl, "enabled", "disabled", "zorder", "zorderMin");
+.Implement(ICustomParameterizationStdImpl, "enabled", "disabled", "zorder", "zorderMin", "radiopartners");
 UtilityNode.ImplementProperty("enabled", new InitializeStringParameter("Initially enabled", ""));
 UtilityNode.ImplementProperty("disabled", new InitializeStringParameter("Initially disabled", ""));
 UtilityNode.ImplementProperty("zorder", new InitializeStringParameter("Perform zordering on these", null));
 UtilityNode.ImplementProperty("zorderMin", new InitializeNumericParameter("Minimal z-order", 100));
-
-
+UtilityNode.ImplementProperty("radiomode", new InitializeBooleanParameter("In that mode when item is enabled the others are disabled.", false), 
+        null, function(oval, nval) {
+            if (nval) {
+                this.ExecBeforeFinalInit([], function() {
+                    this.applyRadioMode();
+                    this.enabledui_changed.invoke(this, null);
+                });
+            }
+});
+UtilityNode.ImplementProperty("radiopartners", new InitializeStringParameter("Radio mode partners - comma separated list of parent/child data-key addresses.", null))
+UtilityNode.prototype.applyRadioMode = function(enabled) {
+    var uiname;
+    if (this.get_radiomode()) {
+        for (uiname in this.$enableui) {
+            if (this.$enableui.hasOwnProperty(uiname)) {
+                if (this.$enableui[uiname]) {
+                    this.$enableui[uiname] = false;
+                }
+            }
+        }
+        if (typeof enabled == "string" && this.$enableui.hasOwnProperty(enabled)) {
+            this.$enableui[enabled] = true;
+            this.$updateRadioPartners();
+        } else {
+            this.enabledui_changed.invoke(this, null);
+        }
+    }
+}
+UtilityNode.prototype.$updateRadioPartners = function() {
+    var partners = this.get_radiopartners();
+    if (typeof partners == "string") {
+        var arr = this.getRelatedObjects(partners,["UtilityNode"]);
+        if (arr && arr.length) {
+            for (var i = 0; i < arr.length; i++) {
+                arr[i].applyRadioMode();
+            }
+        }
+    }
+}
 
 UtilityNode.prototype.finalinit = function() {
     var i,arr, v = this.get_enabled();
@@ -72,6 +109,7 @@ UtilityNode.prototype.enableUI = function(e_sender, dc, bind) {
     if (typeof prop == "string" && prop.length > 0) {
         if (!this.$enableui[prop]) {
             this.$enableui[prop] = true;
+            this.applyRadioMode(prop);
             this.enabledui_changed.invoke(this, prop);
         }
     } else {
@@ -106,6 +144,7 @@ UtilityNode.prototype.toggleUI = function(e_sender, dc, bind) {
             this.$enableui[prop] = false;
         } else {
             this.$enableui[prop] = true;
+            this.applyRadioMode(prop);
         }
         this.enabledui_changed.invoke(this, prop);
     } else {
@@ -114,6 +153,7 @@ UtilityNode.prototype.toggleUI = function(e_sender, dc, bind) {
 }
 UtilityNode.prototype.toggleAll = function(e_sender, dc, bind) {
     var state = null;
+    var x = null;
     for (var k in this.$enableui) {
         if (this.$enableui.hasOwnProperty(k) && k != "") {
             if (state === null) state = this.$enableui[k];
@@ -121,9 +161,11 @@ UtilityNode.prototype.toggleAll = function(e_sender, dc, bind) {
                 this.$enableui[k] = false;
             } else {
                 this.$enableui[k] = true;
+                x = k;
             }
         }
     }
+    if (x != null) this.applyRadioMode(x);
     this.enabledui_changed.invoke(this, null);
 }
 UtilityNode.prototype.get_someenabled = function() {
@@ -147,11 +189,14 @@ UtilityNode.prototype.get_allenabled = function() {
     return true;
 }
 UtilityNode.prototype.enableAll = function(e_sender, dc, bind) {
+    var x = null;
     for (var k in this.$enableui) {
         if (this.$enableui.hasOwnProperty(k) && k != "") {
+                if (x == null) x = k;
                 this.$enableui[k] = true;
         }
     }
+    if (x != null) this.applyRadioMode(x);
     this.enabledui_changed.invoke(this, null);
 }
 UtilityNode.prototype.disableAll = function(e_sender, dc, bind) {
@@ -162,17 +207,23 @@ UtilityNode.prototype.disableAll = function(e_sender, dc, bind) {
     }
     this.enabledui_changed.invoke(this, null);
 }
+/**
+ * 
+ */
 UtilityNode.prototype.smartEnableDisableAll = function(e_sender, dc, bind) {
     var some = this.get_someenabled();
+    var x = null;
     for (var k in this.$enableui) {
         if (this.$enableui.hasOwnProperty(k) && k != "") {
-                if (some) {
-                    this.$enableui[k] = false;
-                } else {
-                    this.$enableui[k] = true;
-                }
+            if (some) {
+                this.$enableui[k] = false;
+            } else {
+                if (x == null) x = k;
+                this.$enableui[k] = true;
+            }
         }
     }
+    if (x != null) this.applyRadioMode(x);
     this.enabledui_changed.invoke(this, null);
 }
 

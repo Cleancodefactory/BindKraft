@@ -129,6 +129,13 @@
 	GRect.empty = function() {
 		return new GRect(0,0,0,0);
 	}
+	GRect.nullOrEmpty = function(rect) {
+		if (BaseObject.is(rect, "IGRect")) {
+			return rect.isEmpty();
+		} else {
+			return true; // null and not a rect are treated the same
+		}
+	}
 	GRect.fromDOMElementViewport = function(_el) {
 		var el = DOMUtil.toDOMElement(_el);
 		if (el != null && el instanceof HTMLElement) {

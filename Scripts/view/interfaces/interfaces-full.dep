@@ -40,6 +40,7 @@
 //#using "./IValidator.js"
 //#using "./IValidatable.js"
 //#using "./IViewContainerEventsSink.js"
+//#using "./IViewContainerInflictedChanges.js"
 //#using "./IOpionatedView.js"
 //#using "./IViewHostQuery.js"
 //#using "./ITemplateFetcher.js"

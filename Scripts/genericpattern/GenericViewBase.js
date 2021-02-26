@@ -9,7 +9,7 @@ function GenericViewBaseEx(el) {
 GenericViewBaseEx.Inherit(ViewBase, "GenericViewBaseEx");
 GenericViewBaseEx.Implement(ITemplateRoot);
 GenericViewBaseEx.Implement(IAjaxContextParameters);
-GenericViewBaseEx.Implement(IViewContainerEventsSink);
+GenericViewBaseEx.Implement(InterfaceImplementer("IViewContainerEventsSinkEmptyImpl"));
 GenericViewBaseEx.Implement(IOpionatedView);
 GenericViewBaseEx.Implement(IStructuralQueryProcessorImpl);
 
@@ -39,6 +39,9 @@ GenericViewBaseEx.prototype.set_isDirty = function (v) {
 
 GenericViewBaseEx.prototype.set_isdirty = function (v) {
 	this.set_isDirty(v);
+}
+GenericViewBaseEx.prototype.makeViewDirty = function() {
+    this.set_isdirty(true);
 }
 GenericViewBaseEx.prototype.viewdirtystatechanged = new InitializeEvent("Fired whenever the isdirty changes state");
 

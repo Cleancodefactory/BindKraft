@@ -67,7 +67,7 @@ IOperationHandlingCallbackImpl.classInitialize = function(cls, force) {
 	// Must invoke handler synchronously
 	cls.prototype.CompleteOperation = function(success, errorinfo_or_data) {
 		if (this.isOperationComplete()) { 
-			throw "The operation is already comlete";
+			throw "The operation is already complete";
 		}
 		this.$operationCompleted = true;
 		if (success) {

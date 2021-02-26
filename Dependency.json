@@ -1,7 +1,7 @@
 ﻿{
   "name": "BindKraft",
-  "version": "2.19.1",
-  "description": "",
+  "version": "2.23.8",
+  "description": "Large browser Javascript library. Provides templates, class inheritance and interface implementation, runs OS-like workspace with multiple apps and windows.",
   "keywords": [],
   "author": "Clean Code Factory",
   "license": "MIT License",
@@ -11,6 +11,10 @@
     {
       "version": "2.19.1",
       "info": "Initial creation"
+    },
+    {
+      "version": "2.23.8",
+      "info": "2021 Feb head"
     }
   ]
 }

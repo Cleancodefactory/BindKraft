@@ -24,6 +24,8 @@
 //#using "./IApplicationState.js"
 //#using "./IApplicationState2.js"
 //#using "./ILocalAPIImports.js"
+//#using "./IMediaQueryNotificator.js"
+//#using "./IMediaQueryTracker.js"
 
 // Backward compatibility temporary interface markers
 

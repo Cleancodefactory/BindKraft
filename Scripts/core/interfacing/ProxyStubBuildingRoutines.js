@@ -10,7 +10,8 @@ var ProxyStubBuildingRoutines = {
 		return BaseObject.is(inst, "$Root_BaseProxy");
 	},
 	refMethod: function(key) {
-		return new Function('if (this.$instance == null) throw "The proxy is no longer connected";\
+		return new Function('if (this.$instance != null && this.$instance.__obliterated) { this.$instance = null; }\
+							if (this.$instance == null) throw "The proxy is no longer connected";\
 							var r = this.$instance.' + key + '.apply(this.$instance, this.$wrapArguments(arguments,"' + key + '"));\
 							return this.$wrapResult(r,"' + key + '");');
 	},

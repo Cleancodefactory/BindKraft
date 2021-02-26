@@ -755,6 +755,16 @@ Function.prototype.ExtendMethod = function(method, withMethod, bRunFirst, bRetur
 //// PROPERTY IMPLEMENTATION HELPERS //////////////////////////////////////
  
 // MyClass.ImplementProperty("myprop", new Initialize("holds something",null) [, "$myproperty"[, "mycallback"]])
+/**
+ * @param {string} pname Property name. The generated property will be available as a pair of functions get_(pname)/set_(pname)
+ * @param {Initialize} [initialize] Initializer appropriate for the property's purpose. While optional, this also provides run-time documentation.
+ * @param {string} [pstore] By default the underlying field is named $(pname), this parameter enables to specify it (exactly)
+ * @param {string|function} [changeCallback] If provided calls the function on property change. String - calls a method with (pname, old_value, new_value), Function - calls it with (old_value, new_value) and this pointing to the instance (executes like a method)
+ * @param {boolean} [force] If true is passed the changeCallback is called on every set no matter if the value has changed or not.
+ * @returns {Function} Returns the definition and can be chained with other Implement statements and other class/interface definition statements.
+ * 
+ * callback is called after the new value is set, it should not change the value
+ */
 Function.prototype.ImplementProperty = function (pname, initialize, pstore, changeCallback, force) {
 	var pstoreprop = (pstore != null) ? pstore : "$" + pname;
 	if (initialize == null) initialize = new Initialize("(no description)", null);

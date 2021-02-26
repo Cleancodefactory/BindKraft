@@ -1,7 +1,7 @@
 
 
 //#using "Base.js"
-//#using "BaseElementBehavior.js"
+//#using "ElementBehaviorBase.js"
 //#using "CardStyle.js"
 //#using "DefaultBase.js"
 //#using "BehaviorBinder.js"

@@ -7,6 +7,7 @@
 //#using "./IDataItemsConnectorImpl.js"
 //#using "./IParametersObjectImpl.js"
 //#using "./ITemplateSourceImpl.js"
+//#using "./IViewContainerEventsSinkEmptyImpl.js"
 //#using "./IViewContainerEventsSinkImpl.js"
 //#using "./IOpenCloseFunctionalityImpl.js"
 //#using "./IDisplayDataSupplierImpl.js"

@@ -124,6 +124,13 @@ Expander.prototype.Collapse = function(e, dc) {
 
     this.statechangedevent.invoke(this, false);
 };
+Expander.prototype.Toggle = function() {
+    if (this.$isopen) {
+        this.Collapse();
+    } else {
+        this.Expand();
+    }
+}
 Expander.prototype.$updateRadioSet = function() {
     var others = this.getRelatedElements(this.radioSet);
     var lt = this;

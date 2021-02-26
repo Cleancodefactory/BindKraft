@@ -139,7 +139,13 @@ BaseObject.lastError = (function() {
 		
 	};
 })();
-
+/**
+ * Gets/sets last error. If called without any arguments returns the system last error object
+ * @param {number|string} [code] Code of the error or its description (for short report)
+ * @param {string} [text] If code is number this is the description, otherwise this is the method name (see method)
+ * @param {string} [method] Method name in which the error occurred.
+ * @returns {object} The last error object. Use .code() for error code, .text() for description, .iserror() or .none() to make sure is an error ...
+ */
 BaseObject.prototype.LASTERROR = function(code, text, method) {
 	if (arguments.length == 0) {
 		return BaseObject.lastError;
@@ -150,6 +156,13 @@ BaseObject.prototype.LASTERROR = function(code, text, method) {
 		return BaseObject.lastError.report(code, text, this.classType(), method);
 	}
 }
+/**
+ * Gets/sets last error. If called without any arguments returns the system last error object. This is the static version of the function.
+ * @param {number|string} [code] Code of the error or its description (for short report)
+ * @param {string} [text] If code is number this is the description, otherwise this is the method name (see method)
+ * @param {string} [method] Method name in which the error occurred.
+ * @returns {object} The last error object. Use .code() for error code, .text() for description, .iserror() or .none() to make sure is an error ...
+ */
 BaseObject.LASTERROR = function(code, text, method) {
 	if (arguments.length == 0) {
 		return BaseObject.lastError;
