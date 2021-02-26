@@ -11,7 +11,58 @@
     WorkspaceBase.prototype.$workspacewindow = null;
     //#endregion
 
-    // Main API methods
+    //#region Paremeters
+    WorkspaceBase.$parameters = new InitializeObject("Various parameters with usage depending on the workspace type");
+    WorkspaceBase.setParameter = function(name, value) {
+        this.$parameters[name] = vale;
+    }
+    WorkspaceBase.prototype.setParameter = function(name, value) { WorkspaceBase.setParameter(name, value); }
+
+    WorkspaceBase.getParameter = function(name) {
+        if (this.$parameters.hasOwnProperty(name)) {
+            return this.$parameters[name];
+        }
+        return null;
+    }
+    WorkspaceBase.prototype.getParameter = function(name) { return WorkspaceBase.getParameter(name);}
+
+    WorkspaceBase.mixParameter = function(name, value) {
+        if (this.$parameters.hasOwnProperty(name) && this.$parameters[name] != null) {
+            if (Object.getPrototypeOf(this.$parameters[name]) == Object.prototype) {
+                if (value != null && Object.getPrototypeOf(value) == Object.prototype) {
+                    this.$parameters[name] = BaseObject.CombineObjects(this.$parameters[name], value);
+                }
+                return this.$parameters[name];
+            } else if (Array.isArray(this.$parameters[name])) {
+                if (Array.isArray(value)) {
+                    this.$parameters[name] = this.$parameters[name].concat(value);
+                }
+                return this.$parameters[name];
+            }
+            this.$parameters[name] = value;
+            return this.$parameters[name];
+        } else {
+            this.$parameters[name] = value;
+            return this.$parameters[name];
+        }
+        return null;
+    }
+    WorkspaceBase.prototype.mixParameter = function(name, value) { return WorkspaceBase.mixParameter(name,value); }
+
+    WorkspaceBase.mixMultipleParameters = function(parameters) {
+        if (Object.getPrototypeOf(parameters) == Object.prototype) {
+            for (var k in parameters) {
+                if (parameters.hasOwnProperty(k)) {
+                    this.mixParameter(k, parameters[k]);
+                }
+            }
+        }
+        return this.$parameters;
+    }
+    WorkspaceBase.prototype.mixMultipleParameters = function(parameters) { return WorkspaceBase.mixMultipleParameters(parameters); }
+    //#endregion
+
+    //#region  Main API methods
 
     /**
      * This method must be called only once, any 
@@ -22,7 +73,13 @@
      * @returns {Boolean} Indicates if initialization was performed (true) or was previously done (false).
      */
     WorkspaceBase.prototype.initialize = function(domroot, parameters) {
-
+        this.mixMultipleParameters(parameters);
+        if (!(domroot instanceof HTMLElement)) {
+            this.LASTERROR("The specified domroot element is not an HTMLElement", "initialize");
+            throw "Cannot attach to DOM, check the domroot argument passed to initialize";
+        }
+        return oncompassneedscalibration.From(null);
+        // Incomplete - overrides should call it first to save some effort on checking arguments
     }
     /**
      * @returns {Boolean} True if the workspace was initialized already.
@@ -57,5 +114,5 @@
     WorkspaceBase.prototype.removeWindow = function(wnd) {
 
     }
-
+    //#endregion
 })();

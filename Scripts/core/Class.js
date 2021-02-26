@@ -8,6 +8,7 @@ of prototyping the standard objects. The namespaces are nammed with preffix SC t
 Function.classes = new Object();
 Function.interfaces = new Object();
 Function.interfaceImplementers = new Object();
+Function.enumerations = new Object();
 function Class(class_name) {
 	if (typeof class_name == "string") {
 	 	if (typeof Function.classes[class_name] == "function") return Function.classes[class_name];
@@ -29,6 +30,46 @@ function InterfaceImplementer(if_name) {
 	if (typeof if_name == "string") {
 		if (typeof Function.interfaceImplementers[if_name] == "function") return Function.interfaceImplementers[if_name];
 		throw "Interface implementer " + if_name + " is not defined.";
+	}
+	return null;
+}
+/**
+ * Used for both definition and import. When the name is specified without definition an import is performed.
+ * @param {string} name The name of the enumeration
+ * @param {object} [definition] When defining an enumeration - the enumeration definition as an object literal.
+ */
+function Enumeration(name, definition) {
+	if (arguments.length > 2) {
+		CompileTime.err("Enumeration has been called with wrong number of arguments.");		
+		if (JBCoreConstants.CompileTimeThrowOnErrors) {
+			throw "Enumeration has been called with wrong number of arguments.";
+		}
+		return null;
+	}
+	if (typeof name == "string") {
+		if (Function.enumerations == null) {
+			Function.enumerations = {};
+		}
+		if (definition != null) {
+			if (typeof definition == "object") {
+				if (Function.enumerations.hasOwnProperty(name)) {
+					CompileTime.err("Enumeration " + name + " is being replaced. While this will not stop further execution it is an error and has to be corrected.");		
+					if (JBCoreConstants.CompileTimeThrowOnErrors) {
+						throw "Enumeration " + name + " is being replaced. While this will not stop further execution it is an error and has to be corrected.";
+					}
+				}
+				Function.enumerations[name] = definition;
+				return definition;
+			}
+			CompileTime.err("Enumeration definition is incorrect. Supplied definition for the enum" + name + " is not an object.");
+			if (JBCoreConstants.CompileTimeThrowOnErrors) {
+				throw "Enumeration definition is incorrect. Supplied definition for the enum" + name + " is not an object.";
+			}
+		} else {
+			if (Function.enumerations.hasOwnProperty(name)) {
+				return Function.enumerations[name];
+			}
+		}
 	}
 	return null;
 }
