@@ -6,10 +6,10 @@
 
 //#using "../jquery.js"
 //#using "../jquery-ui.js"
-//#using "../jquery.ui.touch-punch.js"
-//#using "../jquery.iframe-transport.js"
-//#using "../jquery.fileupload.js"
-//#using "../jquery.qtip-1.0.0-rc3.js"
+////#using "../jquery.ui.touch-punch.js"
+////#using "../jquery.iframe-transport.js"
+////#using "../jquery.fileupload.js"
+////#using "../jquery.qtip-1.0.0-rc3.js"
 //#using "../stacktrace.js"
 
 
