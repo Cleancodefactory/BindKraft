@@ -3,6 +3,8 @@
     /*
         Parameters:
             windowClass     string      The class name of the workspace window
+            windowTemplate  Connector   Template
+            windowFlags     number
     */
 
 
@@ -26,12 +28,15 @@
         this.LASTERROR("Cannot determine the class of the workspace window", "initialize");
         if (wvls == null) throw "Cannot determine the class of the workspace window";
         var template = this.getParameter("windowTemplate");
+        var flags = this.getParameter("windowFlags");
         this.$rootwindow = new wcls(function(w) {
                 w.attachInDOM(domroot);
                 w.fireInitialResize();
                 op.CompleteOperation(true, null);
             },
-            (BaseObject.is(template, "Connector")?template:null)
+            ((typeof flags == "number")?flags:null),
+            (BaseObject.is(template, "Connector")?template:null),
+
         );
         return op;
     }

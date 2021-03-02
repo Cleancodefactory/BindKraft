@@ -82,10 +82,13 @@
         // Incomplete - overrides should call it first to save some effort on checking arguments
     }
     /**
+     * The implementation is left to the inheritors, because it should be based on completeness of the initialization.
+     * 
      * @returns {Boolean} True if the workspace was initialized already.
+     * 
      */
     WorkspaceBase.prototype.get_initialized = function() {
-
+        throw "not implemented";
     }
     /**
      * @param whose {null|string|IApp}  Optional, runningappId or app instance whose windows to return
@@ -95,7 +98,7 @@
      * whose set to empty string will return the non-owned windows (if any)
      */
     WorkspaceBase.prototype.getWindows = function(whose, flags) {
-
+        throw "not impl";
     }
     /**
      * Places/adds a window according to the flags specified
@@ -103,16 +106,16 @@
      * @param flags {integer} Flags for the window placement
      */
     WorkspaceBase.prototype.addWindow = function(wnd, flags) {
-
+        throw "not impl";
     }
     WorkspaceBase.prototype.moveWindow = function(wnd, flags) {
-
+        throw "not impl";
     }
     /**
      * Removes a window from the workspace wherever it is
      */
     WorkspaceBase.prototype.removeWindow = function(wnd) {
-
+        throw "not impl";
     }
     //#endregion
 })();
