@@ -18,3 +18,4 @@ IAttachedWindowBehaviors.prototype.detachAllBehaviors = function(callback) { thr
 
 IAttachedWindowBehaviors.prototype.adviseAttachedBehaviors = function(msg) { throw "not impl"; }
 IAttachedWindowBehaviors.prototype.attachedBehavior = function(/* callback or string */ callback_or_name) { throw "not impl"; }
+IAttachedWindowBehaviors.prototype.adviseForStructuralQueryProcessing = function(query, procInstruction) { throw "not impl"; }

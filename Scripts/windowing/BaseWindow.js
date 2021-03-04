@@ -72,7 +72,12 @@ BaseWindow.Implement(IWindowTemplate);
 BaseWindow.Implement(ITemplateRoot);
 BaseWindow.Implement(IExposeCommands);
 BaseWindow.Implement(IViewHostWindowImpl);
-BaseWindow.Implement(IStructuralQueryProcessorImpl);
+BaseWindow.Implement(IStructuralQueryProcessorImpl, 
+        null,
+        function (query, procInstr) {
+            // Postprocessing queries
+            return this.adviseForStructuralQueryProcessing(query, procInstr);
+        });
 BaseWindow.Implement(IStructuralQueryRouter);
 BaseWindow.Implement(IStructuralQueryEmiterImpl, "windows", function () { return this.get_approot() || this.get_windowparent(); });   // Re-Implement the emiter for windows
 BaseWindow.Implement(IAppletStorage); // Implemented but provided as service only if this.provideAsService=["IAppletStorage"];

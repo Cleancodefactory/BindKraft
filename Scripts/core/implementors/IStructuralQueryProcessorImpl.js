@@ -6,7 +6,7 @@
 // Usage: MyClass.Implement(IStructuralQueryProcessorImpl);
 function IStructuralQueryProcessorImpl() { }
 IStructuralQueryProcessorImpl.InterfaceImpl(IStructuralQueryProcessor, "IStructuralQueryProcessorImpl");
-IStructuralQueryProcessorImpl.classInitialize = function(cls) {
+IStructuralQueryProcessorImpl.classInitialize = function(cls, precallback, postcallback) {
     cls.onStructuralQuery = function(_stype, method) {
 		var stype = _stype;
 		if (typeof _stype == "string") {
@@ -23,13 +23,36 @@ IStructuralQueryProcessorImpl.classInitialize = function(cls) {
 		var methodName = "onStructuralQuery_" + qryClassName;
 		cls.prototype[methodName] = method;
     };
-};
-IStructuralQueryProcessorImpl.prototype.processStructuralQuery = function(query, processInstructions) {
-	if (BaseObject.is(query,"BaseObject")) {
-		var methodName = "onStructuralQuery_" + query.classType();
-		if (typeof this[methodName] == "function") {
-			return this[methodName](query, processInstructions);
-		}
+	if (typeof precallback != null || postcallback != null) {
+		cls.prototype.processStructuralQuery = function(query, processInstructions) {
+			if (BaseObject.is(query,"BaseObject")) {
+				if (typeof precallback == "string" ) {
+					if (this[precallback](query, processInstructions)) return true;
+				} else if (typeof precallback == "function") {
+					if (precallback.call(this, query, processInstructions)) return true;
+				}
+				var methodName = "onStructuralQuery_" + query.classType();
+				if (typeof this[methodName] == "function") {
+					if (this[methodName](query, processInstructions)) return true;
+				}
+				if (typeof postcallback == "string" ) {
+					if (this[postcallback](query, processInstructions)) return true;
+				} else if (typeof postcallback == "function") {
+					if (postcallback.call(this, query, processInstructions)) return true;
+				}
+			}
+			return false;
+		};
+	} else {
+		cls.prototype.processStructuralQuery = function(query, processInstructions) {
+			if (BaseObject.is(query,"BaseObject")) {
+				var methodName = "onStructuralQuery_" + query.classType();
+				if (typeof this[methodName] == "function") {
+					return this[methodName](query, processInstructions);
+				}
+			}
+			return false;
+		};
 	}
-	return false;
+
 };

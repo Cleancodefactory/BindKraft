@@ -103,5 +103,18 @@ IAttachedWindowBehaviorsImpl.classInitialize = function(cls) {
 			});
 		}
 	}
+	cls.prototype.adviseForStructuralQueryProcessing = function(query, processingInstruction) {
+		if (this.isWindowMaterial()) {
+			var r = this.$attachedBehaviors.FirstOrDefault(function (idx, beh) {
+				if (beh.is("IStructuralQueryProcessor")) {
+					if (beh.processStructuralQuery(query, processingInstruction)) {
+						return true;
+					}
+					return null;
+				}
+			});
+			return r?true:false;
+		}
+	}
 	
 }

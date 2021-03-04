@@ -11,20 +11,23 @@ It is possible for the rest of the code to cooperate with the window behaviors, 
 function IAttachedWindowBehaviors() {}
 IAttachedWindowBehaviors.Interface("IAttachedWindowBehaviors");
 IAttachedWindowBehaviors.RequiredTypes("BaseWindow");
-IAttachedWindowBehaviors.prototype.attachBehavior = function(wb);
+IAttachedWindowBehaviors.prototype.attachBehavior = function(wb[, name]);
 IAttachedWindowBehaviors.prototype.detachBehavior = function(wb);
 IAttachedWindowBehaviors.prototype.attachedBehaviors = function(callback);
 IAttachedWindowBehaviors.prototype.detachAllBehaviors = function(callback);
 IAttachedWindowBehaviors.prototype.adviseAttachedBehaviors = function(msg);
+IAttachedWindowBehaviors.prototype.attachedBehavior = function( callback_or_name);
 ```
 As mentioned all windows already have it implemented. The `adviseAttachedBehaviors` is used by the windows themselves and is unlikely to be needed when implementing applications. One may need to call it when implementing new window classes, but even that is unlikely, because behaviors are already advised for almost everything important that happens with the window on which they are attached and it is not very likely more to be needed.
 
-The rest of the methods manage the behaviors and are needed by any application that needs to adjust the behavior of some of its windows through behaviors:
+The rest of the methods manage the behaviors and are needed by any application that needs to adjust the behavior of some of its windows through window behaviors:
 
-### attachBehavior(/* IWindowBehavior */ wb)
+### attachBehavior(/* IWindowBehavior */ wb [, name])
     - wb - A behavior instance. Must suport `IWindowBehavior` interface.
 
 Checks if the interface is supported and then registers the behavior and initializes it (calls its `init` method).
+
+The `name` argument is optional string that registers the behavior under that name. The name must be unique among all the attached behaviors to tha specific window. If a behavior with the same name is already registered, an attempt to register another one will cause exception.
 
 Returns the behavior (the `wb` argument) if it is an `IWindowBehavior` and null otherwise.
 
@@ -44,6 +47,16 @@ Returns an array of all the behaviors or only of those the callback permits.
     callback - optional callback that will be called for each behavior and can return true or false in order to include or exclude it.
 
 Detaches all the behaviors or if callback is used only those permitted by the callback.
+
+### adviseAttachedBehaviors(msg)
+
+	Enables all the attached behaviors to process the WindowingMessage being sent to the window. The default message loop calls it, so any window already calls this method for each processed message. The call occurs as part of the default processing and after calling the external handlers (this includes any on_<messagename> handlers passed with createParameters).
+
+	The point at which the method is called during the message processing is relatively late, so this means that a window can prevent some messages from reaching the attached behaviors.
+
+### attachedBehavior(name_or_callback)
+
+	Returns the first found behavior that matches the conditions checked by the callback (f(beh):bool) or the first one named as specified (if string is passed as argument).
 
 ## Using existing behaviors
 
