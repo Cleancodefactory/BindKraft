@@ -530,14 +530,14 @@ Validator.prototype.closeValidator = function () {
 };
 Validator.prototype.close = Validator.prototype.closeValidator; // temporary
 Validator.prototype.uninit = function () {
-    this.$closeHint();
+    //this.$closeHint();
     this.result = ValidationResultEnum.uninitialized;
     this.onValidityChanged();
 
 }
 Validator.prototype.$showHint = function (msg, capt) {
-    $(this.root).data("qtip") == null || $(this.root).qtip("destroy");
-
+    // $(this.root).data("qtip") == null || $(this.root).qtip("destroy");
+    /*
     if (this.result > ValidationResultEnum.incorrect) {
         $(this.root).qtip({
             content: { text: msg, prerender: true, title: { text: '', button: 'x'} }, hide: false, position: { corner: { target: this.$positiontarget, tooltip: this.$positiontip} },
@@ -558,13 +558,17 @@ Validator.prototype.$showHint = function (msg, capt) {
     if (this.autohidehint) {
         setTimeout(function () { $(localthis.root).data("qtip") == null || $(localthis.root).qtip("hide"); }, 3000);
     }
+    */
 };
 Validator.prototype.$closeHint = function () {
+    /*
     if (this.root != null) {
         $(this.root).qtip("destroy");
     }
+    */
 };
 Validator.prototype.showMessagesHint = function () {
+    /*
     if (this.showhint) {
         if (this.result == ValidationResultEnum.uninitialized) {
             if (this.instructions != null) this.$showHint(this.instructions);
@@ -583,7 +587,7 @@ Validator.prototype.showMessagesHint = function () {
                 }
             }
         }
-    }
+    }*/
 };
 Validator.prototype.updateVisualState = function () {
 	/* Deprecated
@@ -646,12 +650,12 @@ Validator.prototype.updateVisualState = function () {
 				this.rebind();
 				this.updateTargets();
                 el.show();
-                this.showMessagesHint();
+                //this.showMessagesHint();
             }
         } else {
             if (this.result > ValidationResultEnum.correct) {
                 $(this.root).show();
-                this.showMessagesHint();
+                //this.showMessagesHint();
             }
         }
     // } Deprecated
