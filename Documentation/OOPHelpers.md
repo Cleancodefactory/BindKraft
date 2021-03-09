@@ -70,13 +70,14 @@ Notes: The property can be called with a single argument in which case the value
 ### ImplementProperty
 
 ```Javascript
-MyClass.ImplementProperty("someprop", Initialize, pstore, changeCallback);
+MyClass.ImplementProperty("someprop", Initialize, pstore, changeCallback, force);
 ```
 
 ### ImplementActiveProperty
 
 ```Javascript
-MyClass.ImplementActiveProperty(pname, Initialize, pstore_or_force,force_in,changeCallback);
+MyClass.ImplementActiveProperty(pname, Initialize, pstore, force,changeCallback);
+MyClass.ImplementActiveProperty(pname, Initialize, pstore, pstore, force, changeCallback);
 ```
 
 ### ImplementReadProperty
@@ -120,3 +121,20 @@ MyClass.ImplementIndexedWriteProperty(pname, Initialize, pstore);
 ```Javascript
 MyClass.ImplementCollectorProperty(pname, pstore, changeCallback);
 ```
+
+### ImplementSmartProperty
+
+```Javascript
+MyClass.ImplementSmartProperty(pname, smartPropClass, ...propClassArgs);
+```
+
+### ImplementChainSetters
+
+```Javascript
+MyClass.ImplementChainSetters();
+MyClass.ImplementChainSetters(prop1, prop2, ..., propN);
+```
+
+As the name suggests this helper enables creation of simple functions that set their corresponding properties to the value passed as argument and then return this. E.g. `x = new SomeClass();x.prop1(3).prop2("some text").prop3(true);`
+
+This kind of syntax has limited use in BindKraft, because BindKraft maintains primarily a syntax more convenient for usage through bindings, however for class intended for usage explicitly from code, chaining is usual practice. This method offers some minimal help for this case, not always usable, but for simple classes it saves writing plumbing.
