@@ -1034,7 +1034,7 @@ Function.prototype.ImplementIndexedWriteProperty = function (pname, Initialize, 
     };
 	this.prototype["set_" + pname].$Initialize = this.prototype[pstoreprop];
     return this;
-}.Description("Implements an 'indexed-like'pseudo-property over a class or Interface. It is always an array, most importantly set_prop adds new elements instead of replacing the array when called without index argument. However the setter still clears the array when both idx and value are null.")
+}.Description("Implements an 'indexed-like' pseudo-property over a class or Interface. It is always an array, most importantly set_prop adds new elements instead of replacing the array when called without index argument. However the setter still clears the array when both idx and value are null.")
  .Returns("this - can be chained");
  //// CHAIN GEN ////////////////////////
  // +VERSION 2.11.3

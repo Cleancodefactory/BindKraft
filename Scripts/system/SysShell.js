@@ -350,13 +350,44 @@ SysShell.prototype.launchOne = function(_appClass, /* callset of arguments */ ap
 	noone would want, if it proves to be a wrong assumption we will change that).
 	
 */
-SysShell.prototype.launchEx = function(_appClass, _options,/* callset of arguments */ appArgs) {
+SysShell.prototype.$launchExActive = false;
+SysShell.prototype.$launchQueue = new InitializeArray("Launch requests");
+SysShell.prototype.launchEx = function() {
+	var args = Array.createCopyOf(arguments);
+	var op = new Operation(null, 30000) // TODO make this configurable
+	this.$launchQueue.push({
+		args: args,
+		operation: op
+	});
+	if (!this.$launchExActive) {
+		this.$pickLaunchQueue();
+	}
+	return op;
+}
+SysShell.prototype.$pickLaunchQueue = function() {
+	var me = this;
+	this.$launchExActive = true;
+	if (this.$launchQueue != null && this.$launchQueue.length > 0) {
+		var entry = this.$launchQueue.pop();
+		if (entry != null) {
+			this.$launchEx.apply(this, entry.args).then(function() {
+				me.$launchExActive = true;
+				me.callAsync(me.$pickLaunchQueue);
+			})
+			.transfer(entry.operation); // TODO We should make user friendly policy for dealing with unmanageable timeouts.
+			return;
+		}
+	}
+	this.$launchExActive = false;
+}
+SysShell.prototype.$launchEx = function(_appClass, _options,/* callset of arguments */ appArgs) {
+	var _shell = this;
 	var options = _options || {};
 	var op = new Operation(null , 20000); // TODO: We should make this timeout configurable
 	var apiHubs = [LocalAPI.Default()]; // hubs for the api client
 	var apiHubsServe = [LocalAPI.Default()]; // hubs to register in
 	// TODO: (done?) There is a bug in after for the AsyncResult - correct it to make the timeout work
-    var _shell = this;
+    
     //var _wndClassName = wndClassName || "BaseWindow";
     var app = null;
 	var appClass = Class.getClassDef(_appClass);
