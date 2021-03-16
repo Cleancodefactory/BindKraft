@@ -21,7 +21,7 @@
     FindElementsQuery.Inherit(BaseObject, "FindElementsQuery");
     // Helpers
     // Client helper - use in implementation of findServices
-    FindElementsQuery.findElements = function (el, iface, condition) {
+    FindElementsQuery.collectLocatableElements = function (el, iface, condition) {
         var p = new FindElementsQuery(iface, condition);
         if (BaseObject.is(el, "IStructuralQueryEmiter")) {
             if (el.throwStructuralQuery(p)) return p.result;    
