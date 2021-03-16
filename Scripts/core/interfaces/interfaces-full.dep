@@ -47,6 +47,8 @@
 //#using "./IPlatformUrlMapper.js"
 //#using "./IEnvironmentContext.js"
 //#using "./IServiceLocator.js"
+//#using "./IElementsLocator.js"
+//#using "./IElementsLocatorRegister.js"
 
 //#using "./IOperation.js"
 //#using "./IOperationHandlingCallbacks.js"
