@@ -13,9 +13,11 @@ function AppBase(appGate) {
 AppBase.Inherit(DataHolder, "AppBase");
 AppBase.Implement(IAppInstance); // Extends IManagedInterface
 AppBase.Implement(IApp); // TODO: move code from IApp here
-AppBase.Implement(IStructuralQueryProcessorImpl, "app", function () { return this.get_approot(); });
+AppBase.Implement(IStructuralQueryProcessorImpl );
 AppBase.Implement(IStructuralQueryRouterImpl, "app", function () { return this.get_approot(); });
-AppBase.Implement(IStructuralQueryEmiterImpl, "app", function () { return (this.get_approot() || window.Shell); });
+// AppBase.Implement(IStructuralQueryEmiterImpl, "app", function () { return (this.get_approot() || window.Shell); });
+// 2.20 + No longer proceed to the Shell!
+AppBase.Implement(IStructuralQueryEmiterImpl, "app", function () { return (this.get_approot()); });
 AppBase.Implement(IAppletStorage); // Self implementing Interface
 AppBase.Implement(IAjaxContextParameters); // See: IAjaxContextParameters implementation 
 AppBase.Implement(IAjaxReportSinkImpl); // See: IAjaxReportSinkImpl implementation

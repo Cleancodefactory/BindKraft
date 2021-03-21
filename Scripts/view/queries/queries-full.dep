@@ -6,7 +6,7 @@
 //#using "./CallQuery.js"
 //#using "./ChangeContainerStyleQuery.js"
 //#using "./DataStateQuery.js"
-//#using "./FindServiceQuery.js"
+
 //#using "./HostCallQuery.js"
 //#using "./InfoMessageQuery.js"
 //#using "./InitialParameterQuery.js"
