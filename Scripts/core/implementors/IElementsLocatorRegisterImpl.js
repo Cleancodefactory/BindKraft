@@ -2,7 +2,7 @@
     var IElementsLocatorRegister = Interface("IElementsLocatorRegister");
 
     function IElementsLocatorRegisterImpl() {}
-    IElementsLocatorRegisterImpl.InterfaceImpl(IElementsLocatorRegister);
+    IElementsLocatorRegisterImpl.InterfaceImpl(IElementsLocatorRegister, "IElementsLocatorRegisterImpl");
     IElementsLocatorRegisterImpl.classInitialize = function(cls) {
         if (cls.prototype.$__locatableElements == null) {
             cls.prototype.$__locatableElements = new InitializeArray("Contains the registered locatable elements.");
