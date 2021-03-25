@@ -256,7 +256,7 @@ LightFetchHttp.prototype.bodyEncoders = {
 							fd.append(kname,v.toString(10));
 							continue;
 						case "string":
-							fd.append(kname,v);
+							fd.append(kname,"'" + v + "'");
 							continue;
 						case "boolean":
 							if (booleanAsNumbers) {
@@ -301,7 +301,7 @@ LightFetchHttp.prototype.bodyEncoders = {
 								fd.append(kname,v.toString(10));
 								continue;
 							case "string":
-								fd.append(kname,v);
+								fd.append(kname,"'" + v + "'");
 								continue;
 							case "boolean":
 								if (booleanAsNumbers) {
