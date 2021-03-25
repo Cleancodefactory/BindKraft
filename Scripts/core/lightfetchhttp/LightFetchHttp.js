@@ -65,6 +65,7 @@ LightFetchHttp.ImplementProperty("queryMaxDepth", new InitializeNumericParameter
  *  form,
  */
 LightFetchHttp.ImplementProperty("postDataEncode", new InitializeStringParameter("Specifies how to encode the data for POST, PUT. See docs for available options.", "json"));
+LightFetchHttp.ImplementProperty("postHeaderForMultipart", new InitializeStringParameter("Name of the header to add, set empty to disable", "JSONLike-Multipart"));
 LightFetchHttp.ImplementProperty("postDateFormat", new InitializeStringParameter("Specifies the formatting to use when converting Date to string. Leave null to use the system one. The allowed values are the same as the supported by ConvertDateTime: ISO, MS, TICKS, check its documentation for new ones.", null));
 LightFetchHttp.prototype.$convertDateToString = function(dt) {
 	var enc = this.get_postDateFormat();
@@ -235,6 +236,10 @@ LightFetchHttp.prototype.bodyEncoders = {
 	},
 	multipart: function(xhr, data) {
 		var fd = new FormData();
+		var header = this.get_postHeaderForMultipart();
+		if (header != null && Headers.length > 0) {
+			this.setHeader(header, "1");
+		}
 		var depth = this.get_queryMaxDepth() || 0; // TODO A separate limit?
 		var booleanAsNumbers = this.get_queryBoolAsNumber(); // TODO A separate setting?
 
@@ -256,7 +261,7 @@ LightFetchHttp.prototype.bodyEncoders = {
 							fd.append(kname,v.toString(10));
 							continue;
 						case "string":
-							fd.append(kname,v);
+							fd.append(kname,"'" + v + "'");
 							continue;
 						case "boolean":
 							if (booleanAsNumbers) {
@@ -301,7 +306,7 @@ LightFetchHttp.prototype.bodyEncoders = {
 								fd.append(kname,v.toString(10));
 								continue;
 							case "string":
-								fd.append(kname,v);
+								fd.append(kname,"'" + v + "'");
 								continue;
 							case "boolean":
 								if (booleanAsNumbers) {
