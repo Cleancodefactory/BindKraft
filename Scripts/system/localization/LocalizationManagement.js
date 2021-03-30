@@ -83,7 +83,7 @@
             return op;
         } else {
             var trdir = this.$dir.cd("translations");
-            files = trdir.get_files();
+            var files = trdir.get_files();
             if (files.length == 0) {
                 return BaseObject.callCallback(callback, "*");
             } else {
