@@ -9,6 +9,9 @@ function PageSetWindow() {
     this.$cachedChildren = this.getDelegatedProperty("_cachedChildren", new Delegate(this, this.$filterVisibleChildren));
 }
 PageSetWindow.Inherit(PanelWindow, "PageSetWindow");
+PageSetWindow.Defaults({
+	templateName: new StringConnector("<div class=\"f_windowframe\" style=\"position:absolute\" data-key=\"_window\" data-wintype=\"PageSet based\"></div>")
+});
 PageSetWindow.prototype.whenRemovedSelectPage = "next";
 PageSetWindow.prototype.get_page = function (idx) { // Only visible pages
     var pages = this.get_pages();
