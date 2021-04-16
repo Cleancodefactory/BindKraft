@@ -127,8 +127,8 @@
     }
     EmbeddedSvg.prototype.$updateSvg = function(svg) {
         if (svg instanceof Node) {
-            DOMUtil.Empty(this.root);
             var clone = svg.cloneNode(true);
+            DOMUtil.Empty(this.root);
             // TODO: We should probably inspect the element a little and make sure it is SVG? Or should it be done earlier
             if (clone instanceof Element) {
                 if (this.get_width() != null) clone.setAttribute("width", this.get_width() + "");
