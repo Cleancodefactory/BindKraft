@@ -28,7 +28,7 @@
 //#using "../implementors/implementors-full.dep"
 //#using "../interfacing/interfacing-full.dep"
 
-
+//#using "../queries/queries.dep"
 //#using "../DataHolder.js"
 //#using "../InterfaceObject.js"
 //#using "../InterfaceObjectTemplate.js"

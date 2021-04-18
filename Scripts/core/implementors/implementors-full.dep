@@ -20,3 +20,4 @@
 //#using "./IFormatterAggregateImpl.js"
 //#using "./IFindServiceImpl.js"
 //#using "./IEventSubscriberImpl.js"
+//#using "./IElementsLocatorRegisterImpl.js"

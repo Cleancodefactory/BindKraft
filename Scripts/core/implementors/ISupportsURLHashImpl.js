@@ -2,7 +2,7 @@
 
 
 function ISupportsURLHashImpl() { }
-ISupportsURLHashImpl.InterfaceImpl ( ISupportsURLHash );
+ISupportsURLHashImpl.InterfaceImpl ( ISupportsURLHash, "ISupportsURLHashImpl");
 ISupportsURLHashImpl.prototype.hashKeyOfUrl = function () {
     return null;
 };

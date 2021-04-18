@@ -27,7 +27,7 @@ IPlatformUrlMapper.mapModuleUrl = function(url, module, server) {
 	if (module == null || module.length == 0) {
 		return url;
 	} else {
-		return IPlatformUtility.standardModuleUrlParse(url,module,server).mapped;
+		return IPlatformUtility.standardModuleUrlParse(url,module,server)?.mapped;
 	}
 }
 IPlatformUrlMapper.mapResourceUrl = function(url, module, server) {
@@ -35,6 +35,6 @@ IPlatformUrlMapper.mapResourceUrl = function(url, module, server) {
 	if (module == null || module.length == 0) {
 		return url;
 	} else {
-		return IPlatformUtility.standardResourceUrlParse(url,module,server).mapped;
+		return IPlatformUtility.standardResourceUrlParse(url,module,server)?.mapped;
 	}
 }

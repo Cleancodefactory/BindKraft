@@ -65,7 +65,16 @@ LightFetchHttp.ImplementProperty("queryMaxDepth", new InitializeNumericParameter
  *  form,
  */
 LightFetchHttp.ImplementProperty("postDataEncode", new InitializeStringParameter("Specifies how to encode the data for POST, PUT. See docs for available options.", "json"));
-
+LightFetchHttp.ImplementProperty("postHeaderForMultipart", new InitializeStringParameter("Name of the header to add, set empty to disable", "JSONLike-Multipart"));
+LightFetchHttp.ImplementProperty("postDateFormat", new InitializeStringParameter("Specifies the formatting to use when converting Date to string. Leave null to use the system one. The allowed values are the same as the supported by ConvertDateTime: ISO, MS, TICKS, check its documentation for new ones.", null));
+LightFetchHttp.prototype.$convertDateToString = function(dt) {
+	var enc = this.get_postDateFormat();
+	if (enc == null || /^\s*$/.test(enc)) {
+		return this.Unformat("ConvertDateTime", dt);
+	} else {
+		return this.Unformat("ConvertDateTime", dt, null, enc);
+	}
+}
 // + Plugins
 /*
 	Dynamic data consists of properties providing the fetcher with access to sources of tokens, parameters and alike. When a request is sent the fetcher will inspect them and 
@@ -165,7 +174,7 @@ LightFetchHttp.prototype.bodyEncoders = {
 		this.setHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
 		return url.get_query().composeAsString();		
 	},
-	multipart: function(xhr, data) {
+	multipart_old: function(xhr, data) {
 		var fd = new FormData();
 		var depth = this.get_queryMaxDepth() || 0; // TODO A separate limit?
 		var booleanAsNumbers = this.get_queryBoolAsNumber(); // TODO A separate setting?
@@ -215,6 +224,113 @@ LightFetchHttp.prototype.bodyEncoders = {
 						} else if (Object.prototype.toString.call(v) == "[object Object]") {
 							// More strict on recursion
 							_cycleObject(kname, v, level + 1);
+						}
+					}
+				}
+			}
+		}
+		_cycleObject("", data, 0);
+
+		return fd;
+
+	},
+	multipart: function(xhr, data) {
+		var fd = new FormData();
+		var header = this.get_postHeaderForMultipart();
+		if (header != null && Headers.length > 0) {
+			this.setHeader(header, "1");
+		}
+		var depth = this.get_queryMaxDepth() || 0; // TODO A separate limit?
+		var booleanAsNumbers = this.get_queryBoolAsNumber(); // TODO A separate setting?
+
+		function _cycleObject(prefix, obj, level) {
+			if (level > depth) return;
+			var kname; // The name of the current element
+			var i, k, v, t;
+			if (BaseObject.is(obj, "Array")) {
+				for (var i = 0; i < obj.length; i++) {
+					if (prefix.length > 0) {
+						kname = prefix + "." + i;
+					} else {
+						kname = k;
+					}
+					v = obj[i];
+					t = typeof v;
+					switch (v) { // Collect what we can here
+						case "number":
+							fd.append(kname,v.toString(10));
+							continue;
+						case "string":
+							fd.append(kname,"'" + v + "'");
+							continue;
+						case "boolean":
+							if (booleanAsNumbers) {
+								fd.append(kname,v?"1":"0");
+							} else {
+								fd.append(kname,v?"true":"false");
+							}
+							continue;
+					}
+					if (window.Blob && v instanceof Blob) {
+						if (v instanceof File) {
+							fd.append(kname, v, v.name);
+						} else {
+							fd.append(kname, v, "blob.rawobject"); // TODO May be generate something more or less appropriate from the .type property.
+						}
+						continue;
+					}
+					if (v instanceof Date) {
+						fd.append(kname, this.$convertDateToString(v));
+						continue;
+					}
+					if (typeof v == "object") {
+						_cycleObject(kname, v, level + 1);
+						continue;
+					}
+					// Everything else is omitted.
+				}
+			} else if (typeof obj == "object" && obj != null) { // Work it as plain object, but not require it to be plain too much
+				for (k in obj) {
+					if (k.length == 0) continue;
+					if (prefix.length > 0) {
+						kname = prefix + "." + k;
+					} else {
+						kname = k;
+					}
+					// Unsupported values are skipped
+					if (obj.hasOwnProperty(k)) {
+						var v = obj[k];
+						t = typeof v;
+						switch (v) { // Collect what we can here
+							case "number":
+								fd.append(kname,v.toString(10));
+								continue;
+							case "string":
+								fd.append(kname,"'" + v + "'");
+								continue;
+							case "boolean":
+								if (booleanAsNumbers) {
+									fd.append(kname,v?"1":"0");
+								} else {
+									fd.append(kname,v?"true":"false");
+								}
+								continue;
+						}
+						if (window.Blob && v instanceof Blob) {
+							if (v instanceof File) {
+								fd.append(kname, v, v.name);
+							} else {
+								fd.append(kname, v, "blob.rawobject"); // TODO May be generate something more or less appropriate from the .type property.
+							}
+							continue;
+						}
+						if (v instanceof Date) {
+							fd.append(kname, this.$convertDateToString(v));
+							continue;
+						}
+						if (typeof v == "object") {
+							_cycleObject(kname, v, level + 1);
+							continue;
 						}
 					}
 				}

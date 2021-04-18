@@ -113,7 +113,7 @@ Delegate.prototype.getWrapper = function () {
         }
         return localThis.invoke.apply(localThis, args);
     }.Obliterable();
-}.Description("...");
+}.Description("Similar to Function.bind returns a function internally calling a delegate which keeps a this and optionally bound arguments. The function is Obliterable, which means it will be removed if put in a field. This is necessary, because otherwise the function and the underlying delegate may remain in memory for substantial periods of time before being found by GC.");
 Delegate.prototype.getAsyncWrapper = function () {
     var wrp = this.getWrapper();
     var localThis = this;
@@ -121,11 +121,11 @@ Delegate.prototype.getAsyncWrapper = function () {
         localThis.async(wrp).apply(arguments);
         return undefined;
     }
-}.Description("...");
+}.Description("Like getWrapper, but when invoked schedules the call in the system pump to be called in later js loops.");
 
 Delegate.createWrapper = function (obj, func, params) {
     return (new Delegate(obj, func, params)).getWrapper();
-}.Description("Creates a delegate")
+}.Description("Creates a delegate and returns a wrapper function for it (see getWrapper)")
  .Param("obj","Object over which the delegate will be executed")
  .Param("func","Function for the delegate")
  .Param("params","Params with which the delegate will be executed")
@@ -133,13 +133,13 @@ Delegate.createWrapper = function (obj, func, params) {
 
  Delegate.createAsyncWrapper = function (obj, func, params) {
     return (new Delegate(obj, func, params)).getAsyncWrapper();
- }
+ }.Description("Creates a delegate and returns an async wrapper function for it (see getAsyncWrapper)");
 
 Delegate.wrapCallback = function (cb) {
     if (BaseObject.is(cb, "Delegate")) return cb.getWrapper();
     if (typeof cb == "function") return cb;
     return null;
-}.Description("...")
+}.Description("A helper method that always returns a function, but accepts both delegate and function as argument. If delegate is passed it creates a wrapper and returns it, otherwise the function is returned without change.")
  .Param("cb","Delegate or function")
  .Returns("object or null");
 

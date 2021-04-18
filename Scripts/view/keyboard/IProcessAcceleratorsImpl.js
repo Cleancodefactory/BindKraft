@@ -11,7 +11,7 @@
 
 function IProcessAcceleratorsImpl() {}
 
-IProcessAcceleratorsImpl.InterfaceImpl ( IProcessAccelerators );
+IProcessAcceleratorsImpl.InterfaceImpl ( IProcessAccelerators, "IProcessAcceleratorsImpl" );
 
 IProcessAcceleratorsImpl.RequiredTypes ( "Base", "AppBase" );
 

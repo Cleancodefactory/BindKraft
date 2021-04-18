@@ -319,7 +319,11 @@ Array.prototype.equals = function (obj) {
     try {
         for (var i = 0; i < this.length; i++) {
             if (this[i] != null) {
-                if (!this[i].equals(obj[i])) return false;
+                if (BaseObject.is(this[i], "BaseObject")) {
+                    if (!this[i].equals(obj[i])) return false;
+                } else {
+                    if (this[i] != obj[i]) return false;
+                }
             } else {
                 if (obj[i] != null) return false;
             }

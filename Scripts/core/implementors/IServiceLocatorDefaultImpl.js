@@ -1,6 +1,7 @@
-/*
-	Helps you implement simple service locator by mapping the locator logic with none or a little code.
-*/
+/**
+ * Helps you implement simple service locator by mapping the locator logic with none or a little code.
+ * 	NOT RECOMMENDED - USE DIRECT IMPLEMENTATION INSTEAD.
+ */
 function IServiceLocatorDefaultImpl() {}
 IServiceLocatorDefaultImpl.InterfaceImpl(IServiceLocator, "IServiceLocatorDefaultImpl");
 IServiceLocatorDefaultImpl.classInitialize = function(cls, map) {

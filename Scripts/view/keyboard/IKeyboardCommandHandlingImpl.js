@@ -3,7 +3,7 @@
 /** Interface Impl **/
 
 function IKeyboardCommandHandlingImpl() {}
-IKeyboardCommandHandlingImpl.InterfaceImpl ( IKeyboardCommandHandling );
+IKeyboardCommandHandlingImpl.InterfaceImpl ( IKeyboardCommandHandling, "IKeyboardCommandHandlingImpl" );
 IKeyboardCommandHandlingImpl.RequiredTypes ( "Base", "AppBase" );
 IKeyboardCommandHandlingImpl.prototype.keyboardCommandExecutor = function ( e ) {
 	var self = this.activeClass;
