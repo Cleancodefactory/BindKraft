@@ -237,7 +237,7 @@ LightFetchHttp.prototype.bodyEncoders = {
 	multipart: function(xhr, data) {
 		var fd = new FormData();
 		var header = this.get_postHeaderForMultipart();
-		if (header != null && Headers.length > 0) {
+		if (header != null && header.length > 0) {
 			this.setHeader(header, "1");
 		}
 		var depth = this.get_queryMaxDepth() || 0; // TODO A separate limit?
@@ -256,7 +256,7 @@ LightFetchHttp.prototype.bodyEncoders = {
 					}
 					v = obj[i];
 					t = typeof v;
-					switch (v) { // Collect what we can here
+					switch (t) { // Collect what we can here
 						case "number":
 							fd.append(kname,v.toString(10));
 							continue;
@@ -301,7 +301,7 @@ LightFetchHttp.prototype.bodyEncoders = {
 					if (obj.hasOwnProperty(k)) {
 						var v = obj[k];
 						t = typeof v;
-						switch (v) { // Collect what we can here
+						switch (t) { // Collect what we can here
 							case "number":
 								fd.append(kname,v.toString(10));
 								continue;
@@ -634,12 +634,14 @@ LightFetchHttp.prototype.get = function(url, data, exptype) {
 	return this.$fetch(this.get_url(), data);
 }
 LightFetchHttp.prototype.post = function(url, data, enctype, exptype) {
+	this.set_method("POST");
 	if (url != null) this.set_url(url);
 	if (typeof exptype == "string") this.set_expectedContent(exptype);
 	if (enctype != null) this.set_postDataEncode(enctype);
 	return this.$fetch(this.get_url(), null, data);
 }
 LightFetchHttp.prototype.postEx = function(url, reqdata, data, enctype, exptype) {
+	this.set_method("POST");
 	if (url != null) this.set_url(url);
 	if (typeof exptype == "string") this.set_expectedContent(exptype);
 	if (enctype != null) this.set_postDataEncode(enctype);
