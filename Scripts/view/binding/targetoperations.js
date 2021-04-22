@@ -156,6 +156,38 @@ Binding.TargetOperations = {
 				this.value = (v == null)?null:v;
 			}
 		},
+		files: {
+			indexed: false,
+			read: function(){
+				return this.files;
+			},
+			write: function(v){
+				// This will work only if v is FileList, otherwise the assignment will not cause error, nor any effect.
+				this.files = v;
+			}
+		},
+		file: {
+			indexed: false,
+			read: function(){
+				if (window.FileList && this.files instanceof FileList) {
+					if (this.files.length > 0) return this.files[0];
+				}
+				return null;
+			},
+			write: function(v) {
+				// This is not possible easily
+				// Will not work on IE (even 11) and there are some doubts about safari
+				if (window.DataTransfer) {
+					var dt = new DataTransfer();
+					if (dt.items != null && dt.items.add) {
+						if (v instanceof File) {
+							dt.items.add(v);
+						}
+					}
+					this.files = dt.files;
+				}
+			}
+		},
 		html: {
 			indexed: false,
 			read: function(){

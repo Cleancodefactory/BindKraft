@@ -247,7 +247,25 @@ LightFetchHttp.prototype.bodyEncoders = {
 			if (level > depth) return;
 			var kname; // The name of the current element
 			var i, k, v, t;
-			if (BaseObject.is(obj, "Array")) {
+			if (window.FileList && obj instanceof FileList) {
+				for (var i = 0; i < obj.length; i++) {
+					if (prefix.length > 0) {
+						kname = prefix + "." + i;
+					} else {
+						kname = k;
+					}
+					v = obj[i];
+					if (window.Blob && v instanceof Blob) {
+						if (v instanceof File) {
+							fd.append(kname, v, v.name);
+						} else {
+							fd.append(kname, v, "blob.rawobject"); // TODO May be generate something more or less appropriate from the .type property.
+						}
+						continue;
+					}
+					// There cannot be nulls here
+				}
+			} else if (BaseObject.is(obj, "Array")) {
 				for (var i = 0; i < obj.length; i++) {
 					if (prefix.length > 0) {
 						kname = prefix + "." + i;
