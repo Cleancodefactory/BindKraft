@@ -23,7 +23,7 @@
 function LightFetchHttp(type, bFillResponseHeaders) {
 	BaseObject.apply(this, arguments);
 	if (typeof type == "string") {
-		this.$expectedContent = type;
+		this.set_expectedContent(type);
 	}
 	var xhr = this.$xhr = new XMLHttpRequest();
 	// Connect handlers permanently
@@ -42,15 +42,26 @@ LightFetchHttp.prototype.obliterate = function() {
 LightFetchHttp.$ultimateTimeLimit = 600;
 // Some built-in processors are pre-registered here, but this can be changed in some workspaces
 LightFetchHttp.$returnTypeProcessors = {
-
+	"packetxml": "LightFetchHttpResponsePacketXml"
 }
+LightFetchHttp.prototype.$responseProcessor = null;
 
 LightFetchHttp.ImplementProperty("httpuser", new InitializeStringParameter("The user name for http std header", null));
 LightFetchHttp.ImplementProperty("httppass", new InitializeStringParameter("The password for http std header", null));
 
 LightFetchHttp.ImplementProperty("timelimit", new InitializeNumericParameter("The maximum time permitted for the request to complete in seconds, default is 60 seconds", null));
 LightFetchHttp.ImplementProperty("fillResponseHeaders", new InitializeNumericParameter("Include the response headers in the result", false));
-LightFetchHttp.ImplementProperty("expectedContent", new InitializeStringParameter("How to process/check the response", ""));
+LightFetchHttp.ImplementProperty("expectedContent", new InitializeStringParameter("How to process/check the response", ""), null, function(oldv, newv){
+	this.$responseProcessor = null;
+	if (newv != null) {
+		if (typeof LightFetchHttp.$returnTypeProcessors[newv] == "string") {
+			var ptype = LightFetchHttp.$returnTypeProcessors[newv];
+			if (Class.is(ptype, "LightFetchHttpResponseBase")) {
+				this.$responseProcessor = new (Class(ptype))();
+			}
+		}
+	}
+});
 LightFetchHttp.ImplementProperty("withCredentials", new InitializeStringParameter("Send cookies for cors", false));
 LightFetchHttp.ImplementProperty("queryBoolAsNumber", new InitializeBooleanParameter("When encoding data in query string, if set to true (default) booleans are sent as 0 and 1, otherwise as true/false", true));
 LightFetchHttp.ImplementProperty("queryMaxDepth", new InitializeNumericParameter("When encoding data in query string, sets the max depth for object traversal, 0 is default", 0));
@@ -505,8 +516,17 @@ LightFetchHttp.prototype.getResponse = function() {
 					break;
 				
 				default:
-					res.status.issuccessful = false;
-					res.status.message = "Unknown request type";
+					if (this.$responseProcessor != null) {
+						var xmsg = this.$responseProcessor.processResponse(this.$xhr, res);
+						// If the processor returns a string - it is the error message.
+						if (typeof xmsg == "string" && xmsg.length > 0) {
+							res.status.issuccessful = false;
+							res.status.message = xmsg;	
+						}
+					} else {
+						res.status.issuccessful = false;
+						res.status.message = "Unknown request (response) type";
+					}
 			}
 		}
 		if (this.get_fillResponseHeaders()) {
@@ -628,7 +648,11 @@ LightFetchHttp.prototype.$fetch = function(url, /*encoded*/ reqdata, bodydata) {
 				case "string":
 					xhr.responseType = "text";
 					break;
-
+				defult: {
+					if (this.$responseProcessor != null) {
+						this.$responseProcessor.adjustRequest(xhr)
+					}
+				}
 			}
 			if (this.$plugins != null) {
 				for (i = 0; i < this.$plugins.length; i++) {
