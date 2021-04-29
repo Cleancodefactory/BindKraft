@@ -5,6 +5,8 @@
 	json|data   - responseText => JSON.parse => result.data
 	raw			- responseText => result
 	active		- xhr		   <= result(manager)
+
+	packetxml	- resposeXml => Fill result thoroughly
 	
 	
 	
@@ -38,6 +40,11 @@ LightFetchHttp.prototype.obliterate = function() {
 }
 
 LightFetchHttp.$ultimateTimeLimit = 600;
+// Some built-in processors are pre-registered here, but this can be changed in some workspaces
+LightFetchHttp.$returnTypeProcessors = {
+
+}
+
 LightFetchHttp.ImplementProperty("httpuser", new InitializeStringParameter("The user name for http std header", null));
 LightFetchHttp.ImplementProperty("httppass", new InitializeStringParameter("The password for http std header", null));
 
@@ -496,6 +503,7 @@ LightFetchHttp.prototype.getResponse = function() {
 					this.$activeresult = res;
 					return res;
 					break;
+				
 				default:
 					res.status.issuccessful = false;
 					res.status.message = "Unknown request type";

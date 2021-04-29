@@ -16,6 +16,7 @@ function LightFetchHttpPluginBase() {
 }
 LightFetchHttpPluginBase.Inherit(BaseObject, "LightFetchHttpPluginBase");
 
+//LightFetchHttpPluginBase.prototype.
 // Override this in inheriting classes
 LightFetchHttpPluginBase.prototype.manipulateRequest = function(fetcher, xhr) {
     throw "Not implemented";
