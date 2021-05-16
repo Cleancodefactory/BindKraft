@@ -1,10 +1,10 @@
 (function() {
 
-
+    var LightFetchHttpProcessorBase = Class("LightFetchHttpProcessorBase");
     function LightFetchHttpResponseBase(fetcher) {
-        BaseObject.apply(this, arguments);
+        LightFetchHttpProcessorBase.apply(this, arguments);
     }
-    LightFetchHttpResponseBase.Inherit(BaseObject, "LightFetchHttpResponseBase");
+    LightFetchHttpResponseBase.Inherit(LightFetchHttpProcessorBase, "LightFetchHttpResponseBase");
 
 
 

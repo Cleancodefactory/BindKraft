@@ -39,11 +39,36 @@ LightFetchHttp.prototype.obliterate = function() {
 	BaseObject.prototype.obliterate.call(this,null);
 }
 
+//#region Static API
 LightFetchHttp.$ultimateTimeLimit = 600;
 // Some built-in processors are pre-registered here, but this can be changed in some workspaces
 LightFetchHttp.$returnTypeProcessors = {
 	"packetxml": "LightFetchHttpResponsePacketXml"
 }
+LightFetchHttp.$requestBodyEncoders = {
+	
+}
+LightFetchHttp.registerProcessor = function(key, className) {
+	if (typeof key == "string" && key.length > 0) {
+		if (Class.is(className, "LightFetchHttpRequestBase")) {
+			if (this.$requestBodyEncoders[key] != null) {
+				CompileTime.warn("A body encoder has replaced existing registration: " + key);
+			}
+			this.$requestBodyEncoders[key] = Class.getClassName(className);
+		} else if (Class.is(className, "LightFetchHttpResponseBase")) {
+			if (this.$returnTypeProcessors[key] != null) {
+				CompileTime.warn("A return type processor has replaced existing registration: " + key);
+			}
+			this.$returnTypeProcessors[key] = Class.getClassName(className);
+		} else {
+			CompileTime.err("LightFetchHttp.registerProcessor accepts classes derived from either LightFetchHttpResponseBase or LightFetchHttpRequestBase.");	
+		}
+	} else {
+		CompileTime.err("LightFetchHttp.registerProcessor requires non-empty key for the registered processor");
+	}
+}
+//#endregion Static API
+
 LightFetchHttp.prototype.$responseProcessor = null;
 
 LightFetchHttp.ImplementProperty("httpuser", new InitializeStringParameter("The user name for http std header", null));
@@ -631,6 +656,14 @@ LightFetchHttp.prototype.$fetch = function(url, /*encoded*/ reqdata, bodydata) {
 				if (typeof benc == "string") {
 					if (typeof this.bodyEncoders[benc] == "function") {
 						body = this.bodyEncoders[benc].call(this, xhr, bodydata);
+					} else if (typeof LightFetchHttp.$requestBodyEncoders[benc] == "string") {
+						var encoderClass = LightFetchHttp.$requestBodyEncoders[benc];
+						if (Class.is(encoderClass, "LightFetchHttpRequestBase")) {
+							var encoder = new (Class(encoderClass))();
+							body = encoder.encodeBodyData(xhr, bodydata);
+						} else {
+							throw "Unknown body data encoding " + benc + ". There is something registered for this type of encoding, but it is not a LightFetchHttpRequestBase derived class";	
+						}
 					} else {
 						throw "Unknown body data encoding " + benc;
 					}
@@ -648,7 +681,7 @@ LightFetchHttp.prototype.$fetch = function(url, /*encoded*/ reqdata, bodydata) {
 				case "string":
 					xhr.responseType = "text";
 					break;
-				defult: {
+				default: {
 					if (this.$responseProcessor != null) {
 						this.$responseProcessor.adjustRequest(xhr)
 					}
