@@ -549,6 +549,8 @@ DOMUtil.findElements = function(dom,selector,callback, _result, _nonroot) { // c
 		for (var i = 0; i < dom.length; i++) {
 			DOMUtil.findElements(dom[i],selector,callback, result);
 		}
+	} else if (dom instanceof Document) {
+		return DOMUtil.findElements(dom.body, selector, callback);
 	}
 	return result;
 }
@@ -579,6 +581,8 @@ DOMUtil.findElement = function(dom, selector, callback, _nonroot) { // callback(
 			el = DOMUtil.findElement(dom[i],selector,callback);
 			if (el != null) return el;
 		}
+	} else if (dom instanceof Document) {
+		return DOMUtil.findElement(dom.body,selector, callback);
 	}
 	return null;
 }
