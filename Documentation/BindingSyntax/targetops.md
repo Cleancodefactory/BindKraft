@@ -122,6 +122,21 @@ _Diagnostic and development only_
 
 It is not recommended to use any of the following in production!
 
+**setstyle**
+
+During development it is sometimes inconvenient to change the CSS, but one may still need to apply different styles to an element depending on a boolean value. In such cases **setstyle** can enable the programmer to test logic that in production will use **addcssclass**. This target operation uses the parameter of the binding to set different styles when truthy/falsy value passes through the binding. The syntax is:
+
+```HTML
+<p data-bind-setstyle="{read path=somepath parameter='[<truthy styles>][<falsy styles>]}">
+```
+An example would be something like this:
+
+```HTML
+<p data-bind-setstyle="{read path=somepath parameter='[background-color:red;color:white][background-color:white;color:black]}">
+```
+Obviously this binding is not good for production, but very often designing the CSS can be handled by other team or negotiated with others and this will prevent you from testing some view logic before including the necessary CSS class/classes in the stylesheets. Using **setstyles** the logic can be demonstrated without intruding into the domain of those responsible for the CSS, but do not forget to change it later.
+
+
 **datacontext**
 
 Reads/sets the data context starting from the element (if any). Will not search for the data context encompassing the element - gets something only if data context is assigned to this element explicitly. Assigning data context will not trigger the (usually expected) processes of update of the bindings down the DOM tree of the template. Can be useful for experimenting, testing and searching for data-bound bugs.
