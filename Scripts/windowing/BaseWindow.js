@@ -486,6 +486,12 @@ BaseWindow.prototype.isChildWindow = function (wnd) {
     }
     return false;
 };
+BaseWindow.prototype.addCssClass = function(css) {
+    DOMUtil.addClass(this.root, css);
+}
+BaseWindow.prototype.removeCssClass = function(css) {
+    DOMUtil.removeClass(this.root, css);
+}
 // Features
 BaseWindow.prototype.$firstShown = true; // The constructor resets this to false. We set it to true in the prototype to prevent first shown from firing when constructor is deffective.
 BaseWindow.prototype.$fireFirstShown = function () {
