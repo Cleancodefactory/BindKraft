@@ -332,10 +332,10 @@ Binding.TargetOperations = {
 		},
 		elementreadonly: {
 			read: function(bind) {
-				return this.readonly?true:false;
+				return this.readOnly?true:false;
 			},
 			write: function(v, bind) {
-				this.readonly = v?true:false;
+				this.readOnly = v?true:false;
 			}
 		},
 		elementdisabled: {

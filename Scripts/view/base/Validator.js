@@ -104,6 +104,7 @@ Validator.prototype.get_importrules = function() {
 */
 Validator.prototype.$buildRulesFromData = function(v) {
 	var arr = v;
+    var me = this;
 	if (typeof arr == "string") {
 		var arr = JBUtil.getEnclosedTokens("{","}","\\",v);
 		// array of validator rule defs (being class defs) - convert them to object defs
@@ -126,8 +127,8 @@ Validator.prototype.$buildRulesFromData = function(v) {
 			if (def != null && def.className != null) {
 				if (Validator.validatorsRegistry[def.className] != null) def.className = Validator.validatorsRegistry[def.className];
 				if (Class.is(Function.classes[def.className],"ValidateValue")) {
-					var rule = new Function.classes[def.className](this);
-					JBUtil.parametrize.call(rule, this.root, this, def.parameters);
+					var rule = new Function.classes[def.className](me);
+					JBUtil.parametrize.call(rule, me.root, me, def.parameters);
 					return rule;
 				} else {
 					jbTrace.log("The " + def.className + " is not a validation rule (ValidateValue)");
