@@ -286,9 +286,12 @@ Validator.ImplementActiveProperty("domholder", new InitializeStringParameter("Do
 Validator.prototype.isOfGroup = function (reqGrp) {
     if (reqGrp == null || reqGrp.length == 0) return true;
     var g = this.get_groupname();
-    if (g != null && g == reqGrp) {
-        return true;
-    }
+    if (typeof g == "string" && g.length > 0) {
+        g = g.split(/\s*,\s*/);
+        return g.Any(function(idx, item) {
+            return (item == reqGrp);
+        });
+    } 
     return false;
 }.Description("...")
  .Param("reqGrp","...")
