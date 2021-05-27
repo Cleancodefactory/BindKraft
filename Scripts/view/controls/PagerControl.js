@@ -38,6 +38,7 @@ PagerControl.prototype.finalinit = function() {
 	if (this.get_autolink() && BaseObject.is(this.get_dataarea(), "DataArea")) {
 		var da = this.get_dataarea();
 		da.countsetevent.add(new Delegate(this, this.updatePager));
+        da.dataloadedevent.add(new Delegate(this, this.updatePager));
 	}
 }
 // Deprecated due to usage of ItemplateSourceImpl
@@ -111,6 +112,10 @@ PagerControl.prototype.gotoFirstPage = function(){
 }
 
 PagerControl.prototype.updatePager = function () {
+    var area = this.get_dataarea();
+    if (area != null) {
+        area.loadCountIfDirty();
+    }
     this.pagerupdateevent.invoke(this, null);
     this.pagerupdate2event.invoke(this, null);
 	this.normalizePage();
