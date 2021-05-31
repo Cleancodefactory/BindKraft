@@ -199,6 +199,7 @@ DataArea.prototype.$contentLoaded = function (result, success, err_info) {
         this.set_data(resource);
 		this.dataappliedevent.invoke(this, resource);
         this.loadfinishedevent.invoke(this, true);
+        this.loadCountIfDirty();
     }
 };
 DataArea.prototype.$callbackContent = new InitializeMethodDelegate("Revive the newly loaded data and perform the necessary steps for the inner content", DataArea.prototype.$contentLoaded);
