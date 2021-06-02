@@ -207,6 +207,9 @@ PageSetWindow.prototype.get_selectedpage = function () {
     var i = this.get_currentindex();
     return this.get_page(i);
 };
+PageSetWindow.prototype.set_selectedpage = function (page) {
+    this.selectPage(page);
+}
 PageSetWindow.prototype.selectPage = function (page) {
     WindowingMessage.fireOn(this, PageSetEventEnum.selectPage, { page: page });
 };
