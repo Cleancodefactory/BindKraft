@@ -34,13 +34,10 @@ ITemplateSourceImpl.classInitialize = function(cls, defaultTemplateSelector, opt
 		// If a template has been set explicitly - use that one
 		if (tml != null) return tml;
 		// If we are ITemplateConsumer - try to consume from source
-		if (this.is("ITemplateConsumer")) {
-			var tmlSrc = this.get_templateSource();
-			if (tmlSrc != null) {
-				tml = tmlSrc.get_template();
-				if (tml != null) return tml;
-			}
-		}
+		tml = ITemplateConsumer.ConsumeTemplate(this);
+		if (tml != null) return tml;
+		tml = IItemTemplateConsumer.ConsumeTemplate(this, this.get_templateName());
+		if (tml != null) return tml;
 		// Legacy search is by defaultTemplateSelector without parsing
 		if (BaseObject.getProperty(options, "legacy", false)) {
 			tml = DOMUtil.queryOne(tmlName);
