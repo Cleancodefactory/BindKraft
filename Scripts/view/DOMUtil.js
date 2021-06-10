@@ -516,6 +516,22 @@ DOMUtil.filterElements = function(dom,selector,elType) {
 	}
 	return null;
 }
+DOMUtil.cloneElements = function(dom, elType) {
+	var _ElementType = elType || HTMLElement;
+	if (dom instanceof _ElementType) {
+		return dom.cloneNode(true);
+	} else if (dom instanceof NodeList || dom instanceof HTMLCollection || BaseObject.is(dom, "Array")) {
+		var el,result = [];
+		for (var i = 0; i < dom.length; i++) {
+			if (dom[i] instanceof _ElementType) {
+				el = this.cloneElements(dom[i], _ElementType);
+				if (el) result.push(el);
+			}
+		}
+		return result;
+	}
+	return null;
+}
 /**
 	Slower than querySelector, but will honor borders throughly.
 	Searches by selector from element or set of elements up to the borders defined by the callback.
@@ -631,7 +647,7 @@ DOMUtil.fragmentFromHTML = function(html,bNoFilter) {
 DOMUtil.fragmentFromCollection = function(coll,bClone) {
 	if (coll instanceof HTMLCollection || coll instanceof NodeList || BaseObject.is(coll, "Array")) {
 		var fr = document.createDocumentFragment();
-		for (var i = coll.lenght; i >= 0; i--) {
+		for (var i = coll.length; i >= 0; i--) {
 			if (coll[i] instanceof HTMLElement) {
 				if (bClone) {
 					fr.insertBefore(coll[i].cloneNode(true), fr.firstChild);

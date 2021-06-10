@@ -223,6 +223,14 @@ Validator.prototype.set_template = function (v) {
 
 Validator.prototype.isTemplateRoot = function () { return false; };
 Validator.prototype.getTemplateByKey = function (v) {
+    var tml = this.get_template();
+    if (typeof tml == "string") {
+        var fr = new DOMUtilFragment(tml);
+        return fr.filterAsFragment('[data-key='+v+']', true);
+    }
+    return null;
+
+
     var a = $(this.get_template());
     var el;
     if (a != null && a.length > 0) {
@@ -567,6 +575,36 @@ Validator.prototype.showMessagesHint = function () {
     }*/
 };
 Validator.prototype.updateVisualState = function () {
+    var tmls = this.get_template();
+    var tml;
+    if (tmls != null) {
+        switch (this.result) {
+            case 1: // incorrect
+                tml = this.getTemplateByKey("incorrect");
+                break;
+            case 2: // fail
+                tml = this.getTemplateByKey("fail");
+                break;
+            case -1:
+                tml = this.getTemplateByKey("uninitialized");
+                break;
+            default: // correct
+                tml = this.getTemplateByKey("correct");
+        }
+        if (tml != null) {
+            var el = this.$().Empty();
+            Materialize.cloneTemplate(el, tml,this);
+            this.rebind();
+            this.updateTargets();
+        }
+    } else {
+        if (this.result > ValidationResultEnum.correct) {
+            // TODO: Show
+        }
+    }
+};
+
+Validator.prototype.updateVisualState_old = function () {
 	/* Deprecated
     if ($(this.root).is("img")) {
         switch (this.result) {

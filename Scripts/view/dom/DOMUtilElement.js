@@ -1,5 +1,6 @@
 function DOMUtilElement(el, bclone) {
 	BaseObject.apply(this, arguments);
+	if (BaseObject.is(el, "DOMUtilElement")) el = el.get_element();
 	this.reInit(el,bclone);
 }
 DOMUtilElement.Inherit(BaseObject, "DOMUtilElement");
@@ -46,10 +47,35 @@ DOMUtilElement.prototype.get_isempty = function() {
 }
 DOMUtilElement.prototype.get_haschildren = function() {
 	if (this.$element != null) {
-		if (this.$element.children.length > 0) return true;
+		if (this.$element.childNodes.length > 0) {
+			for (var i = 0; i < this.$element.childNodes.length; i++) {
+				if (this.$element.childNodes[i] instanceof HTMLElement) return true;
+			}
+		}
 	}
 	return false;
 }
+DOMUtilElement.prototype.get_children = function() {
+	var result = [];
+	if (this.$element == null) return result;
+	for (var i = 0; i < this.$element.childNodes.length; i++) {
+		if (this.$element.childNodes[i] instanceof HTMLElement) {
+			result.push(new DOMUtilElement(this.$element.childNodes[i]));
+		}
+	}
+	return result;
+}
+DOMUtilElement.prototype.get_clonedchildren = function() {
+	var result = [];
+	if (this.$element == null) return result;
+	for (var i = 0; i < this.$element.childNodes.length; i++) {
+		if (this.$element.childNodes[i] instanceof HTMLElement) {
+			result.push(new DOMUtilElement(this.$element.childNodes[i], true));
+		}
+	}
+	return result;
+}
+
 
 DOMUtilElement.prototype.get_element = function() {
 	return this.$element;
@@ -206,6 +232,7 @@ DOMUtilElement.prototype.findElement = function(selector, callback) {
 	}
 	return null;
 }
+
 DOMUtilElement.prototype.findParent = function(selector, callback) {
 	var pel = DOMUtil.findParent(this.$element, selector, callback);
 	if (pel instanceof HTMLElement) {
@@ -214,32 +241,32 @@ DOMUtilElement.prototype.findParent = function(selector, callback) {
 	return null;
 }
 // High level - return packed elements
-DOMUtilElement.prototype.queryAllByDataKey = function(datakey) {
-	var arr = DOMUtil.queryAllByDataKey(ths.$element, datakey);
+DOMUtilElement.prototype.queryAllByDataKey = function(datakey, clone) {
+	var arr = DOMUtil.queryAllByDataKey(this.$element, datakey);
 	if (arr != null) {
 		for (var i = 0; i < arr.length; i++) {
 			if (arr[i] instanceof HTMLElement) {
-				arr[i] = new DOMUtilElement(arr[i]);
+				arr[i] = new DOMUtilElement(arr[i], clone);
 			}
 		}
 		return arr;
 	}
 	return [];
 }
-DOMUtilElement.prototype.queryOneByDataKey = function(datakey) {
+DOMUtilElement.prototype.queryOneByDataKey = function(datakey, clone) {
 	var el = DOMUtil.queryOneByDataKey(this.$element, datakey);
-	return new DOMUtilElement(el);
+	return new DOMUtilElement(el,clone);
 }
-DOMUtilElement.prototype.queryOne = function(selector) {
+DOMUtilElement.prototype.queryOne = function(selector, clone) {
 	var el = DOMUtil.queryOne(this.$element, selector);
-	return new DOMUtilElement(el);
+	return new DOMUtilElement(el,clone);
 }
-DOMUtilElement.prototype.queryAll = function(selector) {
+DOMUtilElement.prototype.queryAll = function(selector,clone) {
 	var arr = DOMUtil.queryAll(this.$element, selector);
 	if (arr != null) {
 		for (var i = 0; i < arr.length; i++) {
 			if (arr[i] instanceof HTMLElement) {
-				arr[i] = new DOMUtilElement(arr[i]);
+				arr[i] = new DOMUtilElement(arr[i],clone);
 			}
 		}
 		return arr;
@@ -249,6 +276,20 @@ DOMUtilElement.prototype.queryAll = function(selector) {
 DOMUtilElement.prototype.parentByDataKey = function(datakey) {
 	var pel = DOMUtil.parentByDataKey(this.$element, datakey);
 	return new DOMUtilElement(pel);
+}
+
+
+DOMUtilElement.prototype.cloneChildrenAsFragment = function() {
+	var arr = [];
+	if (this.$element != null) {
+		for (var i = 0;i < this.$element.childNodes.length;i++) {
+			arr.push(this.$element.childNodes[i].cloneNode(true));
+		}
+	}
+ 	return new DOMUtilFragment(arr);
+}
+DOMUtilElement.prototype.cloneAsFragment = function() {
+ 	return new DOMUtilFragment(this.$element.cloneNode(true));
 }
 
 // BindKraft special
