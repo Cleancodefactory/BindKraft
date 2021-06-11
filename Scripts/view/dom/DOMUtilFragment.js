@@ -2,6 +2,8 @@ function DOMUtilFragment(fragment, singleroot) {
 	BaseObject.apply(this,arguments);
 	if (typeof fragment == "boolean" && fragment == true) {
 		this.$singleroot = true;
+	} else if(BaseObject.is(fragment, "DOMUtilFragment")) {
+		return fragment.clone();
 	} else { 
 		this.set_fragment(fragment);
 		this.$singleroot = (singleroot?true:false);
@@ -68,8 +70,22 @@ DOMUtilFragment.prototype.filter = function(selector) {
 	}
 	return [];
 }
+DOMUtilFragment.prototype.filterByKey = function(key) {
+	var roots = this.get_roots();
+	if (roots.length > 0) {
+		return DOMUtil.filterElements(roots, '[data-key='+key+']');
+	}
+	return [];
+}
+
 DOMUtilFragment.prototype.filterAsFragment = function(selector, clone) {
 	var arr = this.filter(selector);
+	return new DOMUtilFragment(arr.Select(function(idx, el) {
+		return (clone?el.cloneNode(true):el);
+	}));
+}
+DOMUtilFragment.prototype.filterByKeyAsFragment = function(key, clone) {
+	var arr = this.filterByKey(key);
 	return new DOMUtilFragment(arr.Select(function(idx, el) {
 		return (clone?el.cloneNode(true):el);
 	}));

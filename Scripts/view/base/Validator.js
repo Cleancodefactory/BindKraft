@@ -14,6 +14,7 @@ function Validator(domEl) {
 Validator.Inherit(ViewBase, "Validator");
 Validator.Implement(IValidator);
 Validator.Implement(ITemplateSourceImpl,new Defaults("templateName"));
+Validator.Implement(ITemplateConsumerImpl);
 Validator.Implement(IDisablable);
 Validator.$defaults = {
     templateName: "bindkraft/default-validator" 
@@ -199,34 +200,35 @@ Validator.prototype.$clearRules = function() {
 // }.Description("Creates validators and adds them to the array of Rules");
 // -Validation rules autobuilt from meta info (candidate for deprecation)
 
-Validator.prototype.$template = null;
+// Implemented by ITemplateSourceImpl.
+// Validator.prototype.$template = null;
 
-Validator.prototype.get_template = function () {
-    if (this.templateSource != null) {
-        var o = this.findParent(this.templateSource);
-        if (BaseObject.is(o, "ITemplateSource")) {
-            return o.get_template();
-        } else if (BaseObject.is(o, "BaseObject")) {
-            return null;
-        }
-        return o;
-    } else {
-        return this.$template;
-    }
-}.Description("...")
- .Returns("object or null");
+// Validator.prototype.get_template = function () {
+//     if (this.templateSource != null) {
+//         var o = this.findParent(this.templateSource);
+//         if (BaseObject.is(o, "ITemplateSource")) {
+//             return o.get_template();
+//         } else if (BaseObject.is(o, "BaseObject")) {
+//             return null;
+//         }
+//         return o;
+//     } else {
+//         return this.$template;
+//     }
+// }.Description("...")
+//  .Returns("object or null");
 
-Validator.prototype.set_template = function (v) {
-	this.$template = v;
-}.Description("Sets the tamplate")
- .Param("v","Template");
+// Validator.prototype.set_template = function (v) {
+// 	this.$template = v;
+// }.Description("Sets the tamplate")
+//  .Param("v","Template");
 
 Validator.prototype.isTemplateRoot = function () { return false; };
 Validator.prototype.getTemplateByKey = function (v) {
     var tml = this.get_template();
     if (typeof tml == "string") {
         var fr = new DOMUtilFragment(tml);
-        return fr.filterAsFragment('[data-key='+v+']', true);
+        return fr.filterByKeyAsFragment(v, true);
     }
     return null;
 
