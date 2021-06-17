@@ -1,4 +1,5 @@
 (function(){
+    // DEPRECATION CONSIDERED!!!
     /**
      * Despite the similarities with FindServiceQuery this one is not used as often and the need of it will
      * depend on the architectural choices in the app. Most notably the app or parts of it can be designed to depend
