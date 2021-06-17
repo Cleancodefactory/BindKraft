@@ -415,6 +415,17 @@ Binding.TargetOperations = {
 				}
 			}
 		},
+		togglecssclass: {
+			indexed: true,
+			read: function(idx, bind) {
+				return (DOMUtil.countClass(this,idx) > 0);
+			},
+			write: function(idx, v, bind) {
+				if (v) {
+					DOMUtil.toggleClass(this, idx);
+				}
+			}
+		},
 		fontweight: {
 			read: function(bind) {
 				var styles = window.getComputedStyle(this);
