@@ -1,8 +1,8 @@
 
 /**
-	@classdesc A window containing a collection of child windows, showing only one at a time. No full UI support is implemented in PageSetWindow, because it is intended
-		to serve as base class for tab sets and alike.
-	@class
+    @classdesc A window containing a collection of child windows, showing only one at a time. No full UI support is implemented in PageSetWindow, because it is intended
+        to serve as base class for tab sets and alike.
+    @class
 */
 function PageSetWindow() {
     PanelWindow.apply(this, arguments);
@@ -10,7 +10,7 @@ function PageSetWindow() {
 }
 PageSetWindow.Inherit(PanelWindow, "PageSetWindow");
 PageSetWindow.Defaults({
-	templateName: new StringConnector("<div class=\"f_windowframe\" style=\"position:absolute\" data-key=\"_window\" data-wintype=\"PageSet based\"></div>")
+    templateName: new StringConnector("<div class=\"f_windowframe\" style=\"position:absolute\" data-key=\"_window\" data-wintype=\"PageSet based\"></div>")
 });
 PageSetWindow.prototype.whenRemovedSelectPage = "next";
 PageSetWindow.prototype.get_page = function (idx) { // Only visible pages
@@ -74,7 +74,7 @@ PageSetWindow.prototype.on_EnableWindow = function (msg) {
             }
         };
     }
-	this.callAsync(this.updateTabs);
+    this.callAsync(this.updateTabs);
     //this.updateTabs();
 };
 PageSetWindow.prototype.updateTabs = function () {
@@ -86,7 +86,7 @@ PageSetWindow.prototype.on_ChildAdded = function (msg) {
     if (msg.data != null && msg.data.child != null) {
         msg.data.child.setWindowStyles(WindowStyleFlags.fillparent, "set");
         this.notifyParent(PageSetEventEnum.notifyPageAdded, { page: msg.data.child });
-		this.callAsync(this.updateTabs);
+        this.callAsync(this.updateTabs);
     }
 };
 PageSetWindow.prototype.on_ChildRemoved = function (msg) {
@@ -97,14 +97,14 @@ PageSetWindow.prototype.on_ChildRemoved = function (msg) {
     }
     if (newIndex <= 0) newIndex = 0;
     this.set_currentindex(newIndex);
-	this.notifyParent(PageSetEventEnum.notifyPageRemoved, { page: msg.data.child });
-	this.callAsync(this.updateTabs);
+    this.notifyParent(PageSetEventEnum.notifyPageRemoved, { page: msg.data.child });
+    this.callAsync(this.updateTabs);
 }
 
 /*
     @param {object|boolean} - null - nothing, true - activate, false noactive
 */
-PageSetWindow.prototype.addPage = function (page,options) {
+PageSetWindow.prototype.addPage = function (page, options) {
     var msgdata = { page: page };
     if (typeof options == "boolean") {
         if (options) {
@@ -125,16 +125,16 @@ PageSetWindow.prototype.removePage = function (page) {
     return this;
 };
 PageSetWindow.prototype.removeAllPages = function () {
-	var pages = this.get_pages();
-	if (pages != null) {	
-		pages = Array.createCopyOf(pages);
-		for (var i = 0; i < pages.length; i++) {
-			var page = pages[i];
-			if (page != null) {
-				WindowingMessage.fireOn(this, PageSetEventEnum.removePage, { page: page });
-			}
-		}
-	}
+    var pages = this.get_pages();
+    if (pages != null) {
+        pages = Array.createCopyOf(pages);
+        for (var i = 0; i < pages.length; i++) {
+            var page = pages[i];
+            if (page != null) {
+                WindowingMessage.fireOn(this, PageSetEventEnum.removePage, { page: page });
+            }
+        }
+    }
     return this;
 };
 /*
@@ -144,6 +144,13 @@ PageSetWindow.prototype.removeAllPages = function () {
         noactive
     }
  */
+
+PageSetWindow.prototype.addChild = function (wnd) {
+    //debugger
+    PanelWindow.prototype.addChild.apply(this, arguments);
+    wnd.set_enabledwindow(true);
+    this.$cachedChildren.clear();
+}
 PageSetWindow.prototype.on_addPage = function (msg) {
     if (msg.data != null && msg.data.page != null) {
         if (this.addChild(msg.data.page) === false) {
@@ -159,12 +166,12 @@ PageSetWindow.prototype.on_addPage = function (msg) {
                     }
                 }
             }
-            if (!msg.data.noactive  && ((!BaseObject.getProperty(this, "createParameters.data.dontActivateAddedPages") && msg.data.active) || BaseObject.getProperty(this, "createParameters.data.activateAddedPages"))) {
+            if (!msg.data.noactive && ((!BaseObject.getProperty(this, "createParameters.data.dontActivateAddedPages") && msg.data.active) || BaseObject.getProperty(this, "createParameters.data.activateAddedPages"))) {
                 msg.data.page.set_enabledwindow(true);
                 this.$cachedChildren.clear();
             }
             var pages = this.get_pages();
-            if ( !msg.data.noactive  &&  ((!BaseObject.getProperty(this, "createParameters.data.dontActivateAddedPages") && msg.data.active) || BaseObject.getProperty(this, "createParameters.data.activateAddedPages") || pages.length == 1)) {
+            if (!msg.data.noactive && ((!BaseObject.getProperty(this, "createParameters.data.dontActivateAddedPages") && msg.data.active) || BaseObject.getProperty(this, "createParameters.data.activateAddedPages") || pages.length == 1)) {
                 WindowingMessage.fireOn(this, PageSetEventEnum.selectPage, { page: msg.data.page });
             } else {
                 msg.data.page.setWindowStyles(WindowStyleFlags.visible, "reset"); // Just in case it is not hidden by default
@@ -259,7 +266,7 @@ PageSetWindow.prototype.on_selectPage = function (msg) {
         this.notifyParent(PageSetEventEnum.notifyPageSelected, { page: current, oldpage: old, index: this.$currentIndex });
     }
 };
-PageSetWindow.prototype.deactivateCurrentTab = function(callback, syncSave) {
+PageSetWindow.prototype.deactivateCurrentTab = function (callback, syncSave) {
     this.notifyChild(this.get_selectedpage(), WindowEventEnum.Deactivating, { callback: callback, sync: syncSave });
 };
 PageSetWindow.prototype.$filterVisibleChildren = function () {
