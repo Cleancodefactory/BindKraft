@@ -116,7 +116,10 @@
         this.$register[url] = op;
         return op;
     }
-
+    EmbeddedSvg.prototype.finalinit = function() {
+        var path = this.get_svgpath();
+        if (typeof path == "string" && path.length > 0) this.OnUpdate(); // And no  {} haha!
+    }
     EmbeddedSvg.prototype.OnUpdate = function(prop, oldv, newv) {
         if (this.__obliterated) return;
         // This should be possible at any time regardless of bindings.
