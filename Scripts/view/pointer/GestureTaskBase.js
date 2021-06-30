@@ -15,8 +15,9 @@
     }
     GestureTaskBase.Inherit(BaseObject, "GestureTaskBase");
 
-    
+    GestureTaskBase.prototype.$cursorAtPaused = false;
     GestureTaskBase.prototype.cursorAt = function(pt_or_event, element) {
+        if (this.$cursorAtPaused) return;
         var cur = this.suggestCursor(pt_or_event);
         var el = element || document.body;
         if (el instanceof HTMLElement) {
@@ -38,6 +39,14 @@
                 }
                 el.style.cursor = cur.getStyle();
             }
+        }
+    }
+    GestureTaskBase.prototype.pauseCursorSuggestion = function(op) {
+        if (BaseObject.is(op, Operation)) {
+            this.$cursorAtPaused = true;
+            op.then(o => {
+                this.$cursorAtPaused = false;
+            });
         }
     }
     GestureTaskBase.prototype.suggestCursor = function(pt_or_event) {
