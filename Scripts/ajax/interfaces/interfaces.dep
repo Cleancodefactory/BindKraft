@@ -1,0 +1,5 @@
+
+//#using "./IAjaxRawData.js"
+//#using "./IAjaxRequest.js"
+//#using "./IAjaxResponse.js"
+//#using "./IAjaxResponsePacket.js"
