@@ -7,6 +7,11 @@
         .Implement(IAjaxSendQueue)
         .Implement(IAjaxRawData);
 
+    //#region Events
+    AjaxSendQueue.prototype.requestaddedevent = new InitializeEvent("Fired each time new request is added to the queue.");
+    AjaxSendQueue.prototype.fillqueueevent = new InitializeEvent("Fired When the queue reaches certain limit.");
+    //#endregion
+
     AjaxSendQueue.prototype.$queue = new InitializeArray("The queue");
     
     //#region IAjaxRawData
@@ -80,6 +85,16 @@
     function AjaxQueueHolder(req, priority) {
         this.request = req;
         this.priority = priority || 0;
+    }
+    //#endregion
+
+    //#region Singleton
+    AjaxSendQueue.Default = function() {
+        var sysqueue;
+        return function() {
+            if (sysqueue == null) sysqueue = new AjaxSendQueue();
+            return sysqueue;
+        }
     }
     //#endregion
 
