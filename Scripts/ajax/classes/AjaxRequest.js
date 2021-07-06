@@ -1,5 +1,9 @@
 (function() {
 
+    var AjaxBase = Class("AjaxBase"),
+        IAjaxRequest = Interface("IAjaxRequest"),
+        IAjaxRAwData = Interface("IAjaxRawData");
+
     function AjaxRequest(owner) {
         AjaxBase.apply(this, arguments);
         if (BaseObject.is(owner, "BaseObject")) {
