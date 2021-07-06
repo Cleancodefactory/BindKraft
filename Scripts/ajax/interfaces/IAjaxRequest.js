@@ -33,7 +33,11 @@
     /**
      * Boolean instruction for the cache manager (ignored in betas)
      */
-     IAjaxRequest.prototype.get_cache = function() { throw "not impl"; }
-     IAjaxRequest.prototype.set_cache = function(v) { throw "not impl"; }
+    IAjaxRequest.prototype.get_cache = function() { throw "not impl"; }
+    IAjaxRequest.prototype.set_cache = function(v) { throw "not impl"; }
+
+    IAjaxRequest.prototype.completeRequest = function(response) {
+        throw "This method must be created by a requester.";
+    }
 
 })();

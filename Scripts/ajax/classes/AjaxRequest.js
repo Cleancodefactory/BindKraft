@@ -2,7 +2,7 @@
 
     var AjaxBase = Class("AjaxBase"),
         IAjaxRequest = Interface("IAjaxRequest"),
-        IAjaxRAwData = Interface("IAjaxRawData");
+        IAjaxRawData = Interface("IAjaxRawData");
 
     function AjaxRequest(owner) {
         AjaxBase.apply(this, arguments);
@@ -94,5 +94,13 @@
     AjaxRequest.prototype.get_cache = function() { return this.$cache; }
     AjaxRequest.prototype.set_cache = function(v) { this.$cache = v?true:false; }
     //#endregion
+
+    //#region Callbacking
+    /**
+     * This method is created dynamically by the requester
+     */
+    AjaxRequest.prototype.completeRequest = null;
+    //#endregion
+
 
 })();
