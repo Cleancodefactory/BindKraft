@@ -1,5 +1,9 @@
 (function() {
 
+    var AjaxBase = Class("AjaxBase"),
+        IAjaxSendQueue = Interface("IAjaxSendQueue"),
+        IAjaxRawData = Interface("IAjaxRawData");
+
     function AjaxSendQueue() {
         AjaxBase.apply(this,arguments);
     }
@@ -9,7 +13,8 @@
 
     //#region Events
     AjaxSendQueue.prototype.requestaddedevent = new InitializeEvent("Fired each time new request is added to the queue.");
-    AjaxSendQueue.prototype.fillqueueevent = new InitializeEvent("Fired When the queue reaches certain limit.");
+    // TODO: For now it looks
+    //AjaxSendQueue.prototype.fillqueueevent = new InitializeEvent("Fired When the queue reaches certain limit.");
     //#endregion
 
     AjaxSendQueue.prototype.$queue = new InitializeArray("The queue");
@@ -78,6 +83,22 @@
             return this.dequeueRequest();                    
         }
     }
+
+    AjaxSendQueue.prototype.queueLength = function() {
+        return this.$queue.length;
+    }
+    AjaxSendQueue.prototype.peekRequest = function(index) { 
+        if (Array.isArray(this.$queue)) {
+            if (index >= 0 && index < this.$queue.length) {
+                return this.$queue[index];
+            }
+        }
+        return null;
+    }
+    /**
+     * This method is under consideration. Its existence depends on serious decisions that are yet to be made.
+     */
+    AjaxSendQueue.prototype.cancelRequests = function(callback) {throw "not impl.";}
     //#endregion
 
 
