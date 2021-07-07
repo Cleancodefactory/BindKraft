@@ -45,7 +45,7 @@ System.DefaultCommands = {
 		alert(msg);
 	},
 	"startshell": function(ctx, api){
-		window.Shell = new SysShell($$("#container").first());
+		window.Shell = new SysShell();
 		// Hard separation between creation of workspace and sysshell - we need this in order to make ws creation controlled by createworkspace command!
 		//Shell.workspaceWindow = WorkspaceWindow.Default();
 		
@@ -247,6 +247,10 @@ System.DefaultCommands = {
 		var name = api.pullNextToken();
 		var expression = api.pullNextToken();
 		MediaQueryTracker.Default().addNotificator(name, expression, "MediaQueryNotificatorBroadcaster");
+	},
+	"externalscript": function(ctx, api) {
+		var url = api.pullNextToken();
+		return Class("ExternalScripts").Default().loadScript(url);
 	}
 };
 
@@ -313,5 +317,10 @@ System.DefaultCommands = {
 	gc.register("mediaquery", null, null, defs["mediaquery"], "Registers a media query. syntax: mediaquery name query");
 	gc.register("medianotify", null, null, defs["medianotify"], "Registers a basic media notificator. syntax: medianotify name expression");
 	gc.register("mediamessenger", null, null, defs["mediamessenger"], "Registers a media notificator which also posts Messenger notification MediaChangedQuery. syntax: mediamessenger name expression");
+
 	// -V 2.23.8
+
+	// +V 2.24.0
+	gc.register("externalscript", null, null, defs["externalscript"], "Loads additional javascripts from URL. syntax: externalscript 'url'");
+	// -V 2.24.0
 })();

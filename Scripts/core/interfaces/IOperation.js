@@ -41,6 +41,7 @@ IOperation.warning = function(description, code, moreparams, severity) {
 }
 
 // Helper for error reporting
+// TODO: This did not catch - we should probably deprecate it?
 //  Example: operation.CompleteOperation(
 IOperation.errorname = function(/*In any order*/ _severity, _name, _moreparams) {
 	var err = {

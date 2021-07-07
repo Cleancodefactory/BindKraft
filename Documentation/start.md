@@ -34,7 +34,8 @@ Not yet included in this documentation.
 * [OOP in BindKraftJS](OOP.md) 
 * [OOP Conventions and terms](OOPConventions.md) 
 * [OOP - declaring interfaces](OOPInterfaces.md)
-* [OOP Helpers](OOPHelpers.md) 
+* [OOP Helpers](OOPHelpers.md)
+* [OOP Class information](CoreClasses/Class.md)
 * [Runtime documentation and annotation](RuntimeSelfDoc.md)
 
 

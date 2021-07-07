@@ -116,7 +116,10 @@
         this.$register[url] = op;
         return op;
     }
-
+    EmbeddedSvg.prototype.finalinit = function() {
+        var path = this.get_svgpath();
+        if (typeof path == "string" && path.length > 0) this.OnUpdate(); // And no  {} haha!
+    }
     EmbeddedSvg.prototype.OnUpdate = function(prop, oldv, newv) {
         if (this.__obliterated) return;
         // This should be possible at any time regardless of bindings.
@@ -127,8 +130,8 @@
     }
     EmbeddedSvg.prototype.$updateSvg = function(svg) {
         if (svg instanceof Node) {
-            DOMUtil.Empty(this.root);
             var clone = svg.cloneNode(true);
+            DOMUtil.Empty(this.root);
             // TODO: We should probably inspect the element a little and make sure it is SVG? Or should it be done earlier
             if (clone instanceof Element) {
                 if (this.get_width() != null) clone.setAttribute("width", this.get_width() + "");

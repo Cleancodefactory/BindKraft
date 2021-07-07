@@ -28,9 +28,27 @@ Direct usage of the class is Ok, of course, but we aim at almost eliminating the
 
 ### **timelimit**
 
+If set limits the total time needed to complete the request and if it is reached the request is cancelled. If not set the browser's behavior is the only limiting factor. The value cannot be greater than the `LightFetchHttp.$ultimateTimeLimit`, which is by default 600 seconds, _if a greater value is set, it will act as if not limit is set_! 
+
+usage:
+```Javascript
+fetcher.set_timelimit(90); // Sets the timelimit to 90 seconds
+```
+The default is `null` - not set.
+
 ### **fillResponseHeaders**
 
+It is `false` by default. When set to `true`, the response headers are included in the result data (see more details in the result description).
+
 ### **expectedContent**
+
+Specifies what kind of content is expected in the response - i.e. how to process it into javascript result object. There are a small number of built-in (almost) trivial processing routines and a few BindKraft supplied processors for content often used with BindKraft. Additional and custom processors can be added by custom code by registering them in the `LightFetchHttp.$returnTypeProcessors` static map:
+
+```Javascript
+LightFetchHttp.$returnTypeProcessors[mycontent] = "MyContentHttpResponseProcessor";
+```
+This registers a processor for `mycontent` so that it can be used as a value for the `expectedContent` property. See [LightFetchHttp responses processors](LightFetchHttpResponses.md) for details on how to write one.
+
 
 ### **withCredentials**
 

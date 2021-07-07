@@ -13,7 +13,9 @@ function SysShell(shellspace) {
         } else {
             this.root = shellspace;
         }
-    }
+    } else {
+		this.root = System.Default().getWorkspaceElement();
+	}
 	this.$dispatcherLeasing = new EventDispatchLeasing("IAppBase");
     $(document).bind("keydown", Delegate.createWrapper(this, this.$sysKeyBindings));
     System.Default().windowunloadevent.add(new Delegate(this, this.shutdown));
@@ -739,6 +741,8 @@ SysShell.prototype.addAppWindow = function(w, options) {
 };
 // END APP routines for the new app mechanism
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//TODO: This does not work - revise it
 SysShell.$traceconsoleview = '<div data-class="jbTrace" data-key="dbgRoot" style="height:100%;padding:0px;overflow-y:scroll;">'+
 	'<pre data-key="logview" data-class="Repeater" data-bind-$items="{read}" style="margin:0px;height:100%;" data-on-dblclick="{bind source=dbgRoot path=OnClear}">' +
 		'<div class="dbgEntry" data-bind-html="{read path=msg}" data-bind-jbtracecolor="{read path=msgtype}"></div>' +

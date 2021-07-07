@@ -50,11 +50,27 @@
         }
         return f;
     }
+    LocalizationManagement.prototype.$mergeFile = function(name, content) {
+        var f = this.$getfile(name);
+        if (f == null) {
+            f = new ContentMemoryFile("memory/object", content);
+            this.$dir.register(name, f)
+        } else { // Override the content for now
+            var o = f.get_content();
+            if (o == null) o = {};
+            o = BaseObject.CombineObjectsDeep(o, content);
+            f.set_content(o);
+            f.set_contenttype("memory/object");
+        }
+        return f;
+    }
 
     LocalizationManagement.prototype.setTranslation = function(locale, content) {
         return this.$createFile("translations/" + locale, content);
     }
-
+    LocalizationManagement.prototype.mergeTranslation = function(locale, content) {
+        return this.$mergeFile("translations/" + locale, content);
+    }
     // +Loading helpers
     /**
      * 

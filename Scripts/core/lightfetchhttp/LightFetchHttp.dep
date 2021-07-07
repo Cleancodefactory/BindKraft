@@ -1,4 +1,10 @@
+
+//#using "LightFetchHttpProcessorBase.js"
+//#using "request/request.dep"
+//#using "response/response.dep"
+
 //#using "LightFetchHttpPluginBase.js"
 //#using "LightFetchHttpBearerPlugin.js"
+
 //#using "LightFetchHttp.js"
 //#using "LightFetchHttpActiveResult.js"

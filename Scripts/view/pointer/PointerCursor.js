@@ -48,7 +48,14 @@
      * Use only for short lived cursor instances created for specific purpose. Apply/unapply will apply 
      * the cursor to this element ic called without arguments. This is convenient when the cursor has to be changed temporarily.
      */
-    PointerCursor.prototype.defaultElement = function(el) {
+    PointerCursor.prototype.defaultElement = function(els) {
+        var el = null;
+        for (var i = 0; i < arguments.length; i++) {
+            if (arguments[i] instanceof HTMLElement) {
+                el = arguments[i];
+                break;
+            }
+        }
         if (el == null) {
             this.$defaultElement = null;
         } else if (el instanceof HTMLElement) {

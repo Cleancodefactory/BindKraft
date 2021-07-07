@@ -9,43 +9,16 @@ function Validator(domEl) {
     this.$rules = new Array();
 	
 	
-	/* This code has been factored in separate private methods - see below
-    var rule, attr, node = $(this.root);
-    var attrs = node.getAttributes("data-validate-(\\S+)");
-    var clsDesc;
-    if (attrs != null) {
-        for (attr in attrs) {
-            if (Validator.validatorsRegistry[attr] != null) {
-                clsDesc = {
-                    className: Validator.validatorsRegistry[attr],
-                    parameters: attrs[attr]
-                };
-            } else {
-                clsDesc = JBUtil.parseDataClass(attrs[attr]);
-            }
-            if (clsDesc != null) {
-                if (Class.is(Function.classes[clsDesc.className], "ValidateValue")) {
-                    rule = new Function.classes[clsDesc.className](this);
-                    this.$rules.push(rule);
-                    JBUtil.parametrize.call(rule, this.root, this, clsDesc.parameters);
-                }
-            }
-        }
-        if (this.$rules != null) {
-            this.$rules = this.$rules.sort(function (a, b) {
-                if (a == null) return -1;
-                if (b == null) return 1;
-                if (a.get_order != null && b.get_order != null) return (a.get_order() - b.get_order());
-                return 0;
-            });
-        }
-    }
-	*/
+	
 }
 Validator.Inherit(ViewBase, "Validator");
 Validator.Implement(IValidator);
-Validator.Implement(ITemplateSource);
+Validator.Implement(ITemplateSourceImpl,new Defaults("templateName"));
+Validator.Implement(ITemplateConsumerImpl);
 Validator.Implement(IDisablable);
+Validator.$defaults = {
+    templateName: "bindkraft/default-validator" 
+}
 
 Validator.ImplementProperty("throwqueryonvaliditychanged", new InitializeStringParameter("Any string will enable that, values of view, window, app will limit it to the corresponding scope (ignored for now)",null));
 
@@ -74,7 +47,7 @@ Validator.prototype.$init = function () {
         this.set_template(c);
         c.remove();
     }
-    this.$createAutoValidators();
+    //this.$createAutoValidators();
 	var imprules = this.get_importrules();
 	if (imprules != null) {
 		this.$buildRulesFromData(imprules);
@@ -104,6 +77,7 @@ Validator.prototype.get_importrules = function() {
 */
 Validator.prototype.$buildRulesFromData = function(v) {
 	var arr = v;
+    var me = this;
 	if (typeof arr == "string") {
 		var arr = JBUtil.getEnclosedTokens("{","}","\\",v);
 		// array of validator rule defs (being class defs) - convert them to object defs
@@ -126,8 +100,8 @@ Validator.prototype.$buildRulesFromData = function(v) {
 			if (def != null && def.className != null) {
 				if (Validator.validatorsRegistry[def.className] != null) def.className = Validator.validatorsRegistry[def.className];
 				if (Class.is(Function.classes[def.className],"ValidateValue")) {
-					var rule = new Function.classes[def.className](this);
-					JBUtil.parametrize.call(rule, this.root, this, def.parameters);
+					var rule = new Function.classes[def.className](me);
+					JBUtil.parametrize.call(rule, me.root, me, def.parameters);
 					return rule;
 				} else {
 					jbTrace.log("The " + def.className + " is not a validation rule (ValidateValue)");
@@ -180,75 +154,85 @@ Validator.prototype.$clearRules = function() {
 
 // -Validation rules building
 
-// +Validation rules autobuilt from meta info (candidate for deprecation)
-Validator.prototype.$autoValidatorsCreated = false;
-Validator.prototype.$createAutoValidators = function () {
-    if (this.$autoValidatorsCreated) return;
-    var metaData = this.get_metaData();
-    if (!IsNull(metaData)) {
-        this.$autoValidatorsCreated = true;
-        var rule;
-        switch (metaData.Type) {
-            case "Int16":
-            case "Int32":
-            case "Int64":
-                rule = new CNumberValidator(this);
-                // rule.fail = 1; // Really?!?
-                this.$rules.push(rule);
-                if (metaData.Size > 0) {
-                    rule = new CLengthValidator(this);
-                    rule.set_minChar(0);
-                    rule.set_maxChar(metaData.Size);
-                    this.$rules.push(rule);
-                }
-                break;
-            case "String":
-                if (metaData.Size > 0) {
-                    if (metaData.Size > 0) {
-                        rule = new CLengthValidator(this);
-                        rule.set_minChar(0);
-                        rule.set_maxChar(metaData.Size);
-                        this.$rules.push(rule);
-                    }
-                }
-                break;
-            case "DateTime":
-                break;
-            default:
-        }
-        if (!metaData.AllowNull) {
-            rule = new CRequiredFieldValidator(this);
-            rule.fail = 1;
-            this.$rules.push(rule);
-        }
-    }
-}.Description("Creates validators and adds them to the array of Rules");
+
+// +Validation rules autobuilt from meta info (DEPRECATED - commented code will be removed soon)
+// Validator.prototype.$autoValidatorsCreated = false;
+// Validator.prototype.$createAutoValidators = function () {
+//     if (this.$autoValidatorsCreated) return;
+//     var metaData = this.get_metaData();
+//     if (!IsNull(metaData)) {
+//         this.$autoValidatorsCreated = true;
+//         var rule;
+//         switch (metaData.Type) {
+//             case "Int16":
+//             case "Int32":
+//             case "Int64":
+//                 rule = new CNumberValidator(this);
+//                 // rule.fail = 1; // Really?!?
+//                 this.$rules.push(rule);
+//                 if (metaData.Size > 0) {
+//                     rule = new CLengthValidator(this);
+//                     rule.set_minChar(0);
+//                     rule.set_maxChar(metaData.Size);
+//                     this.$rules.push(rule);
+//                 }
+//                 break;
+//             case "String":
+//                 if (metaData.Size > 0) {
+//                     if (metaData.Size > 0) {
+//                         rule = new CLengthValidator(this);
+//                         rule.set_minChar(0);
+//                         rule.set_maxChar(metaData.Size);
+//                         this.$rules.push(rule);
+//                     }
+//                 }
+//                 break;
+//             case "DateTime":
+//                 break;
+//             default:
+//         }
+//         if (!metaData.AllowNull) {
+//             rule = new CRequiredFieldValidator(this);
+//             rule.fail = 1;
+//             this.$rules.push(rule);
+//         }
+//     }
+// }.Description("Creates validators and adds them to the array of Rules");
 // -Validation rules autobuilt from meta info (candidate for deprecation)
 
-Validator.prototype.$template = null;
+// Implemented by ITemplateSourceImpl.
+// Validator.prototype.$template = null;
 
-Validator.prototype.get_template = function () {
-    if (this.templateSource != null) {
-        var o = this.findParent(this.templateSource);
-        if (BaseObject.is(o, "ITemplateSource")) {
-            return o.get_template();
-        } else if (BaseObject.is(o, "BaseObject")) {
-            return null;
-        }
-        return o;
-    } else {
-        return this.$template;
-    }
-}.Description("...")
- .Returns("object or null");
+// Validator.prototype.get_template = function () {
+//     if (this.templateSource != null) {
+//         var o = this.findParent(this.templateSource);
+//         if (BaseObject.is(o, "ITemplateSource")) {
+//             return o.get_template();
+//         } else if (BaseObject.is(o, "BaseObject")) {
+//             return null;
+//         }
+//         return o;
+//     } else {
+//         return this.$template;
+//     }
+// }.Description("...")
+//  .Returns("object or null");
 
-Validator.prototype.set_template = function (v) {
-	this.$template = v;
-}.Description("Sets the tamplate")
- .Param("v","Template");
+// Validator.prototype.set_template = function (v) {
+// 	this.$template = v;
+// }.Description("Sets the tamplate")
+//  .Param("v","Template");
 
 Validator.prototype.isTemplateRoot = function () { return false; };
 Validator.prototype.getTemplateByKey = function (v) {
+    var tml = this.get_template();
+    if (typeof tml == "string") {
+        var fr = new DOMUtilFragment(tml);
+        return fr.filterByKeyAsFragment(v, true);
+    }
+    return null;
+
+
     var a = $(this.get_template());
     var el;
     if (a != null && a.length > 0) {
@@ -285,9 +269,12 @@ Validator.ImplementActiveProperty("domholder", new InitializeStringParameter("Do
 Validator.prototype.isOfGroup = function (reqGrp) {
     if (reqGrp == null || reqGrp.length == 0) return true;
     var g = this.get_groupname();
-    if (g != null && g == reqGrp) {
-        return true;
-    }
+    if (typeof g == "string" && g.length > 0) {
+        g = g.split(/\s*,\s*/);
+        return g.Any(function(idx, item) {
+            return (item == reqGrp);
+        });
+    } 
     return false;
 }.Description("...")
  .Param("reqGrp","...")
@@ -426,7 +413,7 @@ Validator.prototype.set_disabled = function (v) {
 };
 Validator.prototype.result = ValidationResultEnum.uninitialized;
 Validator.prototype.$validate = function (bIndicate) {
-    this.$createAutoValidators();
+    //this.$createAutoValidators();
     var result = ValidationResultEnum.correct;
     this.$messages = null;
     if (!BaseObject.is(this.$rules, "Array")) return result;
@@ -590,6 +577,36 @@ Validator.prototype.showMessagesHint = function () {
     }*/
 };
 Validator.prototype.updateVisualState = function () {
+    var tmls = this.get_template();
+    var tml;
+    if (tmls != null) {
+        switch (this.result) {
+            case 1: // incorrect
+                tml = this.getTemplateByKey("incorrect");
+                break;
+            case 2: // fail
+                tml = this.getTemplateByKey("fail");
+                break;
+            case -1:
+                tml = this.getTemplateByKey("uninitialized");
+                break;
+            default: // correct
+                tml = this.getTemplateByKey("correct");
+        }
+        if (tml != null) {
+            var el = this.$().Empty();
+            Materialize.cloneTemplate(el, tml,this);
+            this.rebind();
+            this.updateTargets();
+        }
+    } else {
+        if (this.result > ValidationResultEnum.correct) {
+            // TODO: Show
+        }
+    }
+};
+
+Validator.prototype.updateVisualState_old = function () {
 	/* Deprecated
     if ($(this.root).is("img")) {
         switch (this.result) {

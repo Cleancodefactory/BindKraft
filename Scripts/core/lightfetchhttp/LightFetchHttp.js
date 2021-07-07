@@ -5,6 +5,8 @@
 	json|data   - responseText => JSON.parse => result.data
 	raw			- responseText => result
 	active		- xhr		   <= result(manager)
+
+	packetxml	- resposeXml => Fill result thoroughly
 	
 	
 	
@@ -21,7 +23,7 @@
 function LightFetchHttp(type, bFillResponseHeaders) {
 	BaseObject.apply(this, arguments);
 	if (typeof type == "string") {
-		this.$expectedContent = type;
+		this.set_expectedContent(type);
 	}
 	var xhr = this.$xhr = new XMLHttpRequest();
 	// Connect handlers permanently
@@ -37,13 +39,54 @@ LightFetchHttp.prototype.obliterate = function() {
 	BaseObject.prototype.obliterate.call(this,null);
 }
 
+//#region Static API
 LightFetchHttp.$ultimateTimeLimit = 600;
+// Some built-in processors are pre-registered here, but this can be changed in some workspaces
+LightFetchHttp.$returnTypeProcessors = {
+	"packetxml": "LightFetchHttpResponsePacketXml"
+}
+LightFetchHttp.$requestBodyEncoders = {
+	
+}
+LightFetchHttp.registerProcessor = function(key, className) {
+	if (typeof key == "string" && key.length > 0) {
+		if (Class.is(className, "LightFetchHttpRequestBase")) {
+			if (this.$requestBodyEncoders[key] != null) {
+				CompileTime.warn("A body encoder has replaced existing registration: " + key);
+			}
+			this.$requestBodyEncoders[key] = Class.getClassName(className);
+		} else if (Class.is(className, "LightFetchHttpResponseBase")) {
+			if (this.$returnTypeProcessors[key] != null) {
+				CompileTime.warn("A return type processor has replaced existing registration: " + key);
+			}
+			this.$returnTypeProcessors[key] = Class.getClassName(className);
+		} else {
+			CompileTime.err("LightFetchHttp.registerProcessor accepts classes derived from either LightFetchHttpResponseBase or LightFetchHttpRequestBase.");	
+		}
+	} else {
+		CompileTime.err("LightFetchHttp.registerProcessor requires non-empty key for the registered processor");
+	}
+}
+//#endregion Static API
+
+LightFetchHttp.prototype.$responseProcessor = null;
+
 LightFetchHttp.ImplementProperty("httpuser", new InitializeStringParameter("The user name for http std header", null));
 LightFetchHttp.ImplementProperty("httppass", new InitializeStringParameter("The password for http std header", null));
 
 LightFetchHttp.ImplementProperty("timelimit", new InitializeNumericParameter("The maximum time permitted for the request to complete in seconds, default is 60 seconds", null));
 LightFetchHttp.ImplementProperty("fillResponseHeaders", new InitializeNumericParameter("Include the response headers in the result", false));
-LightFetchHttp.ImplementProperty("expectedContent", new InitializeStringParameter("How to process/check the response", ""));
+LightFetchHttp.ImplementProperty("expectedContent", new InitializeStringParameter("How to process/check the response", ""), null, function(oldv, newv){
+	this.$responseProcessor = null;
+	if (newv != null) {
+		if (typeof LightFetchHttp.$returnTypeProcessors[newv] == "string") {
+			var ptype = LightFetchHttp.$returnTypeProcessors[newv];
+			if (Class.is(ptype, "LightFetchHttpResponseBase")) {
+				this.$responseProcessor = new (Class(ptype))();
+			}
+		}
+	}
+});
 LightFetchHttp.ImplementProperty("withCredentials", new InitializeStringParameter("Send cookies for cors", false));
 LightFetchHttp.ImplementProperty("queryBoolAsNumber", new InitializeBooleanParameter("When encoding data in query string, if set to true (default) booleans are sent as 0 and 1, otherwise as true/false", true));
 LightFetchHttp.ImplementProperty("queryMaxDepth", new InitializeNumericParameter("When encoding data in query string, sets the max depth for object traversal, 0 is default", 0));
@@ -237,7 +280,7 @@ LightFetchHttp.prototype.bodyEncoders = {
 	multipart: function(xhr, data) {
 		var fd = new FormData();
 		var header = this.get_postHeaderForMultipart();
-		if (header != null && Headers.length > 0) {
+		if (header != null && header.length > 0) {
 			this.setHeader(header, "1");
 		}
 		var depth = this.get_queryMaxDepth() || 0; // TODO A separate limit?
@@ -247,7 +290,25 @@ LightFetchHttp.prototype.bodyEncoders = {
 			if (level > depth) return;
 			var kname; // The name of the current element
 			var i, k, v, t;
-			if (BaseObject.is(obj, "Array")) {
+			if (window.FileList && obj instanceof FileList) {
+				for (var i = 0; i < obj.length; i++) {
+					if (prefix.length > 0) {
+						kname = prefix + "." + i;
+					} else {
+						kname = k;
+					}
+					v = obj[i];
+					if (window.Blob && v instanceof Blob) {
+						if (v instanceof File) {
+							fd.append(kname, v, v.name);
+						} else {
+							fd.append(kname, v, "blob.rawobject"); // TODO May be generate something more or less appropriate from the .type property.
+						}
+						continue;
+					}
+					// There cannot be nulls here
+				}
+			} else if (BaseObject.is(obj, "Array")) {
 				for (var i = 0; i < obj.length; i++) {
 					if (prefix.length > 0) {
 						kname = prefix + "." + i;
@@ -256,7 +317,7 @@ LightFetchHttp.prototype.bodyEncoders = {
 					}
 					v = obj[i];
 					t = typeof v;
-					switch (v) { // Collect what we can here
+					switch (t) { // Collect what we can here
 						case "number":
 							fd.append(kname,v.toString(10));
 							continue;
@@ -301,7 +362,7 @@ LightFetchHttp.prototype.bodyEncoders = {
 					if (obj.hasOwnProperty(k)) {
 						var v = obj[k];
 						t = typeof v;
-						switch (v) { // Collect what we can here
+						switch (t) { // Collect what we can here
 							case "number":
 								fd.append(kname,v.toString(10));
 								continue;
@@ -478,9 +539,19 @@ LightFetchHttp.prototype.getResponse = function() {
 					this.$activeresult = res;
 					return res;
 					break;
+				
 				default:
-					res.status.issuccessful = false;
-					res.status.message = "Unknown request type";
+					if (this.$responseProcessor != null) {
+						var xmsg = this.$responseProcessor.processResponse(this.$xhr, res);
+						// If the processor returns a string - it is the error message.
+						if (typeof xmsg == "string" && xmsg.length > 0) {
+							res.status.issuccessful = false;
+							res.status.message = xmsg;	
+						}
+					} else {
+						res.status.issuccessful = false;
+						res.status.message = "Unknown request (response) type";
+					}
 			}
 		}
 		if (this.get_fillResponseHeaders()) {
@@ -585,6 +656,14 @@ LightFetchHttp.prototype.$fetch = function(url, /*encoded*/ reqdata, bodydata) {
 				if (typeof benc == "string") {
 					if (typeof this.bodyEncoders[benc] == "function") {
 						body = this.bodyEncoders[benc].call(this, xhr, bodydata);
+					} else if (typeof LightFetchHttp.$requestBodyEncoders[benc] == "string") {
+						var encoderClass = LightFetchHttp.$requestBodyEncoders[benc];
+						if (Class.is(encoderClass, "LightFetchHttpRequestBase")) {
+							var encoder = new (Class(encoderClass))();
+							body = encoder.encodeBodyData(xhr, bodydata);
+						} else {
+							throw "Unknown body data encoding " + benc + ". There is something registered for this type of encoding, but it is not a LightFetchHttpRequestBase derived class";	
+						}
 					} else {
 						throw "Unknown body data encoding " + benc;
 					}
@@ -602,7 +681,11 @@ LightFetchHttp.prototype.$fetch = function(url, /*encoded*/ reqdata, bodydata) {
 				case "string":
 					xhr.responseType = "text";
 					break;
-
+				default: {
+					if (this.$responseProcessor != null) {
+						this.$responseProcessor.adjustRequest(xhr)
+					}
+				}
 			}
 			if (this.$plugins != null) {
 				for (i = 0; i < this.$plugins.length; i++) {
@@ -634,12 +717,14 @@ LightFetchHttp.prototype.get = function(url, data, exptype) {
 	return this.$fetch(this.get_url(), data);
 }
 LightFetchHttp.prototype.post = function(url, data, enctype, exptype) {
+	this.set_method("POST");
 	if (url != null) this.set_url(url);
 	if (typeof exptype == "string") this.set_expectedContent(exptype);
 	if (enctype != null) this.set_postDataEncode(enctype);
 	return this.$fetch(this.get_url(), null, data);
 }
 LightFetchHttp.prototype.postEx = function(url, reqdata, data, enctype, exptype) {
+	this.set_method("POST");
 	if (url != null) this.set_url(url);
 	if (typeof exptype == "string") this.set_expectedContent(exptype);
 	if (enctype != null) this.set_postDataEncode(enctype);

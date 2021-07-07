@@ -199,6 +199,7 @@ DataArea.prototype.$contentLoaded = function (result, success, err_info) {
         this.set_data(resource);
 		this.dataappliedevent.invoke(this, resource);
         this.loadfinishedevent.invoke(this, true);
+        this.loadCountIfDirty();
     }
 };
 DataArea.prototype.$callbackContent = new InitializeMethodDelegate("Revive the newly loaded data and perform the necessary steps for the inner content", DataArea.prototype.$contentLoaded);
@@ -315,7 +316,7 @@ DataArea.prototype.loadCount = function() { // No arguments - everything is coll
     }
 };
 DataArea.prototype.loadCountIfDirty = function () { // No arguments - everything is collected from parameters and bindings
-    if (!this.$iscountdirty) return;
+    if (!this.$iscountdirty) return; // TODO: We have to serialize these calls (should be connector feature)
     if (this.$prepareCountConnector()) {
         this.preloadevent.invoke(this, this.get_parameters());
         this.$countConnector.bind(this.$callbackCount);

@@ -486,6 +486,12 @@ BaseWindow.prototype.isChildWindow = function (wnd) {
     }
     return false;
 };
+BaseWindow.prototype.addCssClass = function(css) {
+    DOMUtil.addClass(this.root, css);
+}
+BaseWindow.prototype.removeCssClass = function(css) {
+    DOMUtil.removeClass(this.root, css);
+}
 // Features
 BaseWindow.prototype.$firstShown = true; // The constructor resets this to false. We set it to true in the prototype to prevent first shown from firing when constructor is deffective.
 BaseWindow.prototype.$fireFirstShown = function () {
@@ -771,7 +777,7 @@ BaseWindow.prototype.windowmaxminchanged = new InitializeEvent("Fired when minim
 
 /*virtual*/BaseWindow.prototype.handleWindowEventDefault = function (evnt, currentResult) {
 	if (this.__obliterated) { return; }
-    var i, w;
+    var i, w, rect;
     this.$notifyExternalHandlers(evnt);
 	if (this.is("IAttachedWindowBehaviors")) {
 		this.adviseAttachedBehaviors(evnt);
@@ -815,6 +821,17 @@ BaseWindow.prototype.windowmaxminchanged = new InitializeEvent("Fired when minim
             }
             break;
         case WindowEventEnum.SizeChanged:
+            /*
+            rect = this.get_clientrect();
+            DOMUtil.removeClass(this.root, "BKNarrow BKAverage BKWide");
+            if (rect.w < @narrow ) {
+                DOMUtil.addClass(this.root, "BKNarrow");
+            } else if (rect.w >= @narrow && rect.w < @average) {
+                DOMUtil.addClass(this.root, "BKAverage");
+            } else {
+                DOMUtil.addClass(this.root, "BKWide");
+            }
+            */
             if ((this.$styleFlags & WindowStyleFlags.parentnotify) != 0) {
                 WindowingMessage.fireOn(this.get_windowparent(), WindowEventEnum.ChildResized, { rect: this.get_windowrect() });
             }

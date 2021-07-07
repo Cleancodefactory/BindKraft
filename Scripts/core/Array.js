@@ -558,6 +558,20 @@ Array.prototype.On = function (fieldOrCallback) {
  .Returns("array, may be empty");
 
 Array.CombineObjects = BaseObject.CombineObjects;
+/**
+ * Sorts the array according to the arguments specified
+ * Syntax: array.OrderBy({field1: dir | cb_dir},{field2: dir | cb_dir}, ....)
+ * where: fieldN is a field of the object*
+ *        dir is 1 ascending, -1 descending direction
+ *        cb is a callback(element, fieldname) that returns a value instead of the field's value and 
+ *              the returned value is used for ordering. In this case the field name does not need to 
+ *              match an actual field of the element.
+ * Example:
+ * var arr =[ {a: 2, b: "asda"}, {a:5,b:"dfgdf"},{a:4,b:"dfswe"},{a:3,b:"gtyjy"},{a:3,b:"ttyuuy"},{a:3,b:"xsdf"};
+ * var result = arr.OrderBy({a:1},{b:1});
+ * var result = arr.OrderBy({a:[function(e,f) {return e.f %2;},1]},{b:1});
+ * Like anywhere else the callback can be also a Delegate.
+ */
 Array.prototype.OrderBy = function () { // var x = array.OrderBy({field1: 1},{field2: -1});
     var r = this;
     var dirs = arguments;
@@ -566,8 +580,14 @@ Array.prototype.OrderBy = function () { // var x = array.OrderBy({field1: 1},{fi
         for (var i = 0; i < dirs.length; i++) {
             var o = dirs[i], dir = 1;
             var o1, o2;
+            var cb = null;
             for (var f in o) {
                 dir = o[f];
+                if (Array.isArray(dir)){
+                    if (dir.length < 2) throw "Syntax of an order entry should be {field: 1 | -1 | [callback, 1 | -1]}"
+                    cb = dir[0];
+                    dir = dir[1];
+                }
                 if (e1 == null) {
                     c = (-1 * dir);
                     break;
@@ -575,8 +595,13 @@ Array.prototype.OrderBy = function () { // var x = array.OrderBy({field1: 1},{fi
                 if (e2 == null) {
                     c = (1 * dir);
                     break;
+                } 
+                if (cb != null) {
+                    o1 = BaseObject.callCallback(cb, e1, f);
+                    o2 = BaseObject.callCallback(cb, e2, f);
+                } else {
+                    o1 = e1[f]; o2 = e2[f];
                 }
-                o1 = e1[f]; o2 = e2[f];
                 if (o1 == null) {
                     c = (-1 * dir);
                     break;

@@ -35,7 +35,7 @@ System.CommandLibs.LoadTranslation = (function() {
         bo.ajaxGetXml(actualurl,null, function(result) {
 			if (result.status.issuccessful) {
                 if (BaseObject.is(result.data, "object")) {
-                    mng.setTranslation(locale, result.data);
+                    mng.mergeTranslation(locale, result.data);
                     op.CompleteOperation(true,null);
                     return;
                 }
@@ -71,7 +71,7 @@ System.CommandLibs.LoadTranslations =(function() {
                     for (var k in result.data) {
                         if (result.data.hasOwnProperty(k)) {
                             if (/^\w{2}(-.*)?$/.test(k)) {
-                                mng.setTranslation(k, result.data[k]);            
+                                mng.mergeTranslation(k, result.data[k]);            
                             }
                         }
                     }

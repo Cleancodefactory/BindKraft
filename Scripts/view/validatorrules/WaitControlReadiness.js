@@ -16,6 +16,7 @@ WaitControlReadiness.prototype.validateValue = function (validator, value, bindi
 	var result = ValidationResultEnum.correct;
 	var target = binding.get_target();
 	var ctl = null;
+	var me = this;
 	if (BaseObject.is(target, "IUIControlReadiness")) {
 		ctl = target;
 	} else if (BaseObject.is(target.activeClass, "IUIControlReadiness")) {
@@ -26,7 +27,7 @@ WaitControlReadiness.prototype.validateValue = function (validator, value, bindi
 		if (BaseObject.is(v, "Operation")) {
 			if (!v.isOperationComplete()) {
 				v.then(function(op) {
-					validator.reportResult(this, op.isOperationSuccessful()?ValidationResultEnum.correct:ValidationResultEnum.incorrect);
+					validator.reportResult(me, op.isOperationSuccessful()?ValidationResultEnum.correct:ValidationResultEnum.incorrect);
 				});
 				result = ValidationResultEnum.pending;
 			}

@@ -1,6 +1,6 @@
 # Validation (of user input etc.)
 
-**Validation** is set of classes and techniques that enable the programmer to validate state of certain UI or part(s) of UI. Typically this is associated with forms filled by the user, but it usually goes further and covers more than just the user input. In any modern application the user input can be part of a variety of interactions with the software and they are certainly not limited to filling a number of fields and clicking "submit" in the end. This is why it is better to think about validation of the state of the UI and not just the user input.
+**Validation** is set of classes and techniques that enable the programmer to validate user input and state of certain UI or part(s) of UI. Typically this is associated with forms filled by the user, but it usually goes further and covers more than just the user input. In any modern application the user input can be part of a variety of interactions with the software and they are certainly not limited to filling a number of fields and clicking "submit" in the end. This is why it is better to think about validation of the state of the UI and not just the user input.
 
 ## Goals of the validation
 

@@ -100,7 +100,7 @@ WorkspaceWindow.prototype.$defaultWindowStyles = WindowStyleFlags.fillparent | W
 WorkspaceWindow.Default = function (callback, callbackArgs) {
     if (WorkspaceWindow.$Default == null) {
         WorkspaceWindow.$Default = new WorkspaceWindow(function (w) {
-            w.attachInDOM($('#container')[0]);
+            w.attachInDOM(System.Default().getWorkspaceElement());
             BaseObject.callCallback(callback, w, callbackArgs);
             w.fireInitialResize();
         },
@@ -125,12 +125,7 @@ WorkspaceWindow.prototype.on_ActivateWindow = function (msg) {
 };
 WorkspaceWindow.prototype.onBrowserResize = function () {
     var viewportSizeTemp = GetViewportSize();
-    //var param = { width: $('#container').ng_WidthFloat(), height: $('#container').ng_HeightFloat(), horizontal: (viewportSize[0] != viewportSizeTemp[0]), vertical: true };
-    //var param = { horizontal: (viewportSize[0] != viewportSizeTemp[0]), vertical: true };
     WindowingMessage.fireOn(this, WindowEventEnum.SizeChanged, {});
-    //viewportSize[0] = viewportSizeTemp[0];
-    //viewportSize[1] = viewportSizeTemp[1];
-    //WindowingMessage.fireOn(this, WindowEventEnum.SizeChanged, {});
 };
 WorkspaceWindow.prototype.springTrigger = null;
 WorkspaceWindow.prototype.windUp = function () {
@@ -154,8 +149,7 @@ WorkspaceWindow.prototype.on_Create = function () {
 
 WorkspaceWindow.prototype.fireInitialResize = function () {
     var viewportSizeTemp = GetViewportSize();
-    var param = { width: $('#container').ng_WidthFloat(), height: $('#container').ng_HeightFloat(), horizontal: false, vertical: true };
-    WindowingMessage.fireOn(this, WindowEventEnum.SizeChanged, param);
+    WindowingMessage.fireOn(this, WindowEventEnum.SizeChanged, {});
 };
 
 WorkspaceWindow.prototype.$activeApp = null;
