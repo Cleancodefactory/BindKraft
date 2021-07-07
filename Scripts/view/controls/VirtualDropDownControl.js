@@ -421,7 +421,7 @@ VirtualDropDownControl.prototype.set_selectedindices = function(n) {
 			return;
 		} else if (typeof n == "number") {
 			if (n >=0 && n < items.length) {
-				this.ClearSelection();
+				this.InternalClearSelection();
 				var itm = items[n];
 				if (itm != null) {
 					this.set_selectedkeys(itm[this.get_keyproperty()]);
@@ -514,7 +514,7 @@ VirtualDropDownControl.prototype.get_selecteditems = function() {
 	}
 }
 VirtualDropDownControl.prototype.set_selecteditems = function(v) {
-	this.ClearSelection();
+	this.InternalClearSelection();
 	var i, item;
 	if (v != null) {
 		if (BaseObject.is(v, "Array")) {
@@ -526,7 +526,7 @@ VirtualDropDownControl.prototype.set_selecteditems = function(v) {
 		}
 	}
 }
-VirtualDropDownControl.prototype.ClearSelection = function() {
+VirtualDropDownControl.prototype.InternalClearSelection = function() {
     if (this.get_multiselect()) {
         this.$selectedkeys = null;
         this.asyncUpdateTargets();
@@ -534,6 +534,10 @@ VirtualDropDownControl.prototype.ClearSelection = function() {
     } else {
         this.set_value(null);
     }
+}
+VirtualDropDownControl.prototype.ClearSelection = function() {
+    this.InternalClearSelection();
+	this.activatedevent.invoke(this, null);
 }
 VirtualDropDownControl.prototype.$value = null;
 VirtualDropDownControl.prototype.get_value = function() {
@@ -607,7 +611,7 @@ VirtualDropDownControl.prototype.set_selectedkeys = function(v) {
     } else if (v != null) {
         this.selectKey(v);
     } else {
-		this.ClearSelection();
+		this.InternalClearSelection();
 	}
 }
 VirtualDropDownControl.prototype.IsKeySelected = function(key) {
