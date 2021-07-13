@@ -36,6 +36,18 @@
     IAjaxRequest.prototype.get_cache = function() { throw "not impl"; }
     IAjaxRequest.prototype.set_cache = function(v) { throw "not impl"; }
 
+    /**
+     * HTTP verb to use. This can be null which means auto. 
+     * The automatic behaviour can be tricky if one does not take into account
+     * that such a choice requires to view the building process as ordered steps.
+     * So, setting the verb can be a step and if precedes setting the data - the 
+     * data should be accommodated to the limitations of the verb. On the other case,
+     * if we order the process in reverse - set the data, then the verb, setting the 
+     * data and url should determine the best verb and auto set it.
+     */
+    IAjaxRequest.prototype.get_verb = function() { throw "not impl"; }
+    IAjaxRequest.prototype.set_verb = function(v) { throw "not impl"; }
+
     IAjaxRequest.prototype.completeRequest = function(response) {
         throw "This method must be created by a requester.";
     }
