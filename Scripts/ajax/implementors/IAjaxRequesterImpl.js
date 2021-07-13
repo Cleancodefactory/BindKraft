@@ -42,8 +42,23 @@
                 }
                 
             } else {
-                // Build a request ourselves
                 
+                // Build a request ourselves
+                var _url = url_or_req;
+                var _data = data_or_reqdata_or_callback;
+                var _callback = null, _cache = false;
+                if (BaseObject.isCallback(callback)) {
+                    _callback = callback;
+                } else if (typeof cache == "boolean") {
+                    _cache = cache;
+                }
+                var request = new AjaxRequest(this);
+                if (typeof _url == "string") {
+                    
+                } else if (BaseObject.is(_url, "BKUrl")) {
+
+                }
+
             }
         }
 

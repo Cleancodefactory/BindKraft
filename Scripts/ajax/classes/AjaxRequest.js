@@ -93,6 +93,11 @@
     AjaxRequest.prototype.$cache = false;
     AjaxRequest.prototype.get_cache = function() { return this.$cache; }
     AjaxRequest.prototype.set_cache = function(v) { this.$cache = v?true:false; }
+
+    AjaxRequest.prototype.$verb = null;
+    AjaxRequest.prototype.get_verb = function() { throw "not impl"; }
+    AjaxRequest.prototype.set_verb = function(v) { throw "not impl"; }
+
     //#endregion
 
     //#region Callbacking
