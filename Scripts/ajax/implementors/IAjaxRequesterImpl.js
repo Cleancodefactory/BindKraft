@@ -21,6 +21,7 @@
                         BaseObject.callCallback(data_or_reqdata_or_callback, response);
                     }
                     _enqueueRequest(request);
+                    return true;
                 } else {
                     if (typeof data_or_reqdata_or_callback == "boolean") {
                         request.set_cache(data_or_reqdata_or_callback);
@@ -41,9 +42,10 @@
                     return op;
                 }
                 
-            } else {
+            } else { // URL then callback or op
                 
                 // Build a request ourselves
+                var err = null;
                 var _url = url_or_req;
                 var _data = data_or_reqdata_or_callback;
                 var _callback = null, _cache = false;
@@ -53,12 +55,13 @@
                     _cache = cache;
                 }
                 var request = new AjaxRequest(this);
-                if (typeof _url == "string") {
-                    
-                } else if (BaseObject.is(_url, "BKUrl")) {
-
-                }
-
+                var bkurl = BKUrl.getBasePathAsUrl();
+                if (typeof _url == "string" || BaseObject.is(_url, "BKUrl")) {
+                    if (!bkurl.set_nav(_url)) request.set_constructionError("Cannot determine the url") ;
+                } 
+                request.set_url(bkurl);
+                if (_data) request.set_data(_data);
+                return this.ajaxSendRequest(request, callback || _cache, _cache != null?_cache: null);
             }
         }
 

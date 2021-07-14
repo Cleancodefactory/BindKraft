@@ -48,6 +48,17 @@
     IAjaxRequest.prototype.get_verb = function() { throw "not impl"; }
     IAjaxRequest.prototype.set_verb = function(v) { throw "not impl"; }
 
+    /**
+     * Sets an error message (string) when the request cannot be constructed completely for some reason.
+     * The requests are built by adding certain pieces of data - url, data, verb etc. This is most often done
+     * by some API method that does it gradually and it can determine at certain point that successful construction
+     * cannot be performed. The method then sets some error message and if the request then enters the pipeline it
+     * will be internally completed with erroneous response without any attempt to further process it or send it anywhere.
+     */
+    IAjaxRequest.prototype.get_constructionError = function() { throw "not impl.";}
+    IAjaxRequest.prototype.set_constructionError = function(v) { throw "not impl.";}
+
+
     IAjaxRequest.prototype.completeRequest = function(response) {
         throw "This method must be created by a requester.";
     }

@@ -98,6 +98,10 @@
     AjaxRequest.prototype.get_verb = function() { throw "not impl"; }
     AjaxRequest.prototype.set_verb = function(v) { throw "not impl"; }
 
+    AjaxRequest.prototype.constructionError = null;
+    AjaxRequest.prototype.get_constructionError = function() { throw "not impl.";}
+    AjaxRequest.prototype.set_constructionError = function(v) { throw "not impl.";}
+
     //#endregion
 
     //#region Callbacking
