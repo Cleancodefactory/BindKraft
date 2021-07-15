@@ -63,4 +63,10 @@
         throw "This method must be created by a requester.";
     }
 
+    //#region Static helpers
+    IAjaxRequest.generateRequestId = (function() {
+        ///////////
+    })();
+
+    //#endregion
 })();

@@ -15,7 +15,16 @@
         throw "not impl.";
     }
 
+    IAjaxBatchRequest.prototype.$requests = new InitializeArray("");
     IAjaxBatchRequest.prototype.add = function(request) {
+        if (BaseObject.is(request, "IAjaxRequest")) {
+            this.$requests.push(request);
+        }
+    }
+    IAjaxBatchRequest.prototype.remove = function(request_id) {
+
+    }
+    IAjaxBatchRequest.prototype.requestsCount = function() {
 
     }
 
