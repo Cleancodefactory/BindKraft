@@ -45,7 +45,7 @@ EventDispatcher.prototype.$orderedAdd = function (func, priority) {
 EventDispatcher.prototype.add = function (func, bPriority) {
     if (this.handlers == null) return this;
 	// TODO: This line looks antique?
-    var n = this.handlers.findElement(func);
+    //var n = this.handlers.findElement(func);
     if (this.$orderedAdd(func, bPriority)) {
         if (this.$adviseNewComers) this.$postInvoke(func);
     }
