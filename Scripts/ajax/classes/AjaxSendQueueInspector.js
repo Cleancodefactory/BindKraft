@@ -52,15 +52,18 @@
         }
     }
  
-    AjaxSendQueueInspector.prototype.checkQueue = function(priority) { 
+    AjaxSendQueueInspector.prototype.checkQueue = function(inspector, priority) { 
         var _priority = priority || this.$criticalpriority || -1;
         var queue = this.get_queue();
-        var inspector = this.get_requestinspector();
         if (queue != null) {
-            if (inspector != null) {
-                
+            if (BaseObject.is(inspector, "IAjaxRequestInspector")) {
+                // Use the inspector
             } else {
-                return queue.queueLength();
+                if (priority != null) {
+                    
+                } else {
+                    return queue.queueLength();
+                }
             }
         }
         

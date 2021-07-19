@@ -101,11 +101,15 @@
     AjaxSendQueue.prototype.cancelRequests = function(callback) {throw "not impl.";}
     //#endregion
 
+    //#region IAjaxSendQueueEnumApi
+    //#endregion
+
 
     //#region  Holder object
     function AjaxQueueHolder(req, priority) {
         this.request = req;
         this.priority = priority || 0;
+        this.queued = Date.now();
     }
     //#endregion
 

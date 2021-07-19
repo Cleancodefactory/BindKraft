@@ -9,4 +9,6 @@
         AjaxBase.apply(this, arguments);
     }
     AjaxProgressQueue.Inherit(AjaxBase,"AjaxProgressQueue");
+
+    
 })();
