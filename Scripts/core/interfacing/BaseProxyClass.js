@@ -63,6 +63,11 @@ $Managed_BaseProxy.prototype.$buildProxyFrom = function(instance, iface, contain
 
 $Managed_BaseProxy.prototype.$wrapResult = function(r, method) {
 	var op, me = this;
+	if (this.__obliterated)	{
+		// Additional line of defence
+		this.LASTERROR("A Proxy was obliterated before the wrapResult phase.");
+		return null;
+	}
 	// Use ReturnType or if r is a proxy use it as a template
 	// Register in the local release container, ignore the one in the comming proxy
 	if (BaseObject.is(r, "$Managed_BaseProxy")) {
@@ -71,12 +76,21 @@ $Managed_BaseProxy.prototype.$wrapResult = function(r, method) {
 	} else if (BaseObject.is(r, "ChunkedOperation")) {
 		op = new ChunkedOperation();
 		r.anychunk(function(success,data) {
-			op.ReportOperationChunk(success,me.$wrapResult(data,method));
+			if (me.__obliterated) {
+				// Emergency operation completion
+				op.CompleteOperation(false, "Proxy was disconnected");
+			} else {
+				op.ReportOperationChunk(success,me.$wrapResult(data,method));
+			}
 		}).then(function (xop) {
 			if (xop.isOperationSuccessful()) {
-				op.CompleteOperation(true, me.$wrapResult(xop.getOperationResult(), method));
+				if (me.__obliterated) {
+					op.CompleteOperation(false, "Proxy was disconnected");
+				} else {
+					op.CompleteOperation(true, me.$wrapResult(xop.getOperationResult(), method));
+				}
 			} else {
-				op.CompleteOperation(false, xop.getOperationErrorInfo());
+				op.CompleteOperation(false, me.__obliterated?"Proxy was disconnected":xop.getOperationErrorInfo());
 			}
 		});
 		return op;
@@ -84,9 +98,13 @@ $Managed_BaseProxy.prototype.$wrapResult = function(r, method) {
 		op = new Operation();
 		r.then(function (xop) {
 			if (xop.isOperationSuccessful()) {
-				op.CompleteOperation(true, me.$wrapResult(xop.getOperationResult(), method));
+				if (me.__obliterated) {
+					op.CompleteOperation(false, "Proxy was disconnected");
+				} else {
+					op.CompleteOperation(true, me.$wrapResult(xop.getOperationResult(), method));
+				}
 			} else {
-				op.CompleteOperation(false, xop.getOperationErrorInfo());
+				op.CompleteOperation(false, me.__obliterated?"Proxy was disconnected":xop.getOperationErrorInfo());
 			}
 		});
 		return op;

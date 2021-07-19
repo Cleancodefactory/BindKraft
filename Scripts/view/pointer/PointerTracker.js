@@ -190,7 +190,7 @@ PointerTracker.prototype.handleTouchStart = function(e) {
 	if (e.touches && e.touches.length > 1) {
 		// Temporary solution
 		this.stopTracking(); // The client should not start new tracking during handling.	
-		if (this.isPreventing()) e.preventDefault();
+		if (this.isPreventing() && e.cancelable) e.preventDefault();
 	}
 	var touch = this.$getMainTouch(e);
 	if (touch == null) {
@@ -200,7 +200,7 @@ PointerTracker.prototype.handleTouchStart = function(e) {
 	var changedstates = this.$reportTouchMessage(e, touch);
 	var msg = this.createTrackMessage("move",changedstates); // TODO: Is move ok without marking buttons and stuff?
 	this.adviseClient(msg);
-	if (this.isPreventing()) e.preventDefault();
+	if (this.isPreventing() && e.cancelable) e.preventDefault();
 }
 PointerTracker.prototype.handleTouchMove = function(e) {
 	if (!this.isTracking()) return;
@@ -212,7 +212,7 @@ PointerTracker.prototype.handleTouchMove = function(e) {
 	var changedstates = this.$reportTouchMessage(e, touch);
 	var msg = this.createTouchTrackMessage("move",changedstates); // TODO: Is move ok without marking buttons and stuff?
 	this.adviseClient(msg);
-	if (this.isPreventing()) e.preventDefault();
+	if (this.isPreventing() && e.cancelable) e.preventDefault();
 }
 PointerTracker.prototype.handleTouchEnd = function(e) {
 	if (!this.isTracking()) return;
@@ -229,7 +229,7 @@ PointerTracker.prototype.handleTouchEnd = function(e) {
 			var changedstates = this.$reportTouchMessage(e, touch);
 			var changedstates = this.$reportMouseMessage(e);
 			this.completeTracking(); // The client should not start new tracking during handling.	
-			if (this.isPreventing()) e.preventDefault();
+			if (this.isPreventing() && e.cancelable) e.preventDefault();
 		} else {
 			// To simplify future extensions let us analyze the situation
 			// out main touch is not in changed - this is another touch which will bw future concern.
