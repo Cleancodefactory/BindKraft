@@ -21,7 +21,7 @@
     IAjaxSendQueueInspector.prototype.set_queue = function(q) { throw "not impl."; }
 
     /**
-     * The count over which the critical limit is considered to be reached.
+     * The count over which the critical limit is considered to be reached. The limit applies to whatever the inspector is interested in.
      */
     IAjaxSendQueueInspector.prototype.get_criticallimit = function () {throw "not impl.";}
     IAjaxSendQueueInspector.prototype.set_criticallimit = function (v) {throw "not impl.";}
