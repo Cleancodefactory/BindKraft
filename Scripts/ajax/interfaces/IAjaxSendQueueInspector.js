@@ -39,5 +39,11 @@
      */
     IAjaxSendQueueInspector.prototype.checkQueue = function(priority) { throw "not impl.";}
 
+    /**
+     * Performs the same tests as checkQueue, but picks the requests in question and performs the actions implemented by the specific inspector with them.
+     * These actions typically include sending the requests to a packer (sender).
+     */
+    IAjaxSendQueueInspector.prototype.grabRequests = function(priority) { throw "not implemented."; }
+
     IAjaxSendQueueInspector.prototype.queuefullevent = new InitializeEvent("Fired when the requests meeting the criteria in the queue pass certain limit.");
 })();

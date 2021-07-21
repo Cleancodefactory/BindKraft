@@ -1,4 +1,12 @@
 (function() {
+
+
+    /**
+     * Base class for request inspectors.
+     * Contains helper routines for various tasks that many inspectors may want to implement. all of them are named as analyse***.
+     * As a rule the helper routines return summary information about the request or null if they can't.
+     *
+     */
     function AjaxRequestInspectorBase() {
         AjaxBase.apply(this,arguments);
     }
@@ -10,6 +18,34 @@
     }
 
     //#region Tools for use in inherited inspectors (if and when necessary)
+    AjaxRequestInspector.prototype.analyseUrl = function(_url) {
+        var url = BKUrl.getBasePathAsUrl();
+        var summary = {
+            server: null,
+            port: null,
+            path: []
+        }
+        if (typeof _url == "string" || BaseObject.is(_url, "IBKUrlObject")) {
+            if (!url.set_nav(_url)) {
+                this.LASTERROR("Cannot project '" + _url + "' onto base url", "analyseUrl");
+                return null;
+            }
+        }
+        var auth = url.get_authority();
+        if (auth != null) {
+            summary.server = auth.get_host();
+            summary.port = auth.get_port();
+        } else {
+            this.LASTERROR("Unexpected error - no authority information in the url:" + url, "analyseUrl");
+            return null;
+        }
+        var path = url.get_path();
+        if (path != null) {
+            summary.path = path.get_pathnamesegements();
+        }
+        return summary;
+    }
+
     AjaxRequestInspector.prototype.analyseData = function(data) {
         var summary = {
             hasbinary: false,

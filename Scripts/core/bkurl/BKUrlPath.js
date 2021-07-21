@@ -14,9 +14,15 @@ BKUrlPath.Inherit(BKUrlObjectBaseChild,"BKUrlPath");
 BKUrlPath.prototype.$pathparts = new InitializeArray("All path parts - segments");
 BKUrlPath.prototype.$abs = false; // Absolute path (empty paths can be absolute if other parts of hte whole URL exist)
 BKUrlPath.prototype.$hasfilepart = false; // No trailing slash - the last segment is "file"
+/**
+ * @returns the number of path segments, including the file part.
+ */
 BKUrlPath.prototype.get_segementscount = function() {
 	return this.$pathparts.length;
 }
+/**
+ * @returns {integer} The number of the segments in the path (without the file part if it exists)
+ */
 BKUrlPath.prototype.get_pathnamesegementscount = function() {
 	if (!this.$hasfilepart) {
 		return this.$pathparts.length;
@@ -25,9 +31,15 @@ BKUrlPath.prototype.get_pathnamesegementscount = function() {
 		return ((c >= 0)?c:0);
 	}
 }
+/**
+ * @returns {Array<string>} Returns an array of all the path segments, including the file part (if exists)
+ */
 BKUrlPath.prototype.get_allsegments = function() {
 	return Array.createCopyOf(this.$pathparts);
 }
+/**
+ * @returns {Array<string>} an array of the path segments without the file part (if one exists)
+ */
 BKUrlPath.prototype.get_pathnamesegements = function() {
 	var s = [];
 	for (var i = 0; i <this.$pathparts.length;i++) {
@@ -41,12 +53,19 @@ BKUrlPath.prototype.get_pathnamesegements = function() {
 	}
 	return s;
 }
+/**
+ * @returns {boolean} Indicates if the URL has a file part - i.e. does not end with slash and is not empty
+ */
 BKUrlPath.prototype.get_hasfilepart = function() {
 	if (this.$pathparts != null && this.$pathparts.length > 0) {
 		return this.$hasfilepart;
 	}
 	return false;
 }
+/**
+ * @returns {boolean} Indicates if the path is absolute in its site. This means that this is either a path in an URL with non-empty authority
+ * 					  or the path starts with / slash
+ */
 BKUrlPath.prototype.get_absolute = function() {
 	if (this.get_parent() != null && this.get_parent().get_authority() != null && !this.get_parent().get_authority().get_isempty()) {
 		// effectively absolute
@@ -54,11 +73,17 @@ BKUrlPath.prototype.get_absolute = function() {
 	}
 	return this.$abs;
 }
+/**
+ * Sets the path to be treated as absolute. The same effect can be achieved by initializing UrlPath with a path starting with  "/"
+ */
 BKUrlPath.prototype.set_absolute = function(v) {
 	this.$abs = v?true:false;
 }
 
-// IIBKUrlObject
+//#region IBKUrlObject
+/**
+ * @returns {boolean} Indicates if hte path is empty. 
+ */
 BKUrlPath.prototype.get_isempty = function() {
 	if (this.$pathparts == null || this.$pathparts.length == 0) {
 		if (!this.$abs) return true;
@@ -82,6 +107,9 @@ BKUrlPath.prototype.$combine = function(v) {
 		return true;
 	}
 }
+/**
+ * Clears the path.
+ */
 BKUrlPath.prototype.clear = function() {
 	this.$pathparts.splice(0,this.$pathparts.length);
 	this.$abs = false;
@@ -107,7 +135,11 @@ BKUrlPath.$reSegment = /^(?:[A-Za-z0-9\-\._~]|%[A-Za-z0-9]{2}|[!$&'()*+,;=\:\@])
 BKUrlPath.$reSegmentNZ = /^(?:[A-Za-z0-9\-\._~]|%[A-Za-z0-9]{2}|[!$&'()*+,;=\:\@])+$/;
 BKUrlPath.$reSegmentNZNC = /^(?:[A-Za-z0-9\-\._~]|%[A-Za-z0-9]{2}|[!$&'()*+,;=\@])+$/;
 
-
+/**
+ * Attempts to parse a string as path. 
+ * 
+ * @returns {boolean} Indicates if the parsing is successful.
+ */
 BKUrlPath.prototype.readAsString = function(v) {
 	if (v == null) {
 		this.clear();
@@ -216,6 +248,8 @@ BKUrlPath.prototype.composeAsString = function() { // TODO
 	}
 	return s;
 }
+
+//#endregion
 
 // Path specific management
 /**
