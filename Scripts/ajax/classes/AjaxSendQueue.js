@@ -83,6 +83,16 @@
             return this.dequeueRequest();                    
         }
     }
+    AjaxSendQueue.prototype.pickRequests = function(callback) { 
+        if (BaseObject.isCallback(callback)) {
+            return this.$queue.Select(function(i, e) {
+                if (BaseObject.callCallback(callback, e)) return e;
+                return null;
+            });
+        } else {
+            return Array.createCopyOf(this.$queue);
+        }
+    }
 
     AjaxSendQueue.prototype.queueLength = function() {
         return this.$queue.length;

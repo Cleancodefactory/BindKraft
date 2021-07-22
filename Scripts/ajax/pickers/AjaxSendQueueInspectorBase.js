@@ -4,19 +4,19 @@
         AjaxBase = Class("AjaxBase")
         IAjaxRequestInspectorUser = Interface("IAjaxRequestInspectorUser");
 
-    function AjaxSendQueueInspector(){
+    function AjaxSendQueueInspectorBase() {
         AjaxBase.apply(this, arguments);
     }
-    AjaxSendQueueInspector.Inherit(AjaxBase,"AjaxSendQueueInspector")
+    AjaxSendQueueInspectorBase.Inherit(AjaxBase,"AjaxSendQueueInspectorBase")
         .Implement(IAjaxSendQueueInspector)
         .Implement(IAjaxRequestInspectorUser);
 
     //#region IAjaxSendQueueInspector
-    AjaxSendQueueInspector.prototype.$queue = null;
-    AjaxSendQueueInspector.prototype.get_queue = function() { 
+    AjaxSendQueueInspectorBase.prototype.$queue = null;
+    AjaxSendQueueInspectorBase.prototype.get_queue = function() { 
         return this.$queue;
     }
-    AjaxSendQueueInspector.prototype.set_queue = function(q) { 
+    AjaxSendQueueInspectorBase.prototype.set_queue = function(q) { 
         if (BaseObject.is(q, "IAjaxSendQueue") || q == null) {
             this.$queue = q;
         } else {
@@ -24,11 +24,11 @@
         }
     }
  
-    AjaxSendQueueInspector.prototype.$criticallimit = -1; // no limit => negative number
-    AjaxSendQueueInspector.prototype.get_criticallimit = function () {
+    AjaxSendQueueInspectorBase.prototype.$criticallimit = -1; // no limit => negative number
+    AjaxSendQueueInspectorBase.prototype.get_criticallimit = function () {
         return this.$criticallimit;
     }
-    AjaxSendQueueInspector.prototype.set_criticallimit = function (v) {
+    AjaxSendQueueInspectorBase.prototype.set_criticallimit = function (v) {
         if (v == null) {
             this.$criticallimit = -1;    
         } else if (typeof v == "number") {
@@ -38,11 +38,11 @@
         }
     }
  
-    AjaxSendQueueInspector.prototype.$criticalpriority = -1; 
-    AjaxSendQueueInspector.prototype.get_criticalpriority = function () {
+    AjaxSendQueueInspectorBase.prototype.$criticalpriority = -1; 
+    AjaxSendQueueInspectorBase.prototype.get_criticalpriority = function () {
         return this.$criticalpriority;
     }
-    AjaxSendQueueInspector.prototype.set_criticalpriority = function (v) {
+    AjaxSendQueueInspectorBase.prototype.set_criticalpriority = function (v) {
         if (v == null) {
             this.$criticalpriority = -1;
         } else if (typeof v == "number") {
@@ -52,7 +52,7 @@
         }
     }
  
-    AjaxSendQueueInspector.prototype.checkQueue = function(inspector, priority) { 
+    AjaxSendQueueInspectorBase.prototype.checkQueue = function(inspector, priority) { 
         var _priority = priority || this.$criticalpriority || -1;
         var queue = this.get_queue();
         if (queue != null) {
@@ -60,7 +60,7 @@
                 // Use the inspector
             } else {
                 if (priority != null) {
-                    
+                    // TODO
                 } else {
                     return queue.queueLength();
                 }
@@ -68,15 +68,29 @@
         }
         
     }
+    AjaxSendQueueInspectorBase.prototype.grabRequests = function(priority) { 
+        var _priority = priority || this.$criticalpriority || -1;
+        var queue = this.get_queue();
+        var inspector = this.get_requestinspector();
+        if (BaseObject.is(inspector, "IAjaxRequestInspector")) {
+            // Use the inspector
+        } else {
+            if (priority != null) {
+                // TODO
+            } else {
+                return queue.queueLength();
+            }
+        }
+    }
 
     //#endregion
 
     //#region IAjaxRequestInspectorUser
-    AjaxSendQueueInspector.prototype.$requestInspector = null;
-    AjaxSendQueueInspector.prototype.get_requestinspector = function() {
+    AjaxSendQueueInspectorBase.prototype.$requestInspector = null;
+    AjaxSendQueueInspectorBase.prototype.get_requestinspector = function() {
          return this.$requestInspector;
     }
-    AjaxSendQueueInspector.prototype.set_requestinspector = function(v) {
+    AjaxSendQueueInspectorBase.prototype.set_requestinspector = function(v) {
         if (v == null) {
             this.$requestInspector = null;
         } else if (BaseObject.is(v, "IAjaxRequestInspector")) {

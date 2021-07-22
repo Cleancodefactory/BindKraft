@@ -14,4 +14,6 @@
      * Returns an operation that completes when the sender is ready.
      */
     IAjaxRequestSender.prototype.get_unblock = function() {throw "not implemented.";}
+
+    IAjaxRequestSender.prototype.sendRequests = function(arrRequests) {throw "not implemented";}
 })();
