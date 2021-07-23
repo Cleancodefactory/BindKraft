@@ -4,8 +4,10 @@
     /**
      * Base class for request inspectors.
      * Contains helper routines for various tasks that many inspectors may want to implement. all of them are named as analyse***.
-     * As a rule the helper routines return summary information about the request or null if they can't.
+     * As a rule the helper routines return summary information about the request or null if they can't work with it.
      *
+     * The request inspectors do not manage requests in any way. they are responsible only for identifying them and extracting information about them
+     * in more compact and easy to use form (easy for management logic)
      */
     function AjaxRequestInspectorBase() {
         AjaxBase.apply(this,arguments);

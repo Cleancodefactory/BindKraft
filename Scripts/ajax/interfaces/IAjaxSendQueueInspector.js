@@ -27,6 +27,12 @@
     IAjaxSendQueueInspector.prototype.set_criticallimit = function (v) {throw "not impl.";}
 
     /**
+     * The critical request age at which the requests should picked even if they are under the critical limit.
+     */
+    IAjaxSendQueueInspector.prototype.get_criticalage = function() { throw "not implemented.";}
+    IAjaxSendQueueInspector.prototype.set_criticalage = function(v) { throw "not implemented.";}
+
+    /**
      * Critical priority under which the requests are checked. If set to negative number - all requests are checked.
      * This is used for the internal calls to checkQueue when the implementation is attached to the queue and also
      * as a default value whenever checkQueue is called without arguments.

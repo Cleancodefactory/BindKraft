@@ -4,18 +4,28 @@
         AjaxBase = Class("AjaxBase")
         IAjaxRequestInspectorUser = Interface("IAjaxRequestInspectorUser");
 
+    /**
+     * Queue inspectors
+     */
     function AjaxSendQueueInspectorBase() {
         AjaxBase.apply(this, arguments);
     }
     AjaxSendQueueInspectorBase.Inherit(AjaxBase,"AjaxSendQueueInspectorBase")
-        .Implement(IAjaxSendQueueInspector)
-        .Implement(IAjaxRequestInspectorUser);
+        .Implement(IAjaxSendQueueInspector);
+        
+    AjaxSendQueueInspectorBase.$defaultCriticalAge = 1000; // 1 second in milliseconds
 
     //#region IAjaxSendQueueInspector
     AjaxSendQueueInspectorBase.prototype.$queue = null;
+    /**
+     * Gets the queue on which the inspector works.
+     */
     AjaxSendQueueInspectorBase.prototype.get_queue = function() { 
         return this.$queue;
     }
+    /**
+     * Sets the queue on which the inspector works.
+     */
     AjaxSendQueueInspectorBase.prototype.set_queue = function(q) { 
         if (BaseObject.is(q, "IAjaxSendQueue") || q == null) {
             this.$queue = q;
@@ -24,27 +34,50 @@
         }
     }
  
-    AjaxSendQueueInspectorBase.prototype.$criticallimit = -1; // no limit => negative number
+    AjaxSendQueueInspectorBase.prototype.$criticallimit = null; // no limit => negative number
+    /**
+     * Critical limit over which (inclusive) the inspector picks requests. This is the number of requests matching the
+     * inspector's criteria that have to be in the queue in order for the inspector to start picking them. This limit 
+     * works in combination with $criticalage
+     */
     AjaxSendQueueInspectorBase.prototype.get_criticallimit = function () {
         return this.$criticallimit;
     }
     AjaxSendQueueInspectorBase.prototype.set_criticallimit = function (v) {
         if (v == null) {
-            this.$criticallimit = -1;    
+            this.$criticallimit = null;    
         } else if (typeof v == "number") {
             this.$criticallimit = v;
         } else {
             this.LASTERROR("Unsupported type", "set_criticallimit");
         }
     }
+
+    AjaxSendQueueInspector.prototype.$criticalage = 1000;
+    /**
+     * The critical request age at which the requests should picked even if they are under the critical limit.
+     */
+    AjaxSendQueueInspector.prototype.get_criticalage = function() { return this.$criticalage; }
+    AjaxSendQueueInspector.prototype.set_criticalage = function(v) { 
+        if (typeof v == "number") {
+            this.$criticalage = v;
+        } else if (v != null) {
+            var n = parseInt(v, 10);
+            if (!isNaN(n)) {
+                this.$criticalage = n;
+            }
+        } else if (v == null) {
+            this.$criticalage = Class.getClassDef(this).$defaultCriticalAge || AjaxSendQueueInspectorBase.$defaultCriticalAge;
+        }
+    }
  
-    AjaxSendQueueInspectorBase.prototype.$criticalpriority = -1; 
+    AjaxSendQueueInspectorBase.prototype.$criticalpriority = null; 
     AjaxSendQueueInspectorBase.prototype.get_criticalpriority = function () {
         return this.$criticalpriority;
     }
     AjaxSendQueueInspectorBase.prototype.set_criticalpriority = function (v) {
         if (v == null) {
-            this.$criticalpriority = -1;
+            this.$criticalpriority = null;
         } else if (typeof v == "number") {
             this.$criticalpriority = v;
         } else {
@@ -52,15 +85,16 @@
         }
     }
  
-    AjaxSendQueueInspectorBase.prototype.checkQueue = function(inspector, priority) { 
+    AjaxSendQueueInspectorBase.prototype.checkQueue = function(priority) { 
         var _priority = priority || this.$criticalpriority || -1;
         var queue = this.get_queue();
         if (queue != null) {
             if (BaseObject.is(inspector, "IAjaxRequestInspector")) {
                 // Use the inspector
+                // TODO
             } else {
                 if (priority != null) {
-                    // TODO
+                    //queue.
                 } else {
                     return queue.queueLength();
                 }
@@ -85,21 +119,5 @@
 
     //#endregion
 
-    //#region IAjaxRequestInspectorUser
-    AjaxSendQueueInspectorBase.prototype.$requestInspector = null;
-    AjaxSendQueueInspectorBase.prototype.get_requestinspector = function() {
-         return this.$requestInspector;
-    }
-    AjaxSendQueueInspectorBase.prototype.set_requestinspector = function(v) {
-        if (v == null) {
-            this.$requestInspector = null;
-        } else if (BaseObject.is(v, "IAjaxRequestInspector")) {
-            this.$requestInspector = v;
-        } else {
-            this.LASTERROR("Unsupprted type set.", "set_requestinspector");
-        }
-
-    }
-
-     //#endregion
+    
 })();

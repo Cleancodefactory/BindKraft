@@ -27,6 +27,8 @@
 
     /**
      * Resets the slot status by setting enqueued to now, the priority to the desired value.
+     * @param [priority] {number} Optional priority, if missing 0 is set.
+     * @returns {IAjaxQueueSlot} This object
      */
     IAjaxQueueSlot.prototype.slotIt = function(priority) {
         throw "Not implemented";

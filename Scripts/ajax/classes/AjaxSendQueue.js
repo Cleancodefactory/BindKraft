@@ -1,5 +1,8 @@
 (function() {
 
+    /**
+     * Be warned, while called queue, this is mostly used in non-queue manner.
+     */
     var AjaxBase = Class("AjaxBase"),
         IAjaxSendQueue = Interface("IAjaxSendQueue"),
         IAjaxRawData = Interface("IAjaxRawData");
@@ -35,12 +38,11 @@
     //#region IAjaxSendQueue
     
     AjaxSendQueue.prototype.enqueueRequest = function(req, priority) { 
-        if (BaseObject.is(req, "IAjaxRequest")) {
-            var slot = new AjaxQueueHolder(req, priority);
+        if (BaseObject.is(req, "IAjaxRequest") && BaseObject.is(req, "IAjaxQueueSlot")) {
             for (var i = this.$queue.length - 1; i >= 0; i--) {
                 var el = this.$queue[i];
-                if (el.priority >= slot.priority) {
-                    this.$queue.splice(i+1,0,slot);
+                if (el.get_priority() >= req.get_priority()) {
+                    this.$queue.splice(i+1,0,req);
                     return true;
                 }
             }
@@ -48,20 +50,21 @@
             this.$queue.unshift(slot);
             return true;
         }
+        this.LASTERROR("Attempted to enqueue a non-request. AjaxSendQueue supports only objects supporting both IAjaxRequest and IAjaxQueueSlot interfaces", "enqueueRequest");
         return false;
     }
     AjaxSendQueue.prototype.dequeueRequest = function(priority) { 
         if (priority == null) {
             if (this.$queue.length > 0) {
                 var el = this.$queue.pop();
-                return el.request;
+                return el;
             }
         } else if (typeof priority == "number" && !isNaN(priority)) {
             for (var i = this.$queue.length - 1; i >= 0; i--) {
                 var el = this.$queue[i];
-                if (el.priority <= priority) {
+                if (el.get_priority() <= priority) {
                     var p = this.$queue.splice(i,1);
-                    return p.request;
+                    return p;
                 }
             }
         }
@@ -75,7 +78,7 @@
                 var el = this.$queue[i];
                 if (BaseObject.callCallback(callback, el)) {
                     var p = this.$queue.splice(i,1);
-                    return p.request;
+                    return p;
                 }
             }
             return null;
@@ -84,13 +87,18 @@
         }
     }
     AjaxSendQueue.prototype.pickRequests = function(callback) { 
+        var result = [];
         if (BaseObject.isCallback(callback)) {
-            return this.$queue.Select(function(i, e) {
-                if (BaseObject.callCallback(callback, e)) return e;
-                return null;
-            });
+            for (var i = this.$queue.length - 1; i >= 0; i--) {
+                var e = this.$queue[i];
+                if (BaseObject.callCallback(callback, e)) {
+                    result.push(e); // collect it
+                    this.$queue.splice(i, 1); // remove it from the queue
+                }
+            }
+            return result;
         } else {
-            return Array.createCopyOf(this.$queue);
+            return this.$queue.splice(0)
         }
     }
 
@@ -104,6 +112,14 @@
             }
         }
         return null;
+    }
+    AjaxSendQueueEnumApi.prototype.peekRequests = function(inspector_or_callback) {
+        if (BaseObject.is(inspector_or_callback, "IAjaxRequestInspector")) {
+            var inspector = inspector_or_callback;
+            // TODO
+        } else if (BaseObject.isCallback(inspector_or_callback)) {
+
+        }
     }
     /**
      * This method is under consideration. Its existence depends on serious decisions that are yet to be made.

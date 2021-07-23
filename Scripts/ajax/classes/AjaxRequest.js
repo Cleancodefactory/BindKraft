@@ -14,7 +14,8 @@
     }
     AjaxRequest.Inherit(AjaxBase, "AjaxRequest")
         .Implement(IAjaxRequest)
-        .Implement(IAjaxRawData);
+        .Implement(IAjaxRawData)
+        .Implement(IAjaxQueueSlot);
 
     //#region IAjaxRawData - not sue if we are going to use this here and how.
     AjaxRequest.prototype.get_rawdata = function() { 
@@ -109,6 +110,42 @@
      * This method is created dynamically by the requester
      */
     AjaxRequest.prototype.completeRequest = null;
+    //#endregion
+
+    //#region IAjaxQueueSlot
+    AjaxQueueSlot.prototype.$priority = 0;
+    AjaxQueueSlot.prototype.get_priority = function() { return this.$priority; }
+    AjaxQueueSlot.prototype.set_priority = function(v) {
+        if (v == null) {
+            this.$priority = 0;
+        } else if (typeof v == "number") {
+            this.$priority = v;
+        } else {
+            this.$priority = 0;
+            this.LASTERROR("Unknown type was assigned to priority and it was set to 0");
+        }
+    }
+    
+    AjaxQueueSlot.prototype.$enqueuedat = null;
+    AjaxQueueSlot.prototype.get_enqueuedat = function() { return this.$enqueuedat; }
+    AjaxQueueSlot.prototype.set_enqueuedat = function(v) {
+        if (v instanceof Date) {
+            this.$enqueuedat = v.getTime();
+        } else if (typeof v == "number") {
+            this.$enqueuedat = v;
+        } else if (v == null) {
+            this.$enqueuedat = null;
+        } else {
+            this.LASTERROR("Unsupported type was assigned to enqueuedat.");
+        }
+    }
+
+    
+    AjaxQueueSlot.prototype.slotIt = function(priority) {
+        this.set_priority(priority);
+        this.set_enqueuedat(Date.now());
+        return this;
+    }
     //#endregion
 
 

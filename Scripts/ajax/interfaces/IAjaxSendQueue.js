@@ -19,6 +19,11 @@
      * @returns {IAjaxRequest} Returns null if the index is out of range
      */
     IAjaxSendQueue.prototype.peekRequest = function(index) { throw "not impl.";}
+
+    /**
+     * Returns array of the requests the inspector or callback approved without removing them.
+     */
+    IAjaxSendQueueEnumApi.prototype.peekRequests = function(requestInspector_or_callback) { throw "not implemented"; }
     
 
     /**
