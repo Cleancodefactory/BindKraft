@@ -85,23 +85,29 @@
         }
     }
  
-    AjaxSendQueueInspectorBase.prototype.checkQueue = function(priority) { 
-        var _priority = priority || this.$criticalpriority || -1;
+    AjaxSendQueueInspectorBase.prototype.checkQueue = function(_priority) { 
+        var priority = _priority || this.$criticalpriority || null;
         var queue = this.get_queue();
         if (queue != null) {
-            if (BaseObject.is(inspector, "IAjaxRequestInspector")) {
-                // Use the inspector
-                // TODO
-            } else {
-                if (priority != null) {
-                    //queue.
-                } else {
-                    return queue.queueLength();
-                }
-            }
+            return this.$checkQueue(queue, priority);
         }
-        
+        return 0;
     }
+    //Override
+    /**
+     * Override to implement variants. The default implementation assumes no checking on request characteristics except priority
+     * @param queue {IAjaxSendQueue} The queue to inspect.
+     * @param _priority {null|integer} Optional priority of the requests to count (all <= are counted)
+     * @returns {integer} The number of requests in the queue matching the inspectors criteria.
+     * 
+     */
+    AjaxSendQueueInspectorBase.prototype.$checkQueue = function(queue, priority) {
+        var reqs = queue.peekRequests(function(req){
+            return true;
+        },priority);
+        return reqs.length;
+    }
+    
     AjaxSendQueueInspectorBase.prototype.grabRequests = function(priority) { 
         var _priority = priority || this.$criticalpriority || -1;
         var queue = this.get_queue();

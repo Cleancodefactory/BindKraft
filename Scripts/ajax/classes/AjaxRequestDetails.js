@@ -6,7 +6,7 @@
      * 
      */
 
-    function AjaxRequestDetails(plainObject) {
+    function AjaxRequestDetails(plainObject, request) {
         BaseObject.apply(this,arguments);
         if (plainObject != null) {
             for (var k in plainObject) {
@@ -15,8 +15,15 @@
                 }
             }
         }
+        this.request = request;
     }
     AjaxRequestDetails.Inherit(BaseObject, "AjaxRequestDetails")
         .Implement(IAjaxRequestDetails);
+
+    AjaxRequestDetails.prototype.removeRequestFromQueue = function(requestQueue) {
+        if (BaseObject.is(requestQueue, "IAjaxSendQueue")) {
+            requestQueue.removeRequest(request);
+        }
+    }
 
 })();

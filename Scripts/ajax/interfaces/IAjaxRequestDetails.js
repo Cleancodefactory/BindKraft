@@ -10,6 +10,7 @@
     function IAjaxRequestDetails() {}
     IAjaxRequestDetails.Interface("IAjaxRequestDetails");
 
+    IAjaxRequestDetails.prototype.request = null;
     IAjaxRequestDetails.prototype.priority = 0;
     IAjaxRequestDetails.prototype.targetOrigin = null; //BKUrlAuthority
     IAjaxRequestDetails.prototype.targetPathOrigin = null; // Reserved, BKUrlPath

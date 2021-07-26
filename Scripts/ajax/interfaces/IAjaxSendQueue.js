@@ -6,6 +6,12 @@
     IAjaxSendQueue.prototype.dequeueRequest = function(priority) { throw "not impl.";}
 
     /**
+     * Removes the given request from the queue if it is in it.
+     * Needed for queue inspectors that need to peek and then decide what to pick and what to leave.
+     */
+    IAjaxSendQueue.prototype.removeRequest = function(request) { throw "not impl."; }
+
+    /**
      * Picks (removes from the queue) the first request that matches the callback's conditions.
      */
     IAjaxSendQueue.prototype.pickRequest = function(callback) { throw "not impl.";}
@@ -23,7 +29,7 @@
     /**
      * Returns array of the requests the inspector or callback approved without removing them.
      */
-    IAjaxSendQueueEnumApi.prototype.peekRequests = function(requestInspector_or_callback) { throw "not implemented"; }
+    IAjaxSendQueueEnumApi.prototype.peekRequests = function(requestInspector_or_callback, priority) { throw "not implemented"; }
     
 
     /**

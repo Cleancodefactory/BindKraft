@@ -72,6 +72,13 @@
 
     }
 
+    IAjaxSendQueue.prototype.removeRequest = function(request) {
+        var i = this.$queue.indexOf(request);
+        if (i >= 0) {
+            return this.$queue.splice(i,1);
+        }
+        return null;
+    }
     AjaxSendQueue.prototype.pickRequest = function(callback) { 
         if (BaseObject.isCallback(callback)) {
             for (var i = this.$queue.length - 1; i >= 0; i--) {
@@ -113,12 +120,28 @@
         }
         return null;
     }
-    AjaxSendQueueEnumApi.prototype.peekRequests = function(inspector_or_callback) {
+    AjaxSendQueue.prototype.peekRequests = function(inspector_or_callback, priority) {
+        var info;
         if (BaseObject.is(inspector_or_callback, "IAjaxRequestInspector")) {
             var inspector = inspector_or_callback;
-            // TODO
+            return this.$queue.Select(function(idx, req) {
+                if (priority != null && priority > req.get_priority()) return null;
+                info = inspector.inspectRequest(req);
+                if (info != null) {
+                    return new AjaxRequestDetails(info, req);
+                }
+                return null;
+            });
         } else if (BaseObject.isCallback(inspector_or_callback)) {
-
+            return this.$queue.Select(function(idx, req) {
+                if (priority != null && priority > req.get_priority()) return null;
+                info = BaseObject.callCallback(inspector_or_callback, req);
+                if (info === true) {
+                    return new AjaxRequestDetails({}, req);
+                } else if (typeof info == "object" && info != null) {
+                    return new AjaxRequestDetails(info, req);
+                }
+            });
         }
     }
     /**
@@ -127,8 +150,7 @@
     AjaxSendQueue.prototype.cancelRequests = function(callback) {throw "not impl.";}
     //#endregion
 
-    //#region IAjaxSendQueueEnumApi
-    //#endregion
+    
 
 
     //#region  Holder object
