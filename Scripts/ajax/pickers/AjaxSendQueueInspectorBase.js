@@ -98,29 +98,36 @@
      * Override to implement variants. The default implementation assumes no checking on request characteristics except priority
      * @param queue {IAjaxSendQueue} The queue to inspect.
      * @param _priority {null|integer} Optional priority of the requests to count (all <= are counted)
-     * @returns {integer} The number of requests in the queue matching the inspectors criteria.
+     * @returns {Array<IAjaxRequestDetails>} Callers may use both the requests or only the number. The array peeks the requests.
      * 
      */
     AjaxSendQueueInspectorBase.prototype.$checkQueue = function(queue, priority) {
         var reqs = queue.peekRequests(function(req){
             return true;
         },priority);
-        return reqs.length;
+        return reqs;
     }
     
-    AjaxSendQueueInspectorBase.prototype.grabRequests = function(priority) { 
-        var _priority = priority || this.$criticalpriority || -1;
-        var queue = this.get_queue();
-        var inspector = this.get_requestinspector();
-        if (BaseObject.is(inspector, "IAjaxRequestInspector")) {
-            // Use the inspector
-        } else {
-            if (priority != null) {
-                // TODO
-            } else {
-                return queue.queueLength();
+    AjaxSendQueueInspectorBase.prototype.grabRequests = function(requests) { 
+        if (BaseObject.is(this.$queue,"IAjaxSendQueue")) {
+            if (Array.isArray(requests)) {
+                var type = null;
+                return requests.Select(function(idx, req) {
+                    if (BaseObject.is(req, "IAjaxRequest")) {
+                        if (type == null) type = "IAjaxRequest";
+                        if (type != "IAjaxRequest") return null; // exclude this one
+                        this.$queue.removeRequest(req);
+                        return req;
+                    } else if (BaseObject.is(req, "IAjaxRequestDetails")) {
+                        if (type == null) type = "IAjaxRequestDetails";
+                        if (type != "IAjaxRequestDetails") return null; // exclude this one
+                        this.$queue.removeRequest(req.request);
+                        return req;
+                    }
+                });
             }
-        }
+        } 
+        return []; // ??? or may be null ?
     }
 
     //#endregion

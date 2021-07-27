@@ -1,10 +1,23 @@
 (function(){
 
+    /**
+     * This is a queue inspector that uses a request inspector to choose requests from the queue
+     */
     function AjaxSendQueueInspectorSingleBase() {
         AjaxSendQueueInspectorBase.apply(this, arguments);
     }
     AjaxSendQueueInspectorSingleBase.Inherit(AjaxSendQueueInspectorBase,"AjaxSendQueueInspectorSingleBase")
         .Implement(IAjaxRequestInspectorUser);
+
+    // Override
+    AjaxSendQueueInspectorSingleBase.prototype.$checkQueue = function(queue, priority) {
+        if (this.$requestInspector != null) {
+            var reqs = queue.peekRequests(this.$requestInspector, priority);
+            return reqs.length;
+        } else {
+            return 0; // Usage without request inspector is prevented in order to force people to use the base class for non-inspected picking.
+        }
+    }
 
     //#region IAjaxRequestInspectorUser
     AjaxSendQueueInspectorBase.prototype.$requestInspector = null;
