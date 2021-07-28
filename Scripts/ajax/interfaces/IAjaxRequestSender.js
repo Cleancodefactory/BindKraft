@@ -1,5 +1,8 @@
 (function(){
 
+    /**
+     * The sender has to support two things - a queue
+     */
     function IAjaxRequestSender() {}
     IAjaxRequestSender.Interface("IAjaxRequestSender");
 
@@ -14,6 +17,8 @@
      * Returns an operation that completes when the sender is ready.
      */
     IAjaxRequestSender.prototype.get_unblock = function() {throw "not implemented.";}
+
+    IAjaxRequestSender.prototype.blockedevent = new InitializeEvent("Fired when the sender is blocked and can't accept more requests");
 
     IAjaxRequestSender.prototype.sendRequests = function(arrRequests) {throw "not implemented";}
 })();
