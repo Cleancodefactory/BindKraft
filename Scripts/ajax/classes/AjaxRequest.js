@@ -107,9 +107,24 @@
 
     //#region Callbacking
     /**
-     * This method is created dynamically by the requester
+     * This method is created dynamically by the requester. It calls internally the $completeRequest 
+     * to enable the class to perform the common tasks it needs to finish.
+     * 
+     * The generated method mostly deals with the call type - with callback / with operation etc. The rest of the work is done by $completeRequest.
      */
     AjaxRequest.prototype.completeRequest = null;
+
+    /**
+     * TODO override this method with the common tasks done on request completion by your request class.
+     * In this basic (and base) request class the method proceeds in a simple way.
+     */
+    // override
+    AjaxRequest.prototype.$completeRequest = function(response) {
+        if (this.is("IajaxPackedRequest")) {
+            this.set_processingState(1); // complete
+            this.set_processingQueue(null); // make sure it is removed from there.
+        }
+    }
     //#endregion
 
     //#region IAjaxQueueSlot

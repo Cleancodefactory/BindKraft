@@ -28,7 +28,16 @@
 
     //#endregion
 
-    
+    //#region Packer
+    AjaxCarrier.prototype.get_requestPacker = function() { 
+        // TODO
+    }
+    AjaxCarrier.prototype.get_responseUnpacker = function() {
+        // DO:
+    }
+    //#endregion
+
+
 
 
 })();

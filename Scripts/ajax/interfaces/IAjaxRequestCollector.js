@@ -1,5 +1,5 @@
 (function() {
-    /**
+    /** // OBSOLETE
      * Describes the collecting functionality implemented in the AjaxRequestInspectors.
      * 
      */

@@ -8,7 +8,56 @@
     function AjaxProgressQueue() {
         AjaxBase.apply(this, arguments);
     }
-    AjaxProgressQueue.Inherit(AjaxBase,"AjaxProgressQueue");
+    AjaxProgressQueue.Inherit(AjaxBase,"AjaxProgressQueue")
+        .Implement(IAjaxProgressQueue);
 
-    
+
+    //#region IAjaxProgressQueue
+    AjaxProgressQueue.prototype.$queue = new InitializeArray("Requess queue");
+    AjaxProgressQueue.prototype.putRequest = function(request) { 
+        if (BaseObject.is(request,  "IAjaxPackedRequest")) {
+            var index = this.$queue.indexOf(request);
+            if (index >= 0) { // already there
+                this.LASTERROR("The request is already on the queue.");
+                return index;
+            } else {
+                this.$queue.push(request);
+                return this.$queue.length - 1;
+            }
+        } else {
+            this.LASTERROR("Only IAjaxPackedRequest objects can be put on the progress queue.");
+            return -1;
+        }
+    }
+
+    AjaxProgressQueue.prototype.removeRequest = function(request) { 
+        if (BaseObject.is(request,  "IAjaxPackedRequest")) {
+            var index = this.$queue.indexOf(request);
+            if (index >= 0) { // already there
+                var r = this.$queue[index];
+                r.set_processingQueue(null); // This should remove it
+                return r;
+            }
+        }
+        return null;
+    }
+
+    AjaxProgressQueue.prototype.cancelRequest = function(request) { 
+        var r = this.removeRequest(request);
+        if (BaseObject.is(r,"IAjaxPackedRequest")) {
+            r.completeRequest(new AjaxResponse(false)); // Cancellation response.
+        }
+    }
+
+    //#endregion
+
+    /**
+     * @param callback {callback} Proto: function(IAjaxRequest): boolean returns true for each request matching the 
+     *                              implemented by the callback criteria.
+     * @returns {Array<IAjaxRequest>} An array of references to all the requests (rather IAjaxPackedRequest-s) matching 
+     *                                the callback's criteria.
+     */
+        AjaxProgressQueue.prototype.peekRequests = function(callback) { throw "not impl."; }
+
+
 })();

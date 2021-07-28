@@ -17,4 +17,9 @@
      *                   This will be the error message if success is false.
      */
     IAjaxResponse.prototype.get_message = function() { throw "not impl.";}
+
+    /**
+     * The request to which this is a response.
+     */
+    IAjaxResponse.prototype.get_request = function() { throw "not impl.";}
 })();

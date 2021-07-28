@@ -20,4 +20,16 @@
      */
     IAjaxPackedRequest.prototype.get_responseUnpacker = function() {throw "not impl.";}
 
+    /**
+     * Reverse reference to the queue in which the request resides, can be null at some points.
+     */
+    IAjaxPackedRequest.prototype.get_processingQueue = function() {throw "not impl."; }
+    IAjaxPackedRequest.prototype.set_processingQueue = function(v) {throw "not impl."; }
+
+    /**
+     * Holds the state of the request (unsent, waiting, complete)
+     */
+    IAjaxPackedRequest.prototype.get_processingState = function () { throw "not impl."; }
+    IAjaxPackedRequest.prototype.set_processingState = function (v) { throw "not impl."; }
+
 })();

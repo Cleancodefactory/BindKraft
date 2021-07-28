@@ -32,6 +32,23 @@ function InterfaceImplementer(if_name) {
 	}
 	return null;
 }
+function Enumeration(enm_name, once_enm_def) {
+	if (typeof enm_name != "string") throw "Enumeration requires enumerations name as first argument.";
+	if (once_enm_def != null && typeof once_enm_def == "object") { // declare
+		if (Function.enumerations[enm_name] != null) throw "Enumeration: definition for "+ enm_name +" already exists.";
+		Function.enumerations[enm_name] = once_enm_def;
+		return once_enm_def;
+	} else if (once_enm_def == null) { // read
+		if (Function.enumerations[enm_name] != null) return Function.enumerations[enm_name];
+		return null;
+	} else if (typeof once_enm_def == "string") { // read item
+		var enm = Function.enumerations[enm_name];
+		if (enm != null) return enm[once_enm_def];
+		return null;
+	} else { // error
+		throw "The second argument to Enumeration is of unexpected type."
+	}
+}
 
 
 (function(_) { 

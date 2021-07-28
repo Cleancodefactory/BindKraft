@@ -97,11 +97,11 @@ Function.prototype.registerStructuralQueryAlias = function(palias, parameterPars
  .Param("parameterParser","...")
  .Param("hardParams","...");
 
-// +EXPERIMENTAL 
+// +DEPRECATED 
 Function.prototype.registerDaemonInfo = function(alias, single) {
 	this.daemonInfo = {
 		alias: alias,
 		single: single || false
 	};
 }
-// -EXPERIMENTAL 
+// -DEPRECATED 
