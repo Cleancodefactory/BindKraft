@@ -52,10 +52,23 @@
     IAjaxSendQueueInspector.prototype.set_criticalpriority = function (v) {throw "not impl.";}
 
     /**
+     * Limits the number of requests reported by checkQueue. For example a limit of 1 MUST cause checkQueue to stop
+     * searching for further requests after finding one matching the criteria. grabRequests should not need a limitation in
+     * normal usage - passing the requests found by checkQueue to grabRequests. However implementing the limitation there also
+     * is RECOMMENDED.
+     */
+    IAjaxSendQueueInspector.prototype.get_picklimit = function() { throw "Not implemented"; }
+    IAjaxSendQueueInspector.prototype.set_picklimit = function(v) { throw "Not implemented"; }
+
+    /**
      * Returns an array of peeked of request details (IAjaxRequestDetails) in the queue that meet the inspected criteria and have priority lower or equal to the one specified.
      * Passing this array to grab requests will remove it from the queue. See the interface description for more usage information.
      * @param priority {integer|null}   The minimal priority to peek
-     * @returns {Array<IAjaxRequestDetails>}
+     * @returns {Array<IAjaxRequestDetails>} Array of references to the requests matching the used criteria (usually IAjaxRequestInspector).
+     * 
+     * Often the Carrier which drives the queue inspector would be interested only in the number of the requests found, but as it is necessary 
+     * to perform the sometimes costly operations for checking the requests it is more practical to obtain the list so that they can be grabbed if 
+     * so decided without the need to recheck them.
      * 
      */
     IAjaxSendQueueInspector.prototype.checkQueue = function(priority) { throw "not impl.";}

@@ -15,7 +15,7 @@
             var reqs = queue.peekRequests(this.$requestInspector, priority);
             return reqs.length;
         } else {
-            return 0; // Usage without request inspector is prevented in order to force people to use the base class for non-inspected picking.
+            return []; // Usage without request inspector is prevented in order to force people to use the base class for non-inspected picking.
         }
     }
 

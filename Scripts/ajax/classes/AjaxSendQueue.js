@@ -120,7 +120,7 @@
         }
         return null;
     }
-    AjaxSendQueue.prototype.peekRequests = function(inspector_or_callback, priority) {
+    AjaxSendQueue.prototype.peekRequests = function(inspector_or_callback, priority, limit) {
         var info;
         if (BaseObject.is(inspector_or_callback, "IAjaxRequestInspector")) {
             var inspector = inspector_or_callback;

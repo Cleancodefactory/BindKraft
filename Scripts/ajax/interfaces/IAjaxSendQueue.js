@@ -29,7 +29,7 @@
     /**
      * Returns array of the requests the inspector or callback approved without removing them.
      */
-    IAjaxSendQueueEnumApi.prototype.peekRequests = function(requestInspector_or_callback, priority) { throw "not implemented"; }
+    IAjaxSendQueueEnumApi.prototype.peekRequests = function(requestInspector_or_callback, priority, limit) { throw "not implemented"; }
     
 
     /**

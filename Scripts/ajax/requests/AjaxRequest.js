@@ -2,7 +2,9 @@
 
     var AjaxBase = Class("AjaxBase"),
         IAjaxRequest = Interface("IAjaxRequest"),
-        IAjaxRawData = Interface("IAjaxRawData");
+        IAjaxRawData = Interface("IAjaxRawData"),
+        IAjaxAttachedInfoImpl = InterfaceImplementer("IAjaxAttachedInfo"),
+        IAjaxQueueSlot = Interface("IAjaxQueueSlot");
 
     function AjaxRequest(owner) {
         AjaxBase.apply(this, arguments);
@@ -15,7 +17,8 @@
     AjaxRequest.Inherit(AjaxBase, "AjaxRequest")
         .Implement(IAjaxRequest)
         .Implement(IAjaxRawData)
-        .Implement(IAjaxQueueSlot);
+        .Implement(IAjaxQueueSlot)
+        .Implement(IAjaxAttachedInfoImpl);
 
     //#region IAjaxRawData - not sue if we are going to use this here and how.
     AjaxRequest.prototype.get_rawdata = function() { 
@@ -44,6 +47,7 @@
 
     }
     //#endregion
+
 
     //#region IAjaxRequest
     AjaxRequest.prototype.$owner = null;    

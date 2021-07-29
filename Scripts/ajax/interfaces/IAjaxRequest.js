@@ -1,11 +1,13 @@
 
 (function() {
 
+    var IAjaxAttachedInfo = Interface("IAjaxAttachedInfo");
+
     /**
      * Represents the request to be sent without HTTP details which are determined by a composer
      */
     function IAjaxRequest() {}
-    IAjaxRequest.Interface("IAjaxRequest");
+    IAjaxRequest.Interface("IAjaxRequest", IAjaxAttachedInfo);
 
     /**
      * Returns the owner instance of an BaseObject

@@ -84,14 +84,26 @@
             this.LASTERROR("Unsupported type", "set_criticalpriority");
         }
     }
+
+    AjaxSendQueueInspectorBase.prototype.$picklimit = 1; // Default 1 looks like a good idea
+    AjaxSendQueueInspectorBase.prototype.get_picklimit = function() { return this.$picklimit; }
+    AjaxSendQueueInspectorBase.prototype.set_picklimit = function(v) { 
+        if (typeof(v) == "number" && !isNaN(v)) {
+            this.$picklimit = Math.floor(v);
+        } else {
+            this.LASTERROR("Unsupported type was assigned top set_picklimit.", "set_picklimit");
+        }
+    }
  
     AjaxSendQueueInspectorBase.prototype.checkQueue = function(_priority) { 
         var priority = _priority || this.$criticalpriority || null;
         var queue = this.get_queue();
         if (queue != null) {
-            return this.$checkQueue(queue, priority);
+            var reqs = this.$checkQueue(queue, priority);
+            // Additional check in case it is not implemented in $checkRequest
+            if (reqs.length > this.get_picklimit()) return reqs.slice(0, this.get_picklimit() - 1);
         }
-        return 0;
+        return [];
     }
     //Override
     /**
@@ -102,7 +114,10 @@
      * 
      */
     AjaxSendQueueInspectorBase.prototype.$checkQueue = function(queue, priority) {
-        var reqs = queue.peekRequests(function(req){
+        var count = 0, limit = this.get_picklimit();
+
+        var reqs = queue.peekRequests(function(req) {
+            if (count > limit) return false; // Example honouring the picklimit.
             return true;
         },priority);
         return reqs;

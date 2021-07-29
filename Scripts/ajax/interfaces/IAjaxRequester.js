@@ -1,4 +1,6 @@
 (function() {
+
+    
     function IAjaxRequester() {}
     IAjaxRequester.Interface("IAjaxRequester");
 
