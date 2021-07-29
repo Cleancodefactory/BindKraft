@@ -11,7 +11,25 @@
     function AjaxCarrier() {
         AjaxBase.apply(this,arguments);
     }
-    AjaxCarrier.Inherit(AjaxBase, "AjaxCarrier");
+    AjaxCarrier.Inherit(AjaxBase, "AjaxCarrier")
+        .Implement(IAjaxCarrier);
+
+
+    //#region IAjaxCarrier
+    AjaxCarrier.prototype.run = function() {
+        var reqs = [];
+        if (this.$inspectors.length > 0) {
+            for (var i = 0; i < this.$inspectors.length; i++) {
+                var inspector = this.$inspectors[i];
+                //inspector
+                //TODO
+            }
+        }
+    }
+    AjaxCarrier.prototype.asyncRun = function() {
+        this.callAsync(this.run);
+    }
+    //#endregion
 
     //#region Inspectors
 

@@ -1,7 +1,8 @@
 (function(){
 
     /**
-     * The sender has to support two things - a queue
+     * The sender has to support two things - a queue for the requests fed into it and indication if it can accept more.
+     * The sender accepts whole requests only - any batch packing has to be done by a packer before that.
      */
     function IAjaxRequestSender() {}
     IAjaxRequestSender.Interface("IAjaxRequestSender");
@@ -14,11 +15,22 @@
     IAjaxRequestSender.prototype.get_blocked = function() {throw "not implemented."; }
 
     /**
+     * Schedules ALL the requests given synchronously, the actual sending may occur asynchronously.
+     * Returns immediately with confirmation (true) or rejection (false). The rejection may occur, because the
+     * sender reached its queue capacity (which is impacted by various conditions depending on the implementation, including number of concurrent requests).
+     * 
+     * @param request {IAjaxPackedRequest} A request to send
+     */
+    IAjaxRequestSender.prototype.sendRequest = function(request) {throw "not implemented";}
+
+    IAjaxRequestSender.prototype.unblockedevent = new InitializeEvent("Fired when the sender can accept more requests");
+
+     //#region Under consideration
+    /**
      * Returns an operation that completes when the sender is ready.
      */
     IAjaxRequestSender.prototype.get_unblock = function() {throw "not implemented.";}
 
-    IAjaxRequestSender.prototype.blockedevent = new InitializeEvent("Fired when the sender is blocked and can't accept more requests");
-
-    IAjaxRequestSender.prototype.sendRequests = function(arrRequests) {throw "not implemented";}
+    //#endregion
+    
 })();

@@ -120,9 +120,9 @@
      */
     // override
     AjaxRequest.prototype.$completeRequest = function(response) {
-        if (this.is("IajaxPackedRequest")) {
-            this.set_processingState(1); // complete
-            this.set_processingQueue(null); // make sure it is removed from there.
+        if (this.is("IAjaxPackedRequest")) {
+            this.set_progressState(1); // complete
+            this.set_progressQueue(null); // make sure it is removed from there.
         }
     }
     //#endregion

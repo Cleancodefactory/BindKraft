@@ -34,8 +34,8 @@
         if (BaseObject.is(request,  "IAjaxPackedRequest")) {
             var index = this.$queue.indexOf(request);
             if (index >= 0) { // already there
-                var r = this.$queue[index];
-                r.set_processingQueue(null); // This should remove it
+                var r = this.$queue.splice(index,1);
+                // FYI: IAjaxPackedRequest.set_progressQueue(null) should call this.
                 return r;
             }
         }
