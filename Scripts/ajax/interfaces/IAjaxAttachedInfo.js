@@ -16,6 +16,14 @@
      *                      using objects is strongly recommended.
      */
     IAjaxAttachedInfo.prototype.attachInfo = function(attacher, info) { throw "not impl.";};
+
+    /**
+     * Like attachInfo but mixes the existing info with the one passed to the method.
+     * @param attacher {BaseObject|string} Defines the key
+     * @param info {object} The information to mix into the attached info. Technically it can be basic value and not an object, but
+     *                      using objects is strongly recommended.
+     */
+    IAjaxAttachedInfo.prototype.mixInfo = function(attacher, info) { throw "not impl.";};
     /**
      * @param attacher {BaseObject|string} Defines the key
      * @returns {object} The previously attached info or null if absent.

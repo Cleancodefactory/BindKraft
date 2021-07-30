@@ -1,1 +1,3 @@
 
+//#using "./AjaxRequestPackerBase.js"
+//#using "./AjaxRequestPackerSingleJson.js"

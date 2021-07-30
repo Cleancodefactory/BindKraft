@@ -1,7 +1,7 @@
 (function() {
 
     var IAjaxSendQueueInspector = Interface("IAjaxSendQueueInspector"),
-        AjaxBase = Class("AjaxBase")
+        AjaxBase = Class("AjaxBase"),
         IAjaxRequestInspectorUser = Interface("IAjaxRequestInspectorUser");
 
     /**
@@ -119,7 +119,7 @@
         var reqs = queue.peekRequests(function(req) {
             if (count > limit) return false; // Example honouring the picklimit.
             return true;
-        },priority);
+        },priority, limit);
         return reqs;
     }
     

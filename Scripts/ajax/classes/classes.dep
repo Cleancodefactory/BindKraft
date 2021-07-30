@@ -1,5 +1,2 @@
 
 //#using "./AjaxBase.js"
-//#using "./AjaxRequest.js"
-//#using "./AjaxSendQueue.js"
-//#using "./AjaxSendQueueInspector.js"

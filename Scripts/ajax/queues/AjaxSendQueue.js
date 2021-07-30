@@ -5,7 +5,8 @@
      */
     var AjaxBase = Class("AjaxBase"),
         IAjaxSendQueue = Interface("IAjaxSendQueue"),
-        IAjaxRawData = Interface("IAjaxRawData");
+        IAjaxRawData = Interface("IAjaxRawData"),
+        IAjaxAttachedInfo = Interface("IAjaxAttachedInfo");
 
     function AjaxSendQueue() {
         AjaxBase.apply(this,arguments);
@@ -47,16 +48,19 @@
                 }
             }
             // enqueue
-            this.$queue.unshift(slot);
+            // this.$queue.unshift(slot);
+            this.$queue.push(slot); // TODO This requires some rearrangements
             return true;
         }
         this.LASTERROR("Attempted to enqueue a non-request. AjaxSendQueue supports only objects supporting both IAjaxRequest and IAjaxQueueSlot interfaces", "enqueueRequest");
         return false;
     }
+    // TODO the dequeue logic needs revising, however it is not clear if we will need it in this form at all.
     AjaxSendQueue.prototype.dequeueRequest = function(priority) { 
         if (priority == null) {
             if (this.$queue.length > 0) {
-                var el = this.$queue.pop();
+                //var el = this.$queue.pop();
+                var el = this.$queue.shift();
                 return el;
             }
         } else if (typeof priority == "number" && !isNaN(priority)) {
@@ -121,25 +125,38 @@
         return null;
     }
     AjaxSendQueue.prototype.peekRequests = function(inspector_or_callback, priority, limit) {
-        var info;
+        var info, _limit = limit || 1;
         if (BaseObject.is(inspector_or_callback, "IAjaxRequestInspector")) {
             var inspector = inspector_or_callback;
             return this.$queue.Select(function(idx, req) {
+                if (_limit <= 0) return null;
                 if (priority != null && priority > req.get_priority()) return null;
                 info = inspector.inspectRequest(req);
                 if (info != null) {
-                    return new AjaxRequestDetails(info, req);
+                    if (req.is(IAjaxAttachedInfo)) {
+                        req.mixInfo(IAjaxRequestInspector, info);
+                        // TODO complete this
+                        //req.attachInfo()
+                    }
+                    _limit --;
+                    return req;
                 }
                 return null;
             });
         } else if (BaseObject.isCallback(inspector_or_callback)) {
             return this.$queue.Select(function(idx, req) {
+                if (_limit <= 0) return null;
                 if (priority != null && priority > req.get_priority()) return null;
                 info = BaseObject.callCallback(inspector_or_callback, req);
                 if (info === true) {
-                    return new AjaxRequestDetails({}, req);
+                    _limit --;
+                    return req;
                 } else if (typeof info == "object" && info != null) {
-                    return new AjaxRequestDetails(info, req);
+                    if (req.is(IAjaxAttachedInfo)) {
+                        req.mixInfo(IAjaxRequestInspector, info);
+                    }
+                    _limit --;
+                    return req;
                 }
             });
         }

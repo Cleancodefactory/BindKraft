@@ -78,6 +78,7 @@
      * @param requests {Array<IAjaxRequest>|Array<IAjaxRequestDetails>} Requests or request details typically obtained from checkQueue.
      * @returns {Array<IAjaxRequest>|Array<IAjaxRequestDetails>} The same type of array as received. If the array contains mixed details and requests LASTERROR is set
      *          and the result contains only the first type met in the array.
+     * 
      */
     IAjaxSendQueueInspector.prototype.grabRequests = function(requests) { throw "not implemented."; }
 

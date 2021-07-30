@@ -32,6 +32,23 @@
             }
             return false;
         };
+
+        cls.prototype.mixInfo = function(attacher, attach_info) { 
+            var info = _info(this);
+            var key = _attacher(attacher);
+            if (key != null) {
+                var existing = info[key];
+                if (existing == null) {
+                    info[key] = attach_info;
+                } else {
+                    if (attach_info != null && typeof attach_info == "object") {
+                        info[key] = BaseObject.CombineObjects(existing, attach_info);
+                    }
+                }
+                return true;
+            }
+            return false;
+        };
     
         cls.prototype.getAttachedInfo = function(attacher) {
             var info = _info(this);
