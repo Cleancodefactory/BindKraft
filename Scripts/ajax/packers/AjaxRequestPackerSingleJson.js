@@ -9,38 +9,36 @@
         this.set_unpacker(this);
     }
     AjaxRequestPackerSingleJson.Inherit(AjaxRequestPackerBase, "AjaxRequestPackerSingleJson")
-        .Implement(IAjaxResponseUnpacker);
-
-        
-
-
-    AjaxRequestPackerSingleJson.prototype.packRequests = function(requests) {
-        if (BaseObject.is(requests, IAjaxRequest) || (Array.isArray(requests) && requests.length == 1 && BaseObject.is(requests[0],IAjaxRequest))) {
-            return AjaxRequestPackerBase.prototype.packRequests.call(this, requests);
-        }
-        this.LASTERROR("packRequests works with single request only for this packer!");
-        return null;
-    }
-    AjaxRequestPackerSingleJson.prototype.$packRequests = function(packedRequest) {
-        var original = packedRequest.get_originalRequests()[0];
-        packedRequest.set_reqdata(original.get_reqdata());
-        packedRequest.set_cache(original.get_cache());
-        if (original.get_verb() != null) {
-            packedRequest.set_verb(original.get_verb());
-        } else {
-            if (original.get_data() != null) {
-                packedRequest.set_verb("POST");
-            } else {
-                packedRequest.set_verb("GET");
+        .Implement(IAjaxRequestPackerImpl, null,
+            function(packedRequest) {
+                var originals = packedRequest.get_originalRequests();
+                if (originals.length <= 0 || originals.length > 1) {
+                    this.LASTERROR("This request packer can work with single requests only.");
+                    return false;
+                }
+                var original = packedRequest.get_originalRequests()[0];
+                packedRequest.set_reqdata(original.get_reqdata());
+                packedRequest.set_cache(original.get_cache());
+                if (original.get_verb() != null) {
+                    packedRequest.set_verb(original.get_verb());
+                } else {
+                    if (original.get_data() != null) {
+                        packedRequest.set_verb("POST");
+                    } else {
+                        packedRequest.set_verb("GET");
+                    }
+                }
+                // Check the data
+                var data = original.get_data();
+                if (!this.$checkIfDataIsJSONCompatible(data)) return false;
+                packedRequest.set_data(data);
+                return true;
             }
-        }
-        // Check the data
-        var data = original.get_data();
-        if (!this.$checkIfDataIsJSONCompatible(data)) return false;
-        packedRequest.set_data(data);
-        return true;
-    }
+        );
 
+    /**
+     * Placeholder for more detailed checks in future
+     */
     AjaxRequestPackerSingleJson.prototype.$checkIfDataIsJSONCompatible = function(data) {
         if (typeof data == "object") return true; // obejcts, arrays etc.
         return false;

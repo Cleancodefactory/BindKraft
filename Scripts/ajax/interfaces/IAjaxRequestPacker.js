@@ -13,4 +13,6 @@
      *                                  in a batch request for example.
      */
     IAjaxRequestPacker.prototype.packRequests = function(requests) {throw "not impl."; }
+
+    
 })();

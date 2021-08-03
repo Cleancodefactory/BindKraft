@@ -15,7 +15,7 @@
         .Implement(IAjaxCarrier);
 
     //#region Parameters
-    AjaxCarrier.ImplementProperty("limit", new Initialize)
+    AjaxCarrier.ImplementProperty("limit", new InitializeNumericParameter("Limit requests processed on each run.", 1));
     //#endregion
 
 
@@ -23,9 +23,26 @@
     AjaxCarrier.prototype.run = function() {
         var reqs;
         if (this.$inspectors.length > 0) {
-            reqs = this.$pickQueue();
+            reqs = this.$pickQueue(null, this.get_limit());
             if (reqs.length > 0) {
-                // Something to send is available
+                packer = this.get_requestPacker();
+                if (BaseObject.is(packer, "IAjaxRequestPacker")) {
+                    var packed = packer.packRequests(reqs);
+                    if (packed != null) {
+                        // Something to send is available
+                        sender = this.get_requestSender();
+                        if (packed.length > 0) {
+                            packed.Each(function(i,r) {
+                                sender.sendRequest(r);
+                            });
+                        }
+                        
+                    } else {
+                        this.LASTERROR("Failed to pack the requests");
+                    }
+                }
+                
+                // TODO - send it
             }
             
         }
@@ -38,6 +55,9 @@
     //#region Inspectors
 
     AjaxCarrier.prototype.$checkQueueIndex = 0; // Initial
+    /**
+     * Picker logic from multiple inspectors by rotating them.
+     */
     AjaxCarrier.prototype.$pickQueue = function(priority, limit) {
         var results = [];
         var index = this.$checkQueueIndex;
@@ -102,7 +122,7 @@
         // TODO
     }
     AjaxCarrier.prototype.get_responseUnpacker = function() {
-        // DO:
+        // TODO:
     }
     //#endregion
 
