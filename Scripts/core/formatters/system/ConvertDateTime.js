@@ -10,7 +10,7 @@ ConvertDateTime.Inherit(SystemFormatterBase,"ConvertDateTime");
 ConvertDateTime.Implement(IArgumentListParserStdImpl,"trim");
 ConvertDateTime.ImplementProperty("defaultencoding", new InitializeStringParameter("The default format if nothing is specified", "ISO"));
 ConvertDateTime.$reMS = /\/Date\(([+-]?\d+)\)\//i;
-ConvertDateTime.$reISODate = /^(\d{4}-\d{1,2}-\d{1,2})(:T|\s)(\d{1,2}:\d{1,2}:\d{1,2}(?:\.\d+)?)(Z)$/;
+ConvertDateTime.$reISODate = /^(\d{4}-\d{1,2}-\d{1,2})(T|\s)(\d{1,2}:\d{1,2}:\d{1,2}(?:\.\d+)?)(Z)$/;
 ConvertDateTime.prototype.ToDate = {
 	ISO: function(val) {
 		// Limitator - intentionally limiting the syntax  to the one widely agreed upon.
