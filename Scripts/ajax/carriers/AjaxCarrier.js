@@ -35,16 +35,15 @@
                             packed.Each(function(i,r) {
                                 sender.sendRequest(r);
                             });
+                        } else {
+                            // No requests picked
                         }
                         
                     } else {
                         this.LASTERROR("Failed to pack the requests");
                     }
                 }
-                
-                // TODO - send it
             }
-            
         }
     }
     AjaxCarrier.prototype.asyncRun = function() {
@@ -118,11 +117,28 @@
     //#endregion
 
     //#region Packer
+    AjaxCarrier.prototype.$requestPacker = null;
     AjaxCarrier.prototype.get_requestPacker = function() { 
-        // TODO
+        return this.$requestPacker;
     }
+    AjaxCarrier.prototype.set_requestPacker = function(v) {
+        if (BaseObject.is(v, "IAjaxRequestPacker") || v == null) {
+            this.$requestPacker = v; 
+        } else {
+            this.LASTERROR("Attempt to set request packer not supporting IAjaxRequestPacker");
+        }
+    }
+
+    AjaxCarrier.prototype.$responseUnpacker = null;
     AjaxCarrier.prototype.get_responseUnpacker = function() {
-        // TODO:
+        return this.$responseUnpacker;
+    }
+    AjaxCarrier.prototype.set_responseUnpacker = function(v) {
+        if (BaseObject.is(v, "IAjaxResponseUnpacker") || v == null) {
+            this.$responseUnpacker = v; 
+        } else {
+            this.LASTERROR("Attempt to set response unpacker not supporting IAjaxResponseUnpacker");
+        }
     }
     //#endregion
 

@@ -36,7 +36,10 @@
         }
         return null;
     }
-    
+    AjaxRequestSenderBase.prototype.$hasQueuedRequests = function() {
+        return this.$requests.length > 0;
+    }
+
     //#endregion
 
     //#region Fetcher pool
