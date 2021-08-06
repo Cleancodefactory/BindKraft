@@ -18,3 +18,4 @@
 //#using "./IAjaxResponseUnpacker.js"
 //#using "./IAjaxSendQueue.js"
 //#using "./IAjaxSendQueueInspector.js"
+//#using "./IAjaxSendQueuePicker.js"

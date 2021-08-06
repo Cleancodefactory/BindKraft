@@ -107,6 +107,11 @@ BaseObject.lastError = (function() {
 			_advise(this)
 			return this;
 		},
+        append: function(code, text, cls, method) { 
+            _text = _text || "";
+            _text += "{" + code + ", " + text + ", " + (cls || "unknown class") + ", " + (method || "unknown method") + "}";
+            return this;
+        },
 		none: function() {
 			return (_code == 0 || _code == null);
 		},
@@ -154,6 +159,22 @@ BaseObject.prototype.LASTERROR = function(code, text, method) {
             return this.LASTERROR(_Errors.compose(), code, text);
         }
 		return BaseObject.lastError.report(code, text, this.classType(), method);
+	}
+}
+BaseObject.prototype.AMMEND_LASTERROR = function(code, text, method) {
+	if (arguments.length == 0) {
+		return BaseObject.lastError;
+	} else {
+        if (typeof code == "string") {
+            return this.AMMEND_LASTERROR(_Errors.compose(), code, text);
+        }
+        var err = BaseObject.lastError;
+        if (err.none()) {
+            return BaseObject.lastError.report(code, text, this.classType(), method);
+        } else {
+            return BaseObject.lastError.append(code, text, this.classType(), method);
+        }
+		
 	}
 }
 /**

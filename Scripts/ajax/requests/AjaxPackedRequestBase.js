@@ -67,6 +67,15 @@
         }
     }
 
+    AjaxPackedRequestBase.prototype.$postencoding = null;
+    AjaxPackedRequestBase.prototype.get_postencoding = function() { return this.$postencoding; }
+    AjaxPackedRequestBase.prototype.set_postencoding = function(v) { this.$postencoding = v; }
+
+    
+    AjaxPackedRequestBase.prototype.$expectedtype = null;
+    AjaxPackedRequestBase.prototype.get_expectedtype = function() { return this.$expectedtype; }
+    AjaxPackedRequestBase.prototype.set_expectedtype = function(v) { this.$expectedtype = v; }
+
     //#endregion
 
 })();

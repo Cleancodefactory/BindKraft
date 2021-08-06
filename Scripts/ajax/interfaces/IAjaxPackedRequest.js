@@ -32,4 +32,18 @@
     IAjaxPackedRequest.prototype.get_progressState = function () { throw "not impl."; }
     IAjaxPackedRequest.prototype.set_progressState = function (v) { throw "not impl."; }
 
+    /**
+     * This is typically determined by the packer. It defines the data encoding for the posted data.
+     * @type {string} The name of the encoding. The LightFetchHttp should be configured to support this encoding. This configuration
+     *                  id usually made on workspace level. 
+     */
+    IAjaxPackedRequest.prototype.get_postencoding = function() { throw "not impl."; }
+    IAjaxPackedRequest.prototype.set_postencoding = function(v) { throw "not impl."; }
+
+    /**
+     * Like the post encoding this is usually determined by the request packer, however the expectations are more often explicitly specified.
+     */
+    IAjaxPackedRequest.prototype.get_expectedtype = function() { throw "not impl."; }
+    IAjaxPackedRequest.prototype.set_expectedtype = function(v) { throw "not impl."; }
+
 })();

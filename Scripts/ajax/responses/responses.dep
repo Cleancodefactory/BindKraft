@@ -1,2 +1,3 @@
 
 //#using "./AjaxResponse.js"
+//#using "./AjaxErrorResponse.js"

@@ -15,6 +15,7 @@
     //#region IAjaxProgressQueue
     AjaxProgressQueue.prototype.$queue = new InitializeArray("Requess queue");
     AjaxProgressQueue.prototype.putRequest = function(request) { 
+        // FYI: IAjaxPackedRequest.set_progressQueue(pqueue) calls this.
         if (BaseObject.is(request,  "IAjaxPackedRequest")) {
             var index = this.$queue.indexOf(request);
             if (index >= 0) { // already there
@@ -35,7 +36,7 @@
             var index = this.$queue.indexOf(request);
             if (index >= 0) { // already there
                 var r = this.$queue.splice(index,1);
-                // FYI: IAjaxPackedRequest.set_progressQueue(null) should call this.
+                // FYI: IAjaxPackedRequest.set_progressQueue(null) calls this.
                 return r;
             }
         }

@@ -1,4 +1,6 @@
 
 //#using "IAjaxAttachedInfoImpl.js";
 //#using "IAjaxRequesterImpl.js";
+//#using "IAjaxSendQueuePickerImpl.js"
+//#using "IAjaxRequestsPackerImpl.js"
 
