@@ -4,6 +4,12 @@
         IAjaxResponseUnpacker = Interface("IAjaxResponseUnpacker"),
         PackedRequestStateEnum = Enumeration("PackedRequestStateEnum");
 
+    /**
+     * This sender uses as default post encoding "json" and "multipart" if any binary is available in the data.
+     * It will use the packed request's suggestions if they exist (multipart has to be suggested by the packer in order to happen)
+     * 
+     * The expected type is always "packetxml", unless something else is suggested by the packed request
+     */
     function AjaxRequestSenderPool(fcount) { 
         AjaxRequestSenderBase.apply(this, arguments);
         fcount = fcount || 1;
@@ -15,7 +21,8 @@
 
     AjaxRequestSenderPool.prototype.sendRequest = function(req) {
         if (BaseObject.is(req, IAjaxPackedRequest)) {
-            
+            this.$enqueueRequest(req);
+            return true;
         } else {
             return false;
         }
@@ -41,33 +48,44 @@
                 if (req != null) {
                     // We have to update the status in the processing queue to sent (waiting response)
                     req.set_progressState(PackedRequestStateEnum.sent);
+                    var expected = req.get_expectedtype() || "packetxml";
                     if (req.get_verb() == "POST") {
                         // TODO: How to determine postdata encode and expected type.
-                        fetcher.postEx(req.get_url(), req.get_reqdata(), teq.get_data()).then(new Delegate(this, this.requestComplete,[req])); 
+                        var postencode = req.get_postencoding() || "json";
+                        fetcher.postEx(req.get_url(), req.get_reqdata(), teq.get_data(),postencode, expected).then(new Delegate(this, this.requestComplete,[req, fetcher])); 
                     } else { // Get by default
-                        fetcher.get(req.get_url(), req.get_reqdata()).then(new Delegate(this, this.requestComplete,[req]));
+                        fetcher.get(req.get_url(), req.get_reqdata(), expected).then(new Delegate(this, this.requestComplete,[req, fetcher]));
                     }
-                    
+                    return true;
                 }
-            }
+            } 
         }
+        return false;
     }
     AjaxRequestSenderPool.prototype.requestComplete = function(operation, request, fetcher) { 
+        var response = null;
         if (operation.isOperationSuccessful()) {
             var responseData = operation.getOperationResult();
             var unpacker = request.get_responseUnpacker();
             if (unpacker == null) {
                 unpacker = request.get_requestPacker();
             }
+            
             if (BaseObject.is(unpacker, "IAjaxResponseUnpacker")) {
-                unpacker.
+                response = unpacker.unpackResponse(request, responseData);
             } else {
                 this.LASTERROR("Invalid response unpacker")
+                response = new AjaxErrorResponse(request, "Invalid response unpacker");
             }
+            if (response == null) {
+                response = new AjaxErrorResponse(request, "Unknown error.")
+            }
+            
             // TODO create response with the unpacker
         } else {
-            // TODO - cancel the request appropriately
+            response = new AjaxErrorResponse(request,operation.getOperationErrorInfo());
         }
+        request.completeRequest(response);
     };
 
     // override to implement differently configured fetchers

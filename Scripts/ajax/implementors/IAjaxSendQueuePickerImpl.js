@@ -2,9 +2,35 @@
 
     var IAjaxSendQueuePicker = Interface("IAjaxSendQueuePicker");
 
+    /**
+     * Implements a picker based on multiple send queue inspectors.
+     * If supplied with a _queueSupplier callback sets the queue on each added inspector. The queue is set to null when inspector is removed.
+     * 
+     * Usage:
+     * MyClass.Implement(IAjaxSendQueuePicker, callback(): IAjaxSendQueue);
+     */
     function IAjaxSendQueuePickerImpl() {}
     IAjaxSendQueuePickerImpl.InterfaceImpl(IAjaxSendQueuePicker);
-    IAjaxSendQueuePickerImpl.classInitialize = function(cls) {
+    IAjaxSendQueuePickerImpl.classInitialize = function(cls, _queueSupplier) {
+
+        function _getQueue(instance) {
+            if (BaseObject.is(instance.$sendque, "IAjaxSendQueue")) {
+                return instance.$sendque;
+            } else if (typeof _queueSupplier == "function") {
+                return _queueSupplier.call(instance);
+            } else if (typeof _queueSupplier == "string" && typeof instance[_queueSupplier] == "function") {
+                return _queueSupplier.call(instance);
+            }
+            return null;
+        }
+
+        cls.prototype.$sendque = null;
+        cls.prototype.get_sendqueue = function() { return this.$sendque; }
+        cls.prototype.set_sendqueue = function(v) { 
+            if (v == null || BaseObject.is(v, "IAjaxSendQueue")) {
+                this.$sendque = v;
+            }
+        }
 
         cls.prototype.$checkQueueIndex = 0; // Initial
         /**
@@ -52,6 +78,7 @@
             if (BaseObject.is(inspector, "IAjaxSendQueueInspector")) {
                 if (this.$inspectors.indexOf(inspector) >= 0) return true; // already there
                 this.$inspectors.push(inspector);
+                inspector.set_queue(_getQueue(this));
                 return true;
             }
             return false;
@@ -59,12 +86,27 @@
         cls.prototype.removeInspector = function(inspector) {
             var idx = this.$inspectors.indexOf(inspector);
             if (idx >= 0) {
-                return this.$inspectors.splice(idx,1);
+                var inspectors = this.$inspectors.splice(idx,1);
+                if (Array.isArray(inspectors)) {
+                    inspectors.Each(function(idx, inspector) {
+                        if (BaseObject.is(inspector, "IAjaxSendQueueInspector")) {
+                            inspector.set_queue(null);
+                        }
+                    });
+                    return (inspectors.length > 0)?inspectors[0]:null;
+                }
             }
             return null;
         }
         cls.prototype.removeAllInspectors = function() {
-            this.$inspectors.splice(0);
+            var inspectors = this.$inspectors.splice(0);
+            if (Array.isArray(inspectors)) {
+                inspectors.Each(function(idx, inspector) {
+                    if (BaseObject.is(inspector, "IAjaxSendQueueInspector")) {
+                        inspector.set_queue(null);
+                    }
+                });
+            }
         }
     }
 

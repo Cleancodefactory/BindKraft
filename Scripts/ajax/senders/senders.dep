@@ -1,1 +1,2 @@
 //#using "./AjaxRequestSenderBase.js"
+//#using "./AjaxRequestSenderPool.js"
