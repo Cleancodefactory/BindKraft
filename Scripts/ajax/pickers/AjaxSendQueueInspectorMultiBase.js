@@ -5,17 +5,17 @@
         IAjaxRequestInspector = Interface("IAjaxRequestInspector");
 
     /**
-     * This is a queue inspector that uses a single request inspector to choose requests from the queue.
+     * This is a queue inspector that uses multiple request inspector in AND modeto choose requests from the queue.
      * It can be configured to grab only up to 1 each time or more (picklimit)
      */
-    function AjaxSendQueueInspectorSingleBase() {
+    function AjaxSendQueueInspectorMultiBase() {
         AjaxSendQueueInspectorBase.apply(this, arguments);
     }
-    AjaxSendQueueInspectorSingleBase.Inherit(AjaxSendQueueInspectorBase,"AjaxSendQueueInspectorSingleBase")
-        .Implement(IAjaxRequestInspectorUser);
+    AjaxSendQueueInspectorMultiBase.Inherit(AjaxSendQueueInspectorBase,"AjaxSendQueueInspectorMultiBase")
+        .Implement(IAjaxRequestInspectorsUser);
 
     // Override
-    AjaxSendQueueInspectorSingleBase.prototype.$checkQueue = function(queue, priority) {
+    AjaxSendQueueInspectorMultiBase.prototype.$checkQueue = function(queue, priority) {
         var limit = this.get_picklimit();
         if (this.$requestInspector != null) {
             var reqs = queue.peekRequests(this.$requestInspector, priority, limit);
@@ -26,11 +26,11 @@
     }
 
     //#region IAjaxRequestInspectorUser
-    AjaxSendQueueInspectorSingleBase.prototype.$requestInspector = null;
-    AjaxSendQueueInspectorSingleBase.prototype.get_requestinspector = function() {
+    AjaxSendQueueInspectorMultiBase.prototype.$requestInspector = null;
+    AjaxSendQueueInspectorMultiBase.prototype.get_requestinspector = function() {
          return this.$requestInspector;
     }
-    AjaxSendQueueInspectorSingleBase.prototype.set_requestinspector = function(v) {
+    AjaxSendQueueInspectorMultiBase.prototype.set_requestinspector = function(v) {
         if (v == null) {
             this.$requestInspector = null;
         } else if (BaseObject.is(v, "IAjaxRequestInspector")) {

@@ -50,7 +50,7 @@
                     req.set_progressState(PackedRequestStateEnum.sent);
                     var expected = req.get_expectedtype() || "packetxml";
                     if (req.get_verb() == "POST") {
-                        // TODO: How to determine postdata encode and expected type.
+                        // determine postdata encoding and expected type by the suggestions left in the IAjaxPAckedRequest
                         var postencode = req.get_postencoding() || "json";
                         fetcher.postEx(req.get_url(), req.get_reqdata(), teq.get_data(),postencode, expected).then(new Delegate(this, this.requestComplete,[req, fetcher])); 
                     } else { // Get by default

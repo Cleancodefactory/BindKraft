@@ -141,5 +141,9 @@
     }
     //#endregion
 
+    //#region Name
+    AjaxCarrier.prototype.get_name = function() {return this.$name; }
+    AjaxCarrier.prototype.set_name = function(v) {this.$name = v;}
+    //#endregion
     
 })();

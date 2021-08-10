@@ -30,4 +30,10 @@
     IAjaxCarrier.prototype.get_progressQueue = function() { throw "not implemented"; }
     IAjaxCarrier.prototype.set_progressQueue = function(v) { throw "not implemented"; }
 
+    /**
+     * Optional, useful for better management of pipelines.
+     */
+    IAjaxCarrier.prototype.get_name = function() { throw "not implemented"; }
+    IAjaxCarrier.prototype.set_name = function(v) { throw "not implemented"; }
+
 })();

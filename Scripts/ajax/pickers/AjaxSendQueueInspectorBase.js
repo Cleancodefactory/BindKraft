@@ -53,7 +53,7 @@
         }
     }
 
-    AjaxSendQueueInspector.prototype.$criticalage = 1000;
+    AjaxSendQueueInspector.prototype.$criticalage = AjaxSendQueueInspectorBase.$defaultCriticalAge;
     /**
      * The critical request age at which the requests should picked even if they are under the critical limit.
      */
@@ -96,6 +96,7 @@
     }
  
     AjaxSendQueueInspectorBase.prototype.checkQueue = function(_priority) { 
+        // TODO: apply critical age and critical limit
         var priority = _priority || this.$criticalpriority || null;
         var queue = this.get_queue();
         if (queue != null) {
