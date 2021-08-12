@@ -1,6 +1,10 @@
 
 
 /*CLASS*/
+/**
+ * 
+ * Usage new  InitializeMethodTrigger("description ...", function () { ...}, timeout);
+ */
 function InitializeMethodTrigger(desc, defval, pause) {
     Initialize.apply(this, arguments);
     this.type = "MethodTrigger";
