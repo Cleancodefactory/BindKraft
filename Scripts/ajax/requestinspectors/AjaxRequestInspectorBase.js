@@ -25,7 +25,8 @@
         var summary = {
             server: null,
             port: null,
-            path: []
+            path: [],
+            pathString: null
         }
         if (typeof _url == "string" || BaseObject.is(_url, "IBKUrlObject")) {
             if (!url.set_nav(_url)) {
@@ -44,6 +45,7 @@
         var path = url.get_path();
         if (path != null) {
             summary.path = path.get_pathnamesegements();
+            summary.pathString = path.toString();
         }
         return summary;
     }
