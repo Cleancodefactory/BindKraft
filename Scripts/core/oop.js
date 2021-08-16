@@ -872,6 +872,48 @@ Function.prototype.ImplementWriteProperty = function (pname, initialize, pstore)
  .Param("pstore","Optional location of the storage for the property, default is this.$<pname>")
  .Returns("this - can be chained");
 
+ /**
+  * 
+  * @param {string} pname The property name
+  * @param {Initialize} Initialize Initialize the property (can be null)
+  * @param {string} pstore Optional (null), the name of the store property, if omitted ${pname} is used
+  * @param {function|string} changeCallback A function or a name of a method. See the callbacks for details.
+  * @returns {class} this - the definition for consequent helpers usage.
+  */
+ Function.prototype.ImplementAccumulatingProperty = function (pname, Initialize, pstore, changeCallback) {
+    var pstoreprop = (pstore != null) ? pstore : "$" + pname;
+    this.prototype[pstoreprop] = Initialize;
+    this.prototype["get_" + pname] = function (idx) {
+        if (idx != null) {
+            return this[pstoreprop][idx];
+        } else {
+            return this[pstoreprop];
+        }
+    };
+	this.prototype["get_" + pname].$Initialize = Initialize;
+    this.prototype["set_" + pname] = function (idx, v) {
+        if (arguments.length > 1) {
+            if (idx != null) {
+                this[pstoreprop][idx] = v;
+            } else {
+                this[pstoreprop] = BaseObject.CombineObjects(this[pstoreprop],v);
+            }
+        } else {
+            this[pstoreprop] = BaseObject.CombineObjects(this[pstoreprop],idx); // if called with a single arg we assume the caller calls this as normal (non-indexed property).
+        }
+		if (changeCallback != null) {
+			if (typeof changeCallback == "function") {
+				changeCallback.call(this, v, idx, this[pstoreprop]);
+			} else if (typeof changeCallback == "string") {
+				this[changeCallback](v, idx, this[pstoreprop]);
+			}
+            
+        }
+    };
+	this.prototype["set_" + pname].$Initialize = Initialize;
+    return this;
+}
+
 Function.prototype.ImplementIndexedProperty = function (pname, Initialize, pstore, changeCallback) {
     var pstoreprop = (pstore != null) ? pstore : "$" + pname;
     this.prototype[pstoreprop] = Initialize;

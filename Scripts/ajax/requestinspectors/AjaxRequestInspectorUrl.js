@@ -31,7 +31,7 @@
         var summary;
         summary = request.getAttachedInfo(this);
         if (summary == null) summary = this.analyseUrl(request.url);
-        if (previousreview.passes) return summary;
+        if (previousreview != null && previousreview.passes) return summary;
         if (this.$reServer != null ) {
             if (typeof summary.server == "string") {
                 if (!this.$reServer.test(summary.server)) return null;
