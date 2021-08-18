@@ -27,7 +27,7 @@
     AjaxRequestInspectorUrl.prototype.$reServer = null;
     AjaxRequestInspectorUrl.prototype.$rePath = null;
     AjaxRequestInspectorUrl.prototype.inspectRequest = function(request) {
-        var previousreview = request.getAttachedInfo(this.$__instanceId);
+        var previousreview = request.getInstanceInfo(this);
         var summary;
         summary = request.getAttachedInfo(this);
         if (summary == null) summary = this.analyseUrl(request.url);
@@ -46,7 +46,7 @@
                 return null;
             }
         }
-        request.mixInfo(this.$__instanceId,{ passes: true});
+        request.mixInstanceInfo(this,{ passes: true});
         return summary;
     }
 

@@ -4,7 +4,8 @@
     MiscellaneousFunctionLibrary = Class("MiscellaneousFunctionLibrary");
 
     /**
-     * Checks the query string parameters of an URL
+     * Checks the query string parameters of an URL. Currently only 1 occurrence of any parameter is allowed to
+     * keep the client behavior in sync with the CoreKraft server.
      * Supports the following syntax per parameter:
      * (specs)regex
      *   specs:
@@ -28,6 +29,10 @@
 
     AjaxRequestInspectorQuery.prototype.$rexes = new InitializeObject("Created regular expressions and options");
     AjaxRequestInspectorQuery.prototype.$reCondition = /^\((\!|\?)\)(.*)$/;
+    /**
+     * The form of the compiled condition is:
+     * { required: true|false, regex: Regexpp }
+     */
     AjaxRequestInspectorQuery.prototype.$compileCondition = function(paramName) {
         var condition = this.$params[paramName];
         if (typeof condition === "string") {
@@ -55,24 +60,9 @@
         var previousreview = request.getAttachedInfo(this.$__instanceId);
         var summary;
         summary = request.getAttachedInfo(this);
-        ////////////////////////////////////////////////////////////////
         if (summary == null) summary = this.analyseUrl(request.url);
         if (previousreview != null && previousreview.passes) return summary;
-        if (this.$reServer != null ) {
-            if (typeof summary.server == "string") {
-                if (!this.$reServer.test(summary.server)) return null;
-            } else {
-                return null;
-            }
-        }
-        if (this.$rePath != null ) {
-            if (typeof summary.pathString == "string") {
-                if (!this.$rePath.test(summary.pathString)) return null;
-            } else {
-                return null;
-            }
-        }
-        request.mixInfo(this.$__instanceId,{ passes: true});
+        //if ()
         return summary;
     }
     AjaxRequestInspectorQuery.prototype.analyseQuery = function(url) {
@@ -81,21 +71,40 @@
         if (this.$params == null || typeof this.$params != "object") {
             summary.paramConditions = 0;
             return summary;
-        }
+        } 
         var query = url.get_query();
-        var vals;
+        var vals, val, cond, countConditions = 0;
         for (var k in this.$params) {
+            countConditions ++;
+            cond = this.$getCompiledConditions(k);
             vals = query.get(k);
             if (vals != null) {
                 if (vals.length > 1) {
-                    this.LASTERROR("More than a single occurence of the query parameter " + k);
+                    this.LASTERROR("More than a single occurrence of the query parameter " + k);
+                    summary.params[k] = null;
+                } else if (vals.length == 1) {
+                    val = vals[0];
+                    if (cond != null) {
+                        if (cond.regex.test(val)) {
+                            // Condition passed
+                            summary.params[k] = { required: cond.required, regex: true, exists: true };
+                        } else {
+                            // Condition not passed
+                            summary.params[k] = { required: cond.required, regex: false, exists: true };
+                        }
+                    } else {
+                        this.LASTERROR("A condition for the query parameter " + k + " is specified, but cannot be compiled.");
+                        summary.params[k] = { required: cond.required, regex: false, exists: true, error: true };
+                    }
+                } else {
+                    summary.params[k] = { required: cond.required, regex: false, exists: false, error: false };
                 }
             } else {
-                // Not found
-                // TODO:
+                // No query parameter with that name
+                summary.params[k] = { required: cond.required, regex: false, exists: false, error: false };
             }
-            // TODO Decide on the syntax and implement.
-        }
+        } 
+        summary.paramConditions = countConditions;
     }
 
 

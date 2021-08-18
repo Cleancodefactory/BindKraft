@@ -35,4 +35,17 @@
      */
     IAjaxAttachedInfo.prototype.clearAttachedInfo = function(attacher) {throw "not impl.";}
 
+    /**
+     * Attaches info for the specified instance (the instance is usually the this of the caller)
+     */
+    IAjaxAttachedInfo.prototype.attachInstanceInfo = function(instance, info) { throw "not impl."; }
+    /**
+     * Mixes with the existing info or creates a new one for the specified instance (usually the caller)
+     */
+    IAjaxAttachedInfo.prototype.mixInstanceInfo = function(instance, info) { throw "not impl."; }
+    /**
+     * Gets any existing info for the specified instance (usually the callers this)
+     */
+    IAjaxAttachedInfo.prototype.getInstanceInfo = function(instance) { throw "not impl.";}
+
 })();
