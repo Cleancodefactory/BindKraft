@@ -43,12 +43,7 @@
             this.LASTERROR("The media query name must not be empty");
             return false;
         }
-        if (this.$queries[name] instanceof MediaQueryList) {
-            return this.$queries[name].matches;
-        } else {
-            this.LASTERROR("The media query " + name + " is not registered.");
-        }
-        return false;
+        return this.$queries[name].matches;
     }
     MediaQueryTracker.prototype.exists = function(name) {
         if (typeof name != "string") {
@@ -59,7 +54,7 @@
             this.LASTERROR("The media query name must not be empty");
             return false;
         }
-        return (this.$queries[name] instanceof MediaQueryList);
+        return (this.$queries[name] != null);
     }
     /**
      * Registers a media query under a specific name. The name can be used to configure notifications.
@@ -106,9 +101,7 @@
             var q = this.$queries[name];
             this.$queries[name] = null;
             delete this.$queries[name];
-            if (q instanceof MediaQueryList) {
-                this.$disconnectQuery(q);
-            }
+            this.$disconnectQuery(q);
             return true;
         }
         return false;
@@ -154,9 +147,7 @@
             if (this.$queries.hasOwnProperty(k)) {
                 arr.push[k];
                 q = this.$queries[k];
-                if (q instanceof MediaQueryList) {
-                    this.$disconnectQuery(q);
-                }
+                this.$disconnectQuery(q);
             }
         }
         for (var i = 0; i < arr.length; this.$queries[arr[i++]] = null);

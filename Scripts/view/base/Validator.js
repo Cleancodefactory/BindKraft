@@ -296,7 +296,7 @@ Validator.prototype.get_message = function () {
     if (this.$messages != null && this.$messages.length > 0) {
         var s = "";
         for (var i = 0; i < this.$messages.length; i++) {
-            if (i > 0) s += "<br/>";
+            if (i > 0) s += " "; //Robert have to add this as html
             s += this.$messages[i];
         }
         return s;
@@ -308,6 +308,34 @@ Validator.prototype.validateBindings = null; // Bindings to validate
 Validator.prototype.$rules = null;
 Validator.prototype.get_rules = function() {
 	return this.$rules;
+}
+Validator.prototype.get_ruleByName = function(name) {
+    if (Array.isArray(this.$rules)) {
+        return this.$rules.FirstOrDefault( function(i, r){
+            if (r.get_ruleName() == name) return r;
+            return null;
+        } )
+    }
+    return null;
+}
+/**
+ * getRuleByClass(cls [, props]) - searches for a rule by class and also optionally by matching property values.
+ */
+Validator.prototype.getRuleByClass = function(cls, props) {
+    if (Array.isArray(this.$rules)) {
+        return this.$rules.FirstOrDefault( function(i, r){
+            if (r.is(cls)) {
+                if (props != null) {
+                    for (var k in props) {
+                        if (typeof r["get_" + k] != "function" || r["get_" + k] != props[k]) return null;
+                    }
+
+                }
+                return r;
+            }
+        });
+    }
+    return null;
 }
 /**
 	set_rules enables to dynamically reset the rules with a new set. This can happen with bindings data-bind-$rules={read ...}

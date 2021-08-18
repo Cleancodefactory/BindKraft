@@ -6,9 +6,16 @@ function ValidateValue(validator) {
     BaseObject.apply(this, arguments);
     // For now we don't see a reason to remember the validator
 }
-ValidateValue.Inherit(BaseObject, "ValidateValue");
+ValidateValue.Inherit(BaseObject, "ValidateValue")
+    .Implement(Interface("IValidateValue"));
 ValidateValue.prototype.raw = true; // Parameter. If != 0 the raw value is passed to the validator, if false or 0 the formatted value
-ValidateValue.prototype.fail = new InitializeBooleanParameter('Parameter. If non-zero the validationResult will return failure instead of incorrect.', false);
+ValidateValue.ImplementProperty("raw", new InitializeBooleanParameter('If non-zero the raw value is passed, if 0 or false, then the formatted value is passed. Most validator rules use raw value!', true), "raw");
+
+ValidateValue.prototype.fail = false; // new InitializeBooleanParameter('Parameter. If non-zero the validationResult will return failure instead of incorrect.', false)
+ValidateValue.ImplementProperty("fail", new InitializeBooleanParameter('Parameter. If non-zero the validationResult will return failure instead of incorrect.', false), "fail");
+
+ValidateValue.ImplementProperty("ruleName", new InitializeStringParameter("A name for the rule - use if it needs to be found.", null));
+
 ValidateValue.prototype.$text = null;
 ValidateValue.prototype.get_text = function () {
     return (this.$text != null) ? this.$text : null;
