@@ -46,6 +46,7 @@
                 return null;
             }
         }
+        request.mixAttachedInfo(this, summary);
         request.mixInstanceInfo(this,{ passes: true});
         return summary;
     }

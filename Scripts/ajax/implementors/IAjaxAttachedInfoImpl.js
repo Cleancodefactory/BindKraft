@@ -54,6 +54,7 @@
             }
             return false;
         };
+        cls.prototype.mixAttachedInfo = cls.prototype.mixInfo; // Alias
     
         cls.prototype.getAttachedInfo = function(attacher) {
             var info = _info(this);

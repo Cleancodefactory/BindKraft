@@ -13,7 +13,7 @@
      *      ! - required
      *   regex: regex as string - it is up to the user to specify ^/$
      * Supports general options:
-     *      strict - only the described parameters are allowed
+     *      strict - All the parameters must be described. Any additional query string parameters cause failure.
      */
     function AjaxRequestInspectorQuery() {
         AjaxRequestInspectorBase.apply(this,arguments);
@@ -57,19 +57,94 @@
     }
 
     AjaxRequestInspectorQuery.prototype.inspectRequest = function(request) {
-        var previousreview = request.getAttachedInfo(this.$__instanceId);
-        var summary;
-        summary = request.getAttachedInfo(this);
-        if (summary == null) summary = this.analyseUrl(request.url);
-        if (previousreview != null && previousreview.passes) return summary;
-        //if ()
-        return summary;
+        var previousreview = request.getInstanceInfo(this);
+        var _summary;
+        if (previousreview != null) {
+            if (previousreview.passes) {
+                return { query: true };// The actual data for the outside world
+            } else {
+                return null; // Checked and failed
+            }
+        }
+        _summary = request.getAttachedInfo(this);
+        if (_summary == null) {
+            _summary = this.$analyseUrl(request.get_url());
+            if (_summary != null) {
+                request.attachInfo(this, _summary); // Save the analysis for the next time
+            }
+        }
+        if (_summary != null) {
+            // Check if the conditions are ok
+            if (!this.$checkAnalysis(_summary)) {
+                request.mixInstanceInfo(this, { passes: false });
+                return null;
+            }
+            // Now check strict if necessary
+            if (this.get_strict()) {
+                var url = request.get_url();
+                if (BaseObject.is(url, "BKUrl" )) {
+                    var qry = url.get_query();
+                    if (qry != null) {
+                        var keys = qry.keys();
+                        for (var i = 0; i < keys.length; i++) {
+                            if (keys[i] in this.$params) continue;
+                            // Strict requirements not met.
+                            request.mixInstanceInfo(this, { passes: false });
+                            return null;
+                        }
+                    } else {
+                       // This should be eliminated by checkAnalysis
+                       request.mixInstanceInfo(this, { passes: false });
+                       return null;
+                    }
+                } else {
+                    request.mixInstanceInfo(this, { passes: false });
+                    return null;
+                }
+            }
+            request.mixInstanceInfo(this, { passes: true });
+            return { query: true };
+        } else {
+            request.mixInstanceInfo(this, { passes: false });
+            return null;
+        }
     }
-    AjaxRequestInspectorQuery.prototype.analyseQuery = function(url) {
+    AjaxRequestInspectorQuery.prototype.$checkAnalysis = function(summary) {
+        if (summary != null && summary.paramConditions > 0) {
+            if (summary.params != null) {
+                var countConditions = 0;
+                var condition;
+                for (var k in summary.params) {
+                    condition = summary.params[k];
+                    if (condition == null) {
+                        return false; // null condition is a condition that failed critically (e.g. more than 1 value bound to the name)
+                    } else {
+                        if (condition.required && !condition.exists) return false; // Missing required parameter
+                        if (condition.exists && !condition.regex) return false; // Does not match 
+                    }
+                }
+                return true;
+            }
+            return false; // Discrepancy - count is greater than 0, but no conditions are checked.
+        } else {
+            return true; // No conditions - treat as Ok.
+        }
+    }
+    /**
+     * Returns an object:
+     * {
+     *   paramConditions: <number of conditions>,
+     *   params: {
+     *      // Multiple
+     *      <paramname>: { required: true|false, regex: true|false, exists: true|false }
+     *   }
+     * }
+     */
+    AjaxRequestInspectorQuery.prototype.$analyseQuery = function(url) {
         // params contains the matched params, the root contains the summary
-        var summary = { params: {}};
+        if (!BaseObject.is(url, "BKUrl")) return null;
+        var summary = { params: {}, paramConditions: 0};
         if (this.$params == null || typeof this.$params != "object") {
-            summary.paramConditions = 0;
             return summary;
         } 
         var query = url.get_query();
