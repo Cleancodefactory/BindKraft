@@ -1,2 +1,5 @@
 
 //#using "./AjaxRequestInspectorBase.js"
+//#using "./AjaxRequestInspectorUrl.js"
+//#using "./AjaxRequestInspectorQuery.js"
+//#using "./AjaxRequestInspectorData.js"

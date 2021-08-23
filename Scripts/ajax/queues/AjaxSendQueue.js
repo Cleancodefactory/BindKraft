@@ -135,6 +135,7 @@
                 if (info != null) {
                     if (req.is(IAjaxAttachedInfo)) {
                         req.mixInfo(IAjaxRequestInspector, info);
+                        // TODO: Important - see are we going to pack non-null results in request details or not and align the code
                         // TODO complete this
                         //req.attachInfo()
                     }

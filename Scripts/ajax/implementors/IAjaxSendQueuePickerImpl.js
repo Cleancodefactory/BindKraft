@@ -39,7 +39,7 @@
         cls.prototype.pickQueue = function(priority, limit) {
             var results = [];
             var index = this.$checkQueueIndex;
-            if (index > this.$inspectors.length) index = 0;
+            if (index >= this.$inspectors.length) index = 0; // >= ? or > ?
             if (index < this.$inspectors.length) {
                 var inspector, reqs, total, excess;
                 do {

@@ -12,33 +12,12 @@
         AjaxSendQueueInspectorBase.apply(this, arguments);
     }
     AjaxSendQueueInspectorSingleBase.Inherit(AjaxSendQueueInspectorBase,"AjaxSendQueueInspectorSingleBase")
-        .Implement(IAjaxRequestInspectorUser);
+        .Implement(IAjaxRequestInspectorUserImpl);
 
     // Override
     AjaxSendQueueInspectorSingleBase.prototype.$checkQueue = function(queue, priority) {
         var limit = this.get_picklimit();
-        if (this.$requestInspector != null) {
-            var reqs = queue.peekRequests(this.$requestInspector, priority, limit);
-            return reqs;
-        } else {
-            return []; // Usage without request inspector is prevented in order to force people to use the base class for non-inspected picking.
-        }
+        return queue.peekRequests(this, priority, limit);
     }
-
-    //#region IAjaxRequestInspectorUser
-    AjaxSendQueueInspectorSingleBase.prototype.$requestInspector = null;
-    AjaxSendQueueInspectorSingleBase.prototype.get_requestinspector = function() {
-         return this.$requestInspector;
-    }
-    AjaxSendQueueInspectorSingleBase.prototype.set_requestinspector = function(v) {
-        if (v == null) {
-            this.$requestInspector = null;
-        } else if (BaseObject.is(v, "IAjaxRequestInspector")) {
-            this.$requestInspector = v;
-        } else {
-            this.LASTERROR("Unsupprted type set.", "set_requestinspector");
-        }
-
-    }
-    //#endregion
+    
 })();

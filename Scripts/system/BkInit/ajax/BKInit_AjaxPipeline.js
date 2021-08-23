@@ -38,6 +38,15 @@
     //#endregion
 
     //#region Carrier
+    /**
+     * 
+     * Usages: 
+     *  pipeline.AddCarrier(function(carrierBuilder) {
+     *  })
+     * or
+     *  pipeline.AddCarrier(new CustomCarrier(), function(carrierBuilder){
+     *  })
+     */
     BKinit_AjaxPipeline.prototype.AddCarrier = function(cr,fn) {
         var _fn = fn;
         var _cr = cr

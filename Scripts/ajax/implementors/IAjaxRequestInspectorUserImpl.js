@@ -17,6 +17,7 @@
         }
 
         //#region Using it
+        // TODO: Important - see are we going to pack non-null results in request details or not and align the code
         cls.prototype.inspectRequest = function(req) { 
             if (this.$requestinspector == null) return null;
             return this.$requestinspector.inspectRequest(req);

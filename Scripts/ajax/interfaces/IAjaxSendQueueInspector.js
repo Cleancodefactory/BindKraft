@@ -20,6 +20,8 @@
      * eliminate any request that became no longer available between the time of checkQueue and grabRequests (if any). Then the requests are sent to the 
      * carrier served by the inspector.
      * 
+     * These inspectors are driven by the AjaxCarrier-s
+     * 
      */
     function IAjaxSendQueueInspector() {}
     IAjaxSendQueueInspector.Interface("IAjaxSendQueueInspector");
@@ -32,13 +34,13 @@
     IAjaxSendQueueInspector.prototype.set_queue = function(q) { throw "not impl."; }
 
     /**
-     * The count over which the critical limit is considered to be reached. The limit applies to whatever the inspector is interested in.
+     * The count OVER which the critical limit is considered to be reached. The limit applies to whatever the inspector is interested in.
      */
     IAjaxSendQueueInspector.prototype.get_criticallimit = function () {throw "not impl.";}
     IAjaxSendQueueInspector.prototype.set_criticallimit = function (v) {throw "not impl.";}
 
     /**
-     * The critical request age at which the requests should picked even if they are under the critical limit.
+     * The critical request age at which the requests should be picked EVEN if they are UNDER the critical limit.
      */
     IAjaxSendQueueInspector.prototype.get_criticalage = function() { throw "not implemented.";}
     IAjaxSendQueueInspector.prototype.set_criticalage = function(v) { throw "not implemented.";}
