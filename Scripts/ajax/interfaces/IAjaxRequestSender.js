@@ -1,8 +1,10 @@
 (function(){
 
     /**
-     * The sender has to support two things - a queue for the requests fed into it and indication if it can accept more.
+     * The sender has to support two things - a queue for the requests fed into it and indication if it should accept more.
      * The sender accepts whole requests only - any batch packing has to be done by a packer before that.
+     * The sender has to accept all the requests sent to it, no matter what the indication says - it is up to the caller to decide
+     * how to not overwhelm the sender.
      */
     function IAjaxRequestSender() {}
     IAjaxRequestSender.Interface("IAjaxRequestSender");

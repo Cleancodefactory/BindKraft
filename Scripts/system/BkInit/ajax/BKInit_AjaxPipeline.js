@@ -39,6 +39,8 @@
 
     //#region Carrier
     /**
+     * Adds a carrier. By default (with single argument) the standard AjaxCarrier is created, but
+     * there is the option for a custom one (two argument version)
      * 
      * Usages: 
      *  pipeline.AddCarrier(function(carrierBuilder) {

@@ -4,8 +4,9 @@
         BaseObject.apply(this, arguments);
         this.carrier = carrier;
         this.pipeline = pipeline;
+        carrier.set_progressqueue(pipeline.get_sendqueue());
     }
-    BKInit_AjaxCarrier.Inherit(BaseObject,"BKIniti_AjaxCarrier");
+    BKInit_AjaxCarrier.Inherit(BaseObject,"BKInit_AjaxCarrier");
 
     // Add queue inspector with a single rule
     BKInit_AjaxCarrier.prototype.addPickRule = function(fn) {
@@ -31,6 +32,20 @@
         }
         return this;
     }
-    
+    BKInit_AjaxCarrier.prototype.name = function(name) {
+        this.carrier.set_name(name);
+        return this;
+    }
+    BKInit_AjaxCarrier.prototype.customSender = function(sender) { 
+        this.carrier.set_requestSender(sender);
+        return this;
+    }
+    BKInit_AjaxCarrier.prototype.poolSender = function(nFetchers, fetcherCreator) { 
+        var _fetchers = nFetchers || 2;
+        var sender = new AjaxRequestSenderPool(_fetchers, fetcherCreator);
+        this.carrier.set_requestSender(sender);
+        return this;
+    }
+
 
 })();

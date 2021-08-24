@@ -10,11 +10,12 @@
      * 
      * The expected type is always "packetxml", unless something else is suggested by the packed request
      */
-    function AjaxRequestSenderPool(fcount) { 
+    function AjaxRequestSenderPool(fcount, fetcherCreator) { 
         AjaxRequestSenderBase.apply(this, arguments);
+        var _creator = fetcherCreator || this.$createFetcher;
         fcount = fcount || 1;
         for (var i = 0; i < fcount; i++) {
-            this.$fetchers.push(this.$createFetcher());
+            this.$fetchers.push(_creator.call(this));
         }
     }
     AjaxRequestSenderPool.Inherit(AjaxRequestSenderBase,"AjaxRequestSenderPool");
