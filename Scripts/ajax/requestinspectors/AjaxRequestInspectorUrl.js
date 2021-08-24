@@ -24,6 +24,20 @@
             }
         });
 
+    //#region Static constructors
+    /**
+     * Filters all the requests to the app server
+     */
+    AjaxRequestInspectorUrl.AppPathInspector = function() {
+        var inspector = new AjaxRequestInspectorUrl();
+        // TODO: Cpmplete this
+        var url = BKUrl.getBasePathAsUrl();
+        url.get_authority()
+        inspector.set_server(this.$reServer);
+        BKUrl.baseURL();
+    }
+    //#endregion
+
     AjaxRequestInspectorUrl.prototype.$reServer = null;
     AjaxRequestInspectorUrl.prototype.$rePath = null;
     AjaxRequestInspectorUrl.prototype.inspectRequest = function(request) {
