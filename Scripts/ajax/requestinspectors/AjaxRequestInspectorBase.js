@@ -15,12 +15,36 @@
     AjaxRequestInspectorBase.Inherit(AjaxBase, "AjaxRequestInspectorBase")
         .Implement(IAjaxRequestInspector);
 
-    AjaxRequestInspector.prototype.inspectRequest = function(request) {
+    AjaxRequestInspectorBase.prototype.inspectRequest = function(request) {
         throw "Abstract inspectRequest is not implemented";
     }
 
     //#region Tools for use in inherited inspectors (if and when necessary)
-    AjaxRequestInspector.prototype.analyseUrl = function(_url) {
+    AjaxRequestInspectorBase.prototype.getSummary = function(patch) {
+        var summary = {
+            server: null,
+            port: null,
+            path: [],
+            pathString: null,
+            hasbinary: false,
+            depth: 0, // Object depth
+            hasvaluearrays: false,
+            hasbinaryarrays: false,
+            hasdates: false
+        }
+        if (typeof patch == "object") {
+            return BaseObject.CombineObjects(summary, patch);
+        }
+        return summary;
+    }
+    /**
+     * Maps the URL over the base URL, so the URL actually analysed always has scheme and authority.
+     * Returns an object with general characteristics of the URL.
+     * 
+     * @param _url {string|IBKUrlObject} - The URL to analyse.
+     * @returns {object}
+     */
+    AjaxRequestInspectorBase.prototype.analyseUrl = function(_url) {
         var url = BKUrl.getBasePathAsUrl();
         var summary = {
             server: null,
@@ -47,10 +71,10 @@
             summary.path = path.get_pathnamesegements();
             summary.pathString = path.toString();
         }
-        return summary;
+        return this.getSummary(summary);
     }
 
-    AjaxRequestInspector.prototype.analyseData = function(data) {
+    AjaxRequestInspectorBase.prototype.analyseData = function(data) {
         var summary = {
             hasbinary: false,
             depth: 0, // Object depth
@@ -61,7 +85,7 @@
         this.$analyseData(data, summary, 0)
         return summary;
     }
-    AjaxRequestInspector.prototype.$analyseData = function(data, summary, level) {
+    AjaxRequestInspectorBase.prototype.$analyseData = function(data, summary, level) {
         var v;
         if (summary.depth < level) summary.depth = level;
         if (window.FileList && data instanceof FileList) {

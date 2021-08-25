@@ -9,12 +9,15 @@ BkInit.AjaxPipeline(function(pipeline){
             carrier
                 .addPickRule(function(picker) {
                     picker
+                        .name("server.com")
                         .criticalLimit(10)
                         .criticalAge(1000)
                         .pickLimit(1)
                         .rule("AjaxRequestInspectorUrl", function(inspector) { 
                             inspector.set_server("*.server.com");
                         })
-                })
+                        .poolSender(2)
+                })        
         })
+        
 });

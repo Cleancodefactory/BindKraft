@@ -15,6 +15,7 @@
                 this.$reServer = null;
             }
         })
+        ImplementProperty("noserver", new InitializeBooleanParameter("if true allows virtual URL without scheme and authority.", false))
         .ImplementProperty("port")
         .ImplementProperty("path", new InitializeStringParameter("wildcards supported - pattern for the path", null), null, function(ov, nv){
             if (typeof nv == "string" && nv.length > 0) {
@@ -50,7 +51,7 @@
             if (typeof summary.server == "string") {
                 if (!this.$reServer.test(summary.server)) return null;
             } else {
-                return null;
+                if (!this.get_noserver()) return null;
             }
         }
         if (this.$rePath != null ) {
