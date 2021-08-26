@@ -83,7 +83,7 @@
             hasdates: false
         }
         this.$analyseData(data, summary, 0)
-        return summary;
+        return this.getSummary(summary);
     }
     AjaxRequestInspectorBase.prototype.$analyseData = function(data, summary, level) {
         var v;

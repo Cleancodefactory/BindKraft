@@ -1,5 +1,11 @@
 (function() {
 
+    /**
+     * The unpackers are intended to convert from the response returned in LightFetchHttp object format to the 
+     * response required by the request. The request may be one that demands all the data or only part of it. In 
+     * other cases multiple requests can be packed into a single batch request and the unpacker ...
+     * 
+     */
     function IAjaxResponseUnpacker() {}
     IAjaxResponseUnpacker.Interface("IAjaxResponseUnpacker");
 

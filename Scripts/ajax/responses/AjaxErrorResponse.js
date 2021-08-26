@@ -12,7 +12,8 @@
      */
     function AjaxErrorResponse(request, message) {
         AjaxBase.apply(this,arguments);
-        this.$data = { status: { issuccessful: false, message: message || "Request failed before being sent" } };
+        this.$success = false;
+        this.$message = message || "Request failed before being sent";
         this.$request = request;
         if (!BaseObject.is(this.$request, IAjaxRequest )) {
             this.LASTERROR("The request parameter is required when creating an AjaxErrorResponse");
@@ -24,14 +25,18 @@
 
     //#region IAjaxResponse
     AjaxErrorResponse.prototype.$data = null;
-    AjaxErrorResponse.prototype.get_data = function() { return this.$data;}
+    AjaxErrorResponse.prototype.get_data = function() { 
+        // return this.$data;
+        return null;
+    }
 
-    
+    AjaxErrorResponse.prototype.$success = false;
     AjaxErrorResponse.prototype.get_success = function() { 
         if (this.$data && this.$data.status) return this.$data.status.issuccessful;
         return false;
     }
  
+    AjaxErrorResponse.prototype.$message = null;
     AjaxErrorResponse.prototype.get_message = function() { 
         if (this.$data && this.$data.status) return this.$data.status.message;
         return null;

@@ -3,6 +3,15 @@
     var AjaxRequestInspectorBase = Class("AjaxRequestInspectorBase"),
     MiscellaneousFunctionLibrary = Class("MiscellaneousFunctionLibrary");
 
+    /**
+     * Inspects by URL specifics.
+     * Null value of a property means the condition given by it will not be checked.
+     * 
+     * get/set_server - server pattern (Typical dir pattern *?)
+     * get/set_path - path pattern (typical dir pattern *?)
+     * get/set_noserver - if true, catches ULS having no authority part.
+     * get/set_port - not implemented yet.
+     */
     function AjaxRequestInspectorUrl() {
         AjaxRequestInspectorBase.apply(this,arguments);
 
@@ -31,7 +40,7 @@
      */
     AjaxRequestInspectorUrl.AppPathInspector = function() {
         var inspector = new AjaxRequestInspectorUrl();
-        // TODO: Cpmplete this
+        // TODO: Complete this
         var url = BKUrl.getBasePathAsUrl();
         url.get_authority()
         inspector.set_server(this.$reServer);
