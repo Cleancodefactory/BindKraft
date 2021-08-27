@@ -6,11 +6,12 @@
     function AjaxResponse(request, data, message) {
         AjaxBase.apply(this,arguments);
         if (data === false) {
-            this.$data = { status: { issuccessful: false, message: message || "Request cancelled"}};
+            this.$success = false;
+            this.$message = message || "Request cancelled";
         } else if (data != null && typeof data == "object") {
             this.$data = data;
         } else {
-            this.$data = { status: { issuccessful: false, message: message || "Unexpected data type."}};
+            this.$data = null;
         }
         this.$request = request;
     }
@@ -22,9 +23,9 @@
     AjaxResponse.prototype.get_data = function() { return this.$data;}
 
     
+    AjaxResponse.prototype.$success = false;
     AjaxResponse.prototype.get_success = function() { 
-        if (this.$data && this.$data.status) return this.$data.status.issuccessful;
-        return false;
+        return this.$success;
     }
  
     AjaxResponse.prototype.get_message = function() { 
@@ -34,6 +35,13 @@
 
     AjaxResponse.prototype.get_request = function() { 
         return this.$request;
+    }
+    AjaxResponse.prototype.set_request = function(request) {
+        if (request == null || BaseObject.is(request,  "IAjaxRequest")) {
+            this.$request = request;
+        } else {
+            this.LASTERROR("Attempt to set non-IAjaxRequest", "set_request");
+        }
     }
 
     //#endregion IAjaxResponse

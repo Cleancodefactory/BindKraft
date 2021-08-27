@@ -21,11 +21,16 @@
 
             if (BaseObject.is(url_or_req, "IAjaxRequest")) {
                 var request = url_or_req;
+                var request_complete = request.completeRequest;
                 if (BaseObject.isCallback(data_or_reqdata_or_callback)) {
                     if (typeof callback == "boolean") {
                         request.set_cache(callback);
                     }
                     request.completeRequest = function(response) {
+                        if (BaseObject.is(response, "IAjaxResponse")) {
+                            response.set_request(request);
+                        }
+                        request_complete.call(request, response);
                         BaseObject.callCallback(data_or_reqdata_or_callback, response);
                     }
                     _enqueueRequest(request);
@@ -36,6 +41,10 @@
                     }
                     var op = new Operation(); // TODO: Needs some safe timeouts etc.
                     request.completeRequest = function(response) {
+                        if (BaseObject.is(response, "IAjaxResponse")) {
+                            response.set_request(request);
+                        }
+                        request_complete.call(request, response);
                         if (BaseObject.is(response, "IAjaxResponse")) {
                             if (response.get_success()) {
                                 op.CompleteOperation(true, response);

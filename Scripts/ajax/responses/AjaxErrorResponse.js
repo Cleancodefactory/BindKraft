@@ -15,8 +15,8 @@
         this.$success = false;
         this.$message = message || "Request failed before being sent";
         this.$request = request;
-        if (!BaseObject.is(this.$request, IAjaxRequest )) {
-            this.LASTERROR("The request parameter is required when creating an AjaxErrorResponse");
+        if (this.$request != null && !BaseObject.is(this.$request, IAjaxRequest )) {
+            this.LASTERROR("The request parameter is not an IAjaxRequest");
             return null;
         }
     }
@@ -44,6 +44,13 @@
 
     AjaxErrorResponse.prototype.get_request = function() { 
         return this.$request;
+    }
+    AjaxErrorResponse.prototype.set_request = function(request) {
+        if (request == null || BaseObject.is(request,  "IAjaxRequest")) {
+            this.$request = request;
+        } else {
+            this.LASTERROR("Attempt to set non-IAjaxRequest", "set_request");
+        }
     }
 
     //#endregion IAjaxResponse

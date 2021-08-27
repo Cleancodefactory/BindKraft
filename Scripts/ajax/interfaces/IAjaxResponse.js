@@ -22,4 +22,8 @@
      * The request to which this is a response.
      */
     IAjaxResponse.prototype.get_request = function() { throw "not impl.";}
+    /**
+     * // TODO Should it be implemented os set once?
+     */
+    IAjaxResponse.prototype.set_request = function(request) { throw "not impl.";}
 })();

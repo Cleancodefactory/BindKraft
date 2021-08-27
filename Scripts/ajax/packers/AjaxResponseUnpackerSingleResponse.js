@@ -19,7 +19,8 @@
 
     
     AjaxResponseUnpackerSingleResponse.prototype.unpackResponse = function(packedrequest, objdata) { 
-        if (objdata == null) return new AjaxErrorResponse()
+        var response = null;
+        if (objdata == null) response = new AjaxErrorResponse("")
         var ar = new AjaxResponse(pa)
     }
 

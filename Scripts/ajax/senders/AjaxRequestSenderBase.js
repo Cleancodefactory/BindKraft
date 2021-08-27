@@ -14,7 +14,25 @@
     AjaxRequestSenderBase.prototype.sendRequest = function(request) {
         // TODO: Try sending request, if the limitations prevent that, enqueue it and grab it when it becomes possible to send it.
     }
-    
+    /**
+     * Fails the request and its original requests with the same response.
+     * The response has to be unsuccessful in order to prevent wrong usage!
+     */
+    AjaxRequestSenderBase.prototype.$failRequest = function(request, response) {
+        if (!BaseObject.is(response, "IAjaxResponse") || response.get_success()) {
+            return null;
+        }
+        if (BaseObject.is(request, "IAjaxPackedRequest")) {
+            var originals = request.get_originalRequests();
+            if (originals != null && Array.isArray(originals)) {
+                for (var i = 0; i < originals.length; i++) {
+                    originals[i].completeRequest(response);
+                }
+            }
+            request.completeRequest(response);
+        }
+        return response;
+    }
     
 
     //IAjaxRequestSender.prototype.unblockedevent = new InitializeEvent("Fired when the sender can accept more requests");
