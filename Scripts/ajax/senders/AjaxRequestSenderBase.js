@@ -17,19 +17,27 @@
     /**
      * Fails the request and its original requests with the same response.
      * The response has to be unsuccessful in order to prevent wrong usage!
+     * @param request {IAjaxPackedRequest} The request to fail - required
+     * @param response {IAjaxResponse && IAjaxCloneable} The response to apply
+     * @param message {string} Optional, required if response is null
      */
-    AjaxRequestSenderBase.prototype.$failRequest = function(request, response) {
-        if (!BaseObject.is(response, "IAjaxResponse") || response.get_success()) {
-            return null;
+    AjaxRequestSenderBase.prototype.$failRequest = function(request, response, message) {
+        if (response != null) {
+            if (!BaseObject.is(response, "IAjaxResponse") || response.get_success()) {
+                return null;
+            }
+            if (!BaseObject.is(response, "IAjaxCloneable")) return null;
+        } else {
+            response = new AjaxErrorResponse(null, message || "Your request received error response");
         }
         if (BaseObject.is(request, "IAjaxPackedRequest")) {
             var originals = request.get_originalRequests();
             if (originals != null && Array.isArray(originals)) {
                 for (var i = 0; i < originals.length; i++) {
-                    originals[i].completeRequest(response);
+                    originals[i].completeRequest(response.cloneAjaxComponent());
                 }
             }
-            request.completeRequest(response);
+            request.completeRequest(response.cloneAjaxComponent());
         }
         return response;
     }

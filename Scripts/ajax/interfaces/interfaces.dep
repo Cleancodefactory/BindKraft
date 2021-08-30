@@ -19,3 +19,4 @@
 //#using "./IAjaxSendQueue.js"
 //#using "./IAjaxSendQueueInspector.js"
 //#using "./IAjaxSendQueuePicker.js"
+//#using "./IAjaxCloneable.js"

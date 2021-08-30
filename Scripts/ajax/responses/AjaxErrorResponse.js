@@ -2,6 +2,7 @@
 
     var IAjaxResponse = Interface("IAjaxResponse"),
         IAjaxRequest = Interface("IAjaxRequest"),
+        IAjaxCloneable = Interface("IAjaxCloneable"),
         AjaxBase = Class("AjaxBase");
 
     /**
@@ -21,6 +22,7 @@
         }
     }
     AjaxErrorResponse.Inherit(AjaxBase, "AjaxErrorResponse")
+        .Implement(IAjaxCloneable)
         .Implement(IAjaxResponse);
 
     //#region IAjaxResponse
@@ -54,4 +56,10 @@
     }
 
     //#endregion IAjaxResponse
+
+    //#region IAjaxCloneable
+    AjaxErrorResponse.prototype.cloneAjaxComponent = function() { 
+        return new AjaxErrorResponse(this.$request, this.$message);
+    }
+    //#endregion
 })();

@@ -74,19 +74,22 @@
             
             if (BaseObject.is(unpacker, "IAjaxResponseUnpacker")) {
                 response = unpacker.unpackResponse(request, responseData);
+                // TODO return it ??
             } else {
-                this.LASTERROR("Invalid response unpacker")
-                response = new AjaxErrorResponse(request, "Invalid response unpacker");
+                this.LASTERROR("Invalid response unpacker");
+                this.$failRequest(request, null, "Invalid response unpacker, check the ajax configuration.");
             }
             if (response == null) {
-                response = new AjaxErrorResponse(request, "Unknown error.")
+                this.$failRequest(request, null, "Unknown error. No response was returned.");
             }
             
             // TODO create response with the unpacker
         } else {
-            response = new AjaxErrorResponse(request,operation.getOperationErrorInfo());
+            response = new AjaxErrorResponse(null, operation.getOperationErrorInfo())
+            this.$failRequest(request, response);
+            
         }
-        request.completeRequest(response);
+        // request.completeRequest(response);
     };
 
     // override to implement differently configured fetchers
