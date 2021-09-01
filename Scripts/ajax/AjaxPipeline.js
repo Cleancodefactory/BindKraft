@@ -61,6 +61,7 @@
         })
     }
 
+    AjaxPipeline.prototype.enumCarriers = function () {}
 
     AjaxPipeline.prototype.$sendqueue = null;
     AjaxPipeline.prototype.get_sendqueue = function(){

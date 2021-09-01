@@ -15,9 +15,9 @@ BkInit.AjaxPipeline(function(pipeline){
                         .pickLimit(1)
                         .rule("AjaxRequestInspectorUrl", function(inspector) { 
                             inspector.set_server("*.server.com");
-                        })
-                        .poolSender(2)
-                })        
+                        });
+                })
+                .poolSender(2);        
         })
         
 });
