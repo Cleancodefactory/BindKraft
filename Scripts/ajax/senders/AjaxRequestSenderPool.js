@@ -23,6 +23,7 @@
     AjaxRequestSenderPool.prototype.sendRequest = function(req) {
         if (BaseObject.is(req, IAjaxPackedRequest)) {
             this.$enqueueRequest(req);
+            this.trySend();
             return true;
         } else {
             return false;
@@ -60,6 +61,8 @@
                     return true;
                 }
             } 
+        } else {
+            // TODO poke carrier 
         }
         return false;
     }
@@ -89,6 +92,7 @@
             this.$failRequest(request, response);
             
         }
+        this.trySend();
         // request.completeRequest(response);
     };
 
