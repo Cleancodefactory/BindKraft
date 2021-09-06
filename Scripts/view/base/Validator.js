@@ -22,7 +22,7 @@ Validator.$defaults = {
 
 Validator.ImplementProperty("throwqueryonvaliditychanged", new InitializeStringParameter("Any string will enable that, values of view, window, app will limit it to the corresponding scope (ignored for now)",null));
 Validator.ImplementProperty("waitreadiness", new InitializeBooleanParameter("If truthy value is set the validator will run the rules after the control is ready (if there is a control attached to the binding's target and no effect otherwise)",false));
-Validator.ImplementProperty("notreadymessage", new InitializeStringParameter("Message when readiness fails","The component failed to complete its task."));
+Validator.ImplementProperty("notreadymessage", new InitializeStringParameter("Message when readiness fails - if null or empty the error message reported will be displayed.",null));
 
 Validator.prototype.validitychanged = new InitializeEvent("Fired whenever the validity changes");
 Validator.prototype.validating = new InitializeEvent("Fired before performing validation");
@@ -540,26 +540,38 @@ Validator.prototype.$readyForValidation = function() {
 Validator.prototype.validate = function (bIndicate, fCallBack) { // fCallBack proto: function(result, isAsynch);
     if (this.get_disabled()) return ValidationResultEnum.correct;
     this.validating.invoke(this, null);
-    var opready = this.$readyForValidation()
+    var _callNeeded = false;
+    var opready = this.$readyForValidation();
     opready.onsuccess(this.thisCall(function(_) {
         this.waitReport = 0;
         if (fCallBack != null) {
             this.$asyncCallBack = fCallBack;
         }
-        this.result = this.$validate(bIndicate);
+        this.result = this.$validate(bIndicate); // on sync onsuccess pending will wait the rule and the callback will be called then.
         this.onValidityChanged();
+        if (_callNeeded && fCallBack != null) {
+            BaseObject.callCallback(this.$asyncCallBack, this.result);
+        }
     }))
     .onfailure(this.thisCall(function(e) {
         this.result = ValidationResultEnum.fail;
         this.$messages = [];
-        this.$messages.push(this.get_notreadymessage());
+        if (this.get_notreadymessage() == null || this.get_notreadymessage().length == 0) {
+            this.$messages.push(e);
+        } else {
+            this.$messages.push(this.get_notreadymessage());
+        }
         this.onValidityChanged();
+        if (_callNeeded && fCallBack != null) {
+            BaseObject.callCallback(this.$asyncCallBack, this.result);
+        }
     }));
     
     if (this.waitReport <= 0 && opready.isOperationComplete()) {
         this.waitReport = 0;
         return this.result;
     } else {
+        _callNeeded = true;
         return ValidationResultEnum.pending;
     }
 };
