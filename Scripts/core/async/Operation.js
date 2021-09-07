@@ -73,6 +73,9 @@ Operation.prototype.$expiration = function() {
 		jbTrace.log("An operation timed out");
 	}
 }
+/**
+ * Can be called multiple times to prolong the life of the operation.
+ */
 Operation.prototype.expire = function(milliseconds) {
 	this.discardAsync("OperationTimeOut"); // Remove any previous timeout tracker.
 	this.async(this.$expiration).after(milliseconds).key("OperationTimeOut").apply(this);

@@ -61,7 +61,20 @@
         })
     }
 
-    AjaxPipeline.prototype.enumCarriers = function () {}
+    /**
+     * Produces tasks for all the carriers, so that they can check the send queue.
+     * // TODO This may need refactoring to make sure the tasks produced are not too many at once.
+     */
+    AjaxPipeline.prototype.asyncRunCarriers = function () {
+        var me = this;
+        this.callAsync(function(){
+            if (me.$carriers != null && me.$carriers.length > 0) {
+                me.$carriers.Each(function(idx, carrier){
+                    carrier.asyncRun();
+                });
+            }
+        });
+    }
 
     AjaxPipeline.prototype.$sendqueue = null;
     AjaxPipeline.prototype.get_sendqueue = function(){

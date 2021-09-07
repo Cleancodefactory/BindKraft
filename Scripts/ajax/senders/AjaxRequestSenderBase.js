@@ -8,12 +8,37 @@
         .Implement(IAjaxRequestSender);
 
     //#region IAjaxRequestSender
-    AjaxRequestSenderBase.prototype.get_blocked = function() {throw "not implemented."; }
 
     // override
     AjaxRequestSenderBase.prototype.sendRequest = function(request) {
         // TODO: Try sending request, if the limitations prevent that, enqueue it and grab it when it becomes possible to send it.
+        throw "not implemented in base class";
     }
+    // override
+    AjaxRequestSenderBase.prototype.trySend = function() {
+        // TODO Send what you can synchronously - use up all resources needed for sending and return (void)
+        throw "not implemented in base class";
+    }
+    // override
+    AjaxRequestSenderBase.prototype.flush = function() { 
+        var op = new Operation(null, window.JBCoreConstants.LongOperationTimeout);
+
+        // TODO Start sending, wait completion, continue the process until all buffered requests are sent. Return an operation(null) to indicate this.
+        throw "not implemented in base class";
+    } // Returns(Operation)
+
+    AjaxRequestSenderBase.prototype.cancel = function() { 
+        // TODO Any overriding method should call the parent implementation and then go on to implement more.
+        if (this.$hasQueuedRequests()) {
+            var req = null;
+            while (req = this.$dequeueRequest()) {
+                this.$failRequest(req, null, "Request has been canceled");
+            }
+        }
+    }
+    // override
+    AjaxRequestSenderBase.prototype.get_overloaded = function() {throw "not implemented in base class";}
+
     /**
      * Fails the request and its original requests with the same response.
      * The response has to be unsuccessful in order to prevent wrong usage!
@@ -58,7 +83,13 @@
     }
     AjaxRequestSenderBase.prototype.$dequeueRequest = function() {
         if (this.$requests.length > 0) {
-            return this.$requests.pop();
+            var req = this.$requests.pop();
+            if (this.$requests.length == 0) {
+                this.callAsync(function() {
+                    this.flushedevent.invoke(this, null);
+                });
+            }
+            return req;
         }
         return null;
     }

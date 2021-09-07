@@ -30,6 +30,17 @@
         }
     }
 
+    AjaxRequestSenderPool.prototype.flush = function() { 
+        
+    } // Returns(Operation)
+    AjaxRequestSenderPool.prototype.get_overloaded = function() {
+        var fetcher = this.$fetchers.FirstOrDefault(function(idx, f){
+            if (!f.isOpened()) return f;
+            return null;
+        });
+        return (fetcher == null); // No free fetchers
+    }
+
     //#region Fetchers pool
     AjaxRequestSenderPool.prototype.$fetchers = new InitializeArray("Fetchers to use");
     AjaxRequestSenderPool.prototype.get_fetchersCount = function() {
@@ -39,7 +50,7 @@
      * Tries to send a request if there are any waiting - dequeues one and sends it if possible.
      * For the request to be send a free fetcher is also needed (in this implementation, others can behave differently)
      */
-    AjaxRequestSenderPool.prototype.trySend = function() {
+    AjaxRequestSenderPool.prototype.$trySend = function() {
         if (this.$hasQueuedRequests()) {
             var fetcher = this.$fetchers.FirstOrDefault(function(idx, f){
                 if (!f.isOpened()) return f;
@@ -65,6 +76,9 @@
             // TODO poke carrier 
         }
         return false;
+    }
+    AjaxRequestSenderPool.prototype.trySend = function() { 
+        while(this.$trySend());
     }
     AjaxRequestSenderPool.prototype.requestComplete = function(operation, request, fetcher) { 
         var response = null;
@@ -92,6 +106,7 @@
             this.$failRequest(request, response);
             
         }
+        fetcher.reset();
         this.trySend();
         // request.completeRequest(response);
     };
