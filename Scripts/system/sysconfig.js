@@ -86,9 +86,15 @@
 	settings.DefaultTransferDateEncoding = "ISO";
 	settings.UltimateFallBackLocale = "en";
 	
-
+	
+	function ReportError(message, source, lineno, colno, error) {
+		alert("Error:" + message + "\n" + source + "\n" + lineno);// HideProgressAfterAjax();
+		return true;
+	}
 	
 	document.addEventListener("DOMContentLoaded", function (event) {
+		//window.removeEventListener('error', window.JBCoreConstants.ParseTimeErrorHandler);
+		window.onerror = ReportError;
 		// Before boot complete compilation phase
 		CompileTime.Tasks.run("completion");
 		// No more compile time tasks - forget them.
