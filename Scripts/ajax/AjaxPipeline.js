@@ -75,6 +75,16 @@
             }
         });
     }
+    AjaxPipeline.prototype.asyncPushCarriers = function () {
+        var me = this;
+        this.callAsync(function(){
+            if (me.$carriers != null && me.$carriers.length > 0) {
+                me.$carriers.Each(function(idx, carrier){
+                    carrier.asyncPush();
+                });
+            }
+        });
+    }
 
     AjaxPipeline.prototype.$sendqueue = null;
     AjaxPipeline.prototype.get_sendqueue = function(){

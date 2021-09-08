@@ -50,9 +50,14 @@
     IAjaxRequestSender.prototype.get_overloaded = function() {throw "not implemented"; }
 
     /**
+     * // TODO Determine if this event can be scraped.
      * Should be fired asynchronously (in this.callAsync at least)
      */
     IAjaxRequestSender.prototype.flushedevent = new InitializeEvent("Fired when the sender's request buffer gets empty.");
+
+    IAjaxRequestSender.prototype.uncloggedevent = new InitializeEvent("Fired when the sender has free resources for sending requests. There could be requests in the queue, calling trySend will consume from them.");
+
+    IAjaxRequestSender.prototype.demandrequestsevent = new InitializeEvent("Fired when the sender has its queued requests sent and can reasonable process more. Usually listened by the carrier");
 
      //#region Under consideration
     /** DEPRECATED

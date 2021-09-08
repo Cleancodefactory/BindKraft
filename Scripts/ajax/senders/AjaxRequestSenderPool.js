@@ -30,9 +30,10 @@
         }
     }
 
-    AjaxRequestSenderPool.prototype.flush = function() { 
-        
-    } // Returns(Operation)
+    // AjaxRequestSenderPool.prototype.flush = function() { 
+
+    // } // Returns(Operation)
+
     AjaxRequestSenderPool.prototype.get_overloaded = function() {
         var fetcher = this.$fetchers.FirstOrDefault(function(idx, f){
             if (!f.isOpened()) return f;
@@ -71,14 +72,19 @@
                     }
                     return true;
                 }
+            } else {
+                // clogged
             } 
         } else {
-            // TODO poke carrier 
+            this.demandrequestsevent.invoke(this, null);
         }
         return false;
     }
     AjaxRequestSenderPool.prototype.trySend = function() { 
         while(this.$trySend());
+        if (!this.get_overloaded()) {
+            this.uncloggedevent.invoke(this, null);
+        }
     }
     AjaxRequestSenderPool.prototype.requestComplete = function(operation, request, fetcher) { 
         var response = null;

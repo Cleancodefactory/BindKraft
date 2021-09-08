@@ -113,7 +113,7 @@ EventDispatcher.prototype.invoke = function () {
         }
 		if (fd != null) {
 			for (i = fd.length - 1; i >= 0; i--) {
-				this.handlers.splice(i,1).obliterate();
+				this.handlers.splice(fd[i],1).obliterate();
 			}
 		}
     }

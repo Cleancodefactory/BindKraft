@@ -13,7 +13,7 @@
         }
 
         function _enqueueRequest(req) {
-            AjaxSendQueue.Default().enqueueRequest(req, defaultPriority);
+            _sendQueue().enqueueRequest(req, defaultPriority);
         }
 
 

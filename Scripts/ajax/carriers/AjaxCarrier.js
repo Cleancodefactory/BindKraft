@@ -37,6 +37,13 @@
         .Implement(IAjaxSendQueuePickerImpl)
         .Implement(IAjaxCarrier);
 
+    AjaxCarrier.prototype.obliterate = function() { 
+        AjaxBase.prototype.obliterate.call(this);
+        this.set_requestSender(null);
+        this.set_responseUnpacker(null);
+        this.set_requestPacker(null);
+        this.set_progressQueue(null);
+    }
     //#region Parameters
     AjaxCarrier.ImplementProperty("limit", new InitializeNumericParameter("Limit requests processed on each run.", 1));
     //#endregion
@@ -88,6 +95,11 @@
     AjaxCarrier.prototype.asyncRun = function() {
         this.callAsync(this.run);
     }
+    AjaxCarrier.prototype.asyncPush = function() {
+        if (this.$requestsender != null) {
+            this.$requestsender.trySend();
+        }
+    }
     //#endregion
 
 
@@ -118,13 +130,25 @@
     //#endregion
 
     //#region Request sender
+
+    AjaxCarrier.prototype.$demandrequests = new InitializeMethodDelegate("Method responding to senser's demandreqeustsevent.", function() {
+        this.asyncRun();
+    })
+
     AjaxCarrier.prototype.$requestsender = null;
     AjaxCarrier.prototype.get_requestSender = function() {
         return this.$requestsender;
     }
     AjaxCarrier.prototype.set_requestSender = function(v) {
         if (v == null || BaseObject.is(v, "IAjaxRequestSender")) {
+            if (v == null && this.$requestsender != null) {
+                this.$requestsender.remove(this.$demandrequests);
+            }
             this.$requestsender = v;
+            if (v != null) {
+                this.$requestsender.add(this.$demandrequests);
+            }
+            
         }
     }
     //#endregion

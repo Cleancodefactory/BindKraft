@@ -13,6 +13,15 @@
      * Async run should call run on next (further) javascript event cycle
      */
     IAjaxCarrier.prototype.asyncRun = function() { throw "not implemented"; }
+    /**
+     * Unlike asyncRun this method should only push the configured sender to try sending what it can from its internally queued requests.
+     * This method is here for balancing purposes - to make sure the pipeline is progressing. If every component is written well enough then
+     * usage of asyncPush should be redundant. However to compensate for any minor problems in the implementation of senders (mainly) and carriers
+     * it should be invoked regularly.
+     * 
+     * The carrier must call trySend on its sender when called - that is all.
+     */
+    IAjaxCarrier.prototype.asyncPush = function() { throw "not implemented"; }
 
     IAjaxCarrier.prototype.get_requestPacker = function() { throw "not implemented"; }
     IAjaxCarrier.prototype.set_requestPacker = function(v) { throw "not implemented"; }

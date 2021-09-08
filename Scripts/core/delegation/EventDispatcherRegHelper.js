@@ -56,7 +56,7 @@ EventDispatherRegHelper.prototype.compareTo = function(obj) {
 };
 // + V:2.10 retuning false (===) removes the handler after execution
 EventDispatherRegHelper.prototype.applyHandler = function(fallbackTarget, argsArray) {
-	if (this.__obliterated) return null;
+	if (this.__obliterated) return false; // make sure this reghelper is removed from the handlers, was returning null before.
     var f = this.handler;
     if (BaseObject.is(f, "IInvocationWithArrayArgs")) {
 		if (f.__obliterated) return false;

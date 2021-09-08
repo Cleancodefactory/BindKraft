@@ -21,8 +21,21 @@
     }
     // override
     AjaxRequestSenderBase.prototype.flush = function() { 
+        if (!this.$hasQueuedRequests()) return Operation.From(null);
         var op = new Operation(null, window.JBCoreConstants.LongOperationTimeout);
-
+        this.uncloggedevent.add(this.thisCall(function() {
+            if (!op.isOperationComplete()) {
+                this.trySend();
+                if (!this.$hasQueuedRequests()) op.CompleteOperation(true, null);
+            } else {
+                return false;
+            }
+        }));
+        this.trySend();
+        
+        
+        
+        return op;
         // TODO Start sending, wait completion, continue the process until all buffered requests are sent. Return an operation(null) to indicate this.
         throw "not implemented in base class";
     } // Returns(Operation)
