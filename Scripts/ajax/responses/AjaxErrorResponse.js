@@ -13,7 +13,6 @@
      */
     function AjaxErrorResponse(request, message) {
         AjaxBase.apply(this,arguments);
-        this.$success = false;
         this.$message = message || "Request failed before being sent";
         this.$request = request;
         if (this.$request != null && !BaseObject.is(this.$request, IAjaxRequest )) {
@@ -32,16 +31,15 @@
         return null;
     }
 
-    AjaxErrorResponse.prototype.$success = false;
+
     AjaxErrorResponse.prototype.get_success = function() { 
-        if (this.$data && this.$data.status) return this.$data.status.issuccessful;
         return false;
     }
  
     AjaxErrorResponse.prototype.$message = null;
     AjaxErrorResponse.prototype.get_message = function() { 
-        if (this.$data && this.$data.status) return this.$data.status.message;
-        return null;
+        
+        return this.$message || "Undefined error";
     }
 
     AjaxErrorResponse.prototype.get_request = function() { 

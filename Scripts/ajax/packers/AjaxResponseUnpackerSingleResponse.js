@@ -34,6 +34,12 @@
             originalrequest.completeRequest(response);
             return;
         }
+        // Get the data only from the fetcher's objdata - presume single data
+        if (objdata.status.issuccessful) {
+
+        } else {
+            
+        }
         var ar = new AjaxResponse(pa)
         // TODO: Unpack and complete the request
     }

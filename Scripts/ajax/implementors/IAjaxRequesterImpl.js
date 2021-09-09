@@ -2,7 +2,7 @@
     function IAjaxRequesterImpl() {}
     IAjaxRequesterImpl.InterfaceImpl(IAjaxRequester);
 
-    IAjaxRequesterImpl.classInitialize = function(cls, _defaultPriority, _getSendQueue) {
+    IAjaxRequesterImpl.classInitialize = function(cls, _pipeline, defaultPriority) {
         var defaultPriority = _defaultPriority || 0;
         function _sendQueue() {
             if (typeof _getSendQueue == "function") {
