@@ -92,6 +92,12 @@
 		return true;
 	}
 	
+	//If no other error handler attached, use the ReportError
+	if (window.JBCoreConstants.ParseTimeErrorHandler == null)
+	{ 
+		window.onerror = ReportError;
+	}
+	
 	document.addEventListener("DOMContentLoaded", function (event) {
 		//window.removeEventListener('error', window.JBCoreConstants.ParseTimeErrorHandler);
 		window.onerror = ReportError;
