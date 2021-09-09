@@ -23,8 +23,8 @@
      * @returns {IAjaxResponse} The unpacked response. (for potential additional use - the most important action is described above)
      * 
      * 
-     * (// DONE What about multiple requests in a packed one).
-     * // DONE determine if there will be return result and what it should be.
+     * (// DONE What about multiple requests in a packed one) - direct completion of each of them through the packed request
+     * (// DONE determine if there will be return result and what it should be) - No need of return result. 
      */
     IAjaxResponseUnpacker.prototype.unpackResponse = function(packedrequest, objdata) { throw "not impl.";}
 

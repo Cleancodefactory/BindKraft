@@ -20,7 +20,20 @@
     
     AjaxResponseUnpackerSingleResponse.prototype.unpackResponse = function(packedrequest, objdata) { 
         var response = null;
-        if (objdata == null) response = new AjaxErrorResponse("")
+        // If we do not have an request to complete there is no point in performing the unpacking.
+        if (!BaseObject.is(packedrequest, "IAjaxPackedRequest")) return; // Can't do a thing
+        var originalrequest = packedrequest.get_originalRequests();
+        if (Array.isArray(originalrequest) && originalrequest.length > 0) {
+            originalrequest = originalrequest[0];
+        } else {
+            // No original to complete
+            return;
+        }
+        if (objdata == null) {
+            response = new AjaxErrorResponse(originalrequest,"No data returned from the fetcher");
+            originalrequest.completeRequest(response);
+            return;
+        }
         var ar = new AjaxResponse(pa)
         // TODO: Unpack and complete the request
     }

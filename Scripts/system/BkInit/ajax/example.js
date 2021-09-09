@@ -14,7 +14,7 @@ BkInit.AjaxPipeline(function(pipeline){
                         .criticalAge(1000)
                         .pickLimit(1)
                         .rule("AjaxRequestInspectorUrl", function(inspector) { 
-                            inspector.set_server("*.server.com");
+                            inspector.set_server("*server.com");
                         });
                 })
                 .poolSender(2);        

@@ -97,7 +97,7 @@
     }
 
     AjaxPipeline.prototype.ajaxSendRequest = function(owner, url_or_req, data_or_reqdata_or_callback, callback, cache) {
-
+        // TODO Currently working on this!!!!!
         if (BaseObject.is(url_or_req, "IAjaxRequest")) { // Actually send something only if request is passed
             var request = url_or_req;
             var request_complete = request.completeRequest;
@@ -161,15 +161,7 @@
         }
     }
 
-
-    /**
-     * @returns {IAjaxSendQueuePicker} The picker is configured with queue inspectors
-     */
-    AjaxPipeline.prototype.get_picker = function() {
-        if (BaseObject.is(this.$carrier, "IAjaxSendQueuePicker")) {
-            return this.$carrier;
-        }
-    }
+  
 
     AjaxPipeline.prototype.$progressQueue = null;
     AjaxPipeline.prototype.get_progressqueue = function() {
