@@ -3,10 +3,16 @@
     var IAjaxResponse = Interface("IAjaxResponse"),
         AjaxBase = Class("AjaxBase");
 
+    /**
+     * This response is the regular success response, but more specific classes may exist for certain kind of unpacking procedures.
+     * 
+     * @param {IAjaxRequest} request An original request object that will be completed with this.
+     * @param {*} data 
+     * @param {*} message 
+     */
     function AjaxResponse(request, data, message) {
         AjaxBase.apply(this,arguments);
         if (data === false) {
-            this.$success = false;
             this.$message = message || "Request cancelled";
         } else if (data != null && typeof data == "object") {
             this.$data = data;
@@ -25,7 +31,7 @@
     
     AjaxResponse.prototype.$success = false;
     AjaxResponse.prototype.get_success = function() { 
-        return this.$success;
+        return true;
     }
  
     AjaxResponse.prototype.get_message = function() { 

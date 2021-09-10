@@ -6,7 +6,8 @@
         AjaxBase = Class("AjaxBase");
 
     /**
-     * 
+     * This response class is often used to pack unsuccessful responses to requests. Unlike the more general
+     * AjaxErrorResponse this one also includes properties for more detailed error information.
      */
     function AjaxUnsuccessfulResponse(request, objdataStatus) {
         AjaxBase.apply(this,arguments);

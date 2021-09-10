@@ -36,9 +36,9 @@
         }
         // Get the data only from the fetcher's objdata - presume single data
         if (objdata.status.issuccessful) {
-
-        } else {
             
+        } else {
+            originalrequest.completeRequest(new AjaxUnsuccessfulResponse(originalrequest, objdata));
         }
         var ar = new AjaxResponse(pa)
         // TODO: Unpack and complete the request

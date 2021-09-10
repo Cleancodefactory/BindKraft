@@ -12,7 +12,7 @@ BkInit.AjaxPipeline(function(pipeline){
                         .name("server.com")
                         .criticalLimit(10)
                         .criticalAge(1000)
-                        .pickLimit(1)
+                        .pickLimit(5)
                         .rule("AjaxRequestInspectorUrl", function(inspector) { 
                             inspector.set_server("*server.com");
                         });
