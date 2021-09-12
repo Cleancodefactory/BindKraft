@@ -41,11 +41,11 @@ Messenger.prototype.$registerForGlobalEvents = function() {
 Messenger.prototype.$onBodyKeyPress = function (e) {
     if (e.which == 27) this.post(new PageEvent("closepopup")); // escape
     // Also broadcast custom message
-    $(window).trigger("closepopup");
+    //$(window).trigger("closepopup");
 };
 Messenger.prototype.$onBodyClick = function (e) {
-    this.post(new PageEvent("closepopup"));
-    $(window).trigger("closepopup");
+    this.post(new PageEvent("closepopup", e.target));
+    //$(window).trigger("closepopup");
 };
 // Overrides
 Messenger.prototype.equals = function (obj) {
