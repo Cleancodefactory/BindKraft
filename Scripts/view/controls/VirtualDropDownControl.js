@@ -4,6 +4,7 @@
 /*CLASS*/
 function VirtualDropDownControl() {
 	Base.apply(this, arguments);
+	Messenger.Instance().subscribe("PageEvent",this.onHandlePageEvent);
 }
 VirtualDropDownControl.Inherit(Base,"VirtualDropDownControl");
 VirtualDropDownControl.Implement(IUIControl);
@@ -14,7 +15,19 @@ VirtualDropDownControl.$defaults = {
 	templateName: "bindkraft/control-vdropdown",
 };
 
-
+VirtualDropDownControl.prototype.obliterate = function () {
+    Messenger.Instance().unsubscribe("PageEvent",this.onHandlePageEvent);
+    Base.prototype.obliterate.call(this);
+}
+VirtualDropDownControl.prototype.onHandlePageEvent = new InitializeMethodDelegate("",function(msg) {
+    if (BaseObject.is(msg, "PageEvent")) {
+		var t = msg.get_target();
+		if (t != null) {
+			if (this.root.contains(t)) return;
+		}
+        // this.Close();
+    }
+});
 VirtualDropDownControl.prototype.set_disabled = function (v) {
     IDisablable.prototype.set_disabled.apply(this, arguments);
     if (this.enabledCss != null && this.enabledCss.length > 0) {
