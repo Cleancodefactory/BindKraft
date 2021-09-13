@@ -1,3 +1,5 @@
+// DEPRECATED
+
 (function() {
 
     var IAjaxResponse = Interface("IAjaxResponse"),

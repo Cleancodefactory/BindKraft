@@ -9,14 +9,9 @@
      * This response class is often used to pack unsuccessful responses to requests. Unlike the more general
      * AjaxErrorResponse this one also includes properties for more detailed error information.
      */
-    function AjaxUnsuccessfulResponse(request, objdataStatus) {
+    function AjaxUnsuccessfulResponse(objdataStatus) {
         AjaxBase.apply(this,arguments);
         this.$data = objdataStatus;
-        this.$request = request;
-        if (this.$request != null && !BaseObject.is(this.$request, IAjaxRequest )) {
-            this.LASTERROR("The request parameter is not an IAjaxRequest");
-            return null;
-        }
     }
     AjaxUnsuccessfulResponse.Inherit(AjaxBase, "AjaxUnsuccessfulResponse")
         .Implement(IAjaxCloneable)
@@ -55,7 +50,7 @@
 
     //#region IAjaxCloneable
     AjaxUnsuccessfulResponse.prototype.cloneAjaxComponent = function() { 
-        return new AjaxUnsuccessfulResponse(this.$request, BaseObject.DeepClone(this.$data));
+        return new AjaxUnsuccessfulResponse(BaseObject.DeepClone(this.$data));
     }
     //#endregion
 })();

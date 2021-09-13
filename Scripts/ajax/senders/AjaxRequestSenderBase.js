@@ -66,7 +66,7 @@
             }
             if (!BaseObject.is(response, "IAjaxCloneable")) return null;
         } else {
-            response = new AjaxErrorResponse(null, message || "Your request received error response");
+            response = new AjaxErrorResponse(message || "Your request received error response");
         }
         if (BaseObject.is(request, "IAjaxPackedRequest")) {
             var originals = request.get_originalRequests();

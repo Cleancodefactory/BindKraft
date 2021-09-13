@@ -73,20 +73,20 @@
                             // No requests pACKED
                             this.LASTERROR( reqs.length + " requestes were picked, but the packer returned none.");
                             reqs.Each(function(idx, req) {
-                                req.completeRequest(new AjaxErrorResponse(req, "Packing the request for sending failed. Packer: " + packer.classType()));
+                                req.completeRequest(new AjaxErrorResponse("Packing the request for sending failed. Packer: " + packer.classType()));
                             });
                         }
                         
                     } else {
                         this.AMMEND_LASTERROR("Failed to pack the requests");
                         reqs.Each(function(idx, req) {
-                            req.completeRequest(new AjaxErrorResponse(req, "Packing the request for sending failed. Packer: " + packer.classType()));
+                            req.completeRequest(new AjaxErrorResponse("Packing the request for sending failed. Packer: " + packer.classType()));
                         });
                     }
                 } else { // No packer 
                     this.LASTERROR("No request packer is set to the carrier");
                     reqs.Each(function(idx, req) {
-                        req.completeRequest(new AjaxErrorResponse(req, "The carrier have no configured request packer."));
+                        req.completeRequest(new AjaxErrorResponse("The carrier have no configured request packer."));
                     });
                 }
             }

@@ -30,7 +30,7 @@
             return;
         }
         if (objdata == null) {
-            response = new AjaxErrorResponse(originalrequest,"No data returned from the fetcher");
+            response = new AjaxErrorResponse("No data returned from the fetcher");
             originalrequest.completeRequest(response);
             return;
         }
@@ -38,7 +38,7 @@
         if (objdata.status.issuccessful) {
             
         } else {
-            originalrequest.completeRequest(new AjaxUnsuccessfulResponse(originalrequest, objdata));
+            originalrequest.completeRequest(new AjaxUnsuccessfulResponse(objdata));
         }
         var ar = new AjaxResponse(pa)
         // TODO: Unpack and complete the request

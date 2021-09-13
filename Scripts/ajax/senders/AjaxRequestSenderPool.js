@@ -108,7 +108,7 @@
             
             // TODO create response with the unpacker
         } else {
-            response = new AjaxErrorResponse(null, operation.getOperationErrorInfo())
+            response = new AjaxErrorResponse(operation.getOperationErrorInfo())
             this.$failRequest(request, response);
             
         }

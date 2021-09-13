@@ -5,21 +5,19 @@
 
     /**
      * This response is the regular success response, but more specific classes may exist for certain kind of unpacking procedures.
+     * For not it is NOT cloneable.
      * 
-     * @param {IAjaxRequest} request An original request object that will be completed with this.
      * @param {*} data 
      * @param {*} message 
      */
-    function AjaxResponse(request, data, message) {
+    function AjaxResponse(data, message) {
         AjaxBase.apply(this,arguments);
-        if (data === false) {
-            this.$message = message || "Request cancelled";
-        } else if (data != null && typeof data == "object") {
+        this.$message = message; // Successful requests usually do not include a message.
+        if (data != null && typeof data == "object") {
             this.$data = data;
         } else {
             this.$data = null;
         }
-        this.$request = request;
     }
     AjaxResponse.Inherit(AjaxBase, "AjaxResponse")
         .Implement(IAjaxResponse);
@@ -28,8 +26,6 @@
     AjaxResponse.prototype.$data = null;
     AjaxResponse.prototype.get_data = function() { return this.$data;}
 
-    
-    AjaxResponse.prototype.$success = false;
     AjaxResponse.prototype.get_success = function() { 
         return true;
     }
@@ -49,6 +45,5 @@
             this.LASTERROR("Attempt to set non-IAjaxRequest", "set_request");
         }
     }
-
     //#endregion IAjaxResponse
 })();

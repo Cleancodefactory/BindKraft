@@ -46,7 +46,7 @@
     AjaxProgressQueue.prototype.cancelRequest = function(request) { 
         var r = this.removeRequest(request);
         if (BaseObject.is(r,"IAjaxPackedRequest")) {
-            r.completeRequest(new AjaxResponse(false)); // Cancellation response.
+            r.completeRequest(new AjaxErrorResponse("Request cancelled")); // Cancellation response.
         }
     }
 

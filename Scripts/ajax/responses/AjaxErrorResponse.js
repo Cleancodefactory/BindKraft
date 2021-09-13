@@ -11,14 +11,9 @@
      * the intent is to check for reported failure. Why: There are many components and some of them may have multiple 
      * implementations, there is no guarantee that every one of them is using this class to fail requests midway.
      */
-    function AjaxErrorResponse(request, message) {
+    function AjaxErrorResponse(message) {
         AjaxBase.apply(this,arguments);
         this.$message = message || "Request failed before being sent";
-        this.$request = request;
-        if (this.$request != null && !BaseObject.is(this.$request, IAjaxRequest )) {
-            this.LASTERROR("The request parameter is not an IAjaxRequest");
-            return null;
-        }
     }
     AjaxErrorResponse.Inherit(AjaxBase, "AjaxErrorResponse")
         .Implement(IAjaxCloneable)
@@ -57,7 +52,7 @@
 
     //#region IAjaxCloneable
     AjaxErrorResponse.prototype.cloneAjaxComponent = function() { 
-        return new AjaxErrorResponse(this.$request, this.$message);
+        return new AjaxErrorResponse(this.$message);
     }
     //#endregion
 })();
