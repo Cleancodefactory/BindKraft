@@ -2,6 +2,7 @@
 
     var AjaxResponse = Class("AjaxResponse"),
         AjaxBase = Class("AjaxBase"),
+        var AjaxResponsePacket = Class("AjaxResponsePacket"),
         IAjaxResponseUnpacker = Interface("IAjaxResponseUnpacker");
     /**
      * The simple unpacker for AjaxRequestPackerSingleJson
@@ -35,13 +36,14 @@
             return;
         }
         // Get the data only from the fetcher's objdata - presume single data
+        // then complete the original request.
         if (objdata.status.issuccessful) {
-            
+            var r = AjaxResponsePacket(objdata);
+            originalrequest.completeRequest(new AjaxResponse(r.get_data()));
         } else {
+            // In case of unsuccessful response, create appropriate response object
             originalrequest.completeRequest(new AjaxUnsuccessfulResponse(objdata));
         }
-        var ar = new AjaxResponse(pa)
-        // TODO: Unpack and complete the request
     }
 
 })();

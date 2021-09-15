@@ -8,6 +8,13 @@
     function IAjaxResponsePacket() {}
     IAjaxResponsePacket.Interface("IAjaxResponsePacket");
 
+    //#region Status
+
+    IAjaxResponsePacket.prototype.get_status = function() { throw "not impl.";}
+    IAjaxResponsePacket.prototype.get_issuccessful = function() { throw "not impl.";}
+    IAjaxResponsePacket.prototype.get_message = function() { throw "not impl.";}
+    //#endregion
+
 
     //#region DATA
 
@@ -30,6 +37,12 @@
      * Returns the hash of the specified data piece or all the hashes as an object with properties containing the hashes. Each property is named the same way as in the result of get_datas()
      */
     IAjaxResponsePacket.prototype.get_datashash = function(key) { throw "not impl.";}
+
+    
+    /**
+     * @returns All the data pieces in 1.0 format.
+     */
+    IAjaxResponsePacket.prototype.get_alldatas = function() { throw "not impl."; }
 
     //#endregion
 
@@ -56,6 +69,11 @@
      IAjaxResponsePacket.prototype.get_viewshash = function() { throw "not impl.";}
 
 
+    //#endregion
+
+
+    //#region Attributes
+    IAjaxResponsePacket.prototype.getAttribute = function(kind, name, attribute) { throw "not impl.";}
     //#endregion
 
 

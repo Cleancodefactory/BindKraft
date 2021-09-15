@@ -1,6 +1,8 @@
 XMLPackedResponse format
 ========================
 
+TODO: This has to be formalized and put into the documentation
+
 This format is the old legacy response format used prior to the public versions of BindKraft servers
 
 Format
@@ -131,6 +133,19 @@ Internal standard data structure
 		<viename1>: <sring>,
 		<viename2>: <sring>,
 		<viename3>: <sring>,
+	},
+	attributes: {
+		views: {
+			<viewnameN>: {
+				sid: viewN_sid
+			}
+		},
+		datas: {
+			dataN: {
+				sid: dataN_sid
+			}
+		}
+
 	},
 	resources: {
 		<resource1>: <json>,

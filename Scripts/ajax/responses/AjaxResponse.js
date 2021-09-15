@@ -30,9 +30,9 @@
         return true;
     }
  
+    AjaxResponse.prototype.$message = null;
     AjaxResponse.prototype.get_message = function() { 
-        if (this.$data && this.$data.status) return this.$data.status.message;
-        return null;
+        return this.$message;
     }
 
     AjaxResponse.prototype.get_request = function() { 

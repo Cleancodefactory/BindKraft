@@ -1,4 +1,13 @@
 (function() {
+
+    /**
+     * Interface of the scheduled requests queue/pool. This is operated more like a pool and less like queue, because
+     * requests are picked by inspectors that determine which ones they want to process.
+     * 
+     * The interface is a bit overloaded with methods which may remain unused. Still some of them could be left for 
+     * administrative / debugging purposes. The actual operation of the queue depends on: 
+     *  enqueueRequest, removeRequest, peekRequests
+     */
     function IAjaxSendQueue() {}
     IAjaxSendQueue.Inteface("IAjaxSendQueue");
 

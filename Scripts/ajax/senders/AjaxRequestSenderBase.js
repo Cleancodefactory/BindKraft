@@ -112,7 +112,4 @@
 
     //#endregion
 
-    //#region Fetcher pool
-    //AjaxRequestSenderBase.prototype.reCreatePool
-    //#endregion
 })();
