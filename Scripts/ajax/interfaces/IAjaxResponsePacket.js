@@ -73,6 +73,14 @@
 
 
     //#region Attributes
+    /**
+     * Returns all the attributes of the specified packet element specified by kind and name
+     * 
+     * @param {string} kind The element kind: datas, views etc.
+     * @param {string} name The name (id) of the packet element inside its kind.
+     * @returns {object|null} The attributes of the packet element as properties of an object.
+     */
+    IAjaxResponsePacket.prototype.getAttributes = function(kind, name) { throw "not impl.";}
     IAjaxResponsePacket.prototype.getAttribute = function(kind, name, attribute) { throw "not impl.";}
     //#endregion
 

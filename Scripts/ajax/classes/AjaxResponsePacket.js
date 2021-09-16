@@ -10,9 +10,18 @@
 
     //#region Status
 
-    AjaxResponsePacket.prototype.get_status = function() { throw "not impl.";}
-    AjaxResponsePacket.prototype.get_issuccessful = function() { throw "not impl.";}
-    AjaxResponsePacket.prototype.get_message = function() { throw "not impl.";}
+    AjaxResponsePacket.prototype.get_status = function() { 
+        if (this.$packet && this.$packet.status) return this.$packet.status;
+        return null;
+    }
+    AjaxResponsePacket.prototype.get_issuccessful = function() { 
+        if (this.$packet && this.$packet.status) return this.$packet.status.issuccessful;
+        return false;
+    }
+    AjaxResponsePacket.prototype.get_message = function() { 
+        if (this.$packet && this.$packet.status) return this.$packet.status.message;
+        return null;
+    }
     //#endregion
 
     //#region DATA
@@ -77,17 +86,52 @@
     }
     //#endregion
 
+    //#region Views
+    // TODO 
+
+    /**
+     * Returns the specified view as string
+     * @returns {string} The requested view by key. By convention the default view must have a key "normal"
+     */
+     AjaxResponsePacket.prototype.get_view = function(key) { 
+         if (this.$packet != null && this.$packet.views) {
+             // TODO
+         }
+     }
+     /**
+      * Returns the hash of the specified view
+      * @returns {string} The hash of the specified view
+      */
+     AjaxResponsePacket.prototype.get_viewhash = function(key) { throw "not impl.";}
+ 
+     /**
+      * @returns all the views as an object with properties named after the view name and the view as string in it.
+      */
+     AjaxResponsePacket.prototype.get_views = function() { throw "not impl.";}
+     /**
+      * @returns all the view hashes as an object with properties named after the view name and the hash as a string in it.
+      */
+      AjaxResponsePacket.prototype.get_viewshash = function() { throw "not impl.";}
+ 
+ 
+     //#endregion
+
     //#region Attributes
-    AjaxResponsePacket.prototype.getAttribute = function(kind, name, attribute) {
+    AjaxResponsePacket.prototype.getAttributes = function(kind, name) { 
         if (typeof kind != "string" || typeof name != "string" || typeof attribute != "string") {
             this.LASTERROR("All parameters must present and be strings.", "getAttribute");
             return null;
         }
         if (this.$packet && this.$packet.attributes && this.$packet.attributes[kind]) {
-            var attrs = this.$packet.attributes[kind][name];
-            if (attrs != null) return attrs[attribute];
+            return this.$packet.attributes[kind][name];
         }
         return null;
+    }
+
+    AjaxResponsePacket.prototype.getAttribute = function(kind, name, attribute) {
+        var attrs = this.getAttributes(kind, name);
+        if (attrs == null) return null;
+        return attrs[attribute];
     }
     //#endregion
 
