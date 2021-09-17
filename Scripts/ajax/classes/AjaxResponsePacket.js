@@ -1,5 +1,10 @@
 (function(){ 
-    
+
+    /**
+     * The response data received from the fetcher is composed in certain way (a convention bordering a standard)
+     * This enables a class like this one to provide easy access to parts of the response. The class is based on an interface
+     * and the interface should be used to recognize the object if multiple variants are supported in future.
+     */
     function AjaxResponsePacket(packet) {
         BaseObject.apply(this, arguments);
         this.$packet = packet;
@@ -95,23 +100,41 @@
      */
      AjaxResponsePacket.prototype.get_view = function(key) { 
          if (this.$packet != null && this.$packet.views) {
-             // TODO
+             var _key = key || "normal";
+             return this.$packet.views[_key];
          }
+         return null;
      }
      /**
       * Returns the hash of the specified view
       * @returns {string} The hash of the specified view
       */
-     AjaxResponsePacket.prototype.get_viewhash = function(key) { throw "not impl.";}
+     AjaxResponsePacket.prototype.get_viewhash = function(key) { 
+         return this.getAttribute("views",_key, "sid");
+     }
  
      /**
       * @returns all the views as an object with properties named after the view name and the view as string in it.
       */
-     AjaxResponsePacket.prototype.get_views = function() { throw "not impl.";}
+     AjaxResponsePacket.prototype.get_views = function() { 
+         if (this.$packet) return this.$packet.views;
+         return null;
+     }
      /**
       * @returns all the view hashes as an object with properties named after the view name and the hash as a string in it.
       */
-      AjaxResponsePacket.prototype.get_viewshash = function() { throw "not impl.";}
+      AjaxResponsePacket.prototype.get_viewshash = function() { 
+          var sids = {};
+          if (this.$packet && this.$packet.attributes && this.$packet.attributes.views) {
+                var views = this.$packet.attributes.views;
+                for (var k in views) {
+                    if (views.hasOwnProperty(k) && views[k] != null) {
+                        sids[k] = views[k].sid;
+                    }
+                }
+          }
+          return sids;
+      }
  
  
      //#endregion
