@@ -96,6 +96,33 @@
         }
     }
 
+    //#region Sending
+
+    AjaxPipeline.prototype.$enqueueRequest = function(req, priority) {
+        var sq = this.get_sendqueue();
+        if (BaseObject.is(sq, "IAjaxSendQueue")) {
+            return sq.enqueueRequest(req, priority || 0);
+        }
+        return false;
+    }
+
+    AjaxPipeline.prototype.$ajaxSendRequest = function(owner, request, callback) {
+        request.completeRequest = function(response) {
+            if (BaseObject.is(response, "IAjaxResponse")) {
+                response.set_request(request);
+                BaseObject.callCallback(callback, response);
+            } else { // The spice must flow
+                BaseObject.callCallback(callback, new AjaxErrorResponse("Invalid response received from infrastructure."));
+            }
+        }
+        return this.$enqueueRequest(request);
+    }
+    AjaxPipeline.prototype.$ajaxSendRequestOp = function(owner, request) {
+        
+    }
+
+    //#endregion Sending
+
     AjaxPipeline.prototype.ajaxSendRequest = function(owner, url_or_req, data_or_reqdata_or_callback, callback, cache) {
         // TODO Currently working on this!!!!!
         if (BaseObject.is(url_or_req, "IAjaxRequest")) { // Actually send something only if request is passed
