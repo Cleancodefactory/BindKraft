@@ -96,7 +96,7 @@
         }
     }
 
-    //#region Sending
+    //#region Sending - private part
 
     AjaxPipeline.prototype.$enqueueRequest = function(req, priority) {
         var sq = this.get_sendqueue();
@@ -105,8 +105,25 @@
         }
         return false;
     }
+    /**
+     * Checks for post: get: in the beginning of the url and sets the verb of the request if one is present.
+     * @returns {string} returns the url stripped (clean). 
+     */
+    AjaxPipeline.prototype.$checkExplicitVerb = function(url, request) {
+        var match;
+        if (match = /(?:^(post:)|(get:))(.*)/.exec(url)) {
+            if (match[1]) {
+                request.set_verb("POST");
+            } else {
+                request.set_verb("GET");
+            }
+            return match[3];
+        } else {
+            return url; // no need to touch the request.
+        }
+    }
 
-    AjaxPipeline.prototype.$ajaxSendRequest = function(owner, request, callback) {
+    AjaxPipeline.prototype.$ajaxSendRequest = function(request, callback) {
         request.completeRequest = function(response) {
             if (BaseObject.is(response, "IAjaxResponse")) {
                 response.set_request(request);
@@ -117,11 +134,89 @@
         }
         return this.$enqueueRequest(request);
     }
-    AjaxPipeline.prototype.$ajaxSendRequestOp = function(owner, request) {
-        
+    AjaxPipeline.prototype.$ajaxSendRequestOp = function(request) {
+        var op = new Operation();
+        if (!this.$ajaxSendRequest(request, function (response) {
+            if (response.get_success()) {
+                op.CompleteOperation(true, response);
+            } else {
+                op.CompleteOperation(false, response.get_message());
+            }
+        })) {
+            op.CompleteOperation(false, "Cannot schedule the request.");
+        };
+        return op;
     }
 
-    //#endregion Sending
+    AjaxPipeline.prototype.$ajaxSendRequestRaw = function(owner, url, data, callback) {
+        // Build a request ourselves
+        if (!BaseObject.isCallback(callback)) return false;
+        var request = new AjaxRequest(owner);
+        var bkurl = BKUrl.getBasePathAsUrl();
+        if (typeof url == "string") url = this.checkExplicitVerb(url, request);
+        if (typeof url == "string" || BaseObject.is(url, "BKUrl")) {
+            if (!bkurl.set_nav(url)) request.set_constructionError("Cannot determine the url") ;
+        } else {
+            return false; // Very deep internal error - if this problem occurs there will be much more consequences.
+        } 
+        request.set_url(bkurl);
+        if (data != null) {
+            request.set_data(data);
+        }
+        return this.$ajaxSendRequest(request, callback);
+    }
+    AjaxPipeline.prototype.$ajaxSendRequestRawOp = function(owner, url, data) {
+        var op = new Operation();
+        if (!this.$ajaxSendRequestRaw(owner, url, data, function(response) {
+            if (response.get_success()) {
+                op.CompleteOperation(true, response);
+            } else {
+                op.CompleteOperation(false, response.get_message());
+            }
+        })) {
+            op.CompleteOperation(false,"Cannot schedule the request.");
+        }
+        return op;
+    }
+
+    
+
+    //#endregion Sending - private part
+
+    //#region Sending - public methods
+
+    //#endregion Sending - public methods
+
+    /**
+     * 
+     * Overloads:
+     * f(owner, url, data_or_reqdata, callback, cache) : Boolean
+     * f(owner, url, data_or_reqdata, cache) : Operation
+     * f(owner, req, callback) : Boolean
+     * f(owner, req) : Operation
+     * 
+     * 
+     */
+    AjaxPipeline.prototype.ajaxSendRequest = function(owner, url_or_req, data_or_reqdata_or_callback, callback, cache) {
+        if (BaseObject.is(url_or_req, "IAjaxRequest")) {
+            if (BaseObject.isCallback(data_or_reqdata_or_callback)) {
+                return this.$ajaxSendRequest(url_or_req, data_or_reqdata_or_callback);
+            } else { // Operation
+                return this.$ajaxSendRequestOp(url_or_req);
+            }
+        } else if (typeof url_or_req == "string") {
+            if (BaseObject.isCallback(callback)) {
+                return this.$ajaxSendRequestRaw(owner, url_or_req, data_or_reqdata_or_callback, callback);
+            } else { // Operation
+                return this.$ajaxSendRequestRawOp(owner, url_or_req, data_or_reqdata_or_callback);
+            }
+        } else { // Unsupported
+            // TODO
+        }
+    }
+
+
+
 
     AjaxPipeline.prototype.ajaxSendRequest = function(owner, url_or_req, data_or_reqdata_or_callback, callback, cache) {
         // TODO Currently working on this!!!!!
