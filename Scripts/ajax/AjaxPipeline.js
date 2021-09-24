@@ -211,13 +211,13 @@
                 return this.$ajaxSendRequestRawOp(owner, url_or_req, data_or_reqdata_or_callback);
             }
         } else { // Unsupported
-            // TODO
+            return false;
         }
     }
 
 
-
-
+    //#region Can be removed
+    /* Reimplemented - cen be removed
     AjaxPipeline.prototype.ajaxSendRequest = function(owner, url_or_req, data_or_reqdata_or_callback, callback, cache) {
         // TODO Currently working on this!!!!!
         if (BaseObject.is(url_or_req, "IAjaxRequest")) { // Actually send something only if request is passed
@@ -282,7 +282,8 @@
             return this.ajaxSendRequest(request, callback || _cache, _cache != null?_cache: null);
         }
     }
-
+    */
+   //#endregion can be removed
   
 
     AjaxPipeline.prototype.$progressQueue = null;
