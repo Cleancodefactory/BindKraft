@@ -24,7 +24,7 @@ BkInit_AppInfo.prototype.content = function(filename, contentType, content) {
 	}
 }
 BkInit_AppInfo.prototype.object = function(filename, content) {
-		if (!BaseObject.is(content, "object")) throw "The content is not an object";
+		if (!BaseObject.is(content, "object") && !BaseObject.is(content, "Array") ) throw "The content is not an object or array";
 		// Add/replace
 		var f = new ContentMemoryFile("memory/object", content);
 		this.$dir.register(filename, f);
