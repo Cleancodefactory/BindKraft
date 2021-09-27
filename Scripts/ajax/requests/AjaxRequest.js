@@ -3,7 +3,7 @@
     var AjaxBase = Class("AjaxBase"),
         IAjaxRequest = Interface("IAjaxRequest"),
         IAjaxRawData = Interface("IAjaxRawData"),
-        IAjaxAttachedInfoImpl = InterfaceImplementer("IAjaxAttachedInfo"),
+        IAjaxAttachedInfoImpl = InterfaceImplementer("IAjaxAttachedInfoImpl"),
         IAjaxQueueSlot = Interface("IAjaxQueueSlot");
 
     function AjaxRequest(owner) {
@@ -126,9 +126,9 @@
     //#endregion
 
     //#region IAjaxQueueSlot
-    AjaxQueueSlot.prototype.$priority = 0;
-    AjaxQueueSlot.prototype.get_priority = function() { return this.$priority; }
-    AjaxQueueSlot.prototype.set_priority = function(v) {
+    AjaxRequest.prototype.$priority = 0;
+    AjaxRequest.prototype.get_priority = function() { return this.$priority; }
+    AjaxRequest.prototype.set_priority = function(v) {
         if (v == null) {
             this.$priority = 0;
         } else if (typeof v == "number") {
@@ -139,9 +139,9 @@
         }
     }
     
-    AjaxQueueSlot.prototype.$enqueuedat = null;
-    AjaxQueueSlot.prototype.get_enqueuedat = function() { return this.$enqueuedat; }
-    AjaxQueueSlot.prototype.set_enqueuedat = function(v) {
+    AjaxRequest.prototype.$enqueuedat = null;
+    AjaxRequest.prototype.get_enqueuedat = function() { return this.$enqueuedat; }
+    AjaxRequest.prototype.set_enqueuedat = function(v) {
         if (v instanceof Date) {
             this.$enqueuedat = v.getTime();
         } else if (typeof v == "number") {
@@ -154,7 +154,7 @@
     }
 
     
-    AjaxQueueSlot.prototype.slotIt = function(priority) {
+    AjaxRequest.prototype.slotIt = function(priority) {
         this.set_priority(priority);
         this.set_enqueuedat(Date.now());
         return this;

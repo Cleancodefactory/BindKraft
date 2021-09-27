@@ -2,7 +2,8 @@
 
     var AjaxRequestPackerBase = Class("AjaxRequestPackerBase"),
         IAjaxRequest = Interface("IAjaxRequest"),
-        IAjaxResponseUnpacker = Interface("IAjaxResponseUnpacker");
+        IAjaxResponseUnpacker = Interface("IAjaxResponseUnpacker"),
+        IAjaxRequestPackerImpl = InterfaceImplementer("IAjaxRequestPackerImpl");
 
     function AjaxRequestPackerSingleJson() {
         AjaxRequestPackerBase.apply(this,arguments);

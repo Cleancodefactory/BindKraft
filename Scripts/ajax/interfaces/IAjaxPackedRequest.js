@@ -1,5 +1,7 @@
 (function() {
 
+    var IAjaxRequest = Interface("IAjaxRequest");
+
     /**
      * Packed request extends the normal request. Objects supporting this interface are returned from the IAjaxRequestPacker.packRequests. 
      * They contain the converted and ready to send form of the initial request(s) and keep reference to the original requests. The packer also 
@@ -7,7 +9,7 @@
      *
      */
     function IAjaxPackedRequest() {}
-    IAjaxPackedRequest.Interface(IAjaxPackedRequest, "IAjaxRequest");
+    IAjaxPackedRequest.Interface("IAjaxPackedRequest", IAjaxRequest);
 
     IAjaxPackedRequest.prototype.get_originalRequests = function() {throw "not impl.";}
 

@@ -9,7 +9,7 @@
      *  enqueueRequest, removeRequest, peekRequests
      */
     function IAjaxSendQueue() {}
-    IAjaxSendQueue.Inteface("IAjaxSendQueue");
+    IAjaxSendQueue.Interface("IAjaxSendQueue");
 
     IAjaxSendQueue.prototype.enqueueRequest = function(req, priority) { throw "not impl.";}
     IAjaxSendQueue.prototype.dequeueRequest = function(priority) { throw "not impl.";}
@@ -38,7 +38,7 @@
     /**
      * Returns array of the requests the inspector or callback approved without removing them.
      */
-    IAjaxSendQueueEnumApi.prototype.peekRequests = function(requestInspector_or_callback, priority, limit) { throw "not implemented"; }
+    IAjaxSendQueue.prototype.peekRequests = function(requestInspector_or_callback, priority, limit) { throw "not implemented"; }
     
 
     /**

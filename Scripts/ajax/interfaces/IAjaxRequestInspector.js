@@ -3,7 +3,7 @@
      * Driven by external logic to inspect one or more requests (one by one). the object implementing this interface
      */
     function IAjaxRequestInspector() {}
-    IAjaxRequestInspector.Interace("IAjaxRequestInspector");
+    IAjaxRequestInspector.Interface("IAjaxRequestInspector");
 
     /**
      * Inspects single request and returns arbitrary information about it. 

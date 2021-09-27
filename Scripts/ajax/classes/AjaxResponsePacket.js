@@ -1,5 +1,6 @@
 (function(){ 
 
+    var IAjaxResponsePacket = Interface("IAjaxResponsePacket");
     /**
      * The response data received from the fetcher is composed in certain way (a convention bordering a standard)
      * This enables a class like this one to provide easy access to parts of the response. The class is based on an interface
@@ -11,7 +12,7 @@
         
     }
     AjaxResponsePacket.Inherit(BaseObject, "AjaxResponsePacket")
-    .Implement(IAjaxResponsePacket);
+        .Implement(IAjaxResponsePacket);
 
     //#region Status
 

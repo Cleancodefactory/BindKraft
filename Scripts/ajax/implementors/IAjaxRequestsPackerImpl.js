@@ -1,5 +1,7 @@
 (function() {
 
+    var IAjaxRequestPacker = Interface("IAjaxRequestPacker");
+
     /**
      * This simple implementer assumes that all the requests passed to it will be packed into a single packed request or each one of them will
      * be packed into separate packed request
@@ -11,7 +13,7 @@
      * @param packedRequestType {string} The name of the type to create for packed requests. It must implement IAjaxPackedRequest
      */
     IAjaxRequestPackerImpl.classInitialize = function(cls, packedRequestType, _$packRequests) {
-        var packedRequestClass = Class.getClassDDef(packedRequestType || "AjaxPackedRequestBase");
+        var packedRequestClass = Class.getClassDef(packedRequestType || "AjaxPackedRequestBase");
         if (packedRequestClass == null || !Class.is(packedRequestClass, "IAjaxPackedRequest")) {
             CompileTime.err("Packed request type specified for IAjaxRequestPackerImpl implementor in the definition of " + cls.classType + " is not declared or does not support IAjaxPackedRequest");
             if (JBCoreConstants.CompileTimeThrowOnErrors) {

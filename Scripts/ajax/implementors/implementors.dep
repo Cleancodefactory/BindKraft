@@ -3,4 +3,6 @@
 //#using "IAjaxRequesterImpl.js";
 //#using "IAjaxSendQueuePickerImpl.js"
 //#using "IAjaxRequestsPackerImpl.js"
+//#using "IAjaxRequestInspectorUserImpl.js"
+//#using "IAjaxRequestInspectorsUserImpl.js"
 

@@ -1,4 +1,6 @@
 (function() {
+
+    var IAjaxRequester = Interface("IAjaxRequester");
     function IAjaxRequesterImpl() {}
     IAjaxRequesterImpl.InterfaceImpl(IAjaxRequester);
 

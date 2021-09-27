@@ -2,7 +2,8 @@
 
     var IAjaxRequestInspectorUser = Interface("IAjaxRequestInspectorUser"),
         AjaxSendQueueInspectorBase = Class("AjaxSendQueueInspectorBase"),
-        IAjaxRequestInspector = Interface("IAjaxRequestInspector");
+        IAjaxRequestInspector = Interface("IAjaxRequestInspector"),
+        IAjaxRequestInspectorUserImpl = InterfaceImplementer("IAjaxRequestInspectorUserImpl");
 
     /**
      * This is a queue inspector that uses a single request inspector to choose requests from the queue.

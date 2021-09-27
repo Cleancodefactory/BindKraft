@@ -1,5 +1,8 @@
 (function() {
 
+    var AjaxBase = Class("AjaxBase"),
+        IAjaxRequestSender = Interface("IAjaxRequestSender");
+
     function AjaxRequestSenderBase() {
         AjaxBase.apply(this, arguments);
     }

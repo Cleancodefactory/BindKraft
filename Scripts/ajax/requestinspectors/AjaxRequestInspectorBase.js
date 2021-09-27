@@ -1,5 +1,7 @@
 (function() {
 
+    var IAjaxRequestInspector = Interface("IAjaxRequestInspector"),
+        AjaxBase = Class("AjaxBase");
 
     /**
      * Base class for request inspectors.

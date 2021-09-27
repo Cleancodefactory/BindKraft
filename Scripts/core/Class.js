@@ -8,6 +8,7 @@ of prototyping the standard objects. The namespaces are nammed with preffix SC t
 Function.classes = new Object();
 Function.interfaces = new Object();
 Function.interfaceImplementers = new Object();
+Function.enumerations = new Object();
 function Class(class_name) {
 	if (typeof class_name == "string") {
 	 	if (typeof Function.classes[class_name] == "function") return Function.classes[class_name];

@@ -53,12 +53,12 @@
         }
     }
 
-    AjaxSendQueueInspector.prototype.$criticalage = AjaxSendQueueInspectorBase.$defaultCriticalAge;
+    AjaxSendQueueInspectorBase.prototype.$criticalage = AjaxSendQueueInspectorBase.$defaultCriticalAge;
     /**
      * The critical request age at which the requests should picked even if they are under the critical limit.
      */
-    AjaxSendQueueInspector.prototype.get_criticalage = function() { return this.$criticalage; }
-    AjaxSendQueueInspector.prototype.set_criticalage = function(v) { 
+     AjaxSendQueueInspectorBase.prototype.get_criticalage = function() { return this.$criticalage; }
+     AjaxSendQueueInspectorBase.prototype.set_criticalage = function(v) { 
         if (typeof v == "number") {
             this.$criticalage = v;
         } else if (v != null) {

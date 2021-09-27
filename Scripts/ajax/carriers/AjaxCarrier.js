@@ -3,7 +3,8 @@
         IAjaxSendQueuePickerImpl = InterfaceImplementer("IAjaxSendQueuePickerImpl"),
         IAjaxRequestPacker = Interface("IAjaxRequestPacker"),
         IAjaxResponseUnpacker = Interface("IAjaxResponseUnpacker"),
-        IAjaxRequestSender = Interface("IAjaxRequestSender");
+        IAjaxRequestSender = Interface("IAjaxRequestSender"),
+        IAjaxCarrier = Interface("IAjaxCarrier");
 
     /**
      * The carrier is responsible for driving the main part of the pipeline. It becomes a hub that connects many (if not most) of the other components

@@ -13,6 +13,7 @@
 
 //#using "../adapters/profiles/full.dep"
 
+//#using "../ajax/ajax.dep"
 // Temp
 ////#using "../http/lib.dep"
 

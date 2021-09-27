@@ -1,5 +1,7 @@
 (function() {
 
+    var AjaxRequestInspectorBase = Class("AjaxRequestInspectorBase");
+
     function AjaxRequestInspectorData() {
         AjaxRequestInspectorBase.apply(this, arguments);
     }
