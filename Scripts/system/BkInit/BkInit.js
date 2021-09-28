@@ -65,5 +65,8 @@ var BkInit = {
 			throw "No such class";
 		}
 		fn(new BKInit_Translation(appClass));
+	},
+	AjaxPipeline: function(fn) { 
+		fn (new (Class("BKInit_AjaxPipeline"))());
 	}
 };

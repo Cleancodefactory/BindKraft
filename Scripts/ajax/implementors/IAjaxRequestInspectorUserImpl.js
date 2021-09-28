@@ -3,7 +3,7 @@
     var IAjaxRequestInspectorUser = Interface("IAjaxRequestInspectorUser");
 
     function IAjaxRequestInspectorUserImpl() {}
-    IAjaxRequestInspectorUserImpl.InterfaceImpl(IAjaxRequestInspectorUser);
+    IAjaxRequestInspectorUserImpl.InterfaceImpl(IAjaxRequestInspectorUser, "IAjaxRequestInspectorUserImpl");
     IAjaxRequestInspectorUserImpl.classInitialize = function(cls) {
 
         cls.prototype.$requestinspector = null;

@@ -7,13 +7,14 @@
 //#using "../core/profiles/full.dep"
 //#using "../view/profiles/full.dep"
 //#using "../windowing/profiles/full.dep"
+//#using "../ajax/ajax.dep"
 //#using "../system/profiles/full.dep"
 
 //#using "../genericpattern/profiles/full.dep"
 
 //#using "../adapters/profiles/full.dep"
 
-//#using "../ajax/ajax.dep"
+
 // Temp
 ////#using "../http/lib.dep"
 

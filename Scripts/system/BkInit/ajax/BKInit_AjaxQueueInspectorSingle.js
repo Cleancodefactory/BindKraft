@@ -10,7 +10,7 @@
     BKInit_AjaxQueueInspectorSingle.Inherit(BaseObject,"BKInit_AjaxQueueInspectorSingle");
 
     // The number of qualifying requests in the send queue over which the picking can start
-    BKInit_AjaxQueueInspectorSingle.criticalLimit = function(n) {
+    BKInit_AjaxQueueInspectorSingle.prototype.criticalLimit = function(n) {
         if (n == null || typeof n == "number" && n > 0) {
             this.inspector.set_criticallimit(n);
         } else {
@@ -19,10 +19,10 @@
         return this;
     }
     // Age over which critical limit does not matter anymore
-    BKInit_AjaxQueueInspectorSingle.criticalAge = function(n) {
+    BKInit_AjaxQueueInspectorSingle.prototype.criticalAge = function(n) {
         if (n == null || typeof n == "number" && n > 0) {
             if (n == null) n = AjaxSendQueueInspectorBase.$defaultCriticalAge; // Default critical age
-            this.inspector.set_criticallAge(n);
+            this.inspector.set_criticalage(n);
         } else {
             throw "criticalAge requires a number of milliseconds or null for the default setting.";
         }

@@ -3,7 +3,7 @@
     var IAjaxAttachedInfo = Interface("IAjaxAttachedInfo");
 
     function IAjaxAttachedInfoImpl() {}
-    IAjaxAttachedInfoImpl.InterfaceImpl(IAjaxAttachedInfo);
+    IAjaxAttachedInfoImpl.InterfaceImpl(IAjaxAttachedInfo, "IAjaxAttachedInfoImpl");
     IAjaxAttachedInfoImpl.classInitialize = function(cls) {
         function _info(inst, clear) {
             if (inst.$__AjaxAttachedInfoData == null || clear) {

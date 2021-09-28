@@ -7,7 +7,7 @@
      * be packed into separate packed request
      */
     function IAjaxRequestPackerImpl() {}
-    IAjaxRequestPackerImpl.InterfaceImpl(IAjaxRequestPacker)
+    IAjaxRequestPackerImpl.InterfaceImpl(IAjaxRequestPacker, "IAjaxRequestPackerImpl")
     IAjaxRequestPackerImpl.RequiredTypes("AjaxRequestPackerBase");
     /**
      * @param packedRequestType {string} The name of the type to create for packed requests. It must implement IAjaxPackedRequest

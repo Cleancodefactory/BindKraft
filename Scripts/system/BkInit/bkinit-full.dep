@@ -11,3 +11,4 @@
 //#using "./BkInit_AppData.js"
 //#using "./BKInit_AppInfo.js"
 //#using "./BKInit_Translation.js"
+//#using "./ajax/ajax.dep"

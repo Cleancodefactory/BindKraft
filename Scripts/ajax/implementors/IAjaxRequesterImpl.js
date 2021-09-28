@@ -2,7 +2,7 @@
 
     var IAjaxRequester = Interface("IAjaxRequester");
     function IAjaxRequesterImpl() {}
-    IAjaxRequesterImpl.InterfaceImpl(IAjaxRequester);
+    IAjaxRequesterImpl.InterfaceImpl(IAjaxRequester, "IAjaxRequesterImpl");
 
     IAjaxRequesterImpl.classInitialize = function(cls, _pipeline, _defaultPriority) {
         var defaultPriority = _defaultPriority || 0;

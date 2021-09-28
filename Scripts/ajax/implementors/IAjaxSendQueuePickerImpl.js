@@ -10,7 +10,7 @@
      * MyClass.Implement(IAjaxSendQueuePicker, callback(): IAjaxSendQueue);
      */
     function IAjaxSendQueuePickerImpl() {}
-    IAjaxSendQueuePickerImpl.InterfaceImpl(IAjaxSendQueuePicker);
+    IAjaxSendQueuePickerImpl.InterfaceImpl(IAjaxSendQueuePicker, "IAjaxSendQueuePickerImpl");
     IAjaxSendQueuePickerImpl.classInitialize = function(cls, _queueSupplier) {
 
         function _getQueue(instance) {

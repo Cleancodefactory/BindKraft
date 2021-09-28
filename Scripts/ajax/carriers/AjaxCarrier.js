@@ -143,11 +143,11 @@
     AjaxCarrier.prototype.set_requestSender = function(v) {
         if (v == null || BaseObject.is(v, "IAjaxRequestSender")) {
             if (v == null && this.$requestsender != null) {
-                this.$requestsender.remove(this.$demandrequests);
+                this.$requestsender.demandrequestsevent.remove(this.$demandrequests);
             }
             this.$requestsender = v;
             if (v != null) {
-                this.$requestsender.add(this.$demandrequests);
+                this.$requestsender.demandrequestsevent.add(this.$demandrequests);
             }
             
         }

@@ -1,4 +1,11 @@
 (function (){
+
+    var AjaxPipeline = Class("AjaxPipeline"),
+        AjaxProgressQueue = Class("AjaxProgressQueue"),
+        AjaxSendQueue = Class("AjaxSendQueue"),
+        BKInit_AjaxCarrier = Class("BKInit_AjaxCarrier"),
+        AjaxCarrier = Class("AjaxCarrier");
+
     function BKInit_AjaxPipeline() {
         BaseObject.apply(this,arguments);
 
@@ -14,11 +21,11 @@
     /**
      * Sets the system default (singleton) send queue as send queue for the pipeline.
      */
-    BKinit_AjaxPipeline.prototype.useDefaultSendQueue = function() {
-        BKInit_AjaxPipeline.$pipeline.set_sendqueue(AjaxSendQueue().Default());
+    BKInit_AjaxPipeline.prototype.useDefaultSendQueue = function() {
+        BKInit_AjaxPipeline.$pipeline.set_sendqueue(AjaxSendQueue.Default());
         return this;
     }
-    BKinit_AjaxPipeline.prototype.useSpecificSendQueue = function(sq) {
+    BKInit_AjaxPipeline.prototype.useSpecificSendQueue = function(sq) {
         if (BaseObject.is(sq, IAjaxSendQueue)) {
             BKInit_AjaxPipeline.$pipeline.set_sendqueue(sq);
             return this;
@@ -50,7 +57,7 @@
      *  pipeline.AddCarrier(new CustomCarrier(), function(carrierBuilder){
      *  })
      */
-    BKinit_AjaxPipeline.prototype.AddCarrier = function(cr,fn) {
+    BKInit_AjaxPipeline.prototype.AddCarrier = function(cr,fn) {
         var _fn = fn;
         var _cr = cr
         if (!BaseObject.is(cr, "IAjaxCarrier")) {

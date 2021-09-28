@@ -1,6 +1,7 @@
 (function(){
 
-    var AjaxSendQueueInspectorBase = Class("AjaxSendQueueInspectorBase");
+    var AjaxSendQueueInspectorBase = Class("AjaxSendQueueInspectorBase"),
+        BKInit_AjaxQueueInspectorSingle = Class("BKInit_AjaxQueueInspectorSingle");
 
     function BKInit_AjaxQueueInspectorMulti(pipeline, inspector) {
         BaseObject.apply(this, arguments);

@@ -1,6 +1,9 @@
 
 (function(){
 
+
+    var IAjaxProgressQueue = Interface("IAjaxProgressQueue");
+
     /**
      * This is a class intended for construction of a pipeline. In most cases a single pipeline for the system should be created,
      * but there is the possibility for more - app specific, task specific etc.

@@ -1,7 +1,9 @@
 (function(){
 
+    var IAjaxRequestInspectorsUser = Interface("IAjaxRequestInspectorsUser");
+
     function IAjaxRequestInspectorsUserImpl(){}
-    IAjaxRequestInspectorsUserImpl.InterfaceImpl("IAjaxRequestInspectorsUser");
+    IAjaxRequestInspectorsUserImpl.InterfaceImpl(IAjaxRequestInspectorsUser, "IAjaxRequestInspectorsUserImpl");
 
     IAjaxRequestInspectorsUserImpl.classInitialize = function(cls) {
 

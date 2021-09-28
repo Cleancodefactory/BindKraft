@@ -1,10 +1,15 @@
 (function() {
 
+    var AjaxSendQueueInspectorSingleBase = Class("AjaxSendQueueInspectorSingleBase"),
+        AjaxSendQueueInspectorMultiBase = Class("AjaxSendQueueInspectorMultiBase"),
+        AjaxRequestSenderPool = Class("AjaxRequestSenderPool"),
+        BKInit_AjaxQueueInspectorSingle = Class("BKInit_AjaxQueueInspectorSingle");
+
     function BKInit_AjaxCarrier(carrier, pipeline) {
         BaseObject.apply(this, arguments);
         this.carrier = carrier;
         this.pipeline = pipeline;
-        carrier.set_progressqueue(pipeline.get_sendqueue());
+        carrier.set_progressQueue(pipeline.get_sendqueue());
     }
     BKInit_AjaxCarrier.Inherit(BaseObject,"BKInit_AjaxCarrier");
 
