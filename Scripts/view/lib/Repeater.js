@@ -307,7 +307,7 @@ Repeater.prototype.resetUpdateOptimization = function() {
  */
 Repeater.prototype.materializeItemTemplate = function(/*prepend|append*/how) {
 	var el = $(this.root);
-	o = ViewBase.cloneTemplate(el, this.get_itemTemplate(), null, this.multiTemplate, how); // var o = $(this.itemTemplate).clone();
+	var o = ViewBase.cloneTemplate(el, this.get_itemTemplate(), null, this.multiTemplate, how); // var o = $(this.itemTemplate).clone();
 	return ElementGroup.getElementSet(o);
 }
 /**

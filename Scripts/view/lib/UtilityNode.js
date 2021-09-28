@@ -14,16 +14,17 @@ function UtilityNode() {
     Base.apply(this,arguments);
 }
 UtilityNode.Inherit(Base, "UtilityNode")
-.Implement(ICustomParameterizationStdImpl, "enabled", "disabled", "zorder", "zorderMin", "radiopartners");
+.Implement(ICustomParameterizationStdImpl, "enabled", "disabled", "zorder", "zorderMin", "radiopartners", "radiomode_default");
 UtilityNode.ImplementProperty("enabled", new InitializeStringParameter("Initially enabled", ""));
 UtilityNode.ImplementProperty("disabled", new InitializeStringParameter("Initially disabled", ""));
 UtilityNode.ImplementProperty("zorder", new InitializeStringParameter("Perform zordering on these", null));
+UtilityNode.ImplementProperty("radiomode_default", new InitializeStringParameter("Shows the item when switching to radio mode", null));
 UtilityNode.ImplementProperty("zorderMin", new InitializeNumericParameter("Minimal z-order", 100));
 UtilityNode.ImplementProperty("radiomode", new InitializeBooleanParameter("In that mode when item is enabled the others are disabled.", false), 
         null, function(oval, nval) {
             if (nval) {
                 this.ExecBeforeFinalInit([], function() {
-                    this.applyRadioMode();
+                    this.applyRadioMode(this.get_radiomode_default());
                     this.enabledui_changed.invoke(this, null);
                 });
             }

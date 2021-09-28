@@ -1404,7 +1404,7 @@ BaseWindow.prototype.$autoCalcClientHeight = function () {
 		if (c.length > 0) { c = c.get(0); } else { c = null; }
 	}
     if (c != null) {
-		
+		if (this.root == c) return false;
         // var clnt = $(c);
 		if (c.offsetParent != null) {
 			var h = this.$autoCalcClientHeight();

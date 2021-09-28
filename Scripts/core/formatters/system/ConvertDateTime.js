@@ -10,12 +10,18 @@ ConvertDateTime.Inherit(SystemFormatterBase,"ConvertDateTime");
 ConvertDateTime.Implement(IArgumentListParserStdImpl,"trim");
 ConvertDateTime.ImplementProperty("defaultencoding", new InitializeStringParameter("The default format if nothing is specified", "ISO"));
 ConvertDateTime.$reMS = /\/Date\(([+-]?\d+)\)\//i;
+ConvertDateTime.$reISODate = /^(\d{4}-\d{1,2}-\d{1,2})(T|\s)(\d{1,2}:\d{1,2}:\d{1,2}(?:\.\d+)?)(Z)$/;
 ConvertDateTime.prototype.ToDate = {
 	ISO: function(val) {
 		// Limitator - intentionally limiting the syntax  to the one widely agreed upon.
-		if (typeof val == "string" && /^\d{4}-\d{1,2}-\d{1,2}(?:T|\s)\d{1,2}:\d{1,2}:\d{1,2}(?:\.\d+)?Z$/.test(val)) {
-			return new Date(val);
+		var done = false;
+		if (typeof val == "string") {
+			val = val.replace(ConvertDateTime.$reISODate, function(matched, y,sep,h,tz) {
+				done = true;
+				return y + "T" + h + "Z";
+			});
 		}
+		if (done) return new Date(val);
 		return null;
 	},
 	MS: function(val) {

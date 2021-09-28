@@ -4,8 +4,10 @@
 //      
 /*CLASS*/
 /*???*/
-function PageEvent(evntType) {
+function PageEvent(evntType, etarget) {
     Message.apply(this, arguments);
     this.eventType = evntType;
+    this.set_target(etarget);
 }
 PageEvent.Inherit(Message, "PageEvent");
+PageEvent.ImplementProperty("target", new Initialize("The target element to which the event travels", null));

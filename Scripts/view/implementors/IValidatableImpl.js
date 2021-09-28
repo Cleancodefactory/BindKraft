@@ -30,7 +30,13 @@ IValidatableImpl.InterfaceImpl(IValidatable, "IValidatableImpl");
 IValidatableImpl.RequiredTypes("Base");
 IValidatableImpl.prototype.$knownvalidity = ValidationResultEnum.uninitialized;
 IValidatableImpl.prototype.get_knownvalidity = function() { return this.$knownvalidity; }
-
+/**
+ * Usages:
+ *  MyClass.Implement(IValidatableImpl,"mygroup")
+ *  MyClass.Implement(IValidatableImpl,true)
+ *  MyClass.Implement(IValidatableImpl,function.call(this));
+ * All the parameters can be mixed together.
+ */
 IValidatableImpl.classInitialize = function(cls, _customValidation, _alwaysReset) {
 	var customValidation, grpName = null, alwaysReset = false;
 	for (var i = 1; i < arguments.length; i++) {

@@ -3,18 +3,6 @@
 
 /// <reference path="~/Scripts/jquery-vsdoc.js"/>
 
-
-function ReportError(message, url, lineNumber) {
-    // HideProgressAfterAjax();
-	alert("Error:" + message + "\n" + url + "\n" + lineNumber);// HideProgressAfterAjax();
-}
-
-
-window.onerror = function (msg, url, linenumber) {
-	ReportError(msg,url,linenumber);
-        //alert("Error:" + message + "\n" + url + "\n" + lineNumber);// HideProgressAfterAjax();
-    return true;
-};
 // Usage IsNull(arg), IsNull("!all", arg, arg ...)
 // If the first arg is a string and starts with "?" or "!" it is a command
 //  ! - means check for null, ? - means check for null or empty, all - means all args must be null (or empty), one - means at least one must be null (or empty).
@@ -56,8 +44,8 @@ function GetViewportSize() {
 
     // IE6 in standards compliant mode (i.e. with a valid doctype as the first line in the document)
     else if (typeof document.documentElement != 'undefined'
-     && typeof document.documentElement.clientWidth !=
-     'undefined' && document.documentElement.clientWidth != 0) {
+        && typeof document.documentElement.clientWidth !=
+        'undefined' && document.documentElement.clientWidth != 0) {
         viewportwidth = parseFloat(document.documentElement.clientWidth);
         viewportheight = parseFloat(document.documentElement.clientHeight);
     }
@@ -78,8 +66,8 @@ function HideProgressAfterAjax() {
         $('#loading_cover').hide();
         HideProgressAfterAjax_Counter = 0;
     }
-	$('#loading_count').text("" + HideProgressAfterAjax_Counter);
-    $('#loading').prop("title","Requests in progress: " + HideProgressAfterAjax_Counter);
+    $('#loading_count').text("" + HideProgressAfterAjax_Counter);
+    $('#loading').prop("title", "Requests in progress: " + HideProgressAfterAjax_Counter);
 }
 
 function ShowProgressBeforeAjax() {
@@ -87,8 +75,8 @@ function ShowProgressBeforeAjax() {
     HideProgressAfterAjax_Counter++;
     $('#loading').show();
     $('#loading_cover').show();
-	$('#loading_count').text("" + HideProgressAfterAjax_Counter);
-    $('#loading').prop("title","Requests in progress: " + HideProgressAfterAjax_Counter);
+    $('#loading_count').text("" + HideProgressAfterAjax_Counter);
+    $('#loading').prop("title", "Requests in progress: " + HideProgressAfterAjax_Counter);
 }
 
 //GUID//
@@ -190,7 +178,7 @@ function sortBy(prop) {
 // example: addWheelListener( elem, function( e ) { console.log( e.deltaY ); e.preventDefault(); } );
 (function (window, document) {
 
-    var prefix = "", _addEventListener, onwheel, support;
+    var prefix = "", _addEventListener, onwheel, support, supportsPassiveOption = false;
 
     // detect event model
     if (window.addEventListener) {
@@ -202,19 +190,30 @@ function sortBy(prop) {
 
     // detect available wheel event
     support = "onwheel" in document.createElement("div") ? "wheel" : // Modern browsers support "wheel"
-              document.onmousewheel !== undefined ? "mousewheel" : // Webkit and IE support at least "mousewheel"
-              "DOMMouseScroll"; // let's assume that remaining browsers are older Firefox
+        document.onmousewheel !== undefined ? "mousewheel" : // Webkit and IE support at least "mousewheel"
+            "DOMMouseScroll"; // let's assume that remaining browsers are older Firefox
+
+    // detect passive event (create options object with a getter to see if its passive property is accessed)
+    try {
+        var opts = Object.defineProperty({}, 'passive', {
+            get: function () {
+                supportsPassiveOption = true;
+            }
+        });
+        window.addEventListener('test', null, opts);
+    } catch (e) { }
+    // end detect passive event
 
     window.addWheelListener = function (elem, callback, useCapture) {
-        _addWheelListener(elem, support, callback, useCapture);
+        _addWheelListener(elem, support, callback, useCapture, supportsPassiveOption);
 
         // handle MozMousePixelScroll in older Firefox
         if (support == "DOMMouseScroll") {
-            _addWheelListener(elem, "MozMousePixelScroll", callback, useCapture);
+            _addWheelListener(elem, "MozMousePixelScroll", callback, useCapture, supportsPassiveOption);
         }
     };
 
-    function _addWheelListener(elem, eventName, callback, useCapture) {
+    function _addWheelListener(elem, eventName, callback, useCapture, supportsPassiveOption) {
         elem[_addEventListener](prefix + eventName, support == "wheel" ? callback : function (originalEvent) {
             !originalEvent && (originalEvent = window.event);
 
@@ -246,7 +245,7 @@ function sortBy(prop) {
             // it's time to fire the callback
             return callback(event);
 
-        }, useCapture || false);
+        }, { capture: useCapture || false, passive: supportsPassiveOption });
     }
 
 })(window, document);

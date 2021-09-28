@@ -4,9 +4,19 @@
 /* STANDARD DROP DOWN */
 function DropDownControl() {
     Base.apply(this, arguments);
+    Messenger.Instance().subscribe("PageEvent",this.onHandlePageEvent);
 }
 DropDownControl.Inherit(Base, "DropDownControl");
 DropDownControl.Implement(IUIControl);
+DropDownControl.prototype.obliterate = function () {
+    Messenger.Instance().unsubscribe("PageEvent",this.onHandlePageEvent);
+    Base.prototype.obliterate.call(this);
+}
+DropDownControl.prototype.onHandlePageEvent = new InitializeMethodDelegate("",function(msg) {
+    if (BaseObject.is(msg, "PageEvent")) {
+        // TODO Close if opened
+    }
+});
 DropDownControl.prototype.defaultTemplateName = ".j_framework_control_dropdown";
 DropDownControl.prototype.$init = function () {
     // Inject the predefined template

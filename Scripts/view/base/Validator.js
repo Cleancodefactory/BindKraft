@@ -21,6 +21,8 @@ Validator.$defaults = {
 }
 
 Validator.ImplementProperty("throwqueryonvaliditychanged", new InitializeStringParameter("Any string will enable that, values of view, window, app will limit it to the corresponding scope (ignored for now)",null));
+Validator.ImplementProperty("waitreadiness", new InitializeBooleanParameter("If truthy value is set the validator will run the rules after the control is ready (if there is a control attached to the binding's target and no effect otherwise)",false));
+Validator.ImplementProperty("notreadymessage", new InitializeStringParameter("Message when readiness fails - if null or empty the error message reported will be displayed.",null));
 
 Validator.prototype.validitychanged = new InitializeEvent("Fired whenever the validity changes");
 Validator.prototype.validating = new InitializeEvent("Fired before performing validation");
@@ -296,7 +298,7 @@ Validator.prototype.get_message = function () {
     if (this.$messages != null && this.$messages.length > 0) {
         var s = "";
         for (var i = 0; i < this.$messages.length; i++) {
-            if (i > 0) s += "<br/>";
+            if (i > 0) s += " "; //Robert have to add this as html
             s += this.$messages[i];
         }
         return s;
@@ -519,21 +521,57 @@ Validator.prototype.reportResult = function (curRule, r) { // Callback for valid
     }
 };
 Validator.prototype.$asyncCallBack = null;
-
+Validator.prototype.$readyForValidation = function() {
+    if (!this.get_waitreadiness()) return Operation.From(null);
+    if (this.validateBindings == null || this.validateBindings.length == 0) return Operation.From(null);
+    if (this.multiple) { 
+        this.LASTERROR("waitreadiness cannot be used with validators working with multiple bindings");
+        // TODO Make this work too (some day)
+        return Operation.From(null);
+    }
+    var binding = this.validateBindings[0];
+    var dom = binding.get_target();
+    if (dom == null) return Operation.From(null);
+    var ac = dom.activeClass;
+    if (!BaseObject.is(ac, "IUIControlReadiness")) return Operation.From(null);
+    var op = ac.get_waitcontrolreadystate();
+    return op;
+}
 Validator.prototype.validate = function (bIndicate, fCallBack) { // fCallBack proto: function(result, isAsynch);
     if (this.get_disabled()) return ValidationResultEnum.correct;
     this.validating.invoke(this, null);
-    var r = this.result;
-    this.waitReport = 0;
-    if (fCallBack != null) {
-        this.$asyncCallBack = fCallBack;
-    }
-    this.result = this.$validate(bIndicate);
-    this.onValidityChanged();
-    if (this.waitReport <= 0) {
+    var _callNeeded = false;
+    var opready = this.$readyForValidation();
+    opready.onsuccess(this.thisCall(function(_) {
+        this.waitReport = 0;
+        if (fCallBack != null) {
+            this.$asyncCallBack = fCallBack;
+        }
+        this.result = this.$validate(bIndicate); // on sync onsuccess pending will wait the rule and the callback will be called then.
+        this.onValidityChanged();
+        if (_callNeeded && fCallBack != null) {
+            BaseObject.callCallback(this.$asyncCallBack, this.result);
+        }
+    }))
+    .onfailure(this.thisCall(function(e) {
+        this.result = ValidationResultEnum.fail;
+        this.$messages = [];
+        if (this.get_notreadymessage() == null || this.get_notreadymessage().length == 0) {
+            this.$messages.push(e);
+        } else {
+            this.$messages.push(this.get_notreadymessage());
+        }
+        this.onValidityChanged();
+        if (_callNeeded && fCallBack != null) {
+            BaseObject.callCallback(this.$asyncCallBack, this.result);
+        }
+    }));
+    
+    if (this.waitReport <= 0 && opready.isOperationComplete()) {
         this.waitReport = 0;
         return this.result;
     } else {
+        _callNeeded = true;
         return ValidationResultEnum.pending;
     }
 };

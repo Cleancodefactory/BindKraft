@@ -9,24 +9,24 @@ IViewContainerEventsSinkImpl.RequiredTypes("Base"); // cvan be implemented only 
 IViewContainerEventsSinkImpl.classInitialize = function (cls) {
 	var IViewContainerInflictedChanges = Interface("IViewContainerInflictedChanges");
 	cls.Implement(IViewContainerInflictedChanges);
-	cls.prototype.onViewStateChanged = function (state) { 
+	cls.ExtendMethod("onViewStateChanged",function (state) { 
 		this.onviewstatechangedevent.invoke(this, state);
-	};
+	});
 	// state ::= <state_name> # depends on the host, see the state names
-	cls.prototype.onViewSizeChanged = function (size) { 
+	cls.ExtendMethod("onViewSizeChanged", function (size) { 
 		this.onviewsizechangedevent.invoke(this, size);
-	};
+	});
 	// size ::= Size instance x,y can be 0
-	cls.prototype.onViewPosChanged = function (rectOrPoint) {
+	cls.ExtendMethod("onViewPosChanged",function (rectOrPoint) {
 		this.onviewposchangedevent.invoke(this, rectOrPoint);
-	};
+	});
 	// rectOrPoint ::= Rect | Point instance depending on what the host can say
-	cls.prototype.onViewVisibilityChanged = function (isVisible) {
+	cls.ExtendMethod("onViewVisibilityChanged", function (isVisible) {
 		this.onviewvisibilitychangedevent.invoke(this, isVisible);
-	};
+	});
 	// isVisible ::= true|false # this is not supported by the card container
 	// New: Sept 2012
-	cls.prototype.onViewActivated = function (activatedDeactivated) {
+	cls.ExtendMethod("onViewActivated", function (activatedDeactivated) {
 		this.onviewactivatedevent.invoke(this, activatedDeactivated);
-	};
+	});
 }

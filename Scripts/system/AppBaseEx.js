@@ -27,7 +27,7 @@ AppBaseEx.prototype.appinitialize = function(callback, args) {
 /**
  *  Override only if needed.
  */
-AppBaseEx.prototype.run = function(/* [] */ args) { /* no mandatory content */ }
+AppBaseEx.prototype.run = function(/* callset */ args) { /* no mandatory content */ }
  
  /**
  * Override! 
