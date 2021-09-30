@@ -68,5 +68,11 @@ var BkInit = {
 	},
 	AjaxPipeline: function(fn) { 
 		fn (new (Class("BKInit_AjaxPipeline"))());
+	},
+	AjaxCustomPipeline: function(name, fn) { 
+		if (typeof name == "string" && name.length > 0) {
+			fn (new (Class("BKInit_AjaxPipeline"))(name));
+		}
+		
 	}
 };

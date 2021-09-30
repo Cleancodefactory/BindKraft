@@ -13,6 +13,7 @@
 //#using "./senders/senders.dep"
 //#using "./carriers/carriers.dep"
 //#using "./AjaxPipeline.js"
+//#using "./AjaxPipelines.js"
 
 
 

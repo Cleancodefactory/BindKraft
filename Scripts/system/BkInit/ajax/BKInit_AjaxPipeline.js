@@ -4,17 +4,24 @@
         AjaxProgressQueue = Class("AjaxProgressQueue"),
         AjaxSendQueue = Class("AjaxSendQueue"),
         BKInit_AjaxCarrier = Class("BKInit_AjaxCarrier"),
-        AjaxCarrier = Class("AjaxCarrier");
+        AjaxCarrier = Class("AjaxCarrier"),
+        AjaxPipelines = Class("AjaxPipelines");
 
-    function BKInit_AjaxPipeline() {
+    function BKInit_AjaxPipeline(/*optional string*/ name ) {
         BaseObject.apply(this,arguments);
+        this.$pipelineName = name;
+        this.createPipeline();
 
     }
     BKInit_AjaxPipeline.Inherit(BaseObject, "BKInit_AjaxPipeline");
-    BKInit_AjaxPipeline.$pipeline = null;
+
+    BKInit_AjaxPipeline.prototype.$pipelineName = null;
+    BKInit_AjaxPipeline.prototype.$pipeline = null;
 
     BKInit_AjaxPipeline.prototype.createPipeline = function() { 
-        BKInit_AjaxPipeline.$pipeline = new AjaxPipeline();
+        if (this.$pipeline !== null) throw "No need to call createPipeline twice";
+        this.$pipeline = new AjaxPipeline();
+        AjaxPipelines.Default().setPipeline(this.$pipelineName, this.$pipeline);
         return this;
     }
     //#region Send queue
@@ -22,12 +29,12 @@
      * Sets the system default (singleton) send queue as send queue for the pipeline.
      */
     BKInit_AjaxPipeline.prototype.useDefaultSendQueue = function() {
-        BKInit_AjaxPipeline.$pipeline.set_sendqueue(AjaxSendQueue.Default());
+        this.$pipeline.set_sendqueue(AjaxSendQueue.Default());
         return this;
     }
     BKInit_AjaxPipeline.prototype.useSpecificSendQueue = function(sq) {
         if (BaseObject.is(sq, IAjaxSendQueue)) {
-            BKInit_AjaxPipeline.$pipeline.set_sendqueue(sq);
+            this.$pipeline.set_sendqueue(sq);
             return this;
         } else {
             throw "The specified argument is not an IAjaxSendQueue";
@@ -40,7 +47,7 @@
      * Includes a progress queue in the pipeline. It is used for diagnostics and activity visualization.
      */
     BKInit_AjaxPipeline.prototype.useProgressQueue = function() { 
-        BKInit_AjaxPipeline.$pipeline.set_progressqueue(new AjaxProgressQueue());
+        this.$pipeline.set_progressqueue(new AjaxProgressQueue());
         return this;
     }
     //#endregion
@@ -64,9 +71,9 @@
             _fn = cr;
             _cr = new AjaxCarrier();
         }
-        BKInit_AjaxPipeline.$pipeline.addCarrier(_cr);
+        this.$pipeline.addCarrier(_cr);
         if (typeof _fn == "function") {
-            _fn(new BKInit_AjaxCarrier(_cr,BKInit_AjaxPipeline.$pipeline));    
+            _fn(new BKInit_AjaxCarrier(_cr,this.$pipeline));    
         }
         return this;
     }

@@ -1,6 +1,7 @@
 (function() {
 
-    var IAjaxSendQueuePicker = Interface("IAjaxSendQueuePicker");
+    var IAjaxSendQueuePicker = Interface("IAjaxSendQueuePicker"),
+        IAjaxSendQueueInspector = Interface("IAjaxSendQueueInspector");
 
     /**
      * Implements a picker based on multiple send queue inspectors.

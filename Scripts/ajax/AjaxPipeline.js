@@ -2,7 +2,8 @@
 (function(){
 
 
-    var IAjaxProgressQueue = Interface("IAjaxProgressQueue");
+    var IAjaxProgressQueue = Interface("IAjaxProgressQueue"),
+        AjaxRequest = Class("AjaxRequest");
 
     /**
      * This is a class intended for construction of a pipeline. In most cases a single pipeline for the system should be created,
@@ -156,7 +157,7 @@
         if (!BaseObject.isCallback(callback)) return false;
         var request = new AjaxRequest(owner);
         var bkurl = BKUrl.getBasePathAsUrl();
-        if (typeof url == "string") url = this.checkExplicitVerb(url, request);
+        if (typeof url == "string") url = this.$checkExplicitVerb(url, request);
         if (typeof url == "string" || BaseObject.is(url, "BKUrl")) {
             if (!bkurl.set_nav(url)) request.set_constructionError("Cannot determine the url") ;
         } else {

@@ -49,7 +49,7 @@
             }
             // enqueue
             // this.$queue.unshift(slot);
-            this.$queue.push(slot); // TODO This requires some rearrangements
+            this.$queue.push(req); // TODO This requires some rearrangements
             return true;
         }
         this.LASTERROR("Attempted to enqueue a non-request. AjaxSendQueue supports only objects supporting both IAjaxRequest and IAjaxQueueSlot interfaces", "enqueueRequest");
@@ -180,13 +180,13 @@
     //#endregion
 
     //#region Singleton
-    AjaxSendQueue.Default = function() {
+    AjaxSendQueue.Default = (function() {
         var sysqueue;
         return function() {
             if (sysqueue == null) sysqueue = new AjaxSendQueue();
             return sysqueue;
         }
-    }
+    })();
     //#endregion
 
 })();
