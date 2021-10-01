@@ -1,2 +1,3 @@
 //#using "./AjaxRequestSenderBase.js"
 //#using "./AjaxRequestSenderPool.js"
+//#using "./AjaxRequestSenderCancel.js"

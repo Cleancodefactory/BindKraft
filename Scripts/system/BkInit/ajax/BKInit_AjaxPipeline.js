@@ -32,6 +32,10 @@
         this.$pipeline.set_sendqueue(AjaxSendQueue.Default());
         return this;
     }
+    BKInit_AjaxPipeline.prototype.useOwnSendQueue = function() {
+        this.$pipeline.createSendQueue();
+        return this;
+    }
     BKInit_AjaxPipeline.prototype.useSpecificSendQueue = function(sq) {
         if (BaseObject.is(sq, IAjaxSendQueue)) {
             this.$pipeline.set_sendqueue(sq);
@@ -39,6 +43,19 @@
         } else {
             throw "The specified argument is not an IAjaxSendQueue";
         }
+    }
+    //#endregion
+
+    //#region Auto-driving it
+    BKInit_AjaxPipeline.prototype.autoRun = function(n) { 
+        if (n == null) n = 1000;
+        this.$pipeline.set_autorun(n);
+        return this;
+    }
+    BKInit_AjaxPipeline.prototype.autoPush = function(n) { 
+        if (n == null) n = 500;
+        this.$pipeline.set_autopush(n);
+        return this;
     }
     //#endregion
 

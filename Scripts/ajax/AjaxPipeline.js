@@ -3,7 +3,8 @@
 
 
     var IAjaxProgressQueue = Interface("IAjaxProgressQueue"),
-        AjaxRequest = Class("AjaxRequest");
+        AjaxRequest = Class("AjaxRequest"),
+        AjaxSendQueue = Class("AjaxSendQueue");
 
     /**
      * This is a class intended for construction of a pipeline. In most cases a single pipeline for the system should be created,
@@ -65,6 +66,7 @@
         })
     }
 
+    //#region Runners
     /**
      * Produces tasks for all the carriers, so that they can check the send queue.
      * // TODO This may need refactoring to make sure the tasks produced are not too many at once.
@@ -90,6 +92,68 @@
         });
     }
 
+    //#region Auto running carriers
+    AjaxPipeline.prototype.$autorun = 0;
+    AjaxPipeline.prototype.get_autorun = function() { 
+        return this.$autorun;
+    }
+    AjaxPipeline.prototype.set_autorun = function(v) { 
+        this.discardAsync("run");
+        if (v == null || v == 0) {
+            this.$autorun = 0;
+            return this;
+        }
+        if (v > 0 && v < 3600000) {
+            if (v < 100) v = 100;
+            if (v > 3600000) v = 3600000;
+            this.$autorun = v;
+        }
+        if (this.$autorun > 0) {
+            this.$rerun();
+        }
+        return this;
+    }
+    AjaxPipeline.prototype.$rerun = function() { 
+        this.asyncRunCarriers();
+        if (this.$autorun > 0) {
+            this.async(this.$rerun).key("run").after(this.$autorun).execute();
+        }
+        return this;
+    }
+    //#endregion auto running carriers
+
+    //#region Auto pushing senders carriers
+    AjaxPipeline.prototype.$autopush = 0;
+    AjaxPipeline.prototype.get_autopush = function() { 
+        return this.$autopush;
+    }
+    AjaxPipeline.prototype.set_autopush = function(v) { 
+        this.discardAsync("run");
+        if (v == null || v == 0) {
+            this.$autopush = 0;
+            return this;
+        }
+        if (v > 0 && v < 3600000) {
+            if (v < 100) v = 100;
+            if (v > 3600000) v = 3600000;
+            this.$autopush = v;
+        }
+        if (this.$autopush > 0) {
+            this.$repush();
+        }
+        return this;
+    }
+    AjaxPipeline.prototype.$repush = function() { 
+        this.asyncRunCarriers();
+        if (this.$autopush > 0) {
+            this.async(this.$repush).key("push").after(this.$autopush).execute();
+        }
+        return this;
+    }
+    //#endregion auto running carriers
+
+    //#endregion
+
     AjaxPipeline.prototype.$sendqueue = null;
     AjaxPipeline.prototype.get_sendqueue = function(){
         return this.$sendqueue;
@@ -99,13 +163,21 @@
             this.$sendqueue = v;
         }
     }
+    /**
+     * Creates a very own send queue for tt pipeline.
+     */
+    AjaxPipeline.prototype.createSendQueue = function() { 
+        this.set_sendqueue(new AjaxSendQueue());
+    }
 
     //#region Sending - private part
 
     AjaxPipeline.prototype.$enqueueRequest = function(req, priority) {
         var sq = this.get_sendqueue();
         if (BaseObject.is(sq, "IAjaxSendQueue")) {
-            return sq.enqueueRequest(req, priority || 0);
+            var bresult = sq.enqueueRequest(req, priority || 0);
+            this.asyncRunCarriers();
+            return bresult;
         }
         return false;
     }

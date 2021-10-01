@@ -2,7 +2,7 @@
 
     var AjaxResponse = Class("AjaxResponse"),
         AjaxBase = Class("AjaxBase"),
-        var AjaxResponsePacket = Class("AjaxResponsePacket"),
+        AjaxResponsePacket = Class("AjaxResponsePacket"),
         IAjaxResponseUnpacker = Interface("IAjaxResponseUnpacker");
     /**
      * The simple unpacker for AjaxRequestPackerSingleJson

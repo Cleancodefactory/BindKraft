@@ -3,7 +3,11 @@
     var AjaxSendQueueInspectorSingleBase = Class("AjaxSendQueueInspectorSingleBase"),
         AjaxSendQueueInspectorMultiBase = Class("AjaxSendQueueInspectorMultiBase"),
         AjaxRequestSenderPool = Class("AjaxRequestSenderPool"),
-        BKInit_AjaxQueueInspectorSingle = Class("BKInit_AjaxQueueInspectorSingle");
+        BKInit_AjaxQueueInspectorSingle = Class("BKInit_AjaxQueueInspectorSingle"),
+        AjaxRequestSenderCancel = Class("AjaxRequestSenderCancel"),
+        AjaxRequestPackerSingleJson = Class("AjaxRequestPackerSingleJson"),
+        AjaxResponseUnpackerSingleResponse = Class("AjaxResponseUnpackerSingleResponse")
+        AjaxRequestPackerDummy = Class("AjaxRequestPackerDummy");
 
     function BKInit_AjaxCarrier(carrier, pipeline) {
         BaseObject.apply(this, arguments);
@@ -13,6 +17,28 @@
     }
     BKInit_AjaxCarrier.Inherit(BaseObject,"BKInit_AjaxCarrier");
 
+    BKInit_AjaxCarrier.prototype.packWith = function(packer) { 
+        this.carrier.set_requestPacker(packer);
+        return this;
+    }
+    BKInit_AjaxCarrier.prototype.packJson = function() {
+        this.carrier.set_requestPacker(new AjaxRequestPackerSingleJson());
+        return this;
+    }
+    BKInit_AjaxCarrier.prototype.unpackWith = function(unpacker) {
+        this.carrier.set_responseUnpacker(unpacker);
+        return this;
+    }
+    BKInit_AjaxCarrier.prototype.unpackJson = function() {
+        this.carrier.set_responseUnpacker(new AjaxResponseUnpackerSingleResponse());
+        return this;
+    }
+    BKInit_AjaxCarrier.prototype.dummyPacking = function() {
+        var p = new AjaxRequestPackerDummy();
+        this.carrier.set_requestPacker(p);
+        this.carrier.set_responseUnpacker(p);
+        return this;
+    }
     // Add queue inspector with a single rule
     BKInit_AjaxCarrier.prototype.addPickRule = function(fn) {
         var queueInspector = new AjaxSendQueueInspectorSingleBase();
@@ -48,6 +74,11 @@
     BKInit_AjaxCarrier.prototype.poolSender = function(nFetchers, fetcherCreator) { 
         var _fetchers = nFetchers || 2;
         var sender = new AjaxRequestSenderPool(_fetchers, fetcherCreator);
+        this.carrier.set_requestSender(sender);
+        return this;
+    }
+    BKInit_AjaxCarrier.prototype.cancel = function() { 
+        var sender = new AjaxRequestSenderCancel();
         this.carrier.set_requestSender(sender);
         return this;
     }

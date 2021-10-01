@@ -1,6 +1,7 @@
 (function(){
 
-    var AjaxSendQueueInspectorBase = Class("AjaxSendQueueInspectorBase");
+    var AjaxSendQueueInspectorBase = Class("AjaxSendQueueInspectorBase"),
+        AjaxRequestInspectorAny = Class("AjaxRequestInspectorAny");
 
     function BKInit_AjaxQueueInspectorSingle(pipeline, inspector) {
         BaseObject.apply(this, arguments);
@@ -53,5 +54,8 @@
             throw "BKInit_AjaxQueueInspectorSingle.rule requires as first argument name or type of a IAjaxRequestInspector";
         }
         return this;
+    }
+    BKInit_AjaxQueueInspectorSingle.prototype.catchAll = function() { 
+        this.inspector.set_requestinspector(new AjaxRequestInspectorAny());
     }
 })();
