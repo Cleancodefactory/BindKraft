@@ -49,3 +49,4 @@
 //#using "./IOpenCloseFunctionality.js"
 //#using "./IUIControlReadiness.js"
 //#using "./IValidateValue.js"
+//#using "./ICaptionedView.js"
