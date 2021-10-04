@@ -6,7 +6,8 @@
     var AjaxBase = Class("AjaxBase"),
         IAjaxSendQueue = Interface("IAjaxSendQueue"),
         IAjaxRawData = Interface("IAjaxRawData"),
-        IAjaxAttachedInfo = Interface("IAjaxAttachedInfo");
+        IAjaxAttachedInfo = Interface("IAjaxAttachedInfo"),
+        IAjaxRequestInspector = Interface("IAjaxRequestInspector");
 
     function AjaxSendQueue() {
         AjaxBase.apply(this,arguments);
@@ -76,7 +77,7 @@
 
     }
 
-    IAjaxSendQueue.prototype.removeRequest = function(request) {
+    AjaxSendQueue.prototype.removeRequest = function(request) {
         var i = this.$queue.indexOf(request);
         if (i >= 0) {
             return this.$queue.splice(i,1);

@@ -101,8 +101,11 @@
         var queue = this.get_queue();
         if (queue != null) {
             var reqs = this.$checkQueue(queue, priority);
+            if (reqs != null) {
             // Additional check in case it is not implemented in $checkRequest
-            if (reqs.length > this.get_picklimit()) return reqs.slice(0, this.get_picklimit() - 1);
+                if (reqs.length > this.get_picklimit()) return reqs.slice(0, this.get_picklimit() - 1);
+                return reqs;
+            }
         }
         return [];
     }
@@ -125,6 +128,7 @@
     }
     
     AjaxSendQueueInspectorBase.prototype.grabRequests = function(requests) { 
+        var me = this;
         if (BaseObject.is(this.$queue,"IAjaxSendQueue")) {
             if (Array.isArray(requests)) {
                 var type = null;
@@ -132,12 +136,12 @@
                     if (BaseObject.is(req, "IAjaxRequest")) {
                         if (type == null) type = "IAjaxRequest";
                         if (type != "IAjaxRequest") return null; // exclude this one
-                        this.$queue.removeRequest(req);
+                        me.$queue.removeRequest(req);
                         return req;
                     } else if (BaseObject.is(req, "IAjaxRequestDetails")) {
                         if (type == null) type = "IAjaxRequestDetails";
                         if (type != "IAjaxRequestDetails") return null; // exclude this one
-                        this.$queue.removeRequest(req.request);
+                        me.$queue.removeRequest(req.request);
                         return req;
                     }
                 });

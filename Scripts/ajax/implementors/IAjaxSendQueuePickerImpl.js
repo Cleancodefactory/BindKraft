@@ -15,8 +15,8 @@
     IAjaxSendQueuePickerImpl.classInitialize = function(cls, _queueSupplier) {
 
         function _getQueue(instance) {
-            if (BaseObject.is(instance.$sendque, "IAjaxSendQueue")) {
-                return instance.$sendque;
+            if (BaseObject.is(instance.$sendqueue, "IAjaxSendQueue")) {
+                return instance.$sendqueue;
             } else if (typeof _queueSupplier == "function") {
                 return _queueSupplier.call(instance);
             } else if (typeof _queueSupplier == "string" && typeof instance[_queueSupplier] == "function") {
@@ -25,11 +25,11 @@
             return null;
         }
 
-        cls.prototype.$sendque = null;
-        cls.prototype.get_sendqueue = function() { return this.$sendque; }
+        cls.prototype.$sendqueue = null;
+        cls.prototype.get_sendqueue = function() { return this.$sendqueue; }
         cls.prototype.set_sendqueue = function(v) { 
             if (v == null || BaseObject.is(v, "IAjaxSendQueue")) {
-                this.$sendque = v;
+                this.$sendqueue = v;
             }
         }
 

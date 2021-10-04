@@ -424,8 +424,8 @@ Function.prototype.$Implement = function (protClass, options /*argument list to 
 			baseprot= protClass;
 		}
 		if (baseprot.extendsInterfaces != null) {
-			for (e in protClass.extendsInterfaces) {
-				this.ImplementEx(protClass.extendsInterfaces[e]); // recursively will implement other base interfaces as needed.
+			for (e in baseprot.extendsInterfaces) {
+				this.ImplementEx(baseprot.extendsInterfaces[e]); // recursively will implement other base interfaces as needed.
 				// Nothing should repeat, because if the given interface was already implemented the Implement will do nothing,
 				// effectively stopping the recursion from the particular interface further.
 			}

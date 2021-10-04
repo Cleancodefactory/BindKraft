@@ -13,6 +13,7 @@
         BaseObject.apply(this, arguments);
         this.carrier = carrier;
         this.pipeline = pipeline;
+        this.carrier.set_sendqueue(this.pipeline.get_sendqueue());
         carrier.set_progressQueue(pipeline.get_sendqueue());
     }
     BKInit_AjaxCarrier.Inherit(BaseObject,"BKInit_AjaxCarrier");
