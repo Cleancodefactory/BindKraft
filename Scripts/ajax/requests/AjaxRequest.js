@@ -100,12 +100,12 @@
     AjaxRequest.prototype.set_cache = function(v) { this.$cache = v?true:false; }
 
     AjaxRequest.prototype.$verb = null;
-    AjaxRequest.prototype.get_verb = function() { throw "not impl"; }
-    AjaxRequest.prototype.set_verb = function(v) { throw "not impl"; }
+    AjaxRequest.prototype.get_verb = function() { return this.$verb; }
+    AjaxRequest.prototype.set_verb = function(v) { this.$verb = v; }
 
-    AjaxRequest.prototype.constructionError = null;
-    AjaxRequest.prototype.get_constructionError = function() { throw "not impl.";}
-    AjaxRequest.prototype.set_constructionError = function(v) { throw "not impl.";}
+    AjaxRequest.prototype.$constructionError = null;
+    AjaxRequest.prototype.get_constructionError = function() { return this.$constructionError; }
+    AjaxRequest.prototype.set_constructionError = function(v) { this.constructionError = v;}
 
     //#endregion
 

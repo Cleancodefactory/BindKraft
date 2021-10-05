@@ -2,7 +2,8 @@
 
     var AjaxRequestSenderBase = Class("AjaxRequestSenderBase"),
         IAjaxResponseUnpacker = Interface("IAjaxResponseUnpacker"),
-        PackedRequestStateEnum = Enumeration("PackedRequestStateEnum");
+        PackedRequestStateEnum = Enumeration("PackedRequestStateEnum"),
+        IAjaxPackedRequest = Interface("IAjaxPackedRequest");
 
     /**
      * This sender uses as default post encoding "json" and "multipart" if any binary is available in the data.
