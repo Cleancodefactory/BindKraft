@@ -6,7 +6,7 @@
      * its implementation will be shadowed if Implement is used.
      */
 
-    function ICaptionedView();
+    function ICaptionedView(){};
     ICaptionedView.Interface("ICaptionedView");
 
     ICaptionedView.prototype.get_caption = function() { throw "not implemented"; };

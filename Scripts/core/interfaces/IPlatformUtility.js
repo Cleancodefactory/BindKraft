@@ -97,7 +97,7 @@ IPlatformUtility.resourceservers = {};
 
 /*
 	Abstrasct nodeset URL looks like this:
-	[post:|get:][read|write]<pack_name>[/<nodepath>]
+	[post:|get:][read|write]/<pack_name>[/<nodepath>]
 	it is parsed internally (or explicitly if you write low level system utilities) by
 	IPlatformUtility.standardModuleUrlParse function to this structure:
 	{
