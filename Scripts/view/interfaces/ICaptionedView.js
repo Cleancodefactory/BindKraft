@@ -7,7 +7,9 @@
      */
 
     function ICaptionedView();
-    ICaptionedView.Interface("ICaptionedView");
+    ICaptionedView.Interface("ICaptionedView")
+        .RequiredTypes("ViewBase")
+        .ForbiddenTypes("WindowBase");
 
     ICaptionedView.prototype.get_caption = function() { throw "not implemented"; };
     ICaptionedView.prototype.get_icon = function() { throw "not implemented"; };
