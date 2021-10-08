@@ -3,7 +3,8 @@
     var AjaxRequestSenderBase = Class("AjaxRequestSenderBase"),
         IAjaxResponseUnpacker = Interface("IAjaxResponseUnpacker"),
         PackedRequestStateEnum = Enumeration("PackedRequestStateEnum"),
-        IAjaxPackedRequest = Interface("IAjaxPackedRequest");
+        IAjaxPackedRequest = Interface("IAjaxPackedRequest"),
+        AjaxErrorResponse = Class("AjaxErrorResponse");
 
     /**
      * This sender uses as default post encoding "json" and "multipart" if any binary is available in the data.
@@ -67,7 +68,7 @@
                     if (req.get_verb() == "POST") {
                         // determine postdata encoding and expected type by the suggestions left in the IAjaxPAckedRequest
                         var postencode = req.get_postencoding() || "json";
-                        fetcher.postEx(req.get_url(), req.get_reqdata(), teq.get_data(),postencode, expected).then(new Delegate(this, this.requestComplete,[req, fetcher])); 
+                        fetcher.postEx(req.get_url(), req.get_reqdata(), req.get_data(),postencode, expected).then(new Delegate(this, this.requestComplete,[req, fetcher])); 
                     } else { // Get by default
                         fetcher.get(req.get_url(), req.get_reqdata(), expected).then(new Delegate(this, this.requestComplete,[req, fetcher]));
                     }

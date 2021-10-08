@@ -5,4 +5,5 @@
 //#using "IAjaxRequestsPackerImpl.js"
 //#using "IAjaxRequestInspectorUserImpl.js"
 //#using "IAjaxRequestInspectorsUserImpl.js"
+//#using "IAjaxExtensionsImpl.js"
 

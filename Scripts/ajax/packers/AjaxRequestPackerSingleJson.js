@@ -18,6 +18,7 @@
                     return false;
                 }
                 var original = packedRequest.get_originalRequests()[0];
+                packedRequest.set_url(original.get_url());
                 packedRequest.set_reqdata(original.get_reqdata());
                 packedRequest.set_cache(original.get_cache());
                 if (original.get_verb() != null) {
