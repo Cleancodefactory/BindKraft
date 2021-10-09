@@ -1,6 +1,6 @@
 (function(){
 
-    /**
+    /** DEPRECATION IN PROGRESS
      * This interface is often skipped when the data it describes is used. The implementation is a rather plain object with
      * several standard fields and a number of additional fields and/or sub-objects.
      * The interface enables official access to the common fields only. For the rest the interfaces may or may not exist.
