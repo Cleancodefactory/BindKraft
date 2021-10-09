@@ -22,3 +22,5 @@
 //#using "./IAjaxSendQueuePicker.js"
 //#using "./IAjaxExtensions.js"
 //#using "./IAjaxRequestPackingExtension.js"
+//#using "./IAjaxRequestSendingExtension.js"
+//#using "./IAjaxCoreKraft.js"
