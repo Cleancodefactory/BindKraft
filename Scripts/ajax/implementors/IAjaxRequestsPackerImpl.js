@@ -1,6 +1,7 @@
 (function() {
 
-    var IAjaxRequestPacker = Interface("IAjaxRequestPacker");
+    var IAjaxRequestPacker = Interface("IAjaxRequestPacker"),
+        IAjaxExtensions = Interface("IAjaxExtensions");
 
     /**
      * This simple implementer assumes that all the requests passed to it will be packed into a single packed request or each one of them will
@@ -23,7 +24,15 @@
 
         cls.prototype.packRequests = function(requests) {
             var packed = this.$createPackedRequest(requests);
-            if (this.$packRequests(packed)) return [packed];
+            if (this.$packRequests(packed)) {
+                // Apply extensions if supported
+                if (this.is(IAjaxExtensions)) {
+                    var result = this.iterateExtensions(function(extension) {
+                        return extension.updateRequest(packed);
+                    });
+                }
+                return [packed];
+            }
             this.LASTERROR("Packing requests failed. This must not happen if the Ajax chains are configured correctly.");
             return null;
         }
@@ -44,7 +53,7 @@
             cls.prototype.$packRequests = _$packRequests;
         } else {
             // override to implement the actual packing - from the original requests to the packed request
-            cls.prototype.$packRequests = function(packedRequest) { throw "not implemented.  This method must be overriden!";}
+            cls.prototype.$packRequests = function(packedRequest) { throw "not implemented.  This method must be implemented in a packer: Implement(IAjaxRequestPackerImpl,[type|null], f(packedRequest) implementation ). This can be done also in the body of the class yourclass.prototype.$packRequests = function ...";}
         }
 
     }
