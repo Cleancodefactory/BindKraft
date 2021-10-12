@@ -1,6 +1,7 @@
 (function() {
 
-    var IAjaxCoreKraft = Internal("IAjaxCoreKraft"),
+    var IAjaxCoreKraft = Interface("IAjaxCoreKraft"),
+        IAjaxRequestPackingExtension = Interface("IAjaxRequestPackingExtension"),
         AjaxBase = Class("AjaxBase");
 
     function AjaxRequestPackingCoreKraftFlagsExtension(addFlags, fallBackFlags, paramname) {
@@ -9,7 +10,8 @@
         this.fallBackFlags = fallBackFlags || 0;
         this.reqParamname = paramname || "sysrequestcontent";
     }
-    AjaxRequestPackingCoreKraftFlagsExtension.Inherit(AjaxBase, "AjaxRequestPackingCoreKraftFlagsExtension");
+    AjaxRequestPackingCoreKraftFlagsExtension.Inherit(AjaxBase, "AjaxRequestPackingCoreKraftFlagsExtension")
+        .Implement(IAjaxRequestPackingExtension);
 
     AjaxRequestPackingCoreKraftFlagsExtension.prototype.patchPackedRequest = function(packedRequest) { 
         if (!BaseObject.is(packedRequest, "IAjaxPackedRequest")) {

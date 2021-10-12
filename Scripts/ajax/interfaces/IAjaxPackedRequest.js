@@ -21,6 +21,7 @@
      * this one in order to avoid problems if the packer and the unpacker happen to be separate.
      */
     IAjaxPackedRequest.prototype.get_responseUnpacker = function() {throw "not impl.";}
+    IAjaxPackedRequest.prototype.set_responseUnpacker = function(v) {throw "not impl.";}
 
     /**
      * Reverse reference to the queue in which the request resides, can be null at some points.

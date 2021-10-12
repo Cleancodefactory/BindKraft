@@ -38,7 +38,7 @@
         // Get the data only from the fetcher's objdata - presume single data
         // then complete the original request.
         if (objdata.status.issuccessful) {
-            var r = AjaxResponsePacket(objdata);
+            var r = new AjaxResponsePacket(objdata);
             originalrequest.completeRequest(new AjaxResponse(r.get_data()));
         } else {
             // In case of unsuccessful response, create appropriate response object

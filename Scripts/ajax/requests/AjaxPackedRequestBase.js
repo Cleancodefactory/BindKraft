@@ -3,7 +3,8 @@
     var AjaxRequest = Class("AjaxRequest"),
         IAjaxRequest = Interface("IAjaxRequest"),
         IAjaxPackedRequest = Interface("IAjaxPackedRequest"),
-        PackedRequestStateEnum = Enumeration("PackedRequestStateEnum");
+        PackedRequestStateEnum = Enumeration("PackedRequestStateEnum"),
+        IAjaxResponseUnpacker = Interface("IAjaxResponseUnpacker");
 
 
     /**
@@ -11,7 +12,7 @@
      * the owner for a packed request is usually its carrier
      */
     function AjaxPackedRequestBase(packer, unpacker, owner) {
-        AjaxRequest.call(this, owner);
+        AjaxRequest.call(this, owner || this); // self owned - it is not used further in the pipeline anyway.
         this.$requestPacker = packer;
         this.$responseUnpacker = unpacker;
 
@@ -33,6 +34,13 @@
     AjaxPackedRequestBase.prototype.get_requestPacker = function() { return this.$requestPacker; }
     AjaxPackedRequestBase.prototype.$responseUnpacker = null;
     AjaxPackedRequestBase.prototype.get_responseUnpacker = function() { return this.$responseUnpacker;}
+    AjaxPackedRequestBase.prototype.set_responseUnpacker = function(v) { 
+        if (v == null || BaseObject.is(v, IAjaxResponseUnpacker)) {
+            this.$responseUnpacker = v;
+        } else {
+            this.LASTERROR("Incorrect unpacker set to a packed request");
+        }
+    }
     
     AjaxPackedRequestBase.prototype.$progressQueue = null;
     AjaxPackedRequestBase.prototype.get_progressQueue = function() { return this.$progressQueue; }

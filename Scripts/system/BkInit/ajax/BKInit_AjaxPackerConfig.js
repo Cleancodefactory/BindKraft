@@ -2,7 +2,8 @@
 
     var IAjaxRequestPackingExtension = Interface("IAjaxRequestPackingExtension"),
         IAjaxExtensions = Interface("IAjaxExtensions"),
-        IAjaxCoreKraft = Interface("IAjaxCoreKraft");
+        IAjaxCoreKraft = Interface("IAjaxCoreKraft"),
+        AjaxRequestPackingCoreKraftFlagsExtension = Class("AjaxRequestPackingCoreKraftFlagsExtension");
 
     function BKInit_AjaxPackerConfig(packer) {
         BaseObject.apply(this, arguments);

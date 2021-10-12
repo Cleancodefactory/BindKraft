@@ -28,7 +28,7 @@
                 // Apply extensions if supported
                 if (this.is(IAjaxExtensions)) {
                     var result = this.iterateExtensions(function(extension) {
-                        return extension.updateRequest(packed);
+                        return extension.patchPackedRequest(packed);
                     });
                 }
                 return [packed];

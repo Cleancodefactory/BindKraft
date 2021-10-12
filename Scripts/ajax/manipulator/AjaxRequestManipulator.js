@@ -1,5 +1,9 @@
 (function(){
 
+    var AjaxBase = Class("AjaxBase"),
+        IAjaxCoreKraft = Interface("IAjaxCoreKraft"),
+        BKUrl = Class("BKUrl");
+
     function AjaxRequestManipulator(request, pipeline) { 
         AjaxBase.apply(this,arguments);
         this.$request = request;
@@ -8,7 +12,28 @@
     AjaxRequestManipulator.Inherit(AjaxBase, "AjaxRequestManipulator");
 
     AjaxRequestManipulator.prototype.url = function(url) {
-        this.$request.set_url(url);
+        var bkurl = BKUrl.getBasePathAsUrl();
+        if (typeof url == "string") {
+            var match;
+            if (match = /(?:^(post:)|(get:))(.*)/.exec(url)) {
+                if (match[1]) {
+                    this.$request.set_verb("POST");
+                    url = match[3];
+                } else {
+                    this.$request.set_verb("GET");
+                    url = match[3]
+                }
+            }
+            if (!bkurl.set_nav(url)) {
+                throw "Cannot construct the url.";
+            }
+
+        } else if (BaseObject.is(url, BKUrl)) {
+            if (!bkurl.set_nav(url)) {
+                throw "Cannot construct the url.";
+            }
+        }
+        this.$request.set_url(bkurl);
         return this;
     }
     AjaxRequestManipulator.prototype.data = function(data) {
@@ -67,7 +92,7 @@
     //#region Sending the request
 
     AjaxRequestManipulator.prototype.send = function() {
-        return this.$pipeline.ajaxSendRequest(this.$request);
+        return this.$pipeline.ajaxSendRequest(this, this.$request);
     }
 
     //#endregion

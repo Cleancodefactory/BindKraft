@@ -7,7 +7,8 @@
         AjaxRequestSenderCancel = Class("AjaxRequestSenderCancel"),
         AjaxRequestPackerSingleJson = Class("AjaxRequestPackerSingleJson"),
         AjaxResponseUnpackerSingleResponse = Class("AjaxResponseUnpackerSingleResponse")
-        AjaxRequestPackerDummy = Class("AjaxRequestPackerDummy");
+        AjaxRequestPackerDummy = Class("AjaxRequestPackerDummy"),
+        BKInit_AjaxPackerConfig = Class("BKInit_AjaxPackerConfig");
 
     function BKInit_AjaxCarrier(carrier, pipeline) {
         BaseObject.apply(this, arguments);
@@ -24,7 +25,9 @@
     }
     BKInit_AjaxCarrier.prototype.packJson = function(fn) {
         this.carrier.set_requestPacker(new AjaxRequestPackerSingleJson());
-        if (fn) fn(this.carrier.get_requestPacker());
+        if (typeof fn == "function") {
+            fn(new BKInit_AjaxPackerConfig(this.carrier.get_requestPacker()))
+        };
         return this;
     }
     BKInit_AjaxCarrier.prototype.unpackWith = function(unpacker) {

@@ -67,6 +67,12 @@
                         sender = this.get_requestSender();
                         if (packed.length > 0) {
                             packed.Each(function(i,r) {
+                                if (me.get_responseUnpacker() != null) { 
+                                    // If specified on the carrier this takes precedence.
+                                    // Furthermore not all packers can provide default unpacking.
+                                    r.set_responseUnpacker(me.get_responseUnpacker());
+                                }
+
                                 r.set_progressQueue(me.get_progressQueue());
                                 sender.sendRequest(r);
                             });
@@ -111,7 +117,7 @@
     }
     AjaxCarrier.prototype.set_requestPacker = function(v) {
         if (BaseObject.is(v, "IAjaxRequestPacker") || v == null) {
-            this.$requestPacker = v; 
+            this.$requestPacker = v;
         } else {
             this.LASTERROR("Attempt to set request packer not supporting IAjaxRequestPacker");
         }
