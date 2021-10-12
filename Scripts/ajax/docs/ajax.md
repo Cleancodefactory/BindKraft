@@ -17,8 +17,10 @@ The Ajax subsystem can be used in two ways - private (a complete ajax subsystem 
 
  **AjaxPipeline** - holds the entire construction together:
  
-  `IAjaxSendQueue` - receives the requests from the code
+  `IAjaxSendQueue` - A pool rather, receives the requests from the code
 
-  `IAjaxCarrier` - onne or more carriers
+  `IAjaxCarrier` - the main element of the pipeline. Combines picking requests from send queue using pickers, packing them and sending them - see blow for the details.
+
+  
     
     ...  

@@ -24,7 +24,7 @@
             originals.Each(function(idx, req) {
                 if (BaseObject.is(req, "IAjaxAttachedInfo")) {
                     info = req.getAttachedInfo(IAjaxCoreKraft);
-                    if (info != null) {
+                    if (info != null) { // User passed flags
                         if (typeof info.contentFlags == "number") {
                             flags |= info.contentFlags;
                         }

@@ -36,11 +36,17 @@
 
 
         cls.prototype.iterateExtensions = function(callback) { 
+            var result = null;
             if (BaseObject.isCallback(callback)) {
                 this.$__ajaxExtensions.Each(function(idx,extension) { 
-                    BaseObject.callCallback(callback, extension);
+                    if (!result) return; // If one has failed - no more are executed.
+                    var r = BaseObject.callCallback(callback, extension);
+                    if (typeof r == "string") {
+                        result = r;
+                    }
                 });
             }
+            return result;
         }
 
     }

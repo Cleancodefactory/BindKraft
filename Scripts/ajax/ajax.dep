@@ -15,25 +15,4 @@
 //#using "./AjaxPipeline.js"
 //#using "./AjaxPipelines.js"
 //#using "./extensions/extensions.dep"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.dep"
-
+//#using "./manipulator.dep"

@@ -22,8 +22,9 @@
         this.carrier.set_requestPacker(packer);
         return this;
     }
-    BKInit_AjaxCarrier.prototype.packJson = function() {
+    BKInit_AjaxCarrier.prototype.packJson = function(fn) {
         this.carrier.set_requestPacker(new AjaxRequestPackerSingleJson());
+        if (fn) fn(this.carrier.get_requestPacker());
         return this;
     }
     BKInit_AjaxCarrier.prototype.unpackWith = function(unpacker) {

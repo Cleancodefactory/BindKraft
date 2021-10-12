@@ -3,13 +3,15 @@
     var AjaxRequestPackerBase = Class("AjaxRequestPackerBase"),
         IAjaxRequest = Interface("IAjaxRequest"),
         IAjaxResponseUnpacker = Interface("IAjaxResponseUnpacker"),
-        IAjaxRequestPackerImpl = InterfaceImplementer("IAjaxRequestPackerImpl");
+        IAjaxRequestPackerImpl = InterfaceImplementer("IAjaxRequestPackerImpl"),
+        IAjaxCoreKraft = Interface("IAjaxCoreKraft");
 
     function AjaxRequestPackerSingleJson() {
         AjaxRequestPackerBase.apply(this,arguments);
         this.set_unpacker(this);
     }
     AjaxRequestPackerSingleJson.Inherit(AjaxRequestPackerBase, "AjaxRequestPackerSingleJson")
+        .Implement(IAjaxCoreKraft)
         .Implement(IAjaxRequestPackerImpl, null,
             function(packedRequest) {
                 var originals = packedRequest.get_originalRequests();

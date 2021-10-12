@@ -6,4 +6,5 @@
 //#using "IAjaxRequestInspectorUserImpl.js"
 //#using "IAjaxRequestInspectorsUserImpl.js"
 //#using "IAjaxExtensionsImpl.js"
+//#using "IAjaxConnectedImpl.js"
 
