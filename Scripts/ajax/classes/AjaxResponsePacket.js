@@ -38,7 +38,7 @@
         var def = datas[0];
         if (def && def.name == "default") return def.data;
     }
-    IAjaxResponsePacket.prototype.get_datahash = function() { 
+    AjaxResponsePacket.prototype.get_datahash = function() { 
         var datas = this.get_alldatas();
         if (datas.length == 0) return null;
         var def = datas[0];
@@ -53,7 +53,7 @@
      * @param key {string} Optional, if omitted returns an object containing all the pieces in its properties.
      * @returns {object} the specified piece of data or all the datas (if key is omitted)
      */
-    IAjaxResponsePacket.prototype.get_datas = function(key) { 
+    AjaxResponsePacket.prototype.get_datas = function(key) { 
         if (key == null) {
             if (this.$packet && this.$packet.datas) return this.$packet.datas;
         } else {
@@ -64,7 +64,7 @@
     /**
      * Returns the hash of the specified data piece or all the hashes as an object with properties containing the hashes. Each property is named the same way as in the result of get_datas()
      */
-    IAjaxResponsePacket.prototype.get_datashash = function(key) { 
+    AjaxResponsePacket.prototype.get_datashash = function(key) { 
         return this.getAttribute("datas", key, "sid");
     }
 
@@ -72,8 +72,8 @@
     /**
      * @returns All the data pieces in 1.0 format.
      */
-     AjaxResponsePacket.prototype.get_alldatas = function() { 
-        // TODO: May be add the attributes too?
+    AjaxResponsePacket.prototype.get_alldatas = function() { 
+        // TODO: Maybe add the attributes too? Maybe not
         if (this.$datas != null) return this.$datas;
         var datas = [], o;
         if (this.$packet != null && this.$packet.datas != null) {
@@ -85,7 +85,7 @@
                 }
             }
         } else if (this.$packet != null && this.$packet.data != null) {
-            datas.push({ "default": this.$packet.data });
+            datas.push({ name: "default", data: this.$packet.data });
         }
         this.$datas = datas;
         return datas;
@@ -99,32 +99,32 @@
      * Returns the specified view as string
      * @returns {string} The requested view by key. By convention the default view must have a key "normal"
      */
-     AjaxResponsePacket.prototype.get_view = function(key) { 
+    AjaxResponsePacket.prototype.get_view = function(key) { 
          if (this.$packet != null && this.$packet.views) {
              var _key = key || "normal";
              return this.$packet.views[_key];
          }
          return null;
-     }
+    }
      /**
       * Returns the hash of the specified view
       * @returns {string} The hash of the specified view
       */
-     AjaxResponsePacket.prototype.get_viewhash = function(key) { 
+    AjaxResponsePacket.prototype.get_viewhash = function(key) { 
          return this.getAttribute("views",_key, "sid");
-     }
+    }
  
      /**
       * @returns all the views as an object with properties named after the view name and the view as string in it.
       */
-     AjaxResponsePacket.prototype.get_views = function() { 
+    AjaxResponsePacket.prototype.get_views = function() { 
          if (this.$packet) return this.$packet.views;
          return null;
-     }
-     /**
-      * @returns all the view hashes as an object with properties named after the view name and the hash as a string in it.
-      */
-      AjaxResponsePacket.prototype.get_viewshash = function() { 
+    }
+    /**
+     * @returns all the view hashes as an object with properties named after the view name and the hash as a string in it.
+     */
+    AjaxResponsePacket.prototype.get_viewshash = function() { 
           var sids = {};
           if (this.$packet && this.$packet.attributes && this.$packet.attributes.views) {
                 var views = this.$packet.attributes.views;

@@ -11,6 +11,10 @@
      * It will use the packed request's suggestions if they exist (multipart has to be suggested by the packer in order to happen)
      * 
      * The expected type is always "packetxml", unless something else is suggested by the packed request
+     * 
+     * @param fcount {integer} the number of fetchers to use for sending pool. If omitted - 1
+     * @param fetcherCreator {function} Custom fetcher creator function. It must create a single LightFetchHttp object and return it. 
+     *                                  Used when specially configured fetchers are necessary.
      */
     function AjaxRequestSenderPool(fcount, fetcherCreator) { 
         AjaxRequestSenderBase.apply(this, arguments);
