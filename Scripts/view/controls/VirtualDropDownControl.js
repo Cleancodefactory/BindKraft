@@ -11,8 +11,12 @@ VirtualDropDownControl.Implement(IUIControl);
 VirtualDropDownControl.Implement(IDisablable);
 VirtualDropDownControl.Implement(IItemKeyPropertiesDescriptor);
 VirtualDropDownControl.Implement(ITemplateSourceImpl, new Defaults("templateName", "bindkraft/control-vdropdown"));
+VirtualDropDownControl.ImplementProperty("disabledCss", new InitializeStringParameter("default value"), new Defaults("disabledCss", "disabled"), "disabledCss");
+VirtualDropDownControl.ImplementProperty("enabledCss", new InitializeStringParameter("default value"), new Defaults("enabledCss", null), "enabledCss");
 VirtualDropDownControl.$defaults = {
 	templateName: "bindkraft/control-vdropdown",
+	disabledCss: "disabled",
+	enabledCss: null, // Usually not needed - the default form is enabled.
 };
 
 VirtualDropDownControl.prototype.obliterate = function () { //Un-Register messenger

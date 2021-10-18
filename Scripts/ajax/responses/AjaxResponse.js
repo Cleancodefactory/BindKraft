@@ -7,8 +7,8 @@
      * This response is the regular success response, but more specific classes may exist for certain kind of unpacking procedures.
      * For not it is NOT cloneable.
      * 
-     * @param {*} data 
-     * @param {*} message 
+     * @param {*} data - only the data from the response, without any OOB/status information.
+     * @param {*} message - optional message
      */
     function AjaxResponse(data, message) {
         AjaxBase.apply(this,arguments);
