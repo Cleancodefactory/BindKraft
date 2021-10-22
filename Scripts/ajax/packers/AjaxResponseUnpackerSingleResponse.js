@@ -3,7 +3,8 @@
     var AjaxResponse = Class("AjaxResponse"),
         AjaxBase = Class("AjaxBase"),
         AjaxResponsePacket = Class("AjaxResponsePacket"),
-        IAjaxResponseUnpacker = Interface("IAjaxResponseUnpacker");
+        IAjaxResponseUnpacker = Interface("IAjaxResponseUnpacker"),
+        AjaxUnsuccessfulResponse = Class("AjaxUnsuccessfulResponse");
     /**
      * The simple unpacker for AjaxRequestPackerSingleJson
      *  -> Json is sent
