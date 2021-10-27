@@ -7,7 +7,13 @@ function Defaults(name, hardDefault) {
 	this.hardDefault = hardDefault;
 }
 Defaults.prototype.read = function(obj) {
+	var x;
 	if (typeof this.name != "string") return this.hardDefault;
+	if (BaseObject.is(obj, "IAmbientDefaultsConsumer")) {
+		// Try finding defaults service
+		x = obj.readAmbientDefaultValue(this.name);
+		if (x != null) return x;
+	}
 	var cls = Class.getClassDef(obj);
 	if (cls != null && typeof cls.$defaults == "object" && typeof cls.$defaults[this.name] !== "undefined") {
 		return cls.$defaults[this.name];

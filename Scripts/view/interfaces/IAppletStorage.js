@@ -1,7 +1,7 @@
 
 
 
-
+// TODO Deprecate this
 /*INTERFACE*/ /*IMPL*/
 function IAppletStorage() { }
 IAppletStorage.Interface("IAppletStorage");

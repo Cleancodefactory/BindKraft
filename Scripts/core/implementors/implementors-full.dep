@@ -21,3 +21,4 @@
 //#using "./IFindServiceImpl.js"
 //#using "./IEventSubscriberImpl.js"
 //#using "./IElementsLocatorRegisterImpl.js"
+//#using "./IAmbientDefaultsConsumerImpl.js"

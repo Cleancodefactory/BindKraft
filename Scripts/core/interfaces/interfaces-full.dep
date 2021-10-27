@@ -102,3 +102,6 @@
 
 //#using "./IRunningComponent.js"
 //#using "./IRunningComponentSuspendable.js"
+
+//#using "./IAmbientDefaultsConsumer.js"
+//#using "./IAmbientDefaults.js"

@@ -115,3 +115,40 @@ The first argument above is the boot **phase** in which to execute the action. T
 1. The defaults have to be simple values (numbers, strings, booleans etc.)
 2. The defaults are plain values and not a tree of objects.
 3. The name of each default value should be based on the name of the parameter for which it is intended (e.g. templateName for the property parameter `get_templateName`/`set_templateName`) unless there is no such parameter - then the name MUST be descriptive and the documentation must describe its purpose and effect.
+
+## Ambient defaults
+Please do not read yet!
+
+TODO: Write description here!!!
+
+
+For the implementation of IAmbientDefaults:
+
+```Javascipt
+
+init.AppData("SomeApp", function (data) {
+        // may be other data files
+        data.ambientDefaults({
+            "VirtualDropDownControl": {
+                templateName: "mymodule/vd-template"
+            },
+            PagerControl: {
+                templateName: "mymodule/pager-template",
+                pageSize: 20
+            }
+        });
+        data.object("ambientDefaults", {
+            "VirtualDropDownControl": {
+                templateName: "mymodule/vd-template"
+            },
+            PagerControl: {
+                templateName: "mymodule/pager-template",
+                pageSize: 20
+            }
+        });
+    });
+
+```
+
+```Javascript
+```

@@ -29,7 +29,8 @@ YesNoControl.prototype.changedevent = new InitializeEvent("Fired when the value 
 YesNoControl.prototype.activatedevent = new InitializeEvent("Fired when the value changes");
 
 YesNoControl.prototype.init = function () {
-    $(this.root).empty().append(this.get_template());
+    ITemplateSourceImpl.InstantiateTemplate(this);
+    
 
     this.yesElement = this.child(this.get_yeskey());
     this.noElement = this.child(this.get_nokey());
