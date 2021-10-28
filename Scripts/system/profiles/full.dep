@@ -31,11 +31,13 @@
 //#using "../mediaquery/mediaquery.dep"
 //#using "../localization/localization.dep"
 //#using "../shellcustomizers/shellcustomizers.dep"
+//#using "../AppAmbientDefaults.js"
 
 //#using "../globalcommands/globalcommands.dep"
 //#using "../globalcommands.js"
 
 //#using "../BkInit/bkinit-full.dep"
+
 
 
 // This must be the last file to include

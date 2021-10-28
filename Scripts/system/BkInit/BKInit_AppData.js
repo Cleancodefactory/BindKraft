@@ -31,3 +31,9 @@ BkInit_AppData.prototype.object = function(filename, content) {
 		var f = new ContentMemoryFile("memory/object", content);
 		this.$dir.register(filename, f);
 }
+BkInit_AppData.prototype.ambientDefaults = function(content) {
+	if (!BaseObject.is(content, "object")) throw "The ambientDefaults is not an object";
+	// Add/replace
+	var f = new ContentMemoryFile("memory/object", content);
+	this.$dir.register("ambientDefaults", f);
+}

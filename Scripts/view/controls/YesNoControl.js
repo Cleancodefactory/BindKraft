@@ -4,6 +4,7 @@ function YesNoControl() {
 
 YesNoControl.Inherit(Base, "YesNoControl");
 YesNoControl.Implement(IUIControl);
+YesNoControl.Implement(InterfaceImplementer("IAmbientDefaultsConsumerImpl"));
 YesNoControl.Implement(ITemplateSourceImpl, new Defaults("templateName", "bindkraft/control-yesno"));
 YesNoControl.$defaults = {
 	templateName: "bindkraft/control-yesno"

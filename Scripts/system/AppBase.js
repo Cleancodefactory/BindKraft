@@ -7,7 +7,8 @@ function AppBase(appGate) {
 	if (BaseObject.is(appGate,"IHasManagedInterfaceContainer")) {
 		this.$managed_container = appGate.get_managedinterfacecontainer();
 	}
-	
+    var AppAmbientDefaults = Class("AppAmbientDefaults");
+	this.$__appAmbientDefaults = new AppAmbientDefaults(this);
     this.set_instancename("AppBase derived application");
 }
 AppBase.Inherit(DataHolder, "AppBase");
@@ -23,6 +24,7 @@ AppBase.Implement(IAjaxContextParameters); // See: IAjaxContextParameters implem
 AppBase.Implement(IAjaxReportSinkImpl); // See: IAjaxReportSinkImpl implementation
 AppBase.Implement(IAppElementImpl); // Being an app element enables the application to be part of other applications - no need to declare explicitly a parent application
 AppBase.Implement(IHasManagedInterfaceContainer);
+AppBase.Implement(IServiceLocator);
 
 // Service providing
 AppBase.prototype.provideAsServices = new InitializeArray("Assign an array of strings - names of supported interfaces by your class to enable those to be provided as services", ["IAppletStorage"]);
@@ -44,6 +46,14 @@ AppBase.prototype.GetInterface = function(iface) {
 	return null;
 }
 
+AppBase.prototype.locateService = function (type, reason) { 
+    var typename = Class.getTypeName(type);
+    switch (type) {
+        case "IAmbientDefaults":
+            return this.$__appAmbientDefaults;
+    }
+    return null;
+}
 
 AppBase.prototype.appinitialize = function(callback, args) {
 	alert("appinitialize is not implemented in " + this.classType());
