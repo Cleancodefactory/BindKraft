@@ -7,6 +7,7 @@ function UploadWidgetControl() {
 }
 UploadWidgetControl.Inherit(Base, "UploadWidgetControl");
 UploadWidgetControl.Implement(IUIControl);
+UploadWidgetControl.Implement(InterfaceImplementer("IAmbientDefaultsConsumerImpl"));
 UploadWidgetControl.ImplementIndexedProperty("parameters", new InitializeObject("Parameters to send to the server along with the file"));
 UploadWidgetControl.ImplementProperty("block", new InitializeBooleanParameter("Blocks the uploads if set to true", false));
 UploadWidgetControl.ImplementProperty("scale", new InitializeNumericParameter("Scale of progress", 100));

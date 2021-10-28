@@ -10,6 +10,7 @@ VirtualDropDownControl.Inherit(Base,"VirtualDropDownControl");
 VirtualDropDownControl.Implement(IUIControl);
 VirtualDropDownControl.Implement(IDisablable);
 VirtualDropDownControl.Implement(IItemKeyPropertiesDescriptor);
+VirtualDropDownControl.Implement(InterfaceImplementer("IAmbientDefaultsConsumerImpl"));
 VirtualDropDownControl.Implement(ITemplateSourceImpl, new Defaults("templateName", "bindkraft/control-vdropdown"));
 VirtualDropDownControl.ImplementProperty("disabledCss", new InitializeStringParameter("default value"), new Defaults("disabledCss", "disabled"), "disabledCss");
 VirtualDropDownControl.ImplementProperty("enabledCss", new InitializeStringParameter("default value"), new Defaults("enabledCss", null), "enabledCss");

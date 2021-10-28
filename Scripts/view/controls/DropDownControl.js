@@ -8,6 +8,7 @@ function DropDownControl() {
 }
 DropDownControl.Inherit(Base, "DropDownControl");
 DropDownControl.Implement(IUIControl);
+DropDownControl.Implement(InterfaceImplementer("IAmbientDefaultsConsumerImpl"));
 DropDownControl.prototype.obliterate = function () {
     Messenger.Instance().unsubscribe("PageEvent",this.onHandlePageEvent);
     Base.prototype.obliterate.call(this);

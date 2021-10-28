@@ -5,6 +5,7 @@ function DataViewerControl() {
 }
 DataViewerControl.Inherit(Base, "DataViewerControl");
 DataViewerControl.Implement(IUIControl);
+DataViewerControl.Implement(InterfaceImplementer("IAmbientDefaultsConsumerImpl"));
 DataViewerControl.Implement(ITemplateSourceImpl, new Defaults("templateName", "bindkraft/control-dataviewer"));
 DataViewerControl.ImplementProperty("expanded", new InitializeBooleanParameter("Expanded visualization of the data.", false));
 DataViewerControl.$defaults = {

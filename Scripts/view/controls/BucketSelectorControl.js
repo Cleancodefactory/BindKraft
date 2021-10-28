@@ -23,6 +23,7 @@ function BucketSelectorControl() {
 }
 BucketSelectorControl.Inherit(Base, "BucketSelectorControl");
 BucketSelectorControl.Implement(IUIControl);
+BucketSelectorControl.Implement(InterfaceImplementer("IAmbientDefaultsConsumerImpl"));
 BucketSelectorControl.Implement(ITemplateSourceImpl, new Defaults("templateName", "bindkraft/control-vbucketselector"));
 BucketSelectorControl.$defaults = {
 	templateName: "bindkraft/control-vbucketselector"

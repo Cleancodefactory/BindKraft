@@ -202,6 +202,10 @@ So, theoretically the `IAmbientDefaultsConsumer` is the actual mandatory interfa
 
 ### IAmbientDefaultsConsumerImpl
 
+```Javascript
+ComponentClass.Implement(IAmbientDefaultsConsumerImpl);
+```
+
 Following the above considerations BindKraft comes with this implementer (`IAmbientDefaultsConsumerImpl`) which will look for a service providing `IAmbientDefaults` and return values by querying it. Currently `AppBase`, hence all apps include implementation of `IAmbientDefaults` (as separate object) that can be obtained form their `locateService` method (part of the `IServiceLocator` interface which `AppBase` implements).
 
 This means that any control/component or class that supports at least `IStructuralQueryEmiter` can `.Implement(IAmbientDefaultsConsumerImpl)` and benefit of ambient defaults when placed in an app that defines some. An existing library provided implementation for `IAmbientDefaults` does not exist for more granular ambient definitions, but if custom one is supplied (e.g. provided as service by a window which is root of a sub-hierarchy in an app) the components implementing `IAmbientDefaultsConsumerImpl` will automatically be able to use it if available.

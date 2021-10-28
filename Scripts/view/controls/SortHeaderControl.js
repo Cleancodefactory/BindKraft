@@ -7,6 +7,7 @@ function SortHeaderControl() {
 }
 SortHeaderControl.Inherit(Base, "SortHeaderControl");
 SortHeaderControl.Implement(IUIControl);
+SortHeaderControl.Implement(InterfaceImplementer("IAmbientDefaultsConsumerImpl"));
 SortHeaderControl.Implement(ITemplateSourceImpl, new Defaults("templateName", "bindkraftstyles/control-sortheader"));
 SortHeaderControl.Implement(ICustomParameterizationStdImpl, "templateName", "fieldname", "displayname");
 SortHeaderControl.Defaults({
