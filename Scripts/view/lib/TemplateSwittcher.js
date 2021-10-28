@@ -164,9 +164,9 @@ TemplateSwitcher.prototype.nullTemplateSwitch = function(sender, template) {
 }.Description("Standard $select handler which will select between two templates depending on item == null");
 TemplateSwitcher.prototype.boolTemplateSwitch = function(sender, template) {
     if (sender.get_item()) {
-        return this.getTemplateByKey(this.nullTemplate);
-    } else {
         return this.getTemplateByKey(this.notNullTemplate);
+    } else {
+        return this.getTemplateByKey(this.nullTemplate);
     }
 }.Description("Standard $select handler which will select between two templates depending on item == true and not true. Uses the same templates like the nullTemplateSwitch");
 // Explicit template switching

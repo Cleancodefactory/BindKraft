@@ -130,6 +130,9 @@ Messenger.prototype.unregisterWindow = function (win) {
 // callOnce     - The subscription will be automatically removed after the first call to it
 Messenger.prototype.subscribe = function (eventType, handler, callOnce) {
     var eventTypeName = BaseObject.is(eventType, "string") ? eventType : eventType.classType;
+    if (Class.getType(eventTypeName) == null) {
+        throw "The type " + eventTypeName + " does not exist. Messenger.subscribe requires an existing class or interface.";
+    }
     if (this.$registered[eventTypeName] == null) {
         this.$registered[eventTypeName] = [];
     }

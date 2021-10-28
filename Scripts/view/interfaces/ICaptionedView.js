@@ -6,10 +6,10 @@
      * its implementation will be shadowed if Implement is used.
      */
 
-    function ICaptionedView() {}
-    ICaptionedView.Interface("ICaptionedView")
-        .RequiredTypes("ViewBase")
-        .ForbiddenTypes("WindowBase");
+     function ICaptionedView() {}
+     ICaptionedView.Interface("ICaptionedView")
+         .RequiredTypes("ViewBase")
+         .ForbiddenTypes("WindowBase");
 
     ICaptionedView.prototype.get_caption = function() { throw "not implemented"; };
     ICaptionedView.prototype.get_icon = function() { throw "not implemented"; };

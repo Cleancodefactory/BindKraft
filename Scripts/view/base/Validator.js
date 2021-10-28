@@ -656,6 +656,9 @@ Validator.prototype.updateVisualState = function () {
             case -1:
                 tml = this.getTemplateByKey("uninitialized");
                 break;
+            case -2:
+                tml = this.getTemplateByKey("pending");
+                break;
             default: // correct
                 tml = this.getTemplateByKey("correct");
         }
@@ -672,77 +675,7 @@ Validator.prototype.updateVisualState = function () {
     }
 };
 
-Validator.prototype.updateVisualState_old = function () {
-	/* Deprecated
-    if ($(this.root).is("img")) {
-        switch (this.result) {
-            case 1: // incorrect
-                if (this.incorrectImage != null && this.incorrectImage.length > 0) {
-                    $(this.root).show().attr("src", mapPath(this.incorrectImage));
-                } else {
-                    $(this.root).show();
-                }
-                this.showMessagesHint();
-                break;
-            case 2: // fail
-                if (this.failImage != null && this.failImage.length > 0) {
-                    $(this.root).show().attr("src", mapPath(this.failImage));
-                } else {
-                    $(this.root).show();
-                }
-                this.showMessagesHint();
-                break;
-            case -1:
-                if (this.uninitializedImage != null && this.uninitializedImage.length > 0) {
-                    $(this.root).show().attr("src", mapPath(this.uninitializedImage));
-                } else {
-                    $(this.root).show();
-                }
-                this.showMessagesHint();
-                break;
-            default: // correct
-                if (this.correctImage != null && this.correctImage.length > 0) {
-                    $(this.root).show().attr("src", mapPath(this.correctImage));
-                    this.showMessagesHint();
-                } else {
-                    $(this.root).hide();
-                }
-        }
-    } else {
-		*/
-        var tmls = this.get_template();
-        var tml;
-        if (tmls != null && tmls.length > 0) {
-            switch (this.result) {
-                case 1: // incorrect
-                    tml = this.getTemplateByKey("incorrect");
-                    break;
-                case 2: // fail
-                    tml = this.getTemplateByKey("fail");
-                    break;
-                case -1:
-                    tml = this.getTemplateByKey("uninitialized");
-                    break;
-                default: // correct
-                    tml = this.getTemplateByKey("correct");
-            }
-            if (tml != null && tml.length > 0) {
-                var el = $(this.root);
-                el.Empty();
-                var o = ViewBase.cloneTemplate(el, tml, this);
-				this.rebind();
-				this.updateTargets();
-                el.show();
-                //this.showMessagesHint();
-            }
-        } else {
-            if (this.result > ValidationResultEnum.correct) {
-                $(this.root).show();
-                //this.showMessagesHint();
-            }
-        }
-    // } Deprecated
-};
+
 Validator.prototype.onValidityChanged = function () {
     // place to change the state - the default implementation changes its visibility.
 	this.callAsync(this.updateVisualState); // Not strictly necessary, but having this async is never a bad thing.

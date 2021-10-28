@@ -32,20 +32,22 @@ VirtualDropDownControl.prototype.onHandlePageEvent = new InitializeMethodDelegat
         this.Close();
     }
 });
+VirtualDropDownControl.prototype.$disabled = false;
+VirtualDropDownControl.prototype.get_disabled = function () { return this.$disabled; }
 VirtualDropDownControl.prototype.set_disabled = function (v) {
-    IDisablable.prototype.set_disabled.apply(this, arguments);
+	this.$disabled = v;
     if (this.enabledCss != null && this.enabledCss.length > 0) {
         if (v) {
-            $(this.root).removeClass(this.enabledCss);
+			DOMUtil.removeClass(this.root, this.enabledCss);
         } else {
-            $(this.root).addClass(this.enabledCss);
+			DOMUtil.addClass(this.root, this.enabledCss);
         }
     }
     if (this.disabledCss != null && this.disabledCss.length > 0) {
         if (v) {
-            $(this.root).addClass(this.disabledCss);
+            DOMUtil.addClass(this.root,this.disabledCss);
         } else {
-            $(this.root).removeClass(this.disabledCss);
+            DOMUtil.removeClass(this.root,this.disabledCss);
         }
     }
 };
