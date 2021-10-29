@@ -5,7 +5,7 @@ function ScrollableArea() {
 ScrollableArea.Inherit(Base, "ScrollableArea");
 ScrollableArea.Implement(IFreezable);
 //ScrollableArea.Implement(ITemplateSourceImpl);
-
+ScrollableArea.Implement(InterfaceImplementer("IAmbientDefaultsConsumerImpl"));
 ScrollableArea.Implement(ITemplateSourceImpl, new Defaults("templateName", "bindkraft/control-scrollablearea"));
 ScrollableArea.$defaults = {
 	templateName: "bindkraft/control-scrollablearea"

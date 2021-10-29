@@ -15,6 +15,7 @@ Validator.Inherit(ViewBase, "Validator");
 Validator.Implement(IValidator);
 Validator.Implement(ITemplateSourceImpl,new Defaults("templateName"));
 Validator.Implement(ITemplateConsumerImpl);
+Validator.Implement(InterfaceImplementer("IAmbientDefaultsConsumerImpl"));
 Validator.Implement(IDisablable);
 Validator.$defaults = {
     templateName: "bindkraft/default-validator" 
