@@ -6,7 +6,7 @@
         BKInit_AjaxQueueInspectorSingle = Class("BKInit_AjaxQueueInspectorSingle"),
         AjaxRequestSenderCancel = Class("AjaxRequestSenderCancel"),
         AjaxRequestPackerSingleJson = Class("AjaxRequestPackerSingleJson"),
-        AjaxResponseUnpackerSingleResponse = Class("AjaxResponseUnpackerSingleResponse")
+        AjaxResponseUnpackerSingleResponse = Class("AjaxResponseUnpackerSingleResponse"),
         AjaxRequestPackerDummy = Class("AjaxRequestPackerDummy"),
         BKInit_AjaxPackerConfig = Class("BKInit_AjaxPackerConfig");
 
