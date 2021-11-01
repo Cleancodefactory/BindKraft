@@ -765,8 +765,28 @@ Function.prototype.ExtendMethod = function(method, withMethod, bRunFirst, bRetur
  * 
  * callback is called after the new value is set, it should not change the value
  */
-Function.prototype.ImplementProperty = function (pname, initialize, pstore, changeCallback, force) {
-	var pstoreprop = (pstore != null) ? pstore : "$" + pname;
+Function.prototype.ImplementProperty = function (pname, initialize, pstore_or_force, changeCallback, force) {
+	var pstoreprop = "$" + pname;
+	if (typeof pstore_or_force == "boolean") {
+		force = pstore_or_force;
+	} else if (typeof pstore_or_force == "string") {
+		pstoreprop = pstore_or_force;
+	} else if (pstore_or_force == null) {
+
+	} else {
+		CompileTime.err("ImplementProperty in " + this.classType + " has wrong argument.");
+		if (JBCoreConstants.CompileTimeThrowOnErrors) {
+			throw "ImplementProperty in " + this.classType + " has wrong argument.";
+		}
+	}
+	
+	if (typeof pname != "string" || pname.length == 0) {
+		CompileTime.err("ImplementProperty in " + this.classType + " has wrong argument.");
+		if (JBCoreConstants.CompileTimeThrowOnErrors) {
+			throw "ImplementProperty in " + this.classType + " has wrong argument.";
+		}
+	}
+
 	if (initialize == null) initialize = new Initialize("(no description)", null);
     this.prototype[pstoreprop] = initialize;
     this.prototype["get_" + pname] = function () { return this[pstoreprop]; };
