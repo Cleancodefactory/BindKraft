@@ -44,11 +44,10 @@ Validator.prototype.obliterate = function () {
 
 Validator.prototype.$init = function () {
     // In the repeater we need to cut the innerHTML and keep it as a template for repeating items
-    var el = $(this.root);
-    if (this.get_template() == null) {
-        var c = el.children();
-        this.set_template(c);
-        c.remove();
+    var tml = this.root.innerHTML;
+    if (!/^\s+$/.test(tml)) {
+        this.set_template(tml);
+        DOMUtil.empty(this.root);
     }
     //this.$createAutoValidators();
 	var imprules = this.get_importrules();
