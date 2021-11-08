@@ -164,6 +164,12 @@ CLEngine.prototype.processLine = function(arr) {
 	function _processOpStack(topriority) {
 
 	}
+	function _peekStack(stack, _n) {
+		var n = _n || 0;
+		var l = stack.length - n - 1;
+		if (l < 0) return null;
+		return stack[l];
+	}
 
 	for (var i = 0; i < arr.length; i++) {
 		_next = null;
