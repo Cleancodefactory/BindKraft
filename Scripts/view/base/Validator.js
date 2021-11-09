@@ -686,3 +686,26 @@ Validator.prototype.onValidityChanged = function () {
 	}
 	
 };
+
+//#region Bindable properties for outside usage
+// Use validitychanged for sync
+
+/**
+ * @returns true for incorrect and critical states, otherwise false
+ */
+ Validator.prototype.get_isincorrect = function () {
+    return (this.result > ValidationResultEnum.correct);
+}
+/**
+ * @returns true when the validation is pending.
+ */
+Validator.prototype.get_ispending = function () {
+    return (this.result == ValidationResultEnum.pending);
+}
+/**
+ * @returns true when the validation is correct
+ */
+Validator.prototype.get_iscorrect = function () {
+    return (this.result == ValidationResultEnum.correct);
+}
+//#endregion
