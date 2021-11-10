@@ -60,12 +60,12 @@ CLEngine.reTokens = [
 	{ type: "hex",   		re: /(?:0x([0-9a-fA-F]+))/g, proc: CLEngine.parseHexNumber, priority: 0, rtype: "literal"  },
 	{ type: "null",   		re: /(null)(?=\b)/g, proc: CLEngine.parseHexNumber, priority: 0, rtype: "literal"  },
 	{ type: "bool",   		re: /(true|false)(?=\b)/g, proc: CLEngine.parseHexNumber, priority: 0, rtype: "literal"  },
-	{ type: "brnopen",    	re: /(\()/g, priority: 3 },
-	{ type: "brsopen",		re: /(\[)/g,priority: 4 },
-	{ type: "brcopen", 		re: /(\{)/g, property: 4 },
-	{ type: "brnclose",    	re: /(\))/g, priority: 3 },
-	{ type: "brsclose",		re: /(\])/g, priority: 4 },
-	{ type: "brcclose",		re: /(\})/g, priority: 4 },
+	{ type: "brnopen",    	re: /(\()/g, 	priority: 3 },
+	{ type: "brsopen",		re: /(\[)/g,	priority: 4, alternate: "not supported in this version" },
+	{ type: "brcopen", 		re: /(\{)/g, 	priority: 4, alternate: "not supported in this version" },
+	{ type: "brnclose",    	re: /(\))/g, 	priority: 3 },
+	{ type: "brsclose",		re: /(\])/g, 	priority: 4, alternate: "not supported in this version" },
+	{ type: "brcclose",		re: /(\})/g, 	priority: 4, alternate: "not supported in this version" },
 	
 	{ type: "dualop",   re: /(or|and|xor)/g, priority: 60 },
 	{ type: "dualop",   re: /(\=\>|\>\=|\<\=|\=\=)/g, priority: 50 },
@@ -73,6 +73,7 @@ CLEngine.reTokens = [
 	{ type: "dualop",   re: /(\*|\/)/g, priority: 20 },
 	{ type: "dualop",   re: /(\+|\-)/g, priority: 30 },
 	{ type: "assign",   re: /(\=)(?!\=)/g, priority: 80 },
+	{ type: "assign",   re: /(\:)(?!\:)/g, priority: 80, alternate: "not supported in this version" },
 
 	{ type: "ident",   	re: /([a-zA-Z\_\$][a-zA-Z0-9\_\$]*)/g, priority: 15 },
 	{ type: "endop",   	re: /(;)/g, priority: 100 },
@@ -107,11 +108,12 @@ CLEngine.instructions = {
 	// mode - parse what: statement, object literal, array literal.
 	pos - the position at which to attempt recognition
 */
-CLEngine.prototype.$eatToken = function(strLine, pos, /*[]*/ tknLine) {
+CLEngine.prototype.$eatToken = function(obj_tokenizer, strLine, pos, /*[]*/ tknLine) {
 	var match, v;
-	
-	for (var i = 0; i < CLEngine.reTokens.length; i++) {
-		var retkn = CLEngine.reTokens[i];
+	var tokenizer = obj.tokenizer;
+	// for (var i = 0; i < CLEngine.reTokens.length; i++) {
+	for (var i = 0; i < tokenizer.length; i++) {
+		var retkn = tokenizer[i];
 		retkn.re.lastIndex = pos;
 		match = retkn.re.exec(strLine);
 		if (match != null && match.index == pos) {
@@ -127,6 +129,7 @@ CLEngine.prototype.$eatToken = function(strLine, pos, /*[]*/ tknLine) {
 						priority: retkn.priority, 
 						rtype: retkn.rtype});
 			}
+			if (retkn.alternate != null) obj_tokenizer.tokenizer = retkn.alternate;
 			return match[0].length; // caller must add to the pos
 		}
 	}
@@ -136,10 +139,14 @@ CLEngine.prototype.tokenizeLine = function(strLine) {
 	var tknLine = [];
 	var pos = 0;
 	var str = strLine;
+	var obj_tokenizer = { tokenizer: CLEngine.reTokens };
 	//var mode = { stack: []}; // Mode stack if empty parsing statements otherwise object {} or array []
 	// Prio
 	do {
-		var n = this.$eatToken(str, pos, tknLine);
+		var n = this.$eatToken(tokenizer, str, pos, tknLine);
+		if (typeof obj_tokenizer.tokenizer == "string") {
+			return obj_tokenizer.tokenizer + " at " + pos + " (" + str.slice(pos,50) + "...)";
+		}
 		if (n > 0) {
 			pos += n;
 			if (pos >= str.length) break;
@@ -147,6 +154,7 @@ CLEngine.prototype.tokenizeLine = function(strLine) {
 		} else {
 			return "cannot tokenize at " + pos + " (" + str.slice(pos,50) + "...)";
 		}
+		
 	} while (true);
 	return tknLine;
 }
@@ -161,7 +169,21 @@ CLEngine.prototype.processLine = function(arr) {
 	var _item;
 	var program = [];
 
-	function _processOpStackOnCloseBraacket() {
+	function _findItemTypeInOpStack(itemType) {
+		var i;
+		for (i = opstack.length - 1;i >= 0; i--) {
+			var item = opstack[i];
+			if (item.type == itemType) return i;
+		}
+		return -1;
+	}
+	function _getItemByTypeFromOpstack(itemType) {
+		var i = _findItemTypeInOpStack(itemType);
+		if (i >= 0) return opstack[i];
+		return null;
+	}
+	function _processOpStackOnCloseBracket() {
+		var bracket = _getItemByTypeFromOpstack(brnopen);
 	}
 	function _processOpStackToPriority(topriority) {
 		var top = _peekStack(opstack);
