@@ -85,7 +85,7 @@ TODO: _More information about the implementation conventions_
 
 There are two instance methods defined in BaseObject providing options to call formatters directly - both system and custom ones. Because of the way the custom formatters are used the custom formatters are supported only on an existing instance of them. Typically this is Ok, because in most cases where custom formatters need to be invoked from code, they are also invoked from the mark-up (the view/template of a component etc.). This way a natural synchronization occurs - both processing through bindings and explicit operations in code use the same instance. This may be a little inconvenient when custom formatters are needed only by the code - an instance of them, initialized and configured correctly will need to be created in this case.
 
-The **ad hoc formatters are not supported** by the `BaseObject.prototype.Format` and `UnFormat` methods.
+The **ad hoc formatters are not supported** by the `BaseObject.prototype.Format` and `Unformat` methods.
 
 The methods are:
 ```Javascript
@@ -95,7 +95,7 @@ BaseObject.prototype.Format(name_or_inst, val, bind, params)
 >Formats `val` through the formatter specified by `name_or_inst` (see how below). The `bind` and `params` are optional. bind can be a reference to a binding or null to omit it. params is a string containing parameters the same way as they are specified in a binding (e.g. `{ ... format=SomeFormatter(the_parameters) ... }` ). Yet the last to arguments rarely make any sense when using a formatter from the code, but they are provided for the rare occasions when this is possible.
 
 ```Javascript
-BaseObject.prototype.UnFormat(name_or_inst, val, bind, params)
+BaseObject.prototype.Unformat(name_or_inst, val, bind, params)
 ```
 
 The call has the same arguments supported, but calls the inverse action - FromTarget of the formatter.
