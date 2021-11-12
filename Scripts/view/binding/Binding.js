@@ -171,6 +171,14 @@ Binding.entityStateIsChanged = function (o) { // pass a single object
  .Param("o","Binding which state will be checked")
  .Returns ("true or false");
 
+ Binding.entityStateIsNotDeleted = function (o) { // pass a single object
+    if (o == null) return false;
+    var s = o[Binding.entityStatePropertyName];
+    return (s != DataStateEnum.Deleted);
+}.Description("...")
+ .Param("o","Binding which state will be checked")
+ .Returns ("true or false");
+
 Binding.entityStateIsMaterial = function (o) { // pass a single object
     if (o == null) return false;
     var s = o[Binding.entityStatePropertyName];
