@@ -19,9 +19,9 @@ AsyncValidatorRule.prototype.get_message = function (lastValue) {
 	if (msg != null && msg.length > 0) msg = msg.sprintf(lastValue);
 	return msg;
 };
-AsyncValidatorRule.prototype.validateValue = function (validator, values, bindings) {
+AsyncValidatorRule.prototype.validateValues = function (validator, values, bindings) {
 	var result = ValidationResultEnum.correct;
-	if (!Array.isArray(binings)) return this.validationResult(result);
+	if (!Array.isArray(bindings)) return this.validationResult(result);
 	bindings = Array.createCopyOf(bindings);
 	if (Array.isArray(values)) values = Array.createCopyOf(values);
 
@@ -37,6 +37,25 @@ AsyncValidatorRule.prototype.validateValue = function (validator, values, bindin
 		}
 		if (r > result) result = r;
 		if (r == ValidationResultEnum.pending) return r;
+	}
+	return this.validationResult(result);
+};
+
+AsyncValidatorRule.prototype.validateValue = function (validator, value, binding) {
+	var result = ValidationResultEnum.correct;
+	
+	var d = this.get_delegate();
+	var sd = this.get_simpledelegate();
+	if ((sd != null || d != null) && !this.isValueEmpty(value)) {
+		var r;
+		if (d != null) {
+			r = d.invoke({ rule: this, validator: validator, value: value, binding: binding });
+		} else if (sd != null) {
+			r = sd.invoke(this, validator, value, binding);
+		}
+		if (r > result) result = r;
+		if (r == ValidationResultEnum.pending) return r;
+		
 	}
 	return this.validationResult(result);
 };

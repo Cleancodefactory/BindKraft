@@ -36,7 +36,7 @@ DelegateValidatorRule.prototype.validateValue = function (validator, value, bind
 };
 DelegateValidatorRule.prototype.validateValues = function (validator, values, bindings) {
 	var result = ValidationResultEnum.correct;
-	if (!Array.isArray(binings)) return this.validationResult(result);
+	if (!Array.isArray(bindings)) return this.validationResult(result);
 	bindings = Array.createCopyOf(bindings);
 	if (Array.isArray(values)) values = Array.createCopyOf(values);
 	var d = this.get_delegate();

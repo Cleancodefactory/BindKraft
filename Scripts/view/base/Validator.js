@@ -45,7 +45,7 @@ Validator.prototype.obliterate = function () {
 Validator.prototype.$init = function () {
     // In the repeater we need to cut the innerHTML and keep it as a template for repeating items
     var tml = this.root.innerHTML;
-    if (!/^\s+$/.test(tml)) {
+    if (!/^\s*$/.test(tml)) {
         this.set_template(tml);
         DOMUtil.empty(this.root);
     }
