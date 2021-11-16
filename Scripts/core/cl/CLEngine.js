@@ -177,13 +177,14 @@ CLEngine.prototype.processLine = function(arr) {
 		}
 		return -1;
 	}
-	function _getItemByTypeFromOpstack(itemType) {
+	function _peekItemByTypeFromOpstack(itemType) {
 		var i = _findItemTypeInOpStack(itemType);
 		if (i >= 0) return opstack[i];
 		return null;
 	}
 	function _processOpStackOnCloseBracket() {
-		var bracket = _getItemByTypeFromOpstack(brnopen);
+		var bracketIndex = _findItemTypeInOpStack(brnopen);
+		
 	}
 	function _processOpStackToPriority(topriority) {
 		var top = _peekStack(opstack);
