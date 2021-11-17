@@ -22,3 +22,4 @@
 //#using "./IEventSubscriberImpl.js"
 //#using "./IElementsLocatorRegisterImpl.js"
 //#using "./IAmbientDefaultsConsumerImpl.js"
+//#using "./IEnumerateExposedCommandsImpl.js"

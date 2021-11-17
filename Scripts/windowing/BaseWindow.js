@@ -70,7 +70,8 @@ function BaseWindow(viewElement, sf, rect, data) { // The order of the arguments
 BaseWindow.Inherit(ViewBase, "BaseWindow");
 BaseWindow.Implement(IWindowTemplate);
 BaseWindow.Implement(ITemplateRoot);
-BaseWindow.Implement(IExposeCommands);
+BaseWindow.Implement(Interface("IExposeCommandsEx"));
+BaseWindow.Implement(Interface("IServiceLocator"));
 BaseWindow.Implement(IViewHostWindowImpl);
 BaseWindow.Implement(IStructuralQueryProcessorImpl);
 BaseWindow.Implement(IStructuralQueryRouter);
@@ -121,6 +122,9 @@ BaseWindow.findArgs = function (args, kind) {
             continue;
         } else if (BaseObject.is(arg, "Connector")) {
             result.templateSource = arg;
+            continue;
+        } else if (BaseObject.is(arg, "WindowLiveSettings")) {
+            result.liveSettings = arg.cloneObject();
             continue;
         } else if (BaseObject.is(arg, "ISettingsPersister")) {
             result.persister = arg;
@@ -1474,12 +1478,38 @@ BaseWindow.prototype.on_GetFocus = function (params) {
     }
     this.notifyParent(WindowEventEnum.GetFocus, { windowToFocus: this });
 };
-// ---------------------- Structural queries processing -----------------------
+//#region Service locating
+BaseWindow.prototype.locateService = function(iface, reason) {
+    var type = Class.getTypeName(iface);
+    switch (type) {
+        case "IExposeCommandsEx":
+        case "IExposeCommands":
+            return this;
+        case "WindowLiveSettings":
+            if (BaseObject.is(this.createParameters.liveSettings, "WindowLiveSettings")) return this.createParameters.liveSettings;
+            return null;
+    }
+    var behs = this.attachedBehaviors(function(beh) {
+        if (BaseObject.is(beh, "IServiceLocator")) return true;
+        return false;
+    });
+    var result = null;
+    if (behs.length > 0) {
+        result = behs.FirstOrDefault(function(idx, beh) {
+            return beh.locateService(iface, reason);
+        });
+    }
+    return result;
+}
 BaseWindow.prototype.provideAsServices = new InitializeArray("Assign an array of strings - names of supported interfaces by your class to enable those to be provided as services", ["Do not provide services"]);
 BaseWindow.onStructuralQuery("FindServiceQuery", function (query, opts) {
     if (FindServiceQuery.handle(this, query, this.provideAsServices)) return true;
 });
 
+//#endregion
+
+
+// ---------------------- Structural queries processing -----------------------
 BaseWindow.prototype.get_localajaxcontextparameter = function (param) {
     if (this.$ajaxcontextparameter != null && this.$ajaxcontextparameter["" + param] != null) return this.$ajaxcontextparameter["" + param];
     return null;
