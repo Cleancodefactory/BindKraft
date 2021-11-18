@@ -19,6 +19,7 @@
      */
     function IExposeCommands() {}
     IExposeCommands.Interface("IExposeCommands");
-    IExposeCommands.ImplementProperty("commands", new InitializeArray("Array of commands. These should be objects derived from delegate or at least supporting IInvoke"));
+    IExposeCommands.prototype.get_commands = function() { throw "not implemented";}
+    IExposeCommands.prototype.set_commands = function(v) { throw "not implemented";}
 
 })();

@@ -23,3 +23,4 @@
 //#using "./IElementsLocatorRegisterImpl.js"
 //#using "./IAmbientDefaultsConsumerImpl.js"
 //#using "./IEnumerateExposedCommandsImpl.js"
+//#using "./IExposeCommandsExIml.js"
