@@ -28,6 +28,32 @@ Handler.prototype.$parseExpression = function () {
     Binding.prototype.$parseExpression.apply(this, arguments);
 };
 
+Handler.prototype.$filterEvent = function (args /* ...arguments */) {
+	if ( this.__obliterated ) { return false; } // Prevent events fired by dead objects (should not happen, but anyway ...)
+
+	if (this.$formatters != null) {
+		var v;
+		var args = Array.createCopyOf(arguments);
+		for (var i = 0; i < this.$formatters.length; i++) {
+			var f = this.$formatters[i];
+			if (f.$formatterObject) {
+				var _method = "AllowEvent";
+				if (typeof f.$formatterObject[_method] == "function") {
+					if (f.$this != null) {
+						v = f.$formatterObject[_method].call(f.$this, args, this, f.$param);
+					} else {
+						v = f.$formatterObject[_method](args, this, f.$param);
+					}
+				}
+				if (!v) {
+					return false;
+				}
+			}
+		}
+	}
+	return true;
+}
+
 Handler.prototype.OmniHandlerDom = function (ev) {
 	if ( this.__obliterated ) { return; }
 	if ((this.options.nodefault || this.options.preventdefault) && ev != null && ev.preventDefault) {
@@ -41,6 +67,7 @@ Handler.prototype.OmniHandlerDom = function (ev) {
 		if (hndlr != null) {
 			var dc = this.$findDataContext();
 			this.$traceBinding("dc", dc);
+			if (!this.$filterEvent(ev, dc, this, this.bindingParameter)) return;
 
 			if (BaseObject.is(hndlr, "IInvoke")) {
 				return hndlr.invoke(ev, dc, this, this.bindingParameter);
@@ -86,6 +113,7 @@ Handler.prototype.OmniPlugDom = function(ev) {
 Handler.prototype.OmniHandlerDisp = function (sender, dc) {
 	if ( this.__obliterated ) { return; }
 	var args = Array.createCopyOf(arguments);
+	if (!this.$filterEvent(sender, dc, this, this.bindingParameter)) return;
 	return this.callAsyncIf(this.options.async, function () {
 		var hndlr = this.$get_sourceValue();
 		if (hndlr != null) {
@@ -141,12 +169,14 @@ Handler.prototype.OmniTriggerDom = function (ev) {
 	if (this.__obliterated) { return; }
     this.callAsyncIf(this.options.async, function () {
         var dc = this.$findDataContext();
+		if (!this.$filterEvent(ev, dc, this, this.bindingParameter)) return;
         this.$omniTrigger(ev, dc);
     });    
 };
 
 Handler.prototype.OmniTriggerDisp = function (sender, dc) {
 	if ( this.__obliterated ) { return; }
+	if (!this.$filterEvent(sender, dc, this, this.bindingParameter)) return;
 	this.callAsyncIf(this.options.async, function () {
         this.$omniTrigger(sender, dc);
     });    
@@ -155,6 +185,7 @@ Handler.prototype.OmniTriggerDisp = function (sender, dc) {
 // So, up to at least 2.12.0 this is actually throwDown and not throw.
 Handler.prototype.QueryThrowerDisp = function(sender, dc) {
 	if ( this.__obliterated ) { return; }
+	if (!this.$filterEvent(sender, dc, this, this.bindingParameter)) return;
 	this.callAsyncIf(this.options.async, function () {
 		if (this.$throwQuery != null && BaseObject.queryRegistrations[this.$throwQuery] != null) {
 			var p = BaseObject.queryRegistrations[this.$throwQuery].parser.apply(this,this.bindingParameter,this.get_sourceValue());
@@ -173,6 +204,7 @@ Handler.prototype.QueryThrowerDisp = function(sender, dc) {
 
 Handler.prototype.QueryThrowerDom = function(ev) {
 	if ( this.__obliterated ) { return; }
+	if (!this.$filterEvent(ev, null, this, this.bindingParameter)) return;
 	this.callAsyncIf(this.options.async, function () {
 		if (this.$throwQuery != null && BaseObject.queryRegistrations[this.$throwQuery] != null) {
 			var p = BaseObject.queryRegistrations[this.$throwQuery].parser.apply(this,this.bindingParameter,this.get_sourceValue());
@@ -241,6 +273,7 @@ Handler.prototype.$omniTrigger = function (ev, dc) {
 // For potential future needs these are separated in Disp and Dom as the rest
 Handler.prototype.CommandExecutorDisp = function(sender, dc) {
 	if ( this.__obliterated ) { return; }
+	if (!this.$filterEvent(sender, dc, this, this.bindingParameter)) return;
 	this.callAsyncIf(this.options.async, function () {
 		this.$omniCommandExecutor(this.$source, this.bindingParameter);
 	});
@@ -248,6 +281,7 @@ Handler.prototype.CommandExecutorDisp = function(sender, dc) {
 
 Handler.prototype.CommandExecutorDom = function(ev, dc) {
 	if ( this.__obliterated ) { return; }
+	if (!this.$filterEvent(ev, dc, this, this.bindingParameter)) return;
 	this.callAsyncIf(this.options.async, function () {
 		this.$omniCommandExecutor(this.$source, this.bindingParameter);
 	});
