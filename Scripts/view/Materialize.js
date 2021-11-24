@@ -19,7 +19,13 @@ var Materialize = {
 				o.hasDataContext = true;
 			}
 		}
-		return roots;
+		if (roots.length > 1) {
+			return roots;
+		} else if (roots.length == 1) {
+			return roots[0];
+		} else {
+			return null;
+		}
 	},
 	activeClasses: function(els, _type) {
 		var type = _type || "Base";
