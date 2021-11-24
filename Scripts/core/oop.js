@@ -1115,10 +1115,10 @@ Function.prototype.ImplementIndexedWriteProperty = function (pname, Initialize, 
 		 var arg = names[i];
 		 if (typeof arg == "string") {
 			 if (typeof this.prototype["set_" + arg] == "function") {
-				 this.prototype[arg] = function(v) { this["set_" + arg].call(this,v); return this; }
+				 this.prototype[arg] = (function(x) { return function(v) { this["set_" + x].call(this,v); return this; }; })(arg)
 			 } else {
 				 if (typeof this.prototype["set_" + arg] == "undefined") {
-					this.prototype[arg] = function(v) { this[arg] = v; return this;}
+					this.prototype[arg] = (function(x) { return function(v) { this[x] = v; return this;}; })(arg);
 				 } else {
 					 throw "Class " + this.classType + " cannot define a chain setter for the field " + arg + " becasue it already exists";
 				 }
