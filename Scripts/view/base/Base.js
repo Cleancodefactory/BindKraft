@@ -390,14 +390,7 @@ Base.prototype.set_refdata = function (v) {
     this.$referenceData = v;
 };
 Base.get_dataContext = function (startEl) {
-    var cur = $(startEl);
-    while (cur != null) {
-        cur = cur.get(0);
-        if (cur == null) break;
-        if (cur.dataContext || cur.hasDataContext === true) return cur.dataContext;
-        cur = $(cur).parent();
-    }
-    return null;
+    return JBUtil.findDataContext(startEl);
 };
 Base.prototype.get_dataContext = function () { // In contrast to get_data this method will search for the actual data context down the tree
     return Base.get_dataContext(this.root);
