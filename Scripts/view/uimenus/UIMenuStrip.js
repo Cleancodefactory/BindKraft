@@ -26,7 +26,7 @@
         for (var i = 0; i < arguments.length; i++) {
             var mi = arguments[i];
             if (BaseObject.is(mi , UIMenuItem)) {
-                if (mi.is("UIMenuStrip")) me.set_parent(this);
+                if (mi.is("UIMenuStrip")) mi.set_parent(this);
                 this.$items.push(mi);
             } else {
                 this.LASTERROR("An argument is not a UIMenuItem", "append");
