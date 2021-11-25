@@ -1,9 +1,12 @@
 (function(){
 
+    var IAttachedInfoImpl = InterfaceImplementer("IAttachedInfoImpl");
+
     function UIMenuItem() {
         BaseObject.apply(this, arguments);
     }
     UIMenuItem.Inherit(BaseObject, "UIMenuItem")
+        .Implement(IAttachedInfoImpl)
         .ImplementProperty("caption")
         .ImplementProperty("icon") // Module/resource? IconSpec?
         .ImplementProperty("owner") // Structural query sink
