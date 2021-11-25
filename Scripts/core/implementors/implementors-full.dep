@@ -24,3 +24,4 @@
 //#using "./IAmbientDefaultsConsumerImpl.js"
 //#using "./IEnumerateExposedCommandsImpl.js"
 //#using "./IExposeCommandsExIml.js"
+//#using "./IAttachedInfoImpl.js"

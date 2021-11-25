@@ -108,3 +108,5 @@
 //#using "./IExposeCommands.js"
 //#using "./IExposeCommandsEx.js"
 //#using "./IEnumerateExposedCommands.js"
+
+//#using "./IAttachedInfo.js"
