@@ -666,18 +666,18 @@ function jb_initFramework(globalProvider) { // The global provider is being aske
             }
             else if (o.status.httpStatus == 401) {
                 //make a full request to the build in method in CoreKraft
-                window.location.href = mapPath('/account/signin') + '?returnUrl=/';
+                window.location.href = mapPath('/account/signin') + '?returnUrl=' + encodeURIComponent(BKUrl.getInitialFullUrl());
                 settings.AbortAllProcessing = true;
             }
         }
-		if ((o != null && o.status != null && !o.status.issuccessful) && (o.status.httpStatus == 0)) {
-			if (core_ajaxReportProblem(this, settings, "zerostatus", "Request returned incorrect status 0", null)) {
-				// There is a problem resolution pending
-				jbTrace.log("received status - 0");
-				// settings.AbortAllProcessing = true; // The resolver must set this. We keep the line just FYI
-				return o;
-			}
-		}
+		// if ((o != null && o.status != null && !o.status.issuccessful) && (o.status.httpStatus == 0)) {
+		// 	if (core_ajaxReportProblem(this, settings, "zerostatus", "Request returned incorrect status 0", null)) {
+		// 		// There is a problem resolution pending
+		// 		jbTrace.log("received status - 0");
+		// 		// settings.AbortAllProcessing = true; // The resolver must set this. We keep the line just FYI
+		// 		return o;
+		// 	}
+		// }
         core_nextgenAjaxRedirect(o);
         return o;
     };
@@ -704,11 +704,6 @@ function jb_initFramework(globalProvider) { // The global provider is being aske
                     "\ndescription: " + errDescription +
                     ((setttings.url != null) ? ("\nurl: " + setttings.url) : "") +
                     "\n------\n" + xmlHttpReq.responseText);
-        ReportError("HTTP status: " + xmlHttpReq.status +
-                    ";status text: " + textStatus +
-                    ";description: " + errDescription +
-                    ((setttings.url != null) ? ("\nurl: " + setttings.url) : "") +
-                    ";" + xmlHttpReq.responseText, xmlHttpReq.statusText, ""); // alert("AJAX Error:\n HTTP status: " + xmlHttpReq.status + "\nstatus text: " + textStatus + "\ndescription: " + errDescription + "\n------\n" + xmlHttpReq.responseText); 
         var loc;
         if (xmlHttpReq.status == 302) {
             var loc = xmlHttpReq.getResponseHeader("Location");
