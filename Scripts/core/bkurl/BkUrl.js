@@ -496,7 +496,7 @@ BKUrl.getInitialFullUrl = function() {
 BKUrl.getInitialUrl = function() {
 	var url = this.getInitialFullUrl();
 	if (url != null) {
-		return url.readAsString.get_pathUrl();
+		return url.get_pathUrl();
 	}
 	return url;
 }
