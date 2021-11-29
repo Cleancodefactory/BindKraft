@@ -7,7 +7,7 @@
         this.set_parent(_parent);
     }
     UIMenuStrip.Inherit(UIMenuItem, "UIMenuStrip")
-        .ImplementProperty("items", new InitializeArray(""))
+        .ImplementProperty("items", new InitializeArray(""), null, "fireChanged")
         .ImplementProperty("parent", new Initialize("", null));
     
     UIMenuStrip.prototype.get_level = function() { 

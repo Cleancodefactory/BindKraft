@@ -2,3 +2,4 @@
 //#using "./UIMenuSlot.js"
 //#using "./UIMenuComponent.js"
 //#using "./UIMenuStripComponent.js"
+//#using "./IUIMenuHost.js"
