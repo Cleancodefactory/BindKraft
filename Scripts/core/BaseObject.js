@@ -843,6 +843,8 @@ BaseObject.prototype.Format = function(name_or_inst, val, bind, params) {
 		}
 	} else if (BaseObject.is(name_or_inst, "CustomFormatterBase")) {
 		return name_or_inst.ToTarget(val, bind, params);
+    } else if (typeof name_or_inst == "object" && typeof name_or_inst.ToTarget == "function") {
+        return name_or_inst.ToTarget(val, bind, params);
 	} else { 
 		throw "The formatter cannot be found";
 	}
@@ -862,6 +864,8 @@ BaseObject.prototype.Unformat = function(name_or_inst, val, bind, params) {
 		}
 	} else if (BaseObject.is(name_or_inst, "CustomFormatterBase")) {
 		return name_or_inst.FromTarget(val, bind, params);
+    } else if (typeof name_or_inst == "object" && typeof name_or_inst.FromTarget == "function") {
+        return name_or_inst.FromTarget(val, bind, params);
 	} else { 
 		throw "The formatter cannot be found";
 	}
