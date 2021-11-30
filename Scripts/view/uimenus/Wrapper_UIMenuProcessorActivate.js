@@ -1,6 +1,6 @@
 (function(){
 
-    var IUIMenuProcessorActivate = Internal("IUIMenuProcessorActivate");
+    var IUIMenuProcessorActivate = Interface("IUIMenuProcessorActivate");
 
     function Wrapper_UIMenuProcessorActivate(obj, method) {
         BaseObject.apply(this, arguments);

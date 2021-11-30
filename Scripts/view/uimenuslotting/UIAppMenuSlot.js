@@ -1,11 +1,27 @@
 
 (function() {
-    function UIMenuSlot() {
+
+    var IUIAppMenuHost = Interface("IUIAppMenuHost"),
+        IUIMenuHost = Interface("IUIMenuHost");
+
+    function UIAppMenuSlot() {
         Base.apply(this,arguments);
     }
-    UIMenuSlot.Inherit(Base, "UIMenuSlot");
+    UIAppMenuSlot.Inherit(Base, "UIAppMenuSlot")
+        .Implement(IUIAppMenuHost);
 
-    UIMenuSlot.ImplementProperty("menudata", new Initialize("Menu moeel based on UIMenuItem", null),null, function(ov, nv) {
+    //#region IUIMenuSlot
+
+    UIAppMenuSlot.prototype.addMenu = function(m) { 
+        
+    }
+    UIAppMenuSlot.prototype.removeMenu = function(cookie) { throw "not implemented"; }
+
+    //#endregion
+
+    UIAppMenuSlot.ImplementProperty("menus", new InitializeArray("All the added menus"));
+
+    UIAppMenuSlot.ImplementProperty("menudata", new Initialize("Menu moeel based on UIMenuItem", null),null, function(ov, nv) {
         this.$().Empty();
         this.$item = null;
         // TODO The first item ?!?
@@ -27,10 +43,10 @@
             }
         }
     });
-    UIMenuSlot.prototype.$_template = '<div data-class="%%%"></div>';
-    UIMenuSlot.prototype.$item = null;
+    UIAppMenuSlot.prototype.$_template = '<div data-class="%%%"></div>';
+    UIAppMenuSlot.prototype.$item = null;
 
-    UIMenuSlot.prototype.init = function() {
+    UIAppMenuSlot.prototype.init = function() {
 
     }
 
