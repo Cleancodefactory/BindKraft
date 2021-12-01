@@ -3,6 +3,7 @@
 //#using "./IUIMenuHost.js"
 //#using "./IUIAppMenuHost.js"
 
+//#using "./UIMenuSlotBase.js"
 //#using "./UIMenuSlot.js"
 //#using "./UIAppMenuSlot.js"
 //#using "./UIMenuComponent.js"

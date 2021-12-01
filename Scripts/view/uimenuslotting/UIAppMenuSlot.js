@@ -2,52 +2,105 @@
 (function() {
 
     var IUIAppMenuHost = Interface("IUIAppMenuHost"),
-        IUIMenuHost = Interface("IUIMenuHost");
+        IUIMenuHost = Interface("IUIMenuHost"),
+        UIMenuSlotBase = Class("UIMenuSlotBase");
 
     function UIAppMenuSlot() {
-        Base.apply(this,arguments);
+        UIMenuSlotBase.apply(this,arguments);
     }
-    UIAppMenuSlot.Inherit(Base, "UIAppMenuSlot")
-        .Implement(IUIAppMenuHost);
-
-    //#region IUIMenuSlot
-
-    UIAppMenuSlot.prototype.addMenu = function(m) { 
-        
-    }
-    UIAppMenuSlot.prototype.removeMenu = function(cookie) { throw "not implemented"; }
-
-    //#endregion
-
-    UIAppMenuSlot.ImplementProperty("menus", new InitializeArray("All the added menus"));
-
-    UIAppMenuSlot.ImplementProperty("menudata", new Initialize("Menu moeel based on UIMenuItem", null),null, function(ov, nv) {
-        this.$().Empty();
-        this.$item = null;
-        // TODO The first item ?!?
-        if (BaseObject.is(nv, "UIMenuItem")) {
-            var tml,item;
-            if (nv.is("UIMenuStrip")) {
-                var items = nv.get_items();
-                for (var i = 0; i < items.length; i++) {
-                    tml = this.$_template.replace("%%%", items[i].get_classname() );
-                    Materialize.cloneTemplate(this.root, tml, items[i]);
-                }
-                this.rebind();
-                this.updateTargets();    
-            } else {
-                tml = this.$_template.replace("%%%", nv.get_classname() );
-                this.$item = Materialize.cloneTemplate(this.root, tml, nv);
-                this.rebind();
-                this.updateTargets();
-            }
-        }
-    });
-    UIAppMenuSlot.prototype.$_template = '<div data-class="%%%"></div>';
-    UIAppMenuSlot.prototype.$item = null;
+    UIAppMenuSlot.Inherit(UIMenuSlotBase, "UIAppMenuSlot")
+        .Implement(ITemplateSourceImpl, new Defaults("templateName"))
+        .Implement(IUIAppMenuHost)
+        .Defaults({
+            templateName: new StringConnector('<div data-class="%%%"></div>')
+        });
 
     UIAppMenuSlot.prototype.init = function() {
 
     }
+
+    //#region IUIMenuSlot
+
+    UIAppMenuSlot.prototype.addMenu = function(m) { 
+        if (BaseObject.is(m, "UIMenuItem")) {
+            var existing = this.$findMenu(m);
+            if (existing >= 0) { return true; }
+            if (!m.mixAttachedInfo(IUIAppMenuHost, {cookie: this.genCookie()})) {
+                this.LASTERROR("Failed to attach cookie", "addMenu");
+            }
+            this.$menus.push(m);
+            this.$refresh();
+            return true;
+        }
+        return false;
+    }
+    UIAppMenuSlot.prototype.removeMenu = function(cookie) { 
+        var existing = this.$findMenu(cookie);
+        if (existing >= 0) { 
+            var mi = this.$menus.splice(existing, 1);
+            if (BaseObject.is(mi, "UIMenuItem")) {
+                if (!mi.mixAttachedInfo(IUIAppMenuHost, {cookie: null})) {
+                    this.LASTERROR("Failed to remove cookie", "removeMenu");
+                }
+            }
+            this.$refresh();
+        }
+    }
+
+    //#endregion
+
+    //#region Manage menu data
+    UIAppMenuSlot.ImplementProperty("menus", new InitializeArray("All the added menus"));
+    UIAppMenuSlot.prototype.$findMenu = function(cookie_or_mi) {
+        var cookie = null;
+        var info, mitem;
+        if (BaseObject.is(cookie_or_mi, "UIMenuItem")) {
+            info = cookie_or_mi.getAttachedInfo(IUIAppMenuHost);
+            if (info != null) cookie = info.cookie;
+        } else {
+            cookie = cookie_or_mi;
+        }
+        if (cookie == null) return -1;
+        for (var i = 0; i < this.$menus.length; i++) {
+            mitem = this.$menus[i];
+            if (BaseObject.is(item, "UIMenuItem")) {
+                info = mitem.getAttachedInfo(IUIAppMenuHost);
+                if (info != null && info.cookie == cookie) return i;
+            }
+        }
+        return -1;
+    }
+    //#endregion
+
+    //#region UI
+    UIAppMenuSlot.prototype.$refresh = function() { 
+        this.$regenMenu(); //?
+    }
+    
+    UIAppMenuSlot.prototype.$regenMenu = function() {
+        this.$().Empty();
+        var appslottemplate = this.get_template();
+        if (appslottemplate == null) {
+            this.LASTERROR("Cannot regenerate menu, because there is not template", "$regenMenu");
+            return;
+        }
+        // TODO The first item ?!?
+        for (var i = 0; i < this.$menus.length; i++) {
+            var nv = this.$menus[i];
+            if (BaseObject.is(nv, "UIMenuItem")) {
+                var tml,item;
+                if (nv.is("UIMenuStrip")) {
+                    tml = appslottemplate.replace("%%%", nv.get_classname() );
+                    Materialize.cloneTemplate(this.root, tml, nv);
+                } else {
+                    tml = appslottemplate.replace("%%%", nv.get_classname() );
+                    Materialize.cloneTemplate(this.root, tml, nv);
+                }
+            }
+        }
+        this.rebind();
+        this.updateTargets();
+    };
+    //#endregion
 
 })();

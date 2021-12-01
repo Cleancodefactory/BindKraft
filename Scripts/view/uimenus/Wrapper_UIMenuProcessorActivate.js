@@ -26,7 +26,7 @@
         Wrapper_UIMenuProcessorActivate.prototype.onActivate = function() {
             if (typeof this.method != "function") return;
             if (this.obj != null) {
-                obj[this.method].apply(obj, arguments);
+                this.method.apply(this.obj, arguments);
             } else {
                 method.apply(null, arguments);
             }
