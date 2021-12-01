@@ -25,6 +25,7 @@
         }
         return s;
     }
+
     UIMenuSlotBase.prototype.decodeCookie = function(cookie) {
         if (typeof cookie != "string" || cookie.length < 3) {
             this.LASTERROR("Invalid cookie", "decodeCookie");
@@ -36,13 +37,10 @@
             return null;
         }
 
-        var c = cookie.slice(iid.length);
-        /^\s(\d+)(?:\s(?:))/
-
-        var result = {
-
-        }
-        //////////
+        
+        var r = String.reGroups2(cookie,/(?:^(\S+))|(?:\s*(?:(?:#(\d+(?:\.\d*)?))|([a-zA-Z0-9_\-]+)))/g,"id","depth","area").Combine();
+        if (r != null) { return BaseObject.CastObjectValues(r,{depth:"int",area:"string",id:"string"}); }
+        return r;
     }
 
 })();
