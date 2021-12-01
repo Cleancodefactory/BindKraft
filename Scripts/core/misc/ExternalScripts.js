@@ -1,4 +1,9 @@
 (function() {
+
+    /**
+     * Loads a script from any URL. Current implementation will not work correctly if different scripts are loaded in response to differences
+     * in the query string.
+     */
     function ExternalScripts() {
         BaseObject.apply(this,arguments);
     }
