@@ -55,10 +55,13 @@
         if (suggestedClass == null) { 
             suggestedClass = menuItem.get_hostComponentClass();
         }
-        return suggestedClass || fallBack;
+        var result = suggestedClass || fallBack;
+        if (!this.checkProcessorComponentCompatibility(menuItem.get_processorType(),result)) return null;
+        return result;
     }
     UIMenuSlotBase.prototype.checkProcessorComponentCompatibility = function(processorType,componentClass) {
         // TODO: Once determined the component class has to be checked if it can work with the processorType declared.
+        return true;
     }
 
 })();
