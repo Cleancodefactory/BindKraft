@@ -63,7 +63,7 @@
         if (cookie == null) return -1;
         for (var i = 0; i < this.$menus.length; i++) {
             mitem = this.$menus[i];
-            if (BaseObject.is(item, "UIMenuItem")) {
+            if (BaseObject.is(mitem, "UIMenuItem")) {
                 info = mitem.getAttachedInfo(IUIAppMenuHost);
                 if (info != null && info.cookie == cookie) return i;
             }
