@@ -90,10 +90,10 @@
             if (BaseObject.is(nv, "UIMenuItem")) {
                 var tml,item;
                 if (nv.is("UIMenuStrip")) {
-                    tml = appslottemplate.replace("%%%", nv.get_classname() );
+                    tml = appslottemplate.replace("%%%", this.getOpinion(IUIAppMenuHost, nv, "UIMenuStripComponent"));
                     Materialize.cloneTemplate(this.root, tml, nv);
                 } else {
-                    tml = appslottemplate.replace("%%%", nv.get_classname() );
+                    tml = appslottemplate.replace("%%%", this.getOpinion(IUIAppMenuHost, nv, "UIMenuComponent"));
                     Materialize.cloneTemplate(this.root, tml, nv);
                 }
             }

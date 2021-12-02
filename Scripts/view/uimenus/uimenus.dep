@@ -2,6 +2,7 @@
 
 //#using "./IUIMenuProcessor.js"
 //#using "./IUIMenuProcessorActivate.js"
+//#using "./IUIMenuProcessorOpinion.js"
 //#using "./Wrapper_UIMenuProcessorActivate.js"
 //#using "./UIMenuItem.js"
 //#using "./UIMenuStrip.js"

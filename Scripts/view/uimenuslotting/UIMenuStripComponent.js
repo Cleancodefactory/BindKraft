@@ -15,6 +15,7 @@
     UIMenuStripComponent.prototype.on_click = function(event) {
         var item = this.get_dataContext();   
         if (item != null) { // !!!
+            // This should be nothing or rather show/hide of the slot inside
             if (BaseObject.is(item.get_processor(), "Delegate")) {
                 item.get_processor().invoke(this, item);
             }

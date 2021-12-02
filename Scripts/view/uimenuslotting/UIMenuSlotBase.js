@@ -43,4 +43,22 @@
         return r;
     }
 
+    UIMenuSlotBase.prototype.getOpinion = function(slotInterface,menuItem,fallBack) {
+        var interfaceDef = Class.getInterfaceName(slotInterface);
+        var suggestedClass = null;
+        if (BaseObject.is(menuItem.get_processor(),"IUIMenuProcessorOpinion")) {
+            suggestedClass = menuItem.get_processor().suggestUIComponentClass(slotInterface, menuItem);
+        }
+        if (suggestedClass == null && BaseObject.is(menuItem.get_owner(),"IUIMenuProcessorOpinion")) { 
+            suggestedClass = menuItem.get_owner().suggestUIComponentClass(slotInterface, menuItem);
+        }
+        if (suggestedClass == null) { 
+            suggestedClass = menuItem.get_hostComponentClass();
+        }
+        return suggestedClass || fallBack;
+    }
+    UIMenuSlotBase.prototype.checkProcessorComponentCompatibility = function(processorType,componentClass) {
+        // TODO: Once determined the component class has to be checked if it can work with the processorType declared.
+    }
+
 })();

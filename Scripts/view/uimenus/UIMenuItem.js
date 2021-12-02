@@ -11,7 +11,9 @@
         .ImplementProperty("icon", null, null, "fireChanged") // Module/resource? IconSpec?
         .ImplementProperty("owner", null, null, "fireChanged") // Structural query sink
         .ImplementProperty("processor", null, null, "fireChanged") // Delegate-like
-        .ImplementProperty("classname")
+        .ImplementProperty("processorType")
+        .ImplementProperty("hostComponentClass")
+        //.ImplementProperty("classname") // TODO: Remove this.
         .ImplementChainSetters(); // className of the Base component that will be slotted in the menu item area
 
     UIMenuItem.prototype.fireChanged = function() { 
