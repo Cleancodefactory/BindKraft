@@ -1,22 +1,25 @@
 (function() {
-    function UIMenuStripComponent() {
+
+    var IUIMenuActivateProcessor = Interface("IUIMenuActivateProcessor");
+
+    function UIMenuComponent() {
         Base.apply(this,arguments);
         this.on("click", this.on_click);
     }
-    UIMenuStripComponent.Inherit(Base, "UIMenuStripComponent")
+    UIMenuComponent.Inherit(Base, "UIMenuComponent")
         .Implement(IUIControl)
         .Implement(ITemplateSourceImpl, new Defaults("templateName"))
+        .compatibleTypes(IUIMenuActivateProcessor)
         .Defaults({
-            templateName: "bkdevmodule1/menu-itemstripbase"
+            templateName: "bkdevmodule1/menu-itembase"
         });
-    UIMenuStripComponent.prototype.init = function() {
+    UIMenuComponent.prototype.init = function() {
         ITemplateSourceImpl.InstantiateTemplate(this);
     }
-    UIMenuStripComponent.prototype.on_click = function(event) {
+    UIMenuComponent.prototype.on_click = function(event) {
         var item = this.get_dataContext();   
         if (item != null) { // !!!
-            // This should be nothing or rather show/hide of the slot inside
-            if (BaseObject.is(item.get_processor(), "IUIMenuProcessorActivate")) {
+            if (BaseObject.is(item.get_processor(), "IUIMenuActivateProcessor")) {
                 item.get_processor().onActivate(this, item); // args model is temporary !!!
             } else if (BaseObject.is(item.get_processor(), "Delegate")) {
                 // Temporary here

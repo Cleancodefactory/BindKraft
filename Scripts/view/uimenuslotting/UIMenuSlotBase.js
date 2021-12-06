@@ -60,8 +60,12 @@
         return result;
     }
     UIMenuSlotBase.prototype.checkProcessorComponentCompatibility = function(processorType,componentClass) {
-        // TODO: Once determined the component class has to be checked if it can work with the processorType declared.
-        return true;
+        if (processorType == null) return true; // TODO This looks a little bit controversial
+        var cls = Class.getClassDef(componentClass);
+        if (cls == null || cls.compatibleTypesList == null) return false;
+        var proc = Class.getInterfaceName(processorType);
+        if (proc == null) return false;
+        return (cls.compatibleTypesList.indexOf(proc) >= 0);
     }
 
 })();

@@ -1,8 +1,8 @@
 (function(){
 
-    var IUIMenuProcessorActivate = Interface("IUIMenuProcessorActivate");
+    var IUIMenuActivateProcessor = Interface("IUIMenuActivateProcessor");
 
-    function Wrapper_UIMenuProcessorActivate(obj, method) {
+    function Wrapper_UIMenuActivateProcessor(obj, method) {
         BaseObject.apply(this, arguments);
         this.obj = obj;
         if (typeof method == "string") {
@@ -19,11 +19,11 @@
             this.method = null;
         }
     }
-    Wrapper_UIMenuProcessorActivate.Inherit(BaseObject, "Wrapper_UIMenuProcessorActivate")
-        .Implement(IUIMenuProcessorActivate);
+    Wrapper_UIMenuActivateProcessor.Inherit(BaseObject, "Wrapper_UIMenuActivateProcessor")
+        .Implement(IUIMenuActivateProcessor);
 
-        Wrapper_UIMenuProcessorActivate.prototype.catchAll = function() {}
-        Wrapper_UIMenuProcessorActivate.prototype.onActivate = function() {
+        Wrapper_UIMenuActivateProcessor.prototype.catchAll = function() {}
+        Wrapper_UIMenuActivateProcessor.prototype.onActivate = function() {
             if (typeof this.method != "function") return;
             if (this.obj != null) {
                 this.method.apply(this.obj, arguments);

@@ -6,5 +6,5 @@
 //#using "./UIMenuSlotBase.js"
 //#using "./UIMenuSlot.js"
 //#using "./UIAppMenuSlot.js"
-//#using "./UIMenuComponent.js"
-//#using "./UIMenuStripComponent.js"
+//#using "./components/components.dep"
+

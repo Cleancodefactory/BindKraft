@@ -12,7 +12,7 @@
         .Implement(ITemplateSourceImpl, new Defaults("templateName"))
         .Implement(IUIAppMenuHost)
         .Defaults({
-            templateName: new StringConnector('<div data-class="%%%"></div>')
+            templateName: new StringConnector('<div style="display:inline-block;" data-class="%%%"></div>')
         });
 
     UIAppMenuSlot.prototype.init = function() {
