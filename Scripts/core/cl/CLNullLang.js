@@ -8,21 +8,23 @@
         specialliteral: 2,
         // Operator from the langlet
         keyword: 3,
+        varidentifier: 4,
         // identifier - function name or parameter name to fetch (the actual fetching depends on the usage)
         // Addresses 0 - just found, 1 - end of first arg, last - 1 - last arg, last - after final element
-        identifier: 4,
+        identifier: 5,
         // Open normal bracket (function call arguments, grouping is not supported intentionally - see the docs for more details)
-        openbracket: 5,
+        openbracket: 6,
         // close normal bracket - end of function call argument list.
-        closebracket: 6,
+        closebracket: 7,
         // string literal 'something'
-        stringliteral: 7,
+        stringliteral: 8,
         // numeric literal like: 124, +234, -324, 123.45, -2.43, +0.23423 etc.
-        numliteral: 8,
+        numliteral: 9,
         // comma separator of arguments. can be used at top level also, in this case this will produce multiple results (usable only with the corresponding evaluation routines)
-        comma: 9,
+        comma: 10,
         // end of the expression
-        end: 10,
+        end: 11,
+        comment: 12,
         // Virtual tokens ===
         compound: 101
     }
@@ -75,7 +77,7 @@
 
 
 
-    var _regex = /(\s+)|(true|false|null)|(while|if)|([a-zA-Z_][a-zA-Z0-9_\.\-]*)|(\()|(\))|(?:\'((?:\\'|[^\'])*)\')|([\+\-]?\d+(?:\.\d*)?)|(\,|(?:\r|\n)+)|($)/g;
+    var _regex = /(\s+)|(true|false|null)|(while|if)|(?:\$([a-zA-Z0-9_\.\-]+))|([a-zA-Z_][a-zA-Z0-9_\.\-]*)|(\()|(\))|(?:\'((?:\\'|[^\'])*)\')|([\+\-]?\d+(?:\.\d*)?)|(\,|(?:\r|\n)+)|($)|(#.*?(?:\n|\r)+)/g;
 
     //#region Compiler
 
@@ -112,12 +114,19 @@
                             if (undecided != null) runner.complete(_ReportError("Syntax error", match.index, query));
                             undecided = OpEntry(curval, Terms.keyword, match.index);
                             continue;
-                        case Term.identifier:
+                        case Terms.varidentifier:
+                            if (undecided != null) runner.complete(_ReportError("Syntax error", match.index, query));
+                            undecided = OpEntry(curval, Terms.varidentifier, match.index);
+                            continue;
+                        case Terms.identifier:
                             if (undecided != null) runner.complete(_ReportError("Syntax error", match.index, query));
                             undecided = OpEntry(curval, Terms.keyword, match.index);
                             continue;
                         case Terms.openbracket:
-                            if (undecided != null && undecided.term == Term.identifier) {
+                            if (undecided != null && undecided.term == Terms.varidentifier) {
+                                opstack.push(undecided);
+                                undecided = null;
+                            } else if (undecided != null && undecided.term == Terms.identifier) {
                                 opstack.push(undecided);
                                 undecided = null;
                             } else if (undecided != null && undecided.term == Terms.keyword) {
@@ -129,7 +138,11 @@
                             }
                             continue;
                         case Terms.closebracket:
-                            if (undecided != null && undecided.term == Terms.identifier) {
+                            if (undecided != null && undecided.term == Terms.varidentifier) {
+                                opstack.incArgs();
+                                runner.add(_Instruction(Instructions.PushVar, undecided.value)) // todo
+                                undecided = null;
+                            } else if (undecided != null && undecided.term == Terms.identifier) {
                                 undecided.incArgs();
                                 runner.add(_Instruction(Instructions.PushParam, undecided.value));
                                 undecided = null;
@@ -171,7 +184,11 @@
                             }
                             continue;
                         case Terms.comma:
-                            if (undecided != null && undecided.term == Terms.identifier) {
+                            if (undecided != null && undecided.term == Terms.varidentifier) {
+                                opstack.incArgs();
+                                runner.add(_Instruction(Instructions.PushVar, undecided.value));
+                                undecided = null;
+                            } else if (undecided != null && undecided.term == Terms.identifier) {
                                 opstack.incArgs();
                                 runner.add(_Instruction(Instructions.PushParam, undecided.value));
                                 undecided = null;
@@ -246,7 +263,11 @@
                         case Terms.space:
                             continue;
                         case Terms.end:
-                            if (undecided != null && undecided.term == Terms.identifier) {
+                            if (undecided != null && undecided.term == Terms.varidentifier) {
+                                opstack.incArgs();
+                                runner.add(_Instruction(Instructions.PushVar, undecided.value));
+                                undecided = null;
+                            } else if (undecided != null && undecided.term == Terms.identifier) {
                                 opstack.incArgs();
                                 runner.add(_Instruction(Instructions.PushParam, undecided.value));
                                 undecided = null;
