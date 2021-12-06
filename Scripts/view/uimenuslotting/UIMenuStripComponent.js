@@ -16,7 +16,10 @@
         var item = this.get_dataContext();   
         if (item != null) { // !!!
             // This should be nothing or rather show/hide of the slot inside
-            if (BaseObject.is(item.get_processor(), "Delegate")) {
+            if (BaseObject.is(item.get_processor(), "IUIMenuProcessorActivate")) {
+                item.get_processor().onActivate(this, item); // args model is temporary !!!
+            } else if (BaseObject.is(item.get_processor(), "Delegate")) {
+                // Temporary here
                 item.get_processor().invoke(this, item);
             }
         }
