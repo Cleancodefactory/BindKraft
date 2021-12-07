@@ -188,8 +188,8 @@ VirtualDropDownControl.prototype.init = function() {
 	this.$el_list = this.child("itemslist");
 	this.$el_scrollable = this.childObject("sa");
 	this.set_bodyVisible(this.get_bodyVisible());
-	this.on("keyup", this.onKeyPress);
-    this.on("keydown", this.onSwallow);
+	this.on("keyup", this.onSwallow);
+    this.on("keydown", this.onKeyPress);
     this.on("keypress", this.onSwallow);
 	this.set_disabled(this.get_disabled());
 }
@@ -685,22 +685,26 @@ VirtualDropDownControl.prototype.onKeyPress = function (evnt) {
         //this.escapeevent.invoke(this, null);
 		this.ForceClose();
         evnt.stopPropagation();
+		evnt.preventDefault();
     } else if ((evnt.which >= 37 && evnt.which <= 40) || evnt.which == 13 || evnt.which == 32) {
         if ($(this.$el_list).activeclass() != null) {
 			if (!$(this.$el_list).activeclass().processKey(evnt)) {
 				if ($(this.$el_scrollable).activeclass() != null) {
 					if ($(this.$el_scrollable).activeclass().processKey(evnt)) {
 						evnt.stopPropagation();
+						evnt.preventDefault();
 					}
 				}
 			} else {
 				if (this.get_bodyVisible()) {
 					evnt.stopPropagation();
+					evnt.preventDefault();
 				}
 			}
 		}
     } else if (this.get_bodyVisible()) {
 		evnt.stopPropagation();
+		evnt.preventDefault();
 	}
    // jbTrace.log("onKeyPress event: " + evnt.which);
 };
