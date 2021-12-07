@@ -1,3 +1,4 @@
 
 //#using "./UIMenuComponent.js"
 //#using "./UIMenuStripComponent.js"
+//#using "./UIMenuEditComponent.js"

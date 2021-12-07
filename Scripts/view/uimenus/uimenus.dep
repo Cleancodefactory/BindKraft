@@ -5,6 +5,7 @@
 //#using "./IUIMenuEditProcessor.js"
 //#using "./IUIMenuProcessorOpinion.js"
 //#using "./Wrapper_UIMenuActivateProcessor.js"
+//#using "./Wrapper_UIMenuEditProcessor.js"
 //#using "./UIMenuItem.js"
 //#using "./UIMenuStrip.js"
 

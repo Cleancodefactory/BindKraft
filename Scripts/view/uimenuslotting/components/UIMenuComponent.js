@@ -9,7 +9,7 @@
     UIMenuComponent.Inherit(Base, "UIMenuComponent")
         .Implement(IUIControl)
         .Implement(ITemplateSourceImpl, new Defaults("templateName"))
-        .compatibleTypes(IUIMenuActivateProcessor)
+        .CompatibleTypes(IUIMenuActivateProcessor)
         .Defaults({
             templateName: "bkdevmodule1/menu-itembase"
         });
