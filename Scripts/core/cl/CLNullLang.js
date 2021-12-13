@@ -300,6 +300,39 @@
     CLNullLangRunner.prototype.$program = new InitializeArray("The program");
     CLNullLangRunner.prototype.$buildError = null;
 
+    //#region Execution
+
+    CLNullLangRunner.prototype.execute = function(host, hardLimit) {
+        var instr;
+        while (pc < this.$program.length) {
+            /*  operation, operand, argCount */
+            instr = this.$program[pc];
+            switch (instr.operation) {
+                case Instructions.PushParam:
+                break;
+                case Instructions.Call:
+                break;
+                case Instructions.PushDouble:
+                break;
+                case Instructions.PushInt:
+                break;
+                case Instructions.PushNull:
+                break;
+                case Instructions.PushBool:
+                break;
+                case Instructions.PushString:
+                break;
+                case Instructions.Dump:
+                break;
+                case Instructions.JumpIfNot:
+                break;
+                case Instructions.Jump:
+                break;
+                default:
+            }
+        }    
+    }
+    //#endregion Execution
 
     //#region Build
     /**
@@ -338,7 +371,7 @@
         }
         return this;
     }
-    //#endregion
+    //#endregion Build
 
     //#endregion Runner
 
