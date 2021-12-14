@@ -302,6 +302,39 @@
 
     //#region Execution
 
+    /**
+     * The context here carries the command definitions and the environment variables. Further extensions may be added as well.
+     * The execution is complicated because it is async and the cycle through the program involves a lot of waiting.
+     * 
+     * @param {} context 
+     */
+    CLNullLangRunner.prototype.exec = function(context) {
+        var op = new Operation();
+        // Execution registers
+        var pc = 0; // Program counter
+        var stack = [];
+        var me = this;
+        var interrupt = null;
+
+        function _execInstruction(callback) {
+            ///
+        }
+        function _callback(result, err) {
+            if (err != null) {
+                interrupt = { type: "error", message: err + ""};
+            } else {
+                stack.push(result)
+            }
+        }
+
+        _execInstruction(_callback);
+
+
+
+        return op;
+    }
+
+
     CLNullLangRunner.prototype.execute = function(host, hardLimit) {
         var instr;
         while (pc < this.$program.length) {
@@ -309,6 +342,7 @@
             instr = this.$program[pc];
             switch (instr.operation) {
                 case Instructions.PushParam:
+
                 break;
                 case Instructions.Call:
                 break;
