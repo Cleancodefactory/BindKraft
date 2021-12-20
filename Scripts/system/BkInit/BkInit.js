@@ -5,12 +5,31 @@
 */
 
 var BkInit = {
-	IfDefined: function(/*_clsasses,fn*/) {
-		for (var i = 0; i < arguments.length - 1; i++) {
-			if (Class.getTypeName(arguments[i]) == null) return;
+	$delayed: [],
+	$execDelayed: function() {
+		var fn;
+		if (this.$delayed != null && this.$delayed.length > 0) {
+			for (var i = 0; i < this.$delayed.length;i++) {
+				fn = this.$delayed[i];
+				if (typeof fn == 'function') {
+					fn(this);
+				}
+			}
 		}
-		var fn = arguments[arguments.length - 1];
-		fn(this);
+	},
+	IfDefined: function(/*_clsasses,fn*/) {
+		if (arguments.length > 1) {
+			var conditions = Array.createCopyOf(arguments,0,arguments.length - 1);
+			var fn = arguments[arguments.length - 1];
+			this.$delayed.push(function(self) {
+				for (var i = 0; i < conditions.length; i++) {
+					if (Class.getTypeName(conditions[i]) == null) return;
+				}
+				fn(self);
+			});
+		} else if (arguments.length == 1) {
+			arguments[0](this);
+		}
 		return this;
 	},
 	// Shortcut locations

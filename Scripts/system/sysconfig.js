@@ -101,6 +101,8 @@
 	document.addEventListener("DOMContentLoaded", function (event) {
 		//window.removeEventListener('error', window.JBCoreConstants.ParseTimeErrorHandler);
 		window.onerror = ReportError;
+		// Run any delayed initializations
+		BkInit.$execDelayed();
 		// Before boot complete compilation phase
 		CompileTime.Tasks.run("completion");
 		// No more compile time tasks - forget them.
