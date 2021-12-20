@@ -5,6 +5,14 @@
 */
 
 var BkInit = {
+	IfDefined: function(/*_clsasses,fn*/) {
+		for (var i = 0; i < arguments.length - 1; i++) {
+			if (Class.getTypeName(arguments[i]) == null) return;
+		}
+		var fn = arguments[arguments.length - 1];
+		fn(this);
+		return this;
+	},
 	// Shortcut locations
 	StartMenu: function(fn) { fn(new BkInit_Shortcuts("shellfs","startmenu")); return this; },
 	SystemMenu: function(fn) { fn(new BkInit_Shortcuts("shellfs","system")); return this; },
