@@ -21,7 +21,7 @@
         }
         this.$cacheUrl = cacheUrl.toString();
     }
-    ViewLoadParameter.Inherit(BaseObject,"ViewLoadCache");
+    ViewLoadCache.Inherit(BaseObject,"ViewLoadCache");
     ViewLoadCache.$cache = {};
     ViewLoadCache.prototype.put = function(view) { 
         ViewLoadCache.$cache[this.$cacheUrl] = view;
