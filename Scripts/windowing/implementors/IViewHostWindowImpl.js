@@ -183,6 +183,10 @@ IViewHostWindowImpl.classInitialize = function (cls) {
     cls.prototype.LoadViewNow = function (initData) {
         this.viewLoadParameters = initData;
         if (initData != null) {
+            if (BaseObject.is(initData.cachedView,"ViewLoadCache")) {
+                initData.url = initData.cachedView.get_url();
+                initData.view = initData.cachedView.get_view();
+            }
             if (initData.ajaxsettings != null) {
                 if (initData.ajaxsettings.RoleId != null) {
                     this.set_localajaxcontextparameter(AjaxContextParameterFlags.RoleId, initData.ajaxsettings.RoleId);
@@ -221,6 +225,9 @@ IViewHostWindowImpl.classInitialize = function (cls) {
                 useView = initData.view;
             } else if (initData != null && initData.viewName != null) {
                 useView = result.views[initData.viewName];
+                if (BaseObject.is(initData.cachedView,"ViewLoadCache")) {
+                    initData.cachedView.put(useView);
+                }
             } else {
                 for (var v in result.views) {
                     if (result.views[v] != null && result.views[v].length > 0) {
