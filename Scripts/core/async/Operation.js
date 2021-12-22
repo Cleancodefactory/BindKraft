@@ -70,6 +70,7 @@ Operation.Implement(IOperationHandlingCallbackImpl);
 Operation.prototype.$expiration = function() {
 	if (!this.isOperationComplete()) {
 		this.CompleteOperation(false,"Operation timed out");
+		this.LATERROR("An operation timed out (" + this.$__instanceId + IOperationDescription.Dump(this.getOperationDescription()) + ")", "$expiration");
 		jbTrace.log("An operation timed out");
 	}
 }
@@ -97,7 +98,7 @@ Operation.prototype.onBeforeOperationCompleted = function() {
 Operation.prototype.then = function(callback) {
 	if (BaseObject.isCallback(callback)) {
 		var old = this.get_completionroutine();
-		if (BaseObject.is(old,"SugarryDispatcher")) {
+		if (BaseObject.is(old,"SugaryDispatcher")) {
 			old.tell(callback);
 		} else if (BaseObject.isCallback(old)) {
 			var wrapper = new SugaryDispatcher(this);
