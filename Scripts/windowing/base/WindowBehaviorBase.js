@@ -13,6 +13,7 @@ WindowBehaviorBase.prototype.init = function(/*BaseWindow*/ wnd) {
 	this.$window = wnd;
 	this.oninit(wnd);
 }
+//override
 WindowBehaviorBase.prototype.oninit = function(wnd) {
 	// TODO: Override if needed. One can override init directly, but oninit is more convenient (no need to call the parent method).
 }
@@ -20,6 +21,7 @@ WindowBehaviorBase.prototype.uninit = function(/*BaseWindow*/ wnd) {
 	this.$window = null;
 	this.onuninit(wnd);
 }
+//override
 WindowBehaviorBase.prototype.onuninit = function(wnd) {
 	// TODO: Override if needed. One can override uninit directly, but onuninit is more convenient (no need to call the parent method).
 }
