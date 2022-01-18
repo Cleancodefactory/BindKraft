@@ -18,7 +18,7 @@ TSEU - Treestate Element Unit
 TSE - TreeState Element
 
 ```
-    TSE := [ TSEU1, TSEU2, ... TSEUn, metaData]
+    TSE := [ TSEU1, TSEU2, ... TSEUn, $meta]
 ```
 
 In more human understandable terms this gives an object
@@ -52,7 +52,7 @@ TSM - TreeState map
     TSEU3 := ["id", number, > 0 ]
 
     http://..../route/HRM/hrm/123/profile/contract
-    state: [{branch: "hrm", $metaData: {...}}, {"id": 123}, {section: "profile"}, {section: "contract"}]
+    state: [{branch: "hrm", $meta: {...}}, {"id": 123}, {section: "profile"}, {section: "contract"}]
 
     hrm/123/profile/personal_info
 
