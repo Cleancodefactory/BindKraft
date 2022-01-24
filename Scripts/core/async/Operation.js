@@ -59,6 +59,8 @@ function Operation(taskproc /*args*/, timeout) {
 		// TODO: This call seems wrong! This should be a callback behavior
 		var taskargs = [this].concat(Array.createCopyOf(arguments,2));
 		this.async(function() { BaseObject.applyCallback(taskproc,taskargs); });
+	} else if (typeof taskproc === 'string') {
+		this.getOperationDescription().set_description(taskproc);
 	}
 	// Corrected bug on 2018-09-12: timeout not honoured when no task procedure is passed to the constructor (which is the main case)
 	if (typeof timeout == "number" && timeout > 0) {
@@ -70,7 +72,7 @@ Operation.Implement(IOperationHandlingCallbackImpl);
 Operation.prototype.$expiration = function() {
 	if (!this.isOperationComplete()) {
 		this.CompleteOperation(false,"Operation timed out");
-		this.LATERROR("An operation timed out (" + this.$__instanceId + IOperationDescription.Dump(this.getOperationDescription()) + ")", "$expiration");
+		this.LASTERROR("An operation timed out (" + this.$__instanceId + IOperationDescription.Dump(this.getOperationDescription()) + ")", "$expiration");
 		jbTrace.log("An operation timed out");
 	}
 }
@@ -216,4 +218,19 @@ Operation.Failed = function(desc) {
 	var op = new Operation();
 	op.CompleteOperation(false, desc);
 	return op;
+}
+Operation.Create = function(timeout, name,role,description,resultType) {
+	var op = new Operation(description, timeout);
+	var desc = op.getOperationDescription();
+	desc.set_description(description);
+	desc.set_name(name);
+	desc.set_role(role);
+	desc.set_resulttype(resultType);
+	return op;
+}
+Operation.CreateLong = function(name,role,description,resultType) {
+	return this.Create(window.JBCoreConstants.LongOperationTimeout);
+}
+Operation.CreateNormal = function(name,role,description,resultType) {
+	return this.Create(window.JBCoreConstants.NormalOperationTimeout);
 }
