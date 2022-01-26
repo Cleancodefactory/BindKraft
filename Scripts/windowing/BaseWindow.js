@@ -132,7 +132,7 @@ BaseWindow.findArgs = function (args, kind) {
 			result.persister.disablePersistence(true);
             continue;
         } else if (BaseObject.is(arg, "string")) {
-            this.$windowName = arg;
+            result.$windowName = arg;
             continue;
         } else if (typeof arg == "function" || BaseObject.is(arg, "Delegate")) {
             result.createCallback = arg;
@@ -222,11 +222,11 @@ BaseWindow.prototype.$persistSetting = function(key,v) {
 
 // ------------ IWindowIdentification -----------------------------
 
-BaseWindow.prototype.get_windowName = function() { return this.$windowName; }
+BaseWindow.prototype.get_windowName = function() { return this.createParameters.$windowName; }
 BaseWindow.prototype.findChildByName = function(windowName, /*optional*/ recursive) { 
     if (this.children == null) { return null; }
     var w = this.children.FirstOrDefault(function (idx, item) {
-        if (BaseWindow.is(item, "IWindowIdentification") && item.get_windowName() == windowName) {
+        if (BaseObject.is(item, "IWindowIdentification") && item.get_windowName() == windowName) {
             return item;
         }
         return null;
