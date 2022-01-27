@@ -122,6 +122,9 @@ Repeater.prototype.get_items = function() {
 }.Description("Returns all items")
  .Returns("array or null");
 
+Repeater.prototype.refresh = function() {
+	this.set_items(this.get_items());
+}
 Repeater.prototype.set_items = function (newData) {
 	var countnotchanged = (BaseObject.is(newData,"Array") && BaseObject.is(this.$items,"Array") && (newData.length == this.$items.length));
 	
