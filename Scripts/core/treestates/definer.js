@@ -1,24 +1,48 @@
 (function(){
 
+
+	var _tskinds = {
+		conditions: "conditions",
+		tseu: "tseu", // MArks TSEU array
+		tse: "tse", 
+		tsm: "tsm",
+		tsms: "tsms",
+		tsmeta: "tsmeta"
+	};
 	function $DefinerForTreeStates() {
 		BaseObject.apply(this,arguments);
 		throw "This class is not instantiable.";
 	}
 	$DefinerForTreeStates.Inherit(BaseObject,"$DefinerForTreeStates");
 
+	$DefinerForTreeStates.typeOf = function(obj) {
+		if (Array.isArray(obj)) {
+			return obj.$tskind;
+		} else if (typeof obj == "object") {
+			return _tskinds.tsmeta;
+		}
+		return null;
+	}
+	$DefinerForTreeStates.Conditions = _tskinds.conditions;
+	$DefinerForTreeStates.Unit = _tskinds.tseu;
+	$DefinerForTreeStates.Element = _tskinds.tse;
+	$DefinerForTreeStates.Map = _tskinds.tsm;
+	$DefinerForTreeStates.MapSet = _tskinds.tsms;
+	$DefinerForTreeStates.Meta = _tskinds.tsmeta;
+
+	$DefinerForTreeStates.isConditions = function(o) { return this.typeOf(o) == _tskinds.conditions;}
+	$DefinerForTreeStates.isUnit = function(o) { return this.typeOf(o) == _tskinds.tseu;}
+	$DefinerForTreeStates.isElement = function(o) { return this.typeOf(o) == _tskinds.tse;}
+	$DefinerForTreeStates.isMap = function(o) { return this.typeOf(o) == _tskinds.tsm;};
+	$DefinerForTreeStates.isMapSet = function(o) { return this.typeOf(o) == _tskinds.tsms;}
+	$DefinerForTreeStates.isMeta = function(o) { return this.typeOf(o) == _tskinds.tsmeta;}
+
 	$DefinerForTreeStates._defineTS = function(proc,tsapi) {
-		var _tskinds = {
-			conditions: "conditions",
-			tseu: "tseu",
-			tse: "tse",
-			tsm: "tsm",
-			tsms: "tsms"
-		};
-		
 		
 		var cond = function(name,args) {
 			return tsapi.Condition.apply(tsapi, arguments);
 		}
+		
 		var tseu = function(name,types,conditions) {
 			var arrTypes = tsapi.TSEUTypesValid(types);
 			if (tsapi.isError(arrTypes)) throw "One or more of the types in TSEU definition are not recognized. Types specified:" + types;
@@ -40,8 +64,12 @@
 			var arr = [];
 			for (var i = 0; i < arguments.length; i++) {
 				var tseu = arguments[i];
-				if (tseu.$tskind != _tskinds.tseu) throw "TSE can contain only TSEU elements";
-				arr.push(tseu);
+				if (Array.isArray(tseu)) {
+					if (tseu.$tskind != _tskinds.tseu) throw "TSE can contain only TSEU elements";
+					arr.push(tseu);
+				} else if (typeof tseu == "object" && i == arguments.length - 1) {
+					arr.push(tseu);
+				}
 			}
 			arr.$tskind = _tskinds.tse;
 		}
@@ -55,7 +83,7 @@
 					}
 					arr.push(_tsm);
 				}
-				arr.$tskind = _tskinds.tsm;
+				arr.$tskind = _tskinds.tsm; // One map
 				return arr;
 			} else {
 				throw "Empty TSM are not allowed";
@@ -70,7 +98,7 @@
 				}
 				arr.push(_tsm);
 			}
-			arr.$tskind = _tskinds.tsms;
+			arr.$tskind = _tskinds.tsms; // Multiple maps - no single root
 			return arr;
 		}
 		var result = proc(tsms, tsm, tse, tseu, cond);
