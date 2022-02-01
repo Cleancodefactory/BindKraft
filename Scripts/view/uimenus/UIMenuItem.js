@@ -12,7 +12,7 @@
         .ImplementProperty("owner", null, null, "fireChanged") // Structural query sink
         .ImplementProperty("processor", null, null, "fireChanged") // Delegate-like
         .ImplementProperty("processorType")
-        .ImplementProperty("hostComponentClass")
+        .ImplementProperty("hostComponentClass") // Explicit fallback specification of the ui component class that should show the item if nothing else is suggested by processor or owner
         //.ImplementProperty("classname") // TODO: Remove this.
         .ImplementChainSetters(); // className of the Base component that will be slotted in the menu item area
 
