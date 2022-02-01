@@ -234,3 +234,8 @@ Operation.CreateLong = function(name,role,description,resultType) {
 Operation.CreateNormal = function(name,role,description,resultType) {
 	return this.Create(window.JBCoreConstants.NormalOperationTimeout);
 }
+Operation.AsPromise = function(op) {
+	return new Promise(function(resolve, reject) {
+		op.onsuccess( r => resolve(r)).onfailure(e => reject(e));
+	});
+}

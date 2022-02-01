@@ -357,12 +357,16 @@ Base.prototype.get_data = function () {
 };
 Base.prototype.$freezeUpdateSources = false;
 Base.prototype.set_data = function (newData) {
+    // TODO: AsyncBeforeDataContexChanged
     if (IsNull(this.root)) {
         return null;
     }
     this.$freezeUpdateSources = true;
     this.root.dataContext = newData;
-    this.OnBeforeDataContextChanged();
+    var op = this.OnBeforeDataContextChanged();
+    if (!BaseObject.is(op, "Operation")) {
+        op = Operation.From(null);
+    }
     /* // OLD double callbacks for two separate requests for resources and lookups
     var localThis = this;
     if (!this.loadClassResources(function () {
@@ -373,15 +377,20 @@ Base.prototype.set_data = function (newData) {
     return;
     }
     */
-
-    var ar = this.updateTargets();
-    if (ar == null) ar = CallContext.currentAsyncResult();
-    this.afterAsync(ar, function () {
-        this.$freezeUpdateSources = false;
-        this.OnDataContextChanged();
-        this.datachangedevent.invoke(this, newData);
-    });
-	return ar;
+    var opresult = new Operation(null,window.JBCoreConstants.LongOperationTimeout);
+    op.onsuccess(this.thisCall(function () {
+        var ar = this.updateTargets();
+        if (ar == null) ar = CallContext.currentAsyncResult();
+        this.afterAsync(ar, function () {
+            this.$freezeUpdateSources = false;
+            this.OnDataContextChanged();
+            this.datachangedevent.invoke(this, newData);
+            opresult.CompleteOperation(true,newData);
+        });
+    }));
+    
+	//return ar;
+    return opresult;
 }.Fires("datachangedevent");
 Base.prototype.get_refdata = function () {
     return this.$referenceData;
@@ -390,14 +399,7 @@ Base.prototype.set_refdata = function (v) {
     this.$referenceData = v;
 };
 Base.get_dataContext = function (startEl) {
-    var cur = $(startEl);
-    while (cur != null) {
-        cur = cur.get(0);
-        if (cur == null) break;
-        if (cur.dataContext || cur.hasDataContext === true) return cur.dataContext;
-        cur = $(cur).parent();
-    }
-    return null;
+    return JBUtil.findDataContext(startEl)
 };
 Base.prototype.get_dataContext = function () { // In contrast to get_data this method will search for the actual data context down the tree
     return Base.get_dataContext(this.root);
