@@ -138,7 +138,7 @@
 	/**
 		Checks the conditions in the TSEU over the value
 	*/
-	TreeStatesConvert.TSEUTestConditions = function(tseu, v) { // tests the conditions from the TSEU over the value vLinkcolor
+	TreeStatesConvert.TSEUTestConditions = function(tseu, v) { // tests the conditions from the TSEU over the value v
 		var conditions = tseu[2];
 		if (BaseObject.is(conditions,"Array")) {
 			for (var i = 0; i < conditions.length;i++) {
@@ -146,6 +146,16 @@
 			}
 		}
 		return true;
+	}
+	//#region TSE (Element)
+	/**
+	 * The stateTSE
+	 */
+	TreeStatesConvert.GetMetaFromTSE = function(tse) {
+		if (Array.isArray(tse)) {
+
+		}
+		return null;
 	}
 	/**
 		Executes all the TSEU from a TSE to strip the values from an object and put them in an array
@@ -174,6 +184,15 @@
 		}
 		return result;
 	}
+	/**
+	 * Delinearizes array representation into object representation, glues the metadata from the definition
+	 */
+	TreeStatesConvert.DelinearizeTSE = function(tse, linear) { // Converts data from TSE linear array to object
+
+
+	}
+
+	//#endregion TSE
 
 	/**
 	 * Linearizes over a single map. A map (TSM) is:
@@ -195,25 +214,36 @@
 	TreeStatesConvert.LinearizeTSM = function(tsm, objset, _linear) {
 		var linear = _linear || [];
 		var r; // temp result
+		if (objset.length == 0) { // nothing to linearize
+			return linear; // Counts as success
+		}
+		var recurseObjSet; // temp var for cloned remains of object sets
 		if (definer.isMap(tsm)) {
 			if (tsm.length > 0) { // has a TSE - test it
 				r = this.LinearizeTSE(tsm[0]);
-				if (Array.isArray(r)) { // Match
-					linear.push(r);
-					// recurse the submaps until match or error
+				if (Array.isArray(r)) { // We are match
+					linear.push(r); // record it
+					recurseObjSet = Array.createCopyOf(objset,1); // Cut the first object
+					// recurse the submaps until match, error
 					for (var i = 1; i < tsm.length; i++) {
-						r = this.LinearizeTSM(tsm[i]);
-						//if (Array.isArray(r))
+						r = this.LinearizeTSM(tsm[i], recurseObjSet, linear); //
+						if (Array.isArray(r)) {// Match
+							return r;
+						} else if (this.isError(r)) { // Error - immediate bail out
+							return r;
+						} // Try next
 					}
-					return true;
-				} else { // error or not a match - bail out
+					// No matches - technically not an error, but it usually is. Just detect it outside
+					return null;
+				} else { // error or not a match - bail out. Will be null or error, no need to distinguish between them here.
 					return r;
 				}
-			} else { // empty map - bail out
-				return [];
 			}
 		}
 		return null; // no match or/and not a map
+	}
+	TreeStatesConvert.DelinearizeTSM = function(tsm, liear, _objset) {
+		///
 	}
 	/* TODO needs review
 
