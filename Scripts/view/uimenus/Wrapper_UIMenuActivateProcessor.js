@@ -22,14 +22,24 @@
     Wrapper_UIMenuActivateProcessor.Inherit(BaseObject, "Wrapper_UIMenuActivateProcessor")
         .Implement(IUIMenuActivateProcessor);
 
-        Wrapper_UIMenuActivateProcessor.prototype.catchAll = function() {}
-        Wrapper_UIMenuActivateProcessor.prototype.onActivate = function() {
-            if (typeof this.method != "function") return;
-            if (this.obj != null) {
-                this.method.apply(this.obj, arguments);
-            } else {
-                method.apply(null, arguments);
-            }
-        };
+    Wrapper_UIMenuActivateProcessor.prototype.$component = null;
+    Wrapper_UIMenuActivateProcessor.prototype.set_component = function(component) {
+        this.$component = component;
+    }
+    Wrapper_UIMenuActivateProcessor.prototype.visibility = function() {
+        if (this.$component !== null) {
+            return this.$component.visibility.apply(this.$component, arguments);
+        }
+        return false;
+    }
+    Wrapper_UIMenuActivateProcessor.prototype.catchAll = function() {}
+    Wrapper_UIMenuActivateProcessor.prototype.onActivate = function() {
+        if (typeof this.method != "function") return;
+        if (this.obj != null) {
+            this.method.apply(this.obj, arguments);
+        } else {
+            method.apply(null, arguments);
+        }
+    };
 
 })();

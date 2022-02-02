@@ -13,9 +13,45 @@
         .Defaults({
             templateName: "bkdevmodule1/menu-itembase"
         });
+
+    UIMenuComponent.prototype.$displayStyle = null; // last known display style
     UIMenuComponent.prototype.init = function() {
         ITemplateSourceImpl.InstantiateTemplate(this);
     }
+    UIMenuComponent.prototype.finalinit = function() {
+        // TODO This should be base code
+        var item = this.get_data();
+        if (BaseObject.is(item, "UIMenuItem")) {
+            var proc = item.get_processor();
+            if (BaseObject.is(proc, "IUIMenuBaseProcessor")) {
+                proc.set_component(this);
+            }
+        }
+    }
+    
+    UIMenuComponent.prototype.visibility = function(v) {
+        function _isvisble() {
+            var d = window.getComputedStyle(this.root).display;
+            return (d != "none");
+        }
+        var dspl = this.root.style.display;
+        if (dspl != "none") {
+            this.$displayStyle = dspl;
+        }
+        if (arguments.length > 0) {
+            if (v) {
+                this.root.style.display = "";
+                if (!_isvisble()) {
+                    this.root.style.display = this.$displayStyle || "";
+                }
+            } else {
+                this.root.style.display = this.$displayStyle || "none";
+            }
+        }
+        dspl = window.getComputedStyle(this.root).display;
+        return (dspl != "none");
+    }
+
     UIMenuComponent.prototype.on_click = function(event) {
         var item = this.get_dataContext();   
         if (item != null) { // !!!

@@ -31,6 +31,8 @@ In end the processor is preserved in the item.$processor property and if the act
 
     item.get_processor().set_text('hello')
 
+The `ui component` should use `MyClass.CompatibleTypes(type1, type2 ...)` to declare the processor interfaces with which it can work.
+
 
 ### **Why "events"**?
 
@@ -41,3 +43,8 @@ The interface not only calls through that interface methods of the `processor` f
 This way there is no need to save a lot of data into the item to be used by the component - it is directly accessed for the `ui component` and/or the `processor` as defined by the particular connection interface.
 
 Based on this model the connection interfaces define the possible abstract types of menu items - the interfaces define what can be done with each kind and what it can report.
+
+
+## Slotting menu items
+
+Variety of implementations are possible and only a handful of conditional rules must be followed. I.e. the rules guarantee features which in turn are not mandatory.

@@ -81,7 +81,7 @@
         this.$().Empty();
         var appslottemplate = this.get_template();
         if (appslottemplate == null) {
-            this.LASTERROR("Cannot regenerate menu, because there is not template", "$regenMenu");
+            this.LASTERROR("Cannot regenerate menu, because there is no template", "$regenMenu");
             return;
         }
         // TODO The first item ?!?

@@ -1,5 +1,8 @@
 (function() {
 
+    /**
+     * Abstract class providing the inheritors with basic tools for implementing features
+     */
     function UIMenuSlotBase() {
         Base.apply(this, arguments);
     }
@@ -43,6 +46,8 @@
         return r;
     }
 
+    // TODO: The interesting question here is: Is this called after the processor is set? It should be so, it seems.
+    //  This will mean we do not need the processorType much (may be at all) and we can check the selected component class against the processor specified by the item creator.
     UIMenuSlotBase.prototype.getOpinion = function(slotInterface,menuItem,fallBack) {
         var interfaceDef = Class.getInterfaceName(slotInterface);
         var suggestedClass = null;
@@ -67,5 +72,17 @@
         if (proc == null) return false;
         return (cls.compatibleTypesList.indexOf(proc) >= 0);
     }
+
+    //#region 
+
+    UIMenuSlotBase.prototype.toggleVisibility = function() {
+        if (this.root.style.visibility != "visible") {
+            this.root.style.visibility = "visible";
+        } else {
+            this.root.style.visibility = "hidden";
+        }
+    }
+
+    //#endregion
 
 })();

@@ -1,8 +1,15 @@
 
 (function() {
 
+    // TODO Needs changes? or deprecation??
+
     var IUIMenuHost = Interface("IUIMenuHost"),
         UIMenuSlotBase = Class("UIMenuSlotBase");
+    
+    /**
+     * This is a very simplified slot not supporting add/remove - no dynamic editing
+     * If kept should be used for simple scenarios (may be context menus?)
+     */
     function UIMenuSlot() {
         UIMenuSlotBase.apply(this,arguments);
     }
