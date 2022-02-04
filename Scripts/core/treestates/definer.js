@@ -60,7 +60,7 @@
 			arr.$tskind = _tskinds.tseu;
 			return arr;
 		}
-		var tse = function(tseuN) {
+		var tse = function(tseuN, meta) {
 			var arr = [];
 			for (var i = 0; i < arguments.length; i++) {
 				var tseu = arguments[i];

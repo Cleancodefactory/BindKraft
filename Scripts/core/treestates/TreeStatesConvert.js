@@ -45,7 +45,7 @@
 
 	*/
 
-	var $DefinerForTreeStates = Class("DefinerForTreeStates");
+	var $DefinerForTreeStates = Class("$DefinerForTreeStates");
 	
 	var definer = $DefinerForTreeStates;
 
