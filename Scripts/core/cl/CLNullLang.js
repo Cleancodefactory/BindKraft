@@ -1,5 +1,7 @@
 (function() {
 
+    var CLNullLangRunner = Class("CLNullLangRunner");
+
     var Terms = {
         none: 0,
         // Space is found - usually ignored
@@ -28,26 +30,15 @@
         // Virtual tokens ===
         compound: 101
     }
-    var Instructions = { 
-        NoOp: 0, // () - does nothing
-        PushParam: 1, // (Variable Name) - pushes environment parameter's value in the stack
-        Call: 2, // (methodName) - Calls a routine (provided by the host)
-        PushDouble: 3, // (double) - Pushes a double on the stack
-        PushInt: 4, // (int) - Pushes an int on the stack
-        PushNull: 5, // () - Pushes null on the stack
-        PushBool: 6, // (bool) - Pushes a boolean on the stack
-        PushString: 7, // (string) - pushes a string on the stack
-        Dump: 8, // () - Pulls and dumps (forgets) one entry from the stack
-        JumpIfNot: 9, // (jumpaddress), 1 arg
-        Jump: 10 // (jumpaddress), 0 arg
-    }
+    var Instructions = CLNullLangRunner.Instructions;
     function _Instruction(operation, operand, argcount) {
         return {
             operation: operation,
-            operand: operand,
+            operand: operand || null,
             argCount: argcount || 0
         }
     }
+    
     function _EmptyInstruction() {
         return {
             operation: Instructions.NoOp,
@@ -65,19 +56,19 @@
         return {
             value: val,
             term: term,
-            pos: pos || -1,
+            pos: pos,
             arguments: 0,
             address0: null,
             address1: null,
             address2: null,
-            incArgs: function() {this.arguments ++;}
+            _incArgs: function() {this.arguments ++;}
         }
     }
 
 
 
 
-    var _regex = /(\s+)|(true|false|null)|(while|if)|(?:\$([a-zA-Z0-9_\.\-]+))|([a-zA-Z_][a-zA-Z0-9_\.\-]*)|(\()|(\))|(?:\'((?:\\'|[^\'])*)\')|([\+\-]?\d+(?:\.\d*)?)|(\,|(?:\r|\n)+)|($)|(#.*?(?:\n|\r)+)/g;
+    var _regex = /(\s+)|(true|false|null)|(while|if|halt)|(?:\$([a-zA-Z0-9_\.\-]+))|([a-zA-Z_][a-zA-Z0-9_\.\-]*)|(\()|(\))|(?:\'((?:\\'|[^\'])*)\')|([\+\-]?\d+(?:\.\d*)?)|(,)|($)|(#.*?(?:\n|\r|$)+)/g;
 
     //#region Compiler
 
@@ -91,7 +82,7 @@
     CLNullLang.prototype.compile = function(query) {
         var opstack = []; // Opentry
         opstack.incArgs = function() {
-            if (this.length > 0) this[this.length - 1].incArgs();
+            if (this.length > 0) this[this.length - 1]._incArgs();
         }
         var runner = new CLNullLangRunner();
         var undecided = null; // Opentry
@@ -103,25 +94,30 @@
         _regex.lastIndex = 0;
         var match;
         while (match = _regex.exec(query)) {
-            if (pos != match.index) runner.complete(_ReportError("Syntax error", match.index,query));
-            pos = match.index + match.length;
+            if (pos != match.index) return runner.complete(_ReportError("Syntax error", match.index,query));
+            pos = match.index + match[0].length;
 
             for (var i = 1; i < match.length; i++) {
                 if (match[i] != null) {
                     curval = match[i];
                     switch (i) {
                         case Terms.keyword:
-                            if (undecided != null) runner.complete(_ReportError("Syntax error", match.index, query));
-                            undecided = OpEntry(curval, Terms.keyword, match.index);
-                            continue;
+                            if (undecided != null) return runner.complete(_ReportError("Syntax error", match.index, query));
+                            if (curval == "halt") {
+                                runner.add(_Instruction(Instructions.Halt));
+                                opstack.incArgs();
+                            } else {
+                                undecided = OpEntry(curval, Terms.keyword, match.index);
+                            }
+                            break;
                         case Terms.varidentifier:
-                            if (undecided != null) runner.complete(_ReportError("Syntax error", match.index, query));
+                            if (undecided != null) return runner.complete(_ReportError("Syntax error", match.index, query));
                             undecided = OpEntry(curval, Terms.varidentifier, match.index);
-                            continue;
+                            break;
                         case Terms.identifier:
-                            if (undecided != null) runner.complete(_ReportError("Syntax error", match.index, query));
-                            undecided = OpEntry(curval, Terms.keyword, match.index);
-                            continue;
+                            if (undecided != null) return runner.complete(_ReportError("Syntax error", match.index, query));
+                            undecided = OpEntry(curval, Terms.identifier, match.index);
+                            break;
                         case Terms.openbracket:
                             if (undecided != null && undecided.term == Terms.varidentifier) {
                                 opstack.push(undecided);
@@ -136,21 +132,25 @@
                             } else if (undecided == null) {
                                 opstack.push(OpEntry(null, Terms.compound, match.index));
                             }
-                            continue;
+                            break;
                         case Terms.closebracket:
                             if (undecided != null && undecided.term == Terms.varidentifier) {
                                 opstack.incArgs();
                                 runner.add(_Instruction(Instructions.PushVar, undecided.value)) // todo
                                 undecided = null;
                             } else if (undecided != null && undecided.term == Terms.identifier) {
-                                undecided.incArgs();
+                                opstack.incArgs();
                                 runner.add(_Instruction(Instructions.PushParam, undecided.value));
                                 undecided = null;
                             }
                             // Function call
                             if (opstack.length == 0) return runner.complete(_ReportError("Function call has no name", match.index, query));
                             entry = opstack.pop();
-                            if (entry.term == Terms.identifier) {
+
+                            if (entry.term == Terms.varidentifier) {
+                                opstack.incArgs();
+                                runner.add(_Instruction(Instructions.PullVar, entry.value, entry.arguments));
+                            } else if (entry.term == Terms.identifier) {
                                 opstack.incArgs();
                                 runner.add(_Instruction(Instructions.Call, entry.value, entry.arguments));
                             } else if (entry.term == Terms.keyword) {
@@ -182,7 +182,7 @@
                             } else {
                                 return runner.complete(_ReportError("Syntax error", match.index, query));
                             }
-                            continue;
+                            break;
                         case Terms.comma:
                             if (undecided != null && undecided.term == Terms.varidentifier) {
                                 opstack.incArgs();
@@ -221,7 +221,7 @@
                                     return runner.complete(_ReportError("while or if operator composition error", match.index, query));
                                 }
                             }
-                            continue;
+                            break;
                         case Terms.numliteral:
                             if (undecided != null) return runner.complete(_ReportError("Syntax error",undecided.pos, query));
                             if (curval.indexOf('.') >= 0) { // double
@@ -241,7 +241,7 @@
                                     return runner.complete(_ReportError("Invalid integer literal",match.index, query));
                                 }
                             }
-                            continue;
+                            break;
                         case Terms.specialliteral:
                             if (undecided != null) return runner.complete(_ReportError("Syntax error",undecided.pos,query));
                             if (curval == "null") {
@@ -254,14 +254,15 @@
                                 return runner.complete(_ReportError("Syntax error - unknown literal",match.index, query));
                             }
                             opstack.incArgs();
-                            continue;
+                            break;
                         case Terms.stringliteral:
                             if (undecided != null) return runner.complete(_ReportError("Syntax error",undecided.pos,query));
                             runner.add(_Instruction(Instructions.PushString,curval));
                             opstack.incArgs();
-                            continue;
+                            break;
                         case Terms.space:
-                            continue;
+                        case Terms.comment:
+                            break;
                         case Terms.end:
                             if (undecided != null && undecided.term == Terms.varidentifier) {
                                 opstack.incArgs();
@@ -273,6 +274,7 @@
                                 undecided = null;
                             }
                             if (opstack.length == 0) {
+                                runner.add(_Instruction(Instructions.NoOp));
                                 return runner.complete();
                             } else {
                                 return runner.complete(_ReportError("Syntax error - unexpected end of script",match.index));
@@ -290,123 +292,6 @@
 
     //#endregion Compiler
 
-    //#region Runner
-
-    function CLNullLangRunner() {
-        BaseObject.apply(this, arguments);
-    }
-    CLNullLangRunner.Inherit(BaseObject,"CLNullLangRunner");
-
-    CLNullLangRunner.prototype.$program = new InitializeArray("The program");
-    CLNullLangRunner.prototype.$buildError = null;
-
-    //#region Execution
-
-    /**
-     * The context here carries the command definitions and the environment variables. Further extensions may be added as well.
-     * The execution is complicated because it is async and the cycle through the program involves a lot of waiting.
-     * 
-     * @param {} context 
-     */
-    CLNullLangRunner.prototype.exec = function(context) {
-        var op = new Operation();
-        // Execution registers
-        var pc = 0; // Program counter
-        var stack = [];
-        var me = this;
-        var interrupt = null;
-
-        function _execInstruction(callback) {
-            ///
-        }
-        function _callback(result, err) {
-            if (err != null) {
-                interrupt = { type: "error", message: err + ""};
-            } else {
-                stack.push(result)
-            }
-        }
-
-        _execInstruction(_callback);
-
-
-
-        return op;
-    }
-
-
-    CLNullLangRunner.prototype.execute = function(host, hardLimit) {
-        var instr;
-        while (pc < this.$program.length) {
-            /*  operation, operand, argCount */
-            instr = this.$program[pc];
-            switch (instr.operation) {
-                case Instructions.PushParam:
-
-                break;
-                case Instructions.Call:
-                break;
-                case Instructions.PushDouble:
-                break;
-                case Instructions.PushInt:
-                break;
-                case Instructions.PushNull:
-                break;
-                case Instructions.PushBool:
-                break;
-                case Instructions.PushString:
-                break;
-                case Instructions.Dump:
-                break;
-                case Instructions.JumpIfNot:
-                break;
-                case Instructions.Jump:
-                break;
-                default:
-            }
-        }    
-    }
-    //#endregion Execution
-
-    //#region Build
-    /**
-     * Clears the entire program
-     */
-    CLNullLangRunner.prototype.clear = function() {
-        this.$program.splice(0);
-    }
-    /**
-     * Adds new instruction to the program.
-     */
-    CLNullLangRunner.prototype.add = function(instruction) {
-        this.$program.push(instruction);
-        return this;
-    }
-    /**
-     * Updates the operand of the instruction at address
-     */
-    CLNullLangRunner.prototype.update = function(address, operand) {
-        if (address >= 0 && address < this.$program.length) {
-            var instruction = this.$program[address];
-            instruction.operand = operand;
-            return true;
-        }
-        return false;
-    }
-    /**
-     * Returns the next address to be occupied
-     */
-    CLNullLangRunner.prototype.address = function() {
-        return this.$program.length;
-    }
-    CLNullLangRunner.prototype.complete = function(err) {
-        if (err != null) {
-            this.$buildError = err + "";
-        }
-        return this;
-    }
-    //#endregion Build
-
-    //#endregion Runner
+    
 
 })();

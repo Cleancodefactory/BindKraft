@@ -98,7 +98,7 @@ ToolTipWindow.prototype.openTipWindow = function() {
 }
 
 
-ToolTipWindow.prototype.this.$calcTipPositionPosition = function() {
+ToolTipWindow.prototype.$calcTipPositionPosition = function() {
 	return this.calcRect(this.element,new Size(200,50),this.placement);
 }
 
