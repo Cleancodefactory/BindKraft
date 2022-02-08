@@ -34,7 +34,7 @@
     function _Instruction(operation, operand, argcount) {
         return {
             operation: operation,
-            operand: operand || null,
+            operand: operand,
             argCount: argcount || 0
         }
     }
