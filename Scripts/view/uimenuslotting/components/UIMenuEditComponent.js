@@ -1,10 +1,11 @@
 (function () {
 
+    var UIMenuComponentBase = Class("UIMenuComponentBase");
     function UIMenuEditComponent() {
-        Base.apply(this, arguments);
+        UIMenuComponentBase.apply(this, arguments);
     }
 
-    UIMenuEditComponent.Inherit(Base, "UIMenuEditComponent")
+    UIMenuEditComponent.Inherit(UIMenuComponentBase, "UIMenuEditComponent")
         .Implement(IUIControl)
         .Implement(ITemplateSourceImpl, new Defaults("templateName"))
         .Defaults({

@@ -43,6 +43,7 @@ EventDispatcher.prototype.$orderedAdd = function (func, priority) {
     return this.handlers.addOrderedElement(newhandler);
 };
 EventDispatcher.prototype.add = function (func, bPriority) {
+    if (this.__obliterated || this.$invocationInProgress > 0) return;
     if (this.handlers == null) return this;
 	// TODO: This line looks antique?
     //var n = this.handlers.findElement(func);
@@ -52,12 +53,14 @@ EventDispatcher.prototype.add = function (func, bPriority) {
     return this;
 };
 EventDispatcher.prototype.remove = function (func) {
+    if (this.__obliterated || this.$invocationInProgress > 0) return;
     if (this.handlers == null) return this;
     var h = this.handlers.removeElement(func);
     if (h != null) h.obliterate();
     return this;
 };
 EventDispatcher.prototype.removeByTarget = function (target) {
+    if (this.__obliterated || this.$invocationInProgress > 0) return;
     if (this.handlers == null) return this;
     this.handlers.Delete(function(idx, item) {
         if (BaseObject.is(item, "EventDispatcherReg") && BaseObject.is(item.handler, "ITargeted")) {
@@ -68,7 +71,7 @@ EventDispatcher.prototype.removeByTarget = function (target) {
     return this;
 };
 EventDispatcher.prototype.removeAll = function () {
-    if (this.__obliterated) return;
+    if (this.__obliterated || this.$invocationInProgress > 0) return;
     for (var i = 0; this.handlers != null && i < this.handlers.length; i++) {
         // TODO: Should we oliterate them?
         if (this.handlers[i] != null) {
@@ -95,51 +98,38 @@ EventDispatcher.prototype.$translateArgs = function(args) {
 	this.LASTERROR(_Errors.compose(),"The translator set in an EventDispatcher is not IInvocationWithArrayArgs and will be ignored");
 	return args;
 }
+EventDispatcher.prototype.$invocationInProgress = 0;
 EventDispatcher.prototype.invoke = function () {
     if (this.isFrozen()) return;
-	var args = Array.createCopyOf(arguments);
-	args = this.$translateArgs(args);
-    this.$happened = args;
-    if (this.handlers != null && this.handlers.length) {
-        var f;
-		var fd = null; // For deletion
-        for (var i = 0; this.handlers != null && i < this.handlers.length; i++) { // To keep this reentrant we need to check if the handlers is not cleaned up on every iteration
-            f = this.handlers[i];
-            if (f != null) {
-				if (f.applyHandler(this.target, args) === false) {
-					(fd = fd || []).push(i);
-				}
-			}
+    try {
+        if (this.$invocationInProgress < 0) this.$invocationInProgress = 0;
+        this.$invocationInProgress++;
+        var args = Array.createCopyOf(arguments);
+        args = this.$translateArgs(args);
+        this.$happened = args;
+        if (this.handlers != null && this.handlers.length) {
+            var f;
+            
+            for (var i = 0; this.handlers != null && i < this.handlers.length; i++) { // To keep this reentrant we need to check if the handlers is not cleaned up on every iteration
+                f = this.handlers[i];
+                if (f != null) {
+                    if (f.applyHandler(this.target, args) === false) {
+                        this.handlers.splice(i,1);
+                        i--;
+                        continue; // To keep this reentrant we delete immediately the unneeded handler and continue the cycle
+                        // (fd = fd || []).push(i);
+                    }
+                }
+            }
         }
-		if (fd != null) {
-			for (i = fd.length - 1; i >= 0; i--) {
-				this.handlers.splice(fd[i],1).obliterate();
-			}
-		}
+    } finally {
+        this.$invocationInProgress--;
     }
     return this;
 };
 EventDispatcher.prototype.invokeWithArgsArray = function (args) {
     if (this.isFrozen()) return;
-    var a = (args == null) ? [] : args;
-	a = this.$translateArgs(a);
-    this.$happened = a;
-    var f;
-	var fd = null; // For deletion
-    for (var i = 0; this.handlers != null && i < this.handlers.length; i++) {
-        f = this.handlers[i];
-        if (f != null) {
-			if (f.applyHandler(this.target, a) === false) {
-				(fd = fd || []).push(i);
-			}
-		}
-    }
-	if (fd != null) {
-		for (i = fd.length - 1; i >= 0; i--) {
-			this.handlers.splice(i,1).obliterate();
-		}
-	}
-    return this;
+    return this.invoke.apply(this, args);
 };
 EventDispatcher.prototype.get_translator = function() { return this.$translator; }
 EventDispatcher.prototype.set_translator = function(v) { this.$translator = v; }

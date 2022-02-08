@@ -370,10 +370,13 @@ Function.prototype.Obliterator = function(Obliterator) {
         	this.compatibleTypesList = [];
 		}
         for (var i = 0; i < arguments.length; i++) {
-			if (typeof arguments[i] != "string") {
-				CompileTime.warn("CompatibleTypes declaration accepts only string parameters. Interface: " + this.classType);
+			if (typeof arguments[i] == "string") {
+				this.compatibleTypesList.push(arguments[i]);
+			} else if (typeof arguments[i] == "function") {
+				this.compatibleTypesList.push(Class.getTypeName(arguments[i]));
 			}
-            this.compatibleTypesList.push(arguments[i]);
+			
+            
         }
     };
     return this;

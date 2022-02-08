@@ -35,13 +35,13 @@
             if (nv.is("UIMenuStrip")) {
                 var items = nv.get_items();
                 for (var i = 0; i < items.length; i++) {
-                    tml = $_template.replace("%%%", this.getOpinion(IUIMenuHost, items[i], "UIMenuComponent"));
+                    tml = $_template.replace("%%%", this.getOpinion(IUIMenuHost, items[i], "UIMenuComponentActivate"));
                     Materialize.cloneTemplate(this.root, tml, items[i]);
                 }
                 this.rebind();
                 this.updateTargets();    
             } else {
-                tml = $_template.replace("%%%", this.getOpinion(IUIMenuHost, nv, "UIMenuComponent"));
+                tml = $_template.replace("%%%", this.getOpinion(IUIMenuHost, nv, "UIMenuComponentActivate"));
                 this.$item = Materialize.cloneTemplate(this.root, tml, nv);
                 this.rebind();
                 this.updateTargets();

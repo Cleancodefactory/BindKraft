@@ -2,36 +2,71 @@
 
     var IUIMenuActivateProcessor = Interface("IUIMenuActivateProcessor");
 
-    function UIMenuComponent() {
+    function UIMenuComponentBase() {
         Base.apply(this,arguments);
         this.on("click", this.on_click);
     }
-    UIMenuComponent.Inherit(Base, "UIMenuComponent")
+    UIMenuComponentBase.Inherit(Base, "UIMenuComponentBase")
         .Implement(IUIControl)
+        .Implement(IInvocationWithArrayArgs)
         .Implement(ITemplateSourceImpl, new Defaults("templateName"))
         .CompatibleTypes(IUIMenuActivateProcessor)
         .Defaults({
             templateName: "bkdevmodule1/menu-itembase"
         });
 
-    UIMenuComponent.prototype.$displayStyle = null; // last known display style
-    UIMenuComponent.prototype.init = function() {
+    UIMenuComponentBase.prototype.obliterate = function() {
+        var item = this.get_data();
+        if (BaseObject.is(item, "UIMenuItem")) {
+            item.changed.remove(this);
+        }
+        Base.prototype.obliterate.apply(this,arguments);
+    }
+    UIMenuComponentBase.prototype.menuItem = function() {
+        var item = this.get_data();
+        if (BaseObject.is(item, "UIMenuItem")) {
+            return item;
+        }
+        return null;
+    }
+
+    UIMenuComponentBase.prototype.init = function() {
         ITemplateSourceImpl.InstantiateTemplate(this);
     }
-    UIMenuComponent.prototype.finalinit = function() {
+    UIMenuComponentBase.prototype.finalinit = function() {
         // TODO This should be base code
         var item = this.get_data();
         if (BaseObject.is(item, "UIMenuItem")) {
-            var proc = item.get_processor();
-            if (BaseObject.is(proc, "IUIMenuBaseProcessor")) {
-                proc.set_component(this);
-            }
+            item.changed.add(this);
+            this.updateVisibility();
         }
     }
+    //#region IInvocationWithArrayArgs
+    UIMenuComponentBase.prototype.invokeWithArgsArray = function() {
+        this.OnMenuItemChanged();
+    }
+
+    // override
+    UIMenuComponentBase.prototype.OnMenuItemChanged = function() {
+        this.updateTargets();
+        this.updateVisibility();
+    }
     
-    UIMenuComponent.prototype.visibility = function(v) {
+    //#endregion
+
+    UIMenuComponentBase.prototype.$displayStyle = null; // last known display style
+    UIMenuComponentBase.prototype.updateVisibility = function() {
+        var mi = this.menuItem();
+        if (mi.get_data("hide")) {
+            this.$visibility(false);
+        } else {
+            this.$visibility(true);
+        }
+    }
+    UIMenuComponentBase.prototype.$visibility = function(v) {
+        var me = this;
         function _isvisble() {
-            var d = window.getComputedStyle(this.root).display;
+            var d = window.getComputedStyle(me.root).display;
             return (d != "none");
         }
         var dspl = this.root.style.display;
@@ -52,7 +87,7 @@
         return (dspl != "none");
     }
 
-    UIMenuComponent.prototype.on_click = function(event) {
+    UIMenuComponentBase.prototype.on_click = function(event) {
         var item = this.get_dataContext();   
         if (item != null) { // !!!
             if (BaseObject.is(item.get_processor(), "IUIMenuActivateProcessor")) {

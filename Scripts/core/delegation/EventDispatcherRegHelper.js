@@ -59,7 +59,7 @@ EventDispatherRegHelper.prototype.applyHandler = function(fallbackTarget, argsAr
 	if (this.__obliterated) return false; // make sure this reghelper is removed from the handlers, was returning null before.
     var f = this.handler;
     if (BaseObject.is(f, "IInvocationWithArrayArgs")) {
-		if (f.__obliterated) return false;
+		if (f.__obliterated) return false; // see comment above - when the handler is obliterated we return false instead of the handler (i.e. all obliterated handlers "want" to be forgotten)
         return f.invokeWithArgsArray(argsArray);
     } else if (BaseObject.is(f, "function")) {
         return f.apply(fallbackTarget, argsArray);

@@ -93,7 +93,7 @@
                     tml = appslottemplate.replace("%%%", this.getOpinion(IUIAppMenuHost, nv, "UIMenuStripComponent"));
                     Materialize.cloneTemplate(this.root, tml, nv);
                 } else {
-                    tml = appslottemplate.replace("%%%", this.getOpinion(IUIAppMenuHost, nv, "UIMenuComponent"));
+                    tml = appslottemplate.replace("%%%", this.getOpinion(IUIAppMenuHost, nv, "UIMenuComponentActivate"));
                     Materialize.cloneTemplate(this.root, tml, nv);
                 }
             }

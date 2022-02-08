@@ -51,7 +51,9 @@
     UIMenuSlotBase.prototype.getOpinion = function(slotInterface,menuItem,fallBack) {
         var interfaceDef = Class.getInterfaceName(slotInterface);
         var suggestedClass = null;
+        var proc = null;
         if (BaseObject.is(menuItem.get_processor(),"IUIMenuProcessorOpinion")) {
+            proc = menuItem.get_processor();
             suggestedClass = menuItem.get_processor().suggestUIComponentClass(slotInterface, menuItem);
         }
         if (suggestedClass == null && BaseObject.is(menuItem.get_owner(),"IUIMenuProcessorOpinion")) { 
@@ -61,10 +63,11 @@
             suggestedClass = menuItem.get_hostComponentClass();
         }
         var result = suggestedClass || fallBack;
-        if (!this.checkProcessorComponentCompatibility(menuItem.get_processorType(),result)) return null;
+        if (!this.checkProcessorComponentCompatibility((proc?proc.classDefinition():null),result)) return null;
         return result;
     }
     UIMenuSlotBase.prototype.checkProcessorComponentCompatibility = function(processorType,componentClass) {
+        return true;
         if (processorType == null) return true; // TODO This looks a little bit controversial
         var cls = Class.getClassDef(componentClass);
         if (cls == null || cls.compatibleTypesList == null) return false;
