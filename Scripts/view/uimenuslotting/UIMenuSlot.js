@@ -20,32 +20,28 @@
             templateName: new StringConnector('<div data-class="%%%"></div>')
         });
 
-    UIMenuSlot.ImplementProperty("menudata", new Initialize("Menu model based on UIMenuItem", null),null, function(ov, nv) {
+    UIMenuSlot.ImplementProperty("menudata", new Initialize("Array of menus based on UIMenuItem or a sinlgle menu item", null),null, function(ov, nv) {
         this.$().Empty();
         this.$item = null;
-        // The first item is not displayed - its items matter only.
+        
+        // TODO: Clear the slot first!?!?
+
         if (BaseObject.is(nv, "UIMenuItem")) {
+            nv = [nv];
+        }
+        if (BaseObject.is(nv, "Array")) {
             var $_template = this.get_template();
             if ($_template == null) {
                 this.LASTERROR("Cannot regenerate menu, because there is not template");
                 return;
             }
-            
-            var tml,item;
-            if (nv.is("UIMenuStrip")) {
-                var items = nv.get_items();
-                for (var i = 0; i < items.length; i++) {
-                    tml = $_template.replace("%%%", this.getOpinion(IUIMenuHost, items[i], "UIMenuComponentActivate"));
-                    Materialize.cloneTemplate(this.root, tml, items[i]);
-                }
-                this.rebind();
-                this.updateTargets();    
-            } else {
-                tml = $_template.replace("%%%", this.getOpinion(IUIMenuHost, nv, "UIMenuComponentActivate"));
-                this.$item = Materialize.cloneTemplate(this.root, tml, nv);
-                this.rebind();
-                this.updateTargets();
+            var items = nv;
+            for (var i = 0; i < items.length; i++) {
+                tml = $_template.replace("%%%", this.getOpinion(IUIMenuHost, items[i], "UIMenuComponentActivate"));
+                Materialize.cloneTemplate(this.root, tml, items[i]);
             }
+            this.rebind();
+            this.updateTargets();    
         }
     });
     

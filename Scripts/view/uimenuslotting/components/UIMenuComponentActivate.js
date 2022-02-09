@@ -21,13 +21,10 @@
     }
 
     UIMenuComponentActivate.prototype.on_click = function(event) {
-        var item = this.get_dataContext();   
+        var item = this.get_data();   
         if (item != null) { // !!!
             if (BaseObject.is(item.get_processor(), "IUIMenuActivateProcessor")) {
                 item.get_processor().onActivate(this, item); // args model is temporary !!!
-            } else if (BaseObject.is(item.get_processor(), "Delegate")) {
-                // Temporary here
-                item.get_processor().invoke(this, item);
             }
         }
     }

@@ -4,7 +4,6 @@
 
     function UIMenuComponentBase() {
         Base.apply(this,arguments);
-        this.on("click", this.on_click);
     }
     UIMenuComponentBase.Inherit(Base, "UIMenuComponentBase")
         .Implement(IUIControl)
@@ -87,16 +86,42 @@
         return (dspl != "none");
     }
 
-    UIMenuComponentBase.prototype.on_click = function(event) {
-        var item = this.get_dataContext();   
-        if (item != null) { // !!!
-            if (BaseObject.is(item.get_processor(), "IUIMenuActivateProcessor")) {
-                item.get_processor().onActivate(this, item); // args model is temporary !!!
-            } else if (BaseObject.is(item.get_processor(), "Delegate")) {
-                // Temporary here
-                item.get_processor().invoke(this, item);
-            }
+    //#region Helpers for random stuff
+
+    UIMenuComponentBase.prototype.packKeyboardEventData = function(ke) { 
+        if (ke.originalEvent) {
+            ke = ke.originalEvent;
+        }
+        if (ke instanceof KeyboardEvent) {
+            var keydata = {
+                shift: ke.shiftKey,
+                alt: ke.altKey,
+                meta: ke.metaKey,
+                ctrl: ke.ctrlKey,
+                // TODO handle browsers that have no key
+                key: ke.key // string representation
+            };
+            return keydata;
+        } else {
+            return null;
         }
     }
+    UIMenuComponentBase.prototype.packInputSelectionData = function(field) { 
+        if (field instanceof HTMLInputElement) {
+            var sel = {
+                start: field.selectionStart,
+                end: field.selectionEnd,
+                direction: field.selectionDirection,
+                collapsed: field.selectionStart == field.selectionEnd
+            };
+            return sel;
+        } else {
+            return null;
+        }
+    }
+
+    //#endregion
+
+    
 
 })();

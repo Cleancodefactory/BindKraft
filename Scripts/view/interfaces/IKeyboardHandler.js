@@ -32,6 +32,7 @@ IKeyboardHandler.packKeyDataFromEvent = function(ke,customData) {
 	 if (ke.__isKeyData) return ke;
 	 var r = { __isKeyData: true};
 	 
+	 //if (typeof ke.code )
 	 if (typeof ke.which == "number" && ke.which != 0) {
 		 r.which = ke.which;
 	 } else if (ke.keyCode != null && ! isNaN(parseInt(ke.keyCode))) {

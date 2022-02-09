@@ -6,7 +6,7 @@
     function IUIMenuActivateProcessor() {}
     IUIMenuActivateProcessor.Interface("IUIMenuActivateProcessor" , "IUIMenuBaseProcessor");
 
-    IUIMenuActivateProcessor.prototype.onActivate = function(sender, data) { throw "not implemented"; }
+    IUIMenuActivateProcessor.prototype.onActivate = function(item) { throw "not implemented"; }
 
     //#region Helpers
     IUIMenuActivateProcessor.wrapMethod = function(obj, method) {

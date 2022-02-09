@@ -20,9 +20,9 @@
     
 
     UIMenuStripComponent.prototype.on_click = function(event) {
-        var item = this.get_dataContext();   
-        if (this.get_slot() != null) {
-            this.get_slot().toggleVisibility();
+        var item = this.get_data(); 
+        if (BaseObject.is(item,"UIMenuItem")) {
+            item.set_data("open", !item.get_data("open"));
         }
     }
 

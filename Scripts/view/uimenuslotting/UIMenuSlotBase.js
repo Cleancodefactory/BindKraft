@@ -63,17 +63,29 @@
             suggestedClass = menuItem.get_hostComponentClass();
         }
         var result = suggestedClass || fallBack;
-        if (!this.checkProcessorComponentCompatibility((proc?proc.classDefinition():null),result)) return null;
+        if (result == null) {
+            // TODO Add useful information to the error.
+            this.LASTERROR("Cannot determine component class for a menu item.");
+            return null;
+        }
+        proc = (proc?proc.classDefinition():null);
+        if (!this.checkProcessorComponentCompatibility(proc,result)) {
+            this.LASTERROR("The selected component for the menu item is incompatible with its processor's class. component:" + result.classType + " processor: " + ((proc != null)?proc.classType:"null"));
+            return null;
+        }
         return result;
     }
-    UIMenuSlotBase.prototype.checkProcessorComponentCompatibility = function(processorType,componentClass) {
-        return true;
-        if (processorType == null) return true; // TODO This looks a little bit controversial
-        var cls = Class.getClassDef(componentClass);
-        if (cls == null || cls.compatibleTypesList == null) return false;
-        var proc = Class.getInterfaceName(processorType);
-        if (proc == null) return false;
-        return (cls.compatibleTypesList.indexOf(proc) >= 0);
+    UIMenuSlotBase.prototype.checkProcessorComponentCompatibility = function(processorClass,componentClass) {
+        if (processorClass == null) return true; // Nothing to base check on
+        var component = Class.getClassDef(componentClass);
+        var processor = Class.getClassDef(processorClass);
+        if (component == null || processor == null) {
+            return true; // Paranoia
+        }
+        if (component.compatibleTypesList == null) return true;
+        return component.compatibleTypesList.Any(function(index, typeName) {
+            return Class.is(processor, typeName);
+        });
     }
 
     //#region 
