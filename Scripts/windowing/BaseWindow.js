@@ -72,6 +72,7 @@ BaseWindow.Implement(IWindowTemplate);
 BaseWindow.Implement(ITemplateRoot);
 BaseWindow.Implement(Interface("IExposeCommandsEx"));
 BaseWindow.Implement(Interface("IServiceLocator"));
+BaseWindow.Implement(Interface("IWindowIdentification"));
 BaseWindow.Implement(IViewHostWindowImpl);
 BaseWindow.Implement(IStructuralQueryProcessorImpl);
 BaseWindow.Implement(IStructuralQueryRouter);
@@ -131,7 +132,7 @@ BaseWindow.findArgs = function (args, kind) {
 			result.persister.disablePersistence(true);
             continue;
         } else if (BaseObject.is(arg, "string")) {
-            result.templateSource = new StringConnector(arg);
+            result.$windowName = arg;
             continue;
         } else if (typeof arg == "function" || BaseObject.is(arg, "Delegate")) {
             result.createCallback = arg;
@@ -174,6 +175,20 @@ BaseWindow.updateParentlessWindows = function(wnd) {
 		BaseWindow.$parentlessWindows.removeElement(wnd);
 	}
 }
+BaseWindow.showChildHideTheRest = function(parentWindow,childWindow,additionalFlags) {
+    additionalFlags = additionalFlags || 0;
+    if (BaseObject.is(parentWindow,"BaseWindow") && BaseObject.is(childWindow,"BaseWindow")) {
+        if (parentWindow.children != null) {
+            for (var i = 0;i < parentWindow.children.length;i++) {
+                if (parentWindow.children[i] != childWindow) {
+                    parentWindow.children[i].setWindowStyles(WindowStyleFlags.visible | additionalFlags,"reset");
+                } else {
+                    parentWindow.children[i].setWindowStyles(WindowStyleFlags.visible | additionalFlags,"set");
+                }
+            }
+        }
+    }
+}
 BaseWindow.prototype.$iconpath = null; // Set this in the module-configuration.js file. On some platforms it may be called application-configuration.js.
 BaseWindow.prototype.set_iconpath = function(v) {
 	this.$iconpath = v;
@@ -204,6 +219,56 @@ BaseWindow.prototype.$persistSetting = function(key,v) {
 		this.createParameters.persister.set_setting(key,o);
 	}
 }
+
+// ------------ IWindowIdentification -----------------------------
+
+BaseWindow.prototype.get_windowName = function() { return this.createParameters.$windowName; }
+BaseWindow.prototype.findChildByName = function(windowName, /*optional*/ recursive) { 
+    if (this.children == null) { return null; }
+    var w = this.children.FirstOrDefault(function (idx, item) {
+        if (BaseObject.is(item, "IWindowIdentification") && item.get_windowName() == windowName) {
+            return item;
+        }
+        return null;
+    });
+    if (w != null) { return w; }
+    if (recursive) {
+        w = this.children.FirstOrDefault(function (idx, item) {
+            if (BaseWindow.is(item, "IWindowIdentification")) {
+                return item.findChildByName(windowName, recursive);
+            }
+            return null;
+        });
+        return w;
+    }
+    return null;
+}
+BaseWindow.prototype.findChildrenByName = function(windowName, windowName2 /* etc. */, /*optional*/ recursive) {
+    var names = Array.createCopyOf(arguments).Select(function(idx, item) { return (typeof item == "string"?item:null);});
+    var isrecursive = false;
+    if (arguments.length > 0 && typeof arguments[arguments.length - 1] == "boolean") { isrecursive = true;}
+    var w, result = [];
+    for (var i = 0; i < names.length; i++) {
+        w = this.findChildByName(names[i],isrecursive);
+        if (w) result.push(w);
+    }
+    return result;
+}
+BaseWindow.prototype.findChildrenChain = function(windowName, windowName2) { 
+    var w = this, result = [];
+    for (var i = 0; i < arguments.length; i++) {
+        w = w.findChildByName(arguments[i]);
+        if (w != null) {
+            result.push(w);
+        } else {
+            return null;
+        }
+    }
+
+    return (result.length > 0 ? result : null);
+}
+
+
 // ------------ IAjaxReportSinkImpl implementation -------------------------------
 BaseWindow.prototype.ajaxOnStartOperation = function (settings) {
 };
@@ -1258,6 +1323,7 @@ BaseWindow.prototype.set_windowparent = function (p, param) {
 BaseWindow.prototype.get_windowparent = function () {
     return this.$windowparent;
 };
+// TODO This is remnant of old and abandoned extension - can be reourposed for windows hosted somwhere outside of the main hierarchy
 BaseWindow.prototype.$windowowner = null;
 BaseWindow.prototype.set_windowowner = function(w) {
 	this.$windowowner = w;

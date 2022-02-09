@@ -12,6 +12,7 @@ g_condAlphaB = TreeStatesConvert.Condition("regex",/^B[a-zA-Z]+$/);
 g_ExampleTSE1 = [
 	[ "alpha", "num,null", [g_cond1to20] ],
 	[ "beta", "string",[g_condAlphaA]]
+	//{ name: "alpha", myprop: 213}
 ];
 g_ExampleTSE2 = [
 	[ "alpha", "num,null", [g_cond21to40] ],
@@ -24,7 +25,6 @@ g_ExampleTSE21 = [
 g_ExampleTSM = [
 	[ [g_ExampleTSE1]
 	],
-	
 	[ [g_ExampleTSE2],
 	  [ [g_ExampleTSE21]
 	  ]

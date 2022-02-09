@@ -44,8 +44,8 @@ CLEngine.parseHexNumber = function(s) {
 }
 
 // Pre-parsed assets - used by the executor
-CLEngine.prototype.$commandLine = new InitializeArray("The pre-parsed command line"); 
-CLEngine.prototype.$labelIndex = new InitializeObject("The command line's label index");
+//CLEngine.prototype.$commandLine = new InitializeArray("The pre-parsed command line"); 
+//CLEngine.prototype.$labelIndex = new InitializeObject("The command line's label index");
 
 
 
@@ -54,36 +54,66 @@ CLEngine.prototype.$labelIndex = new InitializeObject("The command line's label 
 // Parser
 ////////////////////////////////////////////////////////
 CLEngine.reTokens = [
-	{ type: "space",		re: /(\s+)/gm, skip: true },
-	{ type: "string",   	re: /\'((?:\\'|[^'])*)\'/gm, proc: CLEngine.unescapeFullString, priority: 10, rtype: "literal"  }, // Lacks new line support
-	{ type: "number",   	re: /([+\-]?[0-9]+(?:\.[0-9]+)?)/g, proc: CLEngine.parseNumber, priority: 10, rtype: "literal" },
-	{ type: "hex",   		re: /(?:0x([0-9a-fA-F]+))/g, proc: CLEngine.parseHexNumber, priority: 10, rtype: "literal"  },
-	{ type: "brnopen",    	re: /(\()/g, priority: 5 },
-	{ type: "brsopen",		re: /(\[)/g },
-	{ type: "brcopen", 		re: /(\{)/g },
-	{ type: "brnclose",    	re: /(\))/g, priority: 5 },
-	{ type: "brsclose",		re: /(\])/g, priority: 10 },
-	{ type: "brcclose",		re: /(\})/g, priority: 10 },
+	{ type: "space",		re: /(\s+)/g, skip: true },
+	{ type: "string",   	re: /\'((?:\\'|[^'])*)\'/g, proc: CLEngine.unescapeFullString, priority: 0, rtype: "literal"  }, // Lacks new line support
+	{ type: "number",   	re: /([+\-]?[0-9]+(?:\.[0-9]+)?)/g, proc: CLEngine.parseNumber, priority: 0, rtype: "literal" },
+	{ type: "hex",   		re: /(?:0x([0-9a-fA-F]+))/g, proc: CLEngine.parseHexNumber, priority: 0, rtype: "literal"  },
+	{ type: "null",   		re: /(null)(?=\b)/g, proc: CLEngine.parseHexNumber, priority: 0, rtype: "literal"  },
+	{ type: "bool",   		re: /(true|false)(?=\b)/g, proc: CLEngine.parseHexNumber, priority: 0, rtype: "literal"  },
+	{ type: "brnopen",    	re: /(\()/g, 	priority: 3 },
+	{ type: "brsopen",		re: /(\[)/g,	priority: 4, alternate: "not supported in this version" },
+	{ type: "brcopen", 		re: /(\{)/g, 	priority: 4, alternate: "not supported in this version" },
+	{ type: "brnclose",    	re: /(\))/g, 	priority: 3 },
+	{ type: "brsclose",		re: /(\])/g, 	priority: 4, alternate: "not supported in this version" },
+	{ type: "brcclose",		re: /(\})/g, 	priority: 4, alternate: "not supported in this version" },
 	
-	{ type: "ident",   	re: /([a-zA-Z\_\$][a-zA-Z0-9\_\$]*?)/g, priority: 15 },
-	{ type: "endop",   	re: /(;)/g, priority: 100 },
-	{ type: "commaop",  re: /(\,)/g, priority: 90 },
 	{ type: "dualop",   re: /(or|and|xor)/g, priority: 60 },
 	{ type: "dualop",   re: /(\=\>|\>\=|\<\=|\=\=)/g, priority: 50 },
 	{ type: "dualop",   re: /(\<|\>)/g, priority: 50 },
 	{ type: "dualop",   re: /(\*|\/)/g, priority: 20 },
 	{ type: "dualop",   re: /(\+|\-)/g, priority: 30 },
-	{ type: "assign",   re: /(\=)(?!\=)/g, priority: 80 }
+	{ type: "assign",   re: /(\=)(?!\=)/g, priority: 80 },
+	{ type: "assign",   re: /(\:)(?!\:)/g, priority: 80, alternate: "not supported in this version" },
+
+	{ type: "ident",   	re: /([a-zA-Z\_\$][a-zA-Z0-9\_\$]*)/g, priority: 15 },
+	{ type: "endop",   	re: /(;)/g, priority: 100 },
+	{ type: "commaop",  re: /(\,)/g, priority: 90 }
+	
 ];
+CLEngine.instruction = function(instr, operand, args, pos) {
+	return [instr, operand, nargs, pos];
+}
+CLEngine.instructions = { 
+	"exec": 0x01,
+	"pushvar": 0x02,
+	"pushval": 0x03,
+
+	// Duals
+	"or": 0x10,
+	"and":0x11,
+	"xor":0x12,
+	"geq":0x13, // >=
+	"leq":0x14, // <=
+	"equ":0x15, // ==
+	"arw":0x16, // =>
+	"les":0x17, // <
+	"gtr":0x18, // >
+	"mul":0x19, // *
+	"div":0x1A, // /
+	"add":0x1B, // +
+	"sub":0x1C, // -
+	"asn":0x1F, // =
+}
 /*
-	mode - parse what: statement, object literal, array literal.
+	// mode - parse what: statement, object literal, array literal.
 	pos - the position at which to attempt recognition
 */
-CLEngine.prototype.$eatToken = function(strLine, mode, pos, /*[]*/ tknLine) {
+CLEngine.prototype.$eatToken = function(obj_tokenizer, strLine, pos, /*[]*/ tknLine) {
 	var match, v;
-	
-	for (var i = 0; i < CLEngine.reTokens.length; i++) {
-		var retkn = CLEngine.reTokens[i];
+	var tokenizer = obj.tokenizer;
+	// for (var i = 0; i < CLEngine.reTokens.length; i++) {
+	for (var i = 0; i < tokenizer.length; i++) {
+		var retkn = tokenizer[i];
 		retkn.re.lastIndex = pos;
 		match = retkn.re.exec(strLine);
 		if (match != null && match.index == pos) {
@@ -91,10 +121,16 @@ CLEngine.prototype.$eatToken = function(strLine, mode, pos, /*[]*/ tknLine) {
 			if (typeof retkn.proc == "function") {
 				v = retkn.proc(v);
 			}
-			if (retkn.skip !== true) {
-				tknLine.push({ type: retkn.type, value: v, pos: pos, priority: retkn.priority, rtype: retkn.rtype});
+			if (retkn.skip != true) {
+				tknLine.push({ 
+						type: retkn.type, 
+						value: v, 
+						pos: pos, 
+						priority: retkn.priority, 
+						rtype: retkn.rtype});
 			}
-			return match[0].length;
+			if (retkn.alternate != null) obj_tokenizer.tokenizer = retkn.alternate;
+			return match[0].length; // caller must add to the pos
 		}
 	}
 	return -1;
@@ -103,36 +139,92 @@ CLEngine.prototype.tokenizeLine = function(strLine) {
 	var tknLine = [];
 	var pos = 0;
 	var str = strLine;
-	var mode = { stack: []}; // Mode stack if empty parsing statements otherwise object {} or array []
+	var obj_tokenizer = { tokenizer: CLEngine.reTokens };
+	//var mode = { stack: []}; // Mode stack if empty parsing statements otherwise object {} or array []
 	// Prio
 	do {
-		var n = this.$eatToken(str, mode, pos, tknLine);
+		var n = this.$eatToken(tokenizer, str, pos, tknLine);
+		if (typeof obj_tokenizer.tokenizer == "string") {
+			return obj_tokenizer.tokenizer + " at " + pos + " (" + str.slice(pos,50) + "...)";
+		}
 		if (n > 0) {
 			pos += n;
-			// str = str.slice(n);
 			if (pos >= str.length) break;
 			continue;
 		} else {
-			return "cannot tokenize at " + pos + " (" + str.slice(pos,20) + ")";
+			return "cannot tokenize at " + pos + " (" + str.slice(pos,50) + "...)";
 		}
+		
 	} while (true);
 	return tknLine;
 }
 CLEngine.prototype.processLine = function(arr) {
-	var _next;
+	var instruction = null;
+	var _next = null;
+	var undecided = null;
+	var opstack = [];
+	var item; // Current token
+
 	var _vstack = [];
-	var _opstack = [];
 	var _item;
-	var result = [];
+	var program = [];
+
+	function _findItemTypeInOpStack(itemType) {
+		var i;
+		for (i = opstack.length - 1;i >= 0; i--) {
+			var item = opstack[i];
+			if (item.type == itemType) return i;
+		}
+		return -1;
+	}
+	function _peekItemByTypeFromOpstack(itemType) {
+		var i = _findItemTypeInOpStack(itemType);
+		if (i >= 0) return opstack[i];
+		return null;
+	}
+	function _processOpStackOnCloseBracket() {
+		var bracketIndex = _findItemTypeInOpStack(brnopen);
+		
+	}
+	function _processOpStackToPriority(topriority) {
+		var top = _peekStack(opstack);
+		if (top != null) {
+
+		}
+
+	}
+	function _peekStack(stack, _n) {
+		var n = _n || 0;
+		var l = stack.length - n - 1;
+		if (l < 0) return null;
+		return stack[l];
+	}
+
 	for (var i = 0; i < arr.length; i++) {
 		_next = null;
 		if (i < arr.length - 1) _next = arr[i+1];
 		var item = arr[i];
+
 		if (item.rype == "literal") {
-			_vstack.push(item);
-		} else {
-			
+			// put literal instruction into program
+			program.push(CLEngine.instruction(CLEngine.instructions.pushval, item.value, 0, item.pos));
+			continue;
+		} else if (item.type == "ident") {
+			if (_next.type == "brnopen") { // function call
+				instruction = CLEngine.instruction(CLEngine.instructions.exec, item.value, -1, item.pos);
+				program.push(instruction);
+				// Record the exec instruction ref with the bracket
+				_next.exec = instruction; // args will be incremented on each coma and on close bracket
+				continue;
+			} else { // grouping
+				opstack.push(item); // Maybe we need to recognize this exact open bracket
+				continue;
+			}
+		} else if (item.type == "dualop") {
+
 		}
+
+		
 		// TODO: Continue
 	}
 }

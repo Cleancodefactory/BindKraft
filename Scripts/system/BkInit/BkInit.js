@@ -5,6 +5,33 @@
 */
 
 var BkInit = {
+	$delayed: [],
+	$execDelayed: function() {
+		var fn;
+		if (this.$delayed != null && this.$delayed.length > 0) {
+			for (var i = 0; i < this.$delayed.length;i++) {
+				fn = this.$delayed[i];
+				if (typeof fn == 'function') {
+					fn(this);
+				}
+			}
+		}
+	},
+	IfDefined: function(/*_clsasses,fn*/) {
+		if (arguments.length > 1) {
+			var conditions = Array.createCopyOf(arguments,0,arguments.length - 1);
+			var fn = arguments[arguments.length - 1];
+			this.$delayed.push(function(self) {
+				for (var i = 0; i < conditions.length; i++) {
+					if (Class.getTypeName(conditions[i]) == null) return;
+				}
+				fn(self);
+			});
+		} else if (arguments.length == 1) {
+			arguments[0](this);
+		}
+		return this;
+	},
 	// Shortcut locations
 	StartMenu: function(fn) { fn(new BkInit_Shortcuts("shellfs","startmenu")); return this; },
 	SystemMenu: function(fn) { fn(new BkInit_Shortcuts("shellfs","system")); return this; },
