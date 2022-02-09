@@ -27,6 +27,8 @@ EventHandlerHelper.prototype.getDelegate = function() {
             if (BaseObject.is(this.obj_or_callback, "BaseObject")) {
                 if (typeof this.func == "function" || typeof this.func == "string") {
                     this.$delegate = new Delegate(this.obj_or_callback, this.func);
+                } else if (BaseObject.is(this.func, "Delegate")) {
+                    this.$delegate = this.func;
                 } else if (typeof this.obj_or_callback == "function") { // This should not be reached butto prevent stupid errors we process it
                     this.$delegate = new Delegate(null, this.obj_or_callback);
                 }
@@ -47,8 +49,10 @@ EventHandlerHelper.prototype.getFunction = function () {
             if (BaseObject.is(this.obj_or_callback, "BaseObject")) {
                 if (typeof this.func == "function" || typeof this.func == "string") {
                     this.$func = Delegate.createWrapper(this.obj_or_callback, this.func);
+                } else if (BaseObject.is(this.func, "Delegate")) {
+                    this.$func = this.func.getWrapper();
                 } else if (typeof this.obj_or_callback == "function") { // This should not be reached butto prevent stupid errors we process it
-                    this.$delegate = this.obj_or_callback;
+                    this.$func = this.obj_or_callback;
                 }
             }
         }

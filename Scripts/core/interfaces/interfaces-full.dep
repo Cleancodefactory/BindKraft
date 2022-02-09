@@ -105,3 +105,8 @@
 
 //#using "./IAmbientDefaultsConsumer.js"
 //#using "./IAmbientDefaults.js"
+//#using "./IExposeCommands.js"
+//#using "./IExposeCommandsEx.js"
+//#using "./IEnumerateExposedCommands.js"
+
+//#using "./IAttachedInfo.js"

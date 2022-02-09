@@ -8,7 +8,7 @@ Class general declaration:
 BaseWindow.Inherit(ViewBase, "BaseWindow");
 BaseWindow.Implement(IWindowTemplate);
 BaseWindow.Implement(ITemplateRoot);
-BaseWindow.Implement(IExposeCommands);
+BaseWindow.Implement(Interface("IExposeCommandsEx"));
 BaseWindow.Implement(IViewHostWindowImpl); // Will be removed soon (from version 2.20 these features will be available only in SimpleViewWindow or/and additional dedicated view hosting window classes)
 BaseWindow.Implement(IStructuralQueryProcessorImpl);
 BaseWindow.Implement(IStructuralQueryRouter);

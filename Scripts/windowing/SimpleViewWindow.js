@@ -10,6 +10,11 @@ SimpleViewWindow.Defaults({
 });
 SimpleViewWindow.prototype.on_Create = function (msg) {
 	PanelWindow.prototype.on_Create.apply(this,arguments);
+    var initData = this.createParameters.data;
+    if (initData != null && BaseObject.is(initData.cachedView,"ViewLoadCache")) {
+        initData.url = initData.cachedView.get_url();
+        initData.view = initData.cachedView.get_view();
+    }
 };
 SimpleViewWindow.prototype.on_FirstShown = function (msg) {
     if (this.createParameters != null && this.createParameters.data != null && !this.viewLoaded && !this.createParameters.data.loadOnCreate ) {

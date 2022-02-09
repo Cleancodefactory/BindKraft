@@ -16,3 +16,17 @@ IOperationDescription.prototype.get_name = function() { throw "not implemented";
 IOperationDescription.prototype.get_role = function() { throw "not implemented";}
 IOperationDescription.prototype.get_resulttype = function() { throw "not implemented";}
 IOperationDescription.prototype.get_description = function() { throw "not implemented";}
+
+IOperationDescription.Dump = function(desc) { 
+	if (!BaseObject.is(desc,"IOperationDescription")) return "";
+	var s = "";
+	var x = desc.get_name();
+	if (typeof x == "string" && x.length > 0) s += "[name:" + x + "]";
+	x = desc.get_role();
+	if (typeof x == "string" && x.length > 0) s += "[role:" + x + "]";
+	x = desc.get_resulttype();
+	if (typeof x == "string" && x.length > 0) s += "[resulttype:" + x + "]";
+	x = desc.get_description();
+	if (typeof x == "string" && x.length > 0) s += "[description:" + x + "]";
+	return s;
+}

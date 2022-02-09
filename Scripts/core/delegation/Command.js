@@ -1,5 +1,5 @@
 
-
+// DEPRECATION WARNING - will be deprecated soon without backward compatibility measures.
 
 /*CLASS*/
 function Command(obj, func,initParams, additionalArgs) {

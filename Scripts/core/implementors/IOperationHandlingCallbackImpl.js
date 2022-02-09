@@ -28,8 +28,8 @@ IOperationHandlingCallbackImpl.classInitialize = function(cls, force) {
 	cls.prototype.$operationErrorInfo = null;
 	cls.prototype.$operationResult = null;
 	
-	IOperation.prototype.$operationdescription = null;
-	IOperation.prototype.getOperationDescription = function() {
+	cls.prototype.$operationdescription = null;
+	cls.prototype.getOperationDescription = function() {
 		if (this.$operationdescription == null) {
 			this.$operationdescription = new OperationDescription();
 		}

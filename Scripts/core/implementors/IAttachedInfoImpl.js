@@ -1,23 +1,21 @@
 (function() {
 
-    var IAjaxAttachedInfo = Interface("IAjaxAttachedInfo");
+    var IAttachedInfo = Interface("IAttachedInfo");
 
-    function IAjaxAttachedInfoImpl() {}
-    IAjaxAttachedInfoImpl.InterfaceImpl(IAjaxAttachedInfo, "IAjaxAttachedInfoImpl");
-    IAjaxAttachedInfoImpl.classInitialize = function(cls) {
-        function _info(inst, clear) {
-            if (inst.$__AjaxAttachedInfoData == null || clear) {
-                inst.$__AjaxAttachedInfoData = {};
+    function IAttachedInfoImpl() {}
+    IAttachedInfoImpl.InterfaceImpl(IAttachedInfo, "IAttachedInfoImpl");
+    IAttachedInfoImpl.classInitialize = function(cls) {
+        function _info(inst, empty) {
+            if (inst.$__BKAttachedInfoData == null || empty) {
+                inst.$__BKAttachedInfoData = {};
             }
-            return inst.$__AjaxAttachedInfoData;
+            return inst.$__BKAttachedInfoData;
         }
         function _attacher(attacher) {
             var key = null;
-            if (typeof attacher == "string") {
-                key = attacher;
-            } else if (BaseObject.is(attacher, "BaseObject")) {
+            if (BaseObject.is(attacher, "BaseObject")) {
                 key = attacher.classType();
-            } else if (typeof attacher == "function") {
+            } else {
                 key = Class.getTypeName(attacher);
                 if (key == null) this.LASTERROR("The attacher seems to be a type, but it does not exist.");
             }
@@ -29,7 +27,7 @@
             }
             return null;
         }
-        cls.prototype.attachInfo = function(attacher, attach_info) { 
+        cls.prototype.setAttachedInfo = function(attacher, attach_info) { 
             var info = _info(this);
             var key = _attacher(attacher);
             if (key != null) {
@@ -39,7 +37,7 @@
             return false;
         };
 
-        cls.prototype.mixInfo = function(attacher, attach_info) { 
+        cls.prototype.mixAttachedInfo = function(attacher, attach_info) { 
             var info = _info(this);
             var key = _attacher(attacher);
             if (key != null) {
@@ -55,13 +53,12 @@
             }
             return false;
         };
-        cls.prototype.mixAttachedInfo = cls.prototype.mixInfo; // Alias
     
         cls.prototype.getAttachedInfo = function(attacher) {
             var info = _info(this);
             var key = _attacher(attacher);
             if (key != null) {
-                return info[key];
+                return info[key]?info[key]:null;
             }
             return null;
         };
@@ -71,7 +68,7 @@
             if (arguments.length > 0) {
                 var key;
                 for (var i = 0;i < arguments.length; i++) {
-                    key = _attacher(attacher);
+                    key = _attacher(arguments[i]);
                     if (key != null) {
                         var info = _info(this)
                         if (info[key] != null) delete info[key];
@@ -114,10 +111,32 @@
             var key = _instance(instance);
             if (key != null) {
                 if (info.$__instances == null) return null;
-                return info.$__instances[key];
+                return info.$__instances[key]?info.$__instances[key]:null;
             }
             return null;
         }
+        cls.prototype.clearInstanceInfo = function(instance) { 
+            var info;
+            if (arguments.length > 0) {
+                var key;
+                info = _info(this);
+                if (info.$__instances == null) return;
+                for (var i = 0;i < arguments.length; i++) {
+                    key = _instance(arguments[i]);
+                    if (key != null) {
+                        if (info.$__instances[key] != null) delete info.$__instances[key];
+                    }
+                }
+             } else {
+                info =_info(this);
+                if (info.$__instances != null) {
+                    info.$__instances = null;
+                };
+            }
+        }
+        cls.prototype.clearAllAttachedInfos = function() { this.clearAttachedInfo();}
+        cls.prototype.clearAllInstanceInfos = function() { this.clearInstanceInfo();}
+
     }
 
 })();

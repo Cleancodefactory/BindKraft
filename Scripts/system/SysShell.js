@@ -719,12 +719,16 @@ SysShell.prototype.shutdownApp = function(appid) {
 	return Operation.From(null);
 };
 SysShell.prototype.killAll = function () { // Shutdown everything
-    var app, apps = this.get_runningapps();
+    var app, apps = Array.createCopyOf(this.get_runningapps());
     if (BaseObject.is(apps, "Array")) {
         for (var i = apps.length - 1; i >= 0; i--) {
             app = apps[i];
             if (BaseObject.is(app, "IApp")) {
-                app.appshutdown();
+				try {
+                	app.appshutdown();
+				} catch (e) {
+					this.LASTERROR("Exception during app shutdown: " + e);
+				}
             }
         }
     }

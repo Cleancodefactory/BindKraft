@@ -44,11 +44,10 @@ Validator.prototype.obliterate = function () {
 
 Validator.prototype.$init = function () {
     // In the repeater we need to cut the innerHTML and keep it as a template for repeating items
-    var el = $(this.root);
-    if (this.get_template() == null) {
-        var c = el.children();
-        this.set_template(c);
-        c.remove();
+    var tml = this.root.innerHTML;
+    if (!/^\s*$/.test(tml)) {
+        this.set_template(tml);
+        DOMUtil.empty(this.root);
     }
     //this.$createAutoValidators();
 	var imprules = this.get_importrules();
@@ -687,3 +686,26 @@ Validator.prototype.onValidityChanged = function () {
 	}
 	
 };
+
+//#region Bindable properties for outside usage
+// Use validitychanged for sync
+
+/**
+ * @returns true for incorrect and critical states, otherwise false
+ */
+ Validator.prototype.get_isincorrect = function () {
+    return (this.result > ValidationResultEnum.correct);
+}
+/**
+ * @returns true when the validation is pending.
+ */
+Validator.prototype.get_ispending = function () {
+    return (this.result == ValidationResultEnum.pending);
+}
+/**
+ * @returns true when the validation is correct
+ */
+Validator.prototype.get_iscorrect = function () {
+    return (this.result == ValidationResultEnum.correct);
+}
+//#endregion
