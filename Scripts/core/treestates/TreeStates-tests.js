@@ -3,6 +3,7 @@
 	These are not systematic tests, but only for use during development 
 */
 
+/*
 //// Example for tests
 g_cond1to20 = TreeStatesConvert.Condition("range",0,20);
 g_cond21to40 = TreeStatesConvert.Condition("range",21,40);
@@ -30,3 +31,4 @@ g_ExampleTSM = [
 	  ]
 	]
 ];
+*/

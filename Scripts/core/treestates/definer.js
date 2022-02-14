@@ -37,6 +37,24 @@
 	$DefinerForTreeStates.isMapSet = function(o) { return this.typeOf(o) == _tskinds.tsms;}
 	$DefinerForTreeStates.isMeta = function(o) { return this.typeOf(o) == _tskinds.tsmeta;}
 
+	$DefinerForTreeStates.hasMeta = function(tse) { 
+		if (this.isElement(tse)) {
+			if (tse.length > 0 && this.isMeta(tse[tse.length - 1])) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+
+	$DefinerForTreeStates.tseLength = function(o) { 
+		if (this.typeOf(o) == _tskinds.tse) {
+			if (this.hasMeta(o)) return o.length - 1;
+			return o.length;
+		}
+		return -1;
+	}
+
 	$DefinerForTreeStates._defineTS = function(proc,tsapi) {
 		
 		var cond = function(name,args) {

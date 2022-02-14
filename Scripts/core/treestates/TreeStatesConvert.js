@@ -45,7 +45,7 @@
 
 	*/
 
-	var $DefinerForTreeStates = Class("DefinerForTreeStates");
+	var $DefinerForTreeStates = Class("$DefinerForTreeStates");
 	
 	var definer = $DefinerForTreeStates;
 
@@ -72,6 +72,8 @@
 		.Returns("If successful an array of linearized state values, each of them is an array in turn. The result can be empty, on error null is returned and last error set.");
 
 	// Static methods	
+
+	//#region Error definitions
 	TreeStatesConvert.ErrorValue = {
 		error: "TreeStatesConvert error"
 	}
@@ -95,6 +97,9 @@
 		}
 		return false;
 	}
+	//#endregion Error definitions
+
+	//#region TSU, validators and condition checking
 	// Validators
 	/**
 		Checks if the comma separated list of types is valid - i.e. all types are supported
@@ -135,10 +140,13 @@
 		}
 		return v;
 	}
+	// Alias of the above
+	TreeStatesConvert.LinearizeTSEU = function(tseu, obj) { return this.TSEUValFromObject(tseu, obj); }
 	/**
 		Checks the conditions in the TSEU over the value
 	*/
 	TreeStatesConvert.TSEUTestConditions = function(tseu, v) { // tests the conditions from the TSEU over the value v
+		if (!definer.isUnit(tseu)) return false;
 		var conditions = tseu[2];
 		if (BaseObject.is(conditions,"Array")) {
 			for (var i = 0; i < conditions.length;i++) {
@@ -147,13 +155,39 @@
 		}
 		return true;
 	}
+	/**
+		Called during delinearization of a TSE linear to deal with individual values
+		If TSEU matches the value, the value is set to the object passed and true is returned.
+		In case of any error or unmatched conditions the function returns false;
+		
+		@param tseu {TSEU}	
+		@param value {any}
+		@param obj {object} - the object to which to set the value
+	*/
+	TreeStatesConvert.DelinearizeTSEU = function(tseu, value, obj) {
+		if (!definer.isUnit(tseu)) {
+			return false;
+		}
+		var name = tseu[0];
+		var types = tseu[1];
+		var arrTypes = TreeStatesConvert.TSEUTypesValid(types);
+		if (this.isError(arrTypes)) return false;
+		if (!TreeStatesConvert.TSEUTestConditions(tseu, value)) return false;
+		obj[name] = v;
+		return true;
+		
+	}
+	//#endregion TSEU, validators and condition checking
+
 	//#region TSE (Element)
 	/**
 	 * The stateTSE
 	 */
 	TreeStatesConvert.GetMetaFromTSE = function(tse) {
-		if (Array.isArray(tse)) {
-
+		if (definer.isElement(tse)) {
+			if (tse.length > 0 && definer.isMeta(tse[tse.length - 1])) {
+				return tse[tse.length - 1];
+			}
 		}
 		return null;
 	}
@@ -185,15 +219,34 @@
 		return result;
 	}
 	/**
-	 * Delinearizes array representation into object representation, glues the metadata from the definition
-	 */
-	TreeStatesConvert.DelinearizeTSE = function(tse, linear) { // Converts data from TSE linear array to object
-
-
+		Executes all the TSEU from a TSE to check the values from an array (linear) and puts them on the object
+		Checks the conditions and stops if any fails - returns null in that case - the object otherwise.
+		
+		@param tse {TSE}		TSE to process
+		@param arrvals {array}	The linear. It has to have the same size as the TSE
+		@param _obj {object}	Optional - created if not passed. The object to which to set values.
+		
+		@remarks an important point here is that the linear has to be the same size as the TSE. This is introducing a
+			requirement to the serialization/deserialization to keep the knowledge of the number of the values linearized
+			using a TSE or take into account the TSE during both processes.
+	*/
+	TreeStatesConvert.DelinearizeTSE = function(tse, arrvals, _obj) {
+		var obj = _obj || {};
+			if (arrvals == null || arrvals.length == 0) {
+			// TODO: May be dealing with required/non-required cases would be needed?
+			return obj; // fine we are optional - empty object
+		}
+		if (definer.tseLength(tse) != arr.length) return null; // fail (see remarks)
+		for (var i = 0; i < definer.tseLength(tse);i++) {
+			// Read one and check type
+			if (!this.DelinearizeTSEU(tse[i], arr[i], obj)) return null;
+		}
+		return obj;
 	}
 
 	//#endregion TSE
 
+	//#region TSM
 	/**
 	 * Linearizes over a single map. A map (TSM) is:
 	 * 
@@ -206,9 +259,9 @@
 	 * 				pass next tsm
 	 * 				recursion returns the linear on success (already appended with the data)
 	 * 
-	 * @param {*} tsm 
-	 * @param {*} objset 
-	 * @param {*} _linear 
+	 * @param {TSM} tsm 
+	 * @param {Array<object>} objset 
+	 * @param {Array<Array>} _linear 
 	 * @returns {[]|error|null} the linear if successful error on error, null on no match
 	 */
 	TreeStatesConvert.LinearizeTSM = function(tsm, objset, _linear) {
@@ -226,6 +279,7 @@
 					recurseObjSet = Array.createCopyOf(objset,1); // Cut the first object
 					// recurse the submaps until match, error
 					for (var i = 1; i < tsm.length; i++) {
+						// Returns our linear appended with everything found down the map
 						r = this.LinearizeTSM(tsm[i], recurseObjSet, linear); //
 						if (Array.isArray(r)) {// Match
 							return r;
@@ -245,6 +299,9 @@
 	TreeStatesConvert.DelinearizeTSM = function(tsm, liear, _objset) {
 		///
 	}
+
+	//#endregion TSM
+
 	/* TODO needs review
 
 		Linearizes a set of object states according to matching TSM from a map set (TSMs)
