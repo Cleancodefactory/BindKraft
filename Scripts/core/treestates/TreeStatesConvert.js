@@ -52,24 +52,29 @@
 	function TreeStatesConvert(map) {
 		BaseObject.apply(this, arguments);
 		if (typeof map == "function") {
-			$DefinerForTreeStates._defineTS(map,TreeStatesConvert);
-		} else if ($DefinerForTreeStates.typeOf(map) == $DefinerForTreeStates.Map) {
-			this.map = map;
+			map = $DefinerForTreeStates._defineTS(map,TreeStatesConvert);
+		} 
+		
+		if (definer.isMap(map)) {
+			this.maps = [map];
+			this.maps.$tskind = definer.MapSet;
+		} else if (definer.isMapSet(map)) {
+			this.maps = map;
+		} else {
+			throw "TreeStatesConvert must be initialized with map or map set";
 		}
-		this.$map = map;
 	}
 	TreeStatesConvert.Inherit(BaseObject,"TreeStatesConvert");
-	TreeStatesConvert.prototype.$map = null;
-	TreeStatesConvert.prototype.linearize = function(/*array of state objects*/ arrStates) {
-		var r = TreeStatesConvert.LinearizeTSM(this.$map, arrStates);
-		if (TreeStatesConvert.isError(r)) {
-			this.LASTERROR(_Errors.compose(),r.text);
-			return null;
-		}
-		return r;
+	TreeStatesConvert.prototype.maps = null;
+	TreeStatesConvert.prototype.linearize = function(objset) {
+		return TreeStatesConvert.LinearizeTSMaps(this.maps, objset);
 	}.Description("Converts the array of state objects to array of linearized state values")
-		.Param("states","Array of state objects matching the map")
+		.Param("states","Array of state objects matching the map (MetaData in them is ignored for this process)")
 		.Returns("If successful an array of linearized state values, each of them is an array in turn. The result can be empty, on error null is returned and last error set.");
+
+	TreeStatesConvert.prototype.delinearize = function(linear) {
+		return TreeStatesConvert.DelinearizeTSMaps(this.maps, linear);
+	}
 
 	// Static methods	
 
@@ -96,6 +101,12 @@
 			return true;
 		}
 		return false;
+	}
+	TreeStatesConvert.getTextFromError = function(err) {
+		if (this.isError(err)) {
+			return err.text || "error occurred";
+		}
+		return null;
 	}
 	//#endregion Error definitions
 
@@ -163,6 +174,8 @@
 		@param tseu {TSEU}	
 		@param value {any}
 		@param obj {object} - the object to which to set the value
+
+		@returns {boolean} - true indicates success
 	*/
 	TreeStatesConvert.DelinearizeTSEU = function(tseu, value, obj) {
 		if (!definer.isUnit(tseu)) {
@@ -173,7 +186,7 @@
 		var arrTypes = TreeStatesConvert.TSEUTypesValid(types);
 		if (this.isError(arrTypes)) return false;
 		if (!TreeStatesConvert.TSEUTestConditions(tseu, value)) return false;
-		obj[name] = v;
+		obj[name] = value;
 		return true;
 		
 	}
@@ -181,7 +194,12 @@
 
 	//#region TSE (Element)
 	/**
-	 * The stateTSE
+	 * @param {TSE} tse The stateTSE
+	 * 
+	 * @returns {object|null} The metadata of the TSE or null if missing or not TSE.
+	 * 
+	 * The same is done also by the definer.getMeta
+	 * 
 	 */
 	TreeStatesConvert.GetMetaFromTSE = function(tse) {
 		if (definer.isElement(tse)) {
@@ -225,6 +243,10 @@
 		@param tse {TSE}		TSE to process
 		@param arrvals {array}	The linear. It has to have the same size as the TSE
 		@param _obj {object}	Optional - created if not passed. The object to which to set values.
+
+		@return {object|null}	Returns the decoded object or null if not match or error. Any errors are issued as LASTERROR
+
+		Attaches the metadata as MetaData property to the result.
 		
 		@remarks an important point here is that the linear has to be the same size as the TSE. This is introducing a
 			requirement to the serialization/deserialization to keep the knowledge of the number of the values linearized
@@ -236,11 +258,12 @@
 			// TODO: May be dealing with required/non-required cases would be needed?
 			return obj; // fine we are optional - empty object
 		}
-		if (definer.tseLength(tse) != arr.length) return null; // fail (see remarks)
+		if (definer.tseLength(tse) != arrvals.length) return null; // fail (see remarks)
 		for (var i = 0; i < definer.tseLength(tse);i++) {
 			// Read one and check type
-			if (!this.DelinearizeTSEU(tse[i], arr[i], obj)) return null;
+			if (!this.DelinearizeTSEU(tse[i], arrvals[i], obj)) return null;
 		}
+		obj.MetaData = definer.getMeta(tse);
 		return obj;
 	}
 
@@ -267,40 +290,114 @@
 	TreeStatesConvert.LinearizeTSM = function(tsm, objset, _linear) {
 		var linear = _linear || [];
 		var r; // temp result
-		if (objset.length == 0) { // nothing to linearize
+		if (objset == null || objset.length == 0) { // nothing to linearize
 			return linear; // Counts as success
 		}
+		var curObject = objset[0];
 		var recurseObjSet; // temp var for cloned remains of object sets
 		if (definer.isMap(tsm)) {
 			if (tsm.length > 0) { // has a TSE - test it
-				r = this.LinearizeTSE(tsm[0]);
+				r = this.LinearizeTSE(tsm[0],curObject);
 				if (Array.isArray(r)) { // We are match
 					linear.push(r); // record it
 					recurseObjSet = Array.createCopyOf(objset,1); // Cut the first object
+					if (recurseObjSet.length == 0) { 
+						// No more data to map - complete successfully
+						return linear;
+					}
 					// recurse the submaps until match, error
 					for (var i = 1; i < tsm.length; i++) {
 						// Returns our linear appended with everything found down the map
 						r = this.LinearizeTSM(tsm[i], recurseObjSet, linear); //
-						if (Array.isArray(r)) {// Match
+						if (Array.isArray(r)) {// Match !
 							return r;
 						} else if (this.isError(r)) { // Error - immediate bail out
-							return r;
-						} // Try next
+							this.LASTERROR(this.getTextFromError(r));
+							return null;
+						} else {// Try next
+							return null;
+						}
 					}
 					// No matches - technically not an error, but it usually is. Just detect it outside
 					return null;
 				} else { // error or not a match - bail out. Will be null or error, no need to distinguish between them here.
+					if (this.isError(r)) BaseObject.LASTERROR(this.getTextFromError(r));
 					return r;
 				}
 			}
 		}
 		return null; // no match or/and not a map
 	}
-	TreeStatesConvert.DelinearizeTSM = function(tsm, liear, _objset) {
+	/**
+	 * Delinearizes from the linear to object.
+	 */
+	TreeStatesConvert.DelinearizeTSM = function(tsm, linear, _objset) {
 		///
+		var objset = _objset || [];
+		if (linear == null || linear.length == 0) {
+			return objset;
+		}
+		var _part = linear[0];
+		if (!Array.isArray(_part)) { 
+			BaseObject.LASTERROR("part of a linear is not an array.");
+			return null;
+		}
+		var obj;
+		if (definer.isMap(tsm)) { 
+			obj = this.DelinearizeTSE(tsm[0],_part);
+			if (obj != null) {
+				objset.push(obj);
+				// This map matches
+				_part = Array.createCopyOf(linear,1);
+				if (_part.length > 0) {
+					// Traverse the submaps
+					for (var i = 1; i < tsm.length; i++) {
+						if (this.DelinearizeTSM(tsm[i],_part,objset) != null) {
+							// data is already recorded in the objset - complete successfully
+							return objset;
+						}
+					}
+					// All tried, there is data, but cannot be decoded
+					return null;
+				} else {
+					// Linear finished
+					return objset;
+				}
+			} else {
+				// This map does not match
+				return null;
+			}
+		}
+		return null;
 	}
 
 	//#endregion TSM
+
+	//#region TSM set - multiple maps
+
+	TreeStatesConvert.LinearizeTSMaps = function(tsms, objset, _linear) {
+		if (definer.isMapSet(tsms)) {
+			for (var i = 0; i < tsms.length; i++) {
+				var linear = this.LinearizeTSM(tsms[i],objset);
+				if (linear != null) { return linear; }
+			}
+		}
+		return null;
+	}
+	TreeStatesConvert.DelinearizeTSMaps = function(tsms, linear, _objset) {
+		if (definer.isMapSet(tsms)) {
+			for (var i = 0; i < tsms.length; i++) {
+				var objset = this.DelinearizeTSM(tsms[i],linear);
+				if (objset != null) { return objset; }
+			}
+		}
+		return null;
+	}
+
+	//#endregion TSM set
+
+
+	//#region Old code
 
 	/* TODO needs review
 
@@ -314,6 +411,7 @@
 
 		
 	*/
+	/*
 	TreeStatesConvert.LinearizeTSMs = function(tsm, objset, _linear) {
 		var linear = _linear || []; // Aggregates the result
 		var i, r;
@@ -347,9 +445,7 @@
 			if (initial) {
 				// tsm is tsms
 				for (i = 0; i < tsm.length; i++) {
-					/* Is each maptree a valid TSM?
-						This is initial level and non-TSM elements can be easilly skpet, however, this probably should be an error
-					*/
+					
 					if (!BaseObject.is(tsm[i], "Array")) continue; // TODO: Skip wrongs seems not right, may be this is an error?
 					r = this.LinearizeTSM(tsm[i], objset, linear); // each map tree, the whole objset as initialy passed, and linear
 					// TODO: How the outcomes are signified?
@@ -416,7 +512,8 @@
 		}
 		
 	}
-
+	*/
+	//#endregion Old code
 
 
 	// Basic routines

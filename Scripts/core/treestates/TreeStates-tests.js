@@ -32,3 +32,23 @@ g_ExampleTSM = [
 	]
 ];
 */
+
+var TreeStatesConvert = Class("TreeStatesConvert");
+
+var map1 = new TreeStatesConvert(function(maps, map, element, unit, condition) {
+	return map( 
+		element(
+			unit("a","string",condition("regex",/^[a-zA-Z]+$/)),
+			{ meta: "a"}
+		),
+		map(
+			element(
+				unit("b","num,string",
+					condition("range",0,1000),
+					condition("regex",/^[a-zA-Z]{2,4}$/)
+				),
+				{ meta: "b" }
+			)
+		)
+	);
+});

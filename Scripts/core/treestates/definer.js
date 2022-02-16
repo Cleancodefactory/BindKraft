@@ -55,6 +55,14 @@
 		return -1;
 	}
 
+	// Called over TSE only
+	$DefinerForTreeStates.getMeta = function(o) { 
+		if (this.typeOf(o) == _tskinds.tse) {
+			if (this.hasMeta(o)) return o[o.length - 1];
+		}
+		return null;
+	}
+
 	$DefinerForTreeStates._defineTS = function(proc,tsapi) {
 		
 		var cond = function(name,args) {
@@ -86,25 +94,29 @@
 					if (tseu.$tskind != _tskinds.tseu) throw "TSE can contain only TSEU elements";
 					arr.push(tseu);
 				} else if (typeof tseu == "object" && i == arguments.length - 1) {
+					tseu.$tskind = _tskinds.meta;
 					arr.push(tseu);
 				}
 			}
 			arr.$tskind = _tskinds.tse;
+			return arr;
 		}
-		var tsm = function(_tse, _tsm) {
+		var tsm = function(_tse, _tsm, _tsm2 /* etc.*/) {
 			if (BaseObject.is(_tse, "Array") && _tse.$tskind == _tskinds.tse) {
 				var arr = [];
 				arr.push(_tse);
-				if (_tsm != null) {
-					if (!BaseObject.is(_tsm, "Array") || _tsm.$tskind != _tskinds.tsm) {
-						throw "The second argument of TSM is not a TSM";
+				for (var i = 1; i < arguments.length; i++) {
+					var t = arguments[i];
+					if ($DefinerForTreeStates.isMap(t)) {
+						arr.push(t);
+					} else {
+						throw "The TS maps consist of one element and 0 or more (sub) maps";
 					}
-					arr.push(_tsm);
 				}
 				arr.$tskind = _tskinds.tsm; // One map
 				return arr;
 			} else {
-				throw "Empty TSM are not allowed";
+				throw "TS map must start with a TS element";
 			}
 		}
 		var tsms = function(tsmN) {
