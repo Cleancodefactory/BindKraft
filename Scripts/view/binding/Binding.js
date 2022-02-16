@@ -1121,7 +1121,7 @@ Binding.prototype.$setupSource = function () {
             
             break;
         case "translation":
-            p = Class("Localization").get_translation(this.$source)
+            p = Class("Localization").get_translation(this.$source);
             this.$sourceObject = p;
             break;
         default:
