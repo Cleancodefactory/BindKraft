@@ -153,6 +153,14 @@ TemplateSwitcher.prototype.set_packeditem = function(v) {
 TemplateSwitcher.prototype.get_packeditem = function() {
     return this.get_item();
 };
+TemplateSwitcher.prototype.itemTemplateSwitch = function(sender, template) {
+    var item = sender.get_item();
+    if (typeof item == "string") {
+        return this.getTemplateByKey(item);
+    } else {
+        return null;
+    }
+}
 // Built-in template selection mechanisms
 // null/non-null switch
 TemplateSwitcher.prototype.nullTemplateSwitch = function(sender, template) {

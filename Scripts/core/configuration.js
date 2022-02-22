@@ -7,6 +7,7 @@
 	
 	To run the framework with customized settings include a javascript file before the framework
 */
+'strict'
 
 var JBFrameworkVersion = { 
 	core: { major: 2, minor: 25, revision: 3 }
