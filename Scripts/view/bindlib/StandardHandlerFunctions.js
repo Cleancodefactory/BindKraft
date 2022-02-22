@@ -1,5 +1,7 @@
 
-
+/**
+ * Use these in bindings like this data-on-XXX={bind source=builtin path=focus}
+ */
 
 var StandardHandlerFunctions = {
 	stoppropagation: function(e, dc) {
