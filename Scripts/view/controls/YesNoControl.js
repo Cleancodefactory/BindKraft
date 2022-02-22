@@ -16,7 +16,7 @@ YesNoControl.prototype.obliterate = function () {
     Base.prototype.obliterate.call(this);
 };
 
-YesNoControl.ImplementProperty("selectedCssClass", new InitializeStringParameter("CSS class for the selected state", "bk-yesno-button-switched"));
+YesNoControl.ImplementProperty("selectedCssClass", new InitializeStringParameter("CSS class for the selected state", "selected"));
 YesNoControl.ImplementProperty("yestitle", new InitializeStringParameter("The display name of the yes value", "Yes"));
 YesNoControl.ImplementProperty("notitle", new InitializeStringParameter("The display name of the no value", "No"));
 YesNoControl.ImplementProperty("yesvalue", new InitializeParameter("The value for the yes state", true));
