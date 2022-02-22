@@ -33,21 +33,46 @@ g_ExampleTSM = [
 ];
 */
 
-var TreeStatesConvert = Class("TreeStatesConvert");
+var TreeStates = Class("TreeStates");
 
-var map1 = new TreeStatesConvert(function(maps, map, element, unit, condition) {
+/*
+app.js
+app-tree.js
+(function() {
+	var app = Class....
+	app.map = new TreeStates ....
+})();
+
+MyApp.prototype.map = new TreeStates ....
+MyApp.map =
+
+Module.dep
+....
+using treestates.js
+using init.js
+*/
+
+var map1 = new TreeStates(function(maps, map, element, unit, condition) {
 	return map( 
-		element(
+		element( "nodeA",
 			unit("a","string",condition("regex",/^[a-zA-Z]+$/)),
 			{ meta: "a"}
 		),
 		map(
-			element(
+			element("nodeAB",
 				unit("b","num,string",
 					condition("range",0,1000),
 					condition("regex",/^[a-zA-Z]{2,4}$/)
 				),
 				{ meta: "b" }
+			)
+		),
+		map(
+			element( "nodeAC",
+				unit("c","num",
+					condition("range",1001)
+				),
+				{ meta: "c" }
 			)
 		)
 	);

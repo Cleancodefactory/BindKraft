@@ -86,9 +86,14 @@
 			arr.$tskind = _tskinds.tseu;
 			return arr;
 		}
-		var tse = function(tseuN, meta) {
+		var tse = function(name, tseuN, meta) {
 			var arr = [];
-			for (var i = 0; i < arguments.length; i++) {
+			if (typeof name == "string" && name.length > 0) {
+				arr.$tsname = name;
+			} else {
+				throw "Name of TreeState element is required!";
+			}
+			for (var i = 1; i < arguments.length; i++) {
 				var tseu = arguments[i];
 				if (Array.isArray(tseu)) {
 					if (tseu.$tskind != _tskinds.tseu) throw "TSE can contain only TSEU elements";
