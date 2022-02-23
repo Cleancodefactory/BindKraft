@@ -2,6 +2,8 @@
 
 (function() {
 
+    var ViewUtil = Class("ViewUtil");
+
 // Imports
 var Panel = Class("Panel"), 
     IDisablable = Interface("IDisablable"), 
@@ -31,20 +33,25 @@ Expander.prototype.setObjectParameter = function(name, value) {
         this.$parameters[name] = value;
     }
 };
-Expander.prototype.activeHeader = new InitializeStringParameter("parent[/child] key of the active header element", "./ActiveHeader");
-Expander.prototype.inactiveHeader = new InitializeStringParameter("parent[/child] key of the inactive header element", "./InactiveHeader");
-Expander.prototype.bodyElement = new InitializeStringParameter("parent[/child] key of the body element", "./Body");
-Expander.prototype.initialState = new InitializeStringParameter("Initial state of the expander, can be 'collapsed' (default) or 'expanded'", "collapsed");
-Expander.prototype.animation = new InitializeStringParameter("Body animation: slow, fast, none", "none");
-Expander.prototype.radioSet = new InitializeStringParameter("parent[/child*] set of expanders to collapse automatically, collapse is diabled, use allowCollapse=true if needed.", null);
-Expander.prototype.allowCollapse = new InitializeBooleanParameter("Allows collapse when it is disabled by default", false);
-Expander.prototype.updateMode = new InitializeNumericParameter("If set to non-zero value will cause the expander to perform updateTargets only when opened.", 0);
-Expander.prototype.liveParts = new InitializeNumericParameter("If set to non-zero value will cause the parts of the expander to be determined anew each time something happens", 0);
-Expander.prototype.noClick = new InitializeBooleanParameter("Does not listen for clicks, can turn only programmatically.", false);
+Expander.ImplementProperty("activeHeader", new InitializeStringParameter("parent[/child] key of the active header element", "./ActiveHeader"), "activeHeader")
+        .ImplementProperty("inactiveHeader", new InitializeStringParameter("parent[/child] key of the inactive header element", "./InactiveHeader"), "inactiveHeader")
+        .ImplementProperty("bodyElement", new InitializeStringParameter("parent[/child] key of the body element", "./Body"), "bodyElement")
+        .ImplementProperty("initialState", new InitializeStringParameter("Initial state of the expander, can be 'collapsed' (default) or 'expanded'", "collapsed"),"initialState")
+        .ImplementProperty("animation", new InitializeStringParameter("(currently unused) Body animation: slow, fast, none", "none"), "animation")
+        .ImplementProperty("radioSet", new InitializeStringParameter("parent[/child*] set of expanders to collapse automatically, collapse is diabled, use allowCollapse=true if needed.", null), "radioSet")
+        .ImplementProperty("allowCollapse", new InitializeBooleanParameter("Allows collapse when it is disabled by default", false), "allowCollapse")
+        .ImplementProperty("updateMode", new InitializeNumericParameter("If set to non-zero value will cause the expander to perform updateTargets only when opened.", 0), "updateMode")
+        .ImplementProperty("liveParts", new InitializeNumericParameter("If set to non-zero value will cause the parts of the expander to be determined anew each time something happens", 0), "liveParts")
+        .ImplementProperty("noClick", new InitializeBooleanParameter("Does not listen for clicks, can turn only programmatically.", false), "noClick")
+        .ImplementProperty("displayType", new InitializeStringParameter("Defines the display value to assign when showing. Use empty string to let the CSS determine it.", ""), "displayType");
+
 //Example for disabled: #disabled='1'
-// evnets
+// events
 Expander.prototype.statechangedevent = new InitializeEvent("Fired when the expander opens or closes. The data is true/false meaning open/close");
 Expander.prototype.expandeddevent = new InitializeEvent("Fired when the expander opens. The data is true meaning open");
+Expander.prototype.collapseddevent = new InitializeEvent("Fired when the expander closes. The data is false meaning open");
+
+
 Expander.prototype.obliterate = function() {
     delete this.$activeHeader;
     delete this.$inactiveHeader;
@@ -56,10 +63,9 @@ Expander.prototype.init = function() {
         this.on(this.activeHeader, "click", this.Collapse);
         this.on(this.inactiveHeader, "click", this.Expand);
     }
-    this.$activeHeader = this.getRelatedElements(this.activeHeader);
-    this.$inactiveHeader = this.getRelatedElements(this.inactiveHeader);
-    this.$bodyElement = this.getRelatedElements(this.bodyElement);
-    this.$animation = (this.animation == "none") ? null : this.animation;
+    /*Array<HTMLElements>*/ this.$activeHeader = ViewUtil.getRelatedElements(this.root, this.activeHeader);
+    this.$inactiveHeader = ViewUtil.getRelatedElements(this.root, this.inactiveHeader);
+    this.$bodyElement = ViewUtil.getRelatedElements(this.root, this.bodyElement);
 	this.freezeEvents(this, function() {
 		if (this.initialState == "collapsed") {
 			this.Collapse();
@@ -79,19 +85,19 @@ Expander.prototype.updateTargets = function() {
 };
 Expander.prototype.get_body = function() {
 	if (this.liveParts) {
-		this.$bodyElement = this.getRelatedElements(this.bodyElement);
+		this.$bodyElement = ViewUtil.getRelatedElements(this.root, this.bodyElement);
 	}
     return this.$bodyElement;
 };
 Expander.prototype.get_inactiveHeader = function() {
 	if (this.liveParts) {
-		this.$inactiveHeader = this.getRelatedElements(this.inactiveHeader);
+		this.$inactiveHeader = ViewUtil.getRelatedElements(this.root, this.inactiveHeader);
 	}
     return this.$inactiveHeader;
 };
 Expander.prototype.get_activeHeader = function() {
 	if (this.liveParts) {
-		this.$activeHeader = this.getRelatedElements(this.activeHeader);
+		this.$activeHeader = ViewUtil.getRelatedElements(this.root, this.activeHeader);
 	}
     return this.$activeHeader;
 };
@@ -102,9 +108,9 @@ Expander.prototype.Expand = function(e, dc) {
 
     this.$isopen = true;
     if (this.updateMode) this.updateTargets();
-    this.get_inactiveHeader().hide();
-    this.get_activeHeader().show();
-    this.get_body().show(this.$animation);
+    DOMUtil.setStyle(this.get_inactiveHeader(),"display", "none");//.hide();
+    DOMUtil.setStyle(this.get_activeHeader(),"display", this.displayType); // show
+    DOMUtil.setStyle(this.get_body(), "display", this.displayType);
     if (this.radioSet != null) this.$updateRadioSet();
 
     this.expandeddevent.invoke(this, true);
@@ -118,11 +124,12 @@ Expander.prototype.Collapse = function(e, dc) {
     }
     this.$isopen = false;
     if (this.updateMode) this.updateSources();
-    this.get_inactiveHeader().show();
-    this.get_activeHeader().hide();
-    this.get_body().hide(this.$animation);
+    DOMUtil.setStyle(this.get_inactiveHeader(),"display", this.displayType);//.hide();
+    DOMUtil.setStyle(this.get_activeHeader(),"display", "none"); // show
+    DOMUtil.setStyle(this.get_body(), "display", "none");
 
     this.statechangedevent.invoke(this, false);
+    this.collapseddevent.invoke(this, false);
 };
 Expander.prototype.Toggle = function() {
     if (this.$isopen) {
@@ -132,11 +139,11 @@ Expander.prototype.Toggle = function() {
     }
 }
 Expander.prototype.$updateRadioSet = function() {
-    var others = this.getRelatedElements(this.radioSet);
+    var others = ViewUtil.getRelatedElements(this.root, this.radioSet);
     var lt = this;
-    others.each(function(idx) {
-        if (BaseObject.is(this.activeClass, "Expander") && this.activeClass != lt) {
-            this.activeClass.Collapse();
+    others.Each(function(idx, el) {
+        if (BaseObject.is(el.activeClass, "Expander") && el.activeClass != lt) {
+            el.activeClass.Collapse();
         }
     });
 };

@@ -11,6 +11,42 @@
     ViewUtil.getRelatedElementsPC = function(baseEl, pattParent, pattChild, bAll) {
 
     }
+    ViewUtil.EParentKinds = { control: 0, templateRoot: 1 };
+    ViewUtil.getSpecialParent = function (baseEl, parentKind) {
+        var cur = DOMUtil.toDOMElement(baseEl);
+        if (cur instanceof HTMLElement) {
+            var result = null;
+            var ac;
+            if (parentKind == ViewUtil.EParentKinds.control) {
+                cur = cur.parentElement; // We need to start from the parent in case this is a control root too
+                while (cur != null) {
+                    ac = cur.activeClass;
+                    if (BaseObject.is(ac, "IUIControl")) {
+                        return cur;
+                    }
+                    if (this.isTemplateRoot(cur)) return null;
+                    cur = cur.parentElement;
+                }
+            } else if (parentKind == ViewUtil.EParentKinds.templateRoot) {
+                while (cur != null) {
+                    if (this.isTemplateRoot(cur)) {
+                        return cur;
+                    }
+                    cur = cur.parentElement;
+                }
+            }
+        }
+        return null;
+    };
+    ViewUtil.isTemplateRoot = function (el) {
+        var he = DOMUtil.toDOMElement(el); // HTMLElement
+        if (he != null) {
+            var ac = he.activeClass;
+            if (BaseObject.is(ac, "ITemplateRoot")) return true;
+            if (he.getAttribute("data-template-root") != null) return true;
+        }
+        return false;
+    };
     ViewUtil.getRelatedElements = function (baseEl, patt, details) {
         if (patt == null || patt.length <= 0) return [];
         var el = DOMUtil.toDOMElement(baseEl);
@@ -41,40 +77,40 @@
                         break;
                     case "..":
                     case "parent":
-                        p = el.parent();
+                        p = el.parentElement;
                         break;
                     case "__control":
-                        p = JBUtil.getSpecialParent(el, JBUtil.EParentKinds.control);
+                        p = this.getSpecialParent(el, this.EParentKinds.control);
                         break;
                     case "__view":
-                        p = JBUtil.getSpecialParent(el, JBUtil.EParentKinds.templateRoot);
+                        p = this.getSpecialParent(el, this.EParentKinds.templateRoot);
                         break;
                     default:
-                        p = el.parents('[data-key="' + arr[0] + '"]');
+                        p = DOMUtil.parentByDataKey(el,arr[0]);
                 }
-                p = (p.length <= 1) ? p : $(p.get(0));
-                if (p.length > 0) {
+                
+                if (p != 0) {
                     if (childKey == null) {
-                        result.push(p.get(0));
+                        result.push(p);
                     } else {
                         g = ElementGroup.getElementSet(p); // get the group
                         if (g.length > 0) {
-                            p = $(g);
-                            c = p.find('[data-key="' + childKey + '"]');
-                            if (c.length > 0) {
-                                if (bAll) {
-                                    for (var j = 0; j < c.length; result.push(c.get(j++)));
-                                } else {
-                                    result.push(c.get(0));
-                                }
+                            if (bAll) { 
+                                c = DOMUtil.queryAllByDataKey(g, childKey) 
+                            } else {
+                                c = DOMUtil.queryOneByDataKey(g, childKey) 
+                                if (c != null) c = [c]; else c = [];
                             }
-                            if (bAll || c.length <= 0) {
-                                c = p.filter('[data-key="' + childKey + '"]');
-                                if (c.length > 0) {
+                            if (Array.isArray(c) && c.length > 0) {
+                                result = result.concat(c);
+                            } 
+                            if (!Array.isArray(c) || c.length <= 0 || bAll) {
+                                c = DOMUtil.filterAllByDataKey(g, childKey);
+                                if (Array.isArray(c) && c.length > 0) {
                                     if (bAll) {
-                                        for (var j = 0; j < c.length; result.push(c.get(j++)));
+                                        result = result.concat(c);
                                     } else {
-                                        result.push(c.get(0));
+                                        result.push(c[0]);
                                     }
                                 }
                             }

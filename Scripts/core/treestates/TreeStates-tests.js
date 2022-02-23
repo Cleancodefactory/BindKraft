@@ -69,7 +69,7 @@ var map1 = new TreeStates(function(maps, map, element, unit, condition) {
 		),
 		map(
 			element( "nodeAC",
-				unit("c","num",
+				unit("b","num",
 					condition("range",1001)
 				),
 				{ meta: "c" }

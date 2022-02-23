@@ -353,6 +353,7 @@ DOMUtil.closestParent = function(dom, selector, bAndSelf) {
 	return null;
 }
 */
+//#region Element(s) operation
 DOMUtil.ownText = function(dom) {
 	var i;
 	if (dom instanceof HTMLElement) {
@@ -460,6 +461,59 @@ DOMUtil.setTextWithElements = function(dom, text) {
 		}
 	}
 }
+/**
+ * @param {HTMLElement|NodeList|HTMLCollection|Array<HTMLElement>} dom
+ * @param {object|string} style - Either css attribute name or object with multiple attribute with values
+ * @param {string} val - Optional, required if style is string. The value to set to the style attribute.
+ */
+DOMUtil.setStyle = function(dom, style, val) {
+	if (dom instanceof HTMLElement) {
+		if (typeof style == "string") {
+			dom.style.setProperty(style, val);
+			return true;
+		} else if (typeof style == "object") {
+			for (var key in style) {
+				if (style.hasOwnProperty(key)) {
+					this.setStyle(dom, key, style[key]);
+				}
+			}
+			return true;
+		}
+		return false;
+	} else if (dom instanceof NodeList || dom instanceof HTMLCollection || BaseObject.is(dom, "Array")) {
+		for (i = 0; i < dom.length; i++) {
+			if (dom[i] instanceof HTMLElement) {
+				if (!this.setStyle(dom[i], style, val)) return false;
+			}
+		}
+		return true;
+	}
+	return false;
+}
+
+DOMUtil.getStyle = function(dom, style, bComputed) {
+	if (dom instanceof HTMLElement) {
+		if (typeof style == "string") {
+			var cssdecl = null;
+			if (bComputed) {
+				cssdecl = window.getComputedStyle(dom);
+			} else {
+				cssdecl = dom.style;
+			}
+			return cssdecl.getProperty(style);
+		} else if (typeof style == "object") {
+			var result = {};
+			for (var key in style) {
+				if (style.hasOwnProperty(key)) {
+					result[key] = this.getStyle(dom, key, bComputed);
+				}
+			}
+			return result;
+		}
+		return null;
+	}
+}
+//#endregion
 /**
 	Checks if the element or set of elements all match a selector or at least one of the selectors (if array of
 	selectors is supplied
@@ -683,6 +737,9 @@ DOMUtil.cleanupDOMFragment = function(frg) {
 
 // Ready to call for frequent scenarios
 
+DOMUtil.filterAllByDataKey = function(node, datakey) {
+	return DOMUtil.filterElements(node, '[data-key="' + datakey + '"]');
+}
 DOMUtil.queryAllByDataKey = function(node, datakey) {
 	return DOMUtil.findElements(node, '[data-key="' + datakey + '"]',DOMUtil.BorderCallbacks.DataKeysInViewIn);
 }
