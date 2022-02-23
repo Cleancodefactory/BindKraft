@@ -1121,7 +1121,7 @@ Binding.prototype.$setupSource = function () {
             
             break;
         case "translation":
-            p = Class("Localization").get_translation(this.$source)
+            p = Class("Localization").get_translation(this.$source);
             this.$sourceObject = p;
             break;
         default:
@@ -2040,7 +2040,7 @@ Binding.prototype.set_targetValue = function (vin) {
         var me = this;
         vin.onsuccess(function(_val){ me.$set_targetValue(_val); })
         .onfailure(function(errinfo){ 
-            this.LASTERROR("Operation failed:" + errinfo, "set_targetValue");
+            me.LASTERROR("Operation failed:" + errinfo, "set_targetValue");
             me.$set_targetValue(null); 
         });
     } else {

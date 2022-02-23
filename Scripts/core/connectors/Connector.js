@@ -44,6 +44,7 @@ Connector.Inherit(BaseObject, "Connector")
 Connector.prototype.obliterate = function(bFull) {
     BaseObject.prototype.obliterate.call(this, bFull);
 };
+Connector.dummyCallback = function() {};
 Connector.Create = function(connectorType, address, host, options) {
 	var conn = Class(connectorType).createInstance(address, host, options);
 	if (BaseObject.is(conn, "Connector")) return conn;

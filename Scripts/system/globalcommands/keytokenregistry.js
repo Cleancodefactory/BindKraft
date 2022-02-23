@@ -8,7 +8,7 @@ System.CommandLibs.TokenStorage = (function() {
             // Existence of other keys is not expected
             for (var k in obj) {
                 if (!obj.hasOwnProperty(k)) continue;
-                if (k == "key" || k == "token" || k == "servicename") continue;
+                if (k == "key" || k == "token" || k == "servicename" || k == "timeoutinseconds") continue;
                 return false;
             }
             if (typeof obj.key != "string") return false;

@@ -10,7 +10,8 @@ ICustomParameterizationStdImpl.InterfaceImpl(ICustomParameterization, "ICustomPa
 ICustomParameterizationStdImpl.classInitialize = function(cls, params) {
 	var list = Array.createCopyOf(arguments,1);
 	if (BaseObject.is(cls.prototype.$customParameterizationAllowedParamsList, "Array")) {
-		cls.prototype.$customParameterizationAllowedParamsList = cls.prototype.$customParameterizationAllowedParamsList.concat(list);
+		ICustomParameterizationStdImpl.addParameters.apply(ICustomParameterizationStdImpl,[cls].concat(list));
+		//cls.prototype.$customParameterizationAllowedParamsList = cls.prototype.$customParameterizationAllowedParamsList.concat(list);
 	} else {
 		cls.prototype.$customParameterizationAllowedParamsList = list;
 	}

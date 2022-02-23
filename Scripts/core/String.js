@@ -284,6 +284,22 @@ String.reGroups = function(str, _re, /*names for the outputs*/name1, name2) {
 String.reGroups2 = function(str, _re, /*names for the outputs*/name1, name2) {
 	var re = _toregex(_re);
 	var result = [];
+    result.Combine = function() {
+        if (this.hasmatches > 0) {
+            var o = BaseObject.CombineObjects.apply(BaseObject, this.concat(function(k,_o,_n) { if (typeof _n != "undefined") return true;}));
+            //return o;
+            var r = {};
+            for (var k in o) { 
+                if (o.hasOwnProperty(k)) {
+                    if (typeof o[k] != "undefined") {
+                        r[k] = o[k];
+                    }
+                }
+            }
+            return r;
+        }
+        return {};
+    }
 	result.hasmatches = 0;
 	if (re == null || str == null) return result;
 	if (str != null) {

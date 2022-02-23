@@ -78,4 +78,33 @@
     IAttachedInfo.prototype.clearAllInstanceInfos = function() { throw "not impl.";}
     //#endregion
 
+
+    //#region Usage helpers
+    /**
+     * 
+     * @param {string} valueName The name of the field to mix
+     * @param {object} typeValues { <typename1>: <value1>, <typename1>: <value2>} - values for various types.
+     */
+    IAttachedInfo.mixMultipleAttachedInfos = function(instance, valueName, typeValues) {
+        if (instance.is(IAttachedInfo)) { 
+            for (var type in typeValues) {
+                if (typeValues.hasOwnProperty(type)) {
+                    var o = {};
+                    o[valueName] = typeValues[type];
+                    instance.mixAttachedInfo(type, o);
+                }
+            }
+        }
+    }
+    IAttachedInfo.getAttachedInfoValue = function(instance, valueName /*, ...typeValues */) {
+        if (instance.is(IAttachedInfo)) { 
+            var arr = Array.createCopyOf(arguments,2);
+            for (var i = 0;i < arr.length;i++) {
+                var o = instance.getAttachedInfo(arr[i]);
+                if (o[valueName] != null) return o[valueName];
+            }
+        }
+        return null;
+    }
+    //#endregion
 })();

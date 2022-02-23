@@ -1,0 +1,18 @@
+
+interface IX {
+    actionMethod1(a,b)
+    actionMethod2(a,b)
+    property value1
+    read property value2
+
+}
+
+A Menu item has:
+
+    back connection interface: processor // ? better name?
+    component that will represent it visually: classname // ? better name?
+
+
+<span>-</span>
+<span bind=$value>value</span>
+<span>+</span>

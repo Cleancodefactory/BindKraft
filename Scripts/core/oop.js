@@ -358,7 +358,31 @@ Function.prototype.Obliterator = function(Obliterator) {
 }.Description("Declares types that must not be implemented in order to implement an interface or implementer")
  .Param("any","Single type name - class or interface name")
  .Returns("this - can be chained.");
- 
+ Function.prototype.CompatibleTypes = function () {
+	if (Function.interfaces[this.classType] == this) {
+		CompileTime.err("Cannot use compatibleTypes with an interface declaration. Declaring " + this.classType);
+		if (JBCoreConstants.CompileTimeThrowOnErrors) {
+			throw ("Cannot use compatibleTypes with an interface declaration. Declaring " + this.classType);
+		}
+	}
+	if (arguments.length > 0) {
+		if (this.compatibleTypesList == null) {
+        	this.compatibleTypesList = [];
+		}
+        for (var i = 0; i < arguments.length; i++) {
+			if (typeof arguments[i] == "string") {
+				this.compatibleTypesList.push(arguments[i]);
+			} else if (typeof arguments[i] == "function") {
+				this.compatibleTypesList.push(Class.getTypeName(arguments[i]));
+			}
+			
+            
+        }
+    };
+    return this;
+ }.Description("Declares types with which this type can work")
+ .Param("any","Single type name - class or interface name")
+ .Returns("this - can be chained.");
 Function.prototype.Initialize = function() {
 	this.$requiresInitialization = true;
 }

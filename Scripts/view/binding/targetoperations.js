@@ -453,8 +453,8 @@ Binding.TargetOperations = {
 				return false;
 			},
 			write: function(idx, v, bind) { 
-				if (typeof idx == "string" && idx.length > 0 && v) {
-					this.style.setProperty('display', idx);
+				if ((typeof idx == "string" || idx == null) && v) {
+					this.style.setProperty('display', idx || "");
 				} else {
 					this.style.setProperty('display', "none");
 				}

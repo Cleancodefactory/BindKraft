@@ -45,10 +45,17 @@ ITemplateSourceImpl.classInitialize = function(cls, defaultTemplateSelector, opt
 			if (tml !=null) return tml.innerHTML;
 			tml = null;
 		}
-		// Try global TemplateRegister and DOM
-		var tn = ITemplateSourceImpl.ParseTemplateName(this.get_templateName());
-		tml = ITemplateSourceImpl.GetGlobalTemplate(tn,options);
-		if (tml != null) return tml;
+		if (BaseObject.is(this.get_templateName(), "Connector")) {
+			if (!this.get_templateName().isAsync) {
+				tml = this.get_templateName().bind(Connector.dummyCallback);
+				if (tml != null) return tml;
+			}
+		} else {
+			// Try global TemplateRegister and DOM
+			var tn = ITemplateSourceImpl.ParseTemplateName(this.get_templateName());
+			tml = ITemplateSourceImpl.GetGlobalTemplate(tn,options);
+			if (tml != null) return tml;
+		}
 		// Future extensions will go here
 		return null;
 	}

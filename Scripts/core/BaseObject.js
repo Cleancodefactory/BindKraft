@@ -1336,7 +1336,52 @@ BaseObject.CombineObjectsDeepSelectively = function () {
     return o;
 }.Description("...")
  .Returns("object");
- 
+ /**
+  * Casts object field values as specified in the 2 argument.
+  * @param {Object} o object to cast
+  * @param {Object} cast Specifies which fields and how to cast them (see below)
+  * @returns the same object with specified field values casted as specified and the rest unchanged.
+  * 
+  * cast:
+  * { <fieldname>:"<type>" }
+  * where type can be a string:
+  * int - cast to integer, if cast fails value is left as is.
+  * number - cast to number, if cast fails value is left as is.
+  * string - casted to string
+  * null - set to null (no actual casting)
+  * 
+  */
+ BaseObject.CastObjectValues = function (o, cast) {
+    if (arguments.length < 2) return o;
+    if (typeof cast == "object" && typeof o == "object") {
+        var v,t;
+        for (var k in o) {
+            if (o.hasOwnProperty(k) && typeof cast[k] == "string") {
+                t = cast[k];
+                switch(t) {
+                    case "int":
+                    case "number":
+                        v = Number(o[k]);
+                        if (t == "int" && !isNaN(v)) {
+                            v = Math.floor(v);
+                        }
+                        if (!isNaN(v)) o[k] = v;
+                    break;
+                    case "string":
+                        v = o[k];
+                        if (typeof v != "string") {
+                            o[k] = String(v);
+                        }
+                    break;
+                    case "null":
+                        o[k] = null;
+                    break;
+                }
+            }
+        }
+    }
+    return o;
+ }
  // property setters static versions
 // Example: var v = BaseObject.getProperty(someObject, "subobj1.subobj2.prop"[,default]);
 //          BaseObject.setProperty(someObject, "subobj1.subobj2.prop", v);
