@@ -99,7 +99,7 @@
 					if (tseu.$tskind != _tskinds.tseu) throw "TSE can contain only TSEU elements";
 					arr.push(tseu);
 				} else if (typeof tseu == "object" && i == arguments.length - 1) {
-					tseu.$tskind = _tskinds.meta;
+					tseu.$tskind = _tskinds.tsmeta;
 					arr.push(tseu);
 				}
 			}

@@ -64,17 +64,40 @@
 			throw "TreeStates must be initialized with map or map set";
 		}
 	}
-	TreeStates.Inherit(BaseObject,"TreeStates");
+	TreeStates.Inherit(BaseObject,"TreeStates")
+		.ImplementProperty("serializer");
+
 	TreeStates.prototype.maps = null;
 	TreeStates.prototype.linearize = function(objset) {
 		return TreeStates.LinearizeTSMaps(this.maps, objset);
 	}.Description("Converts the array of state objects to array of linearized state values")
 		.Param("states","Array of state objects matching the map (MetaData in them is ignored for this process)")
 		.Returns("If successful an array of linearized state values, each of them is an array in turn. The result can be empty, on error null is returned and last error set.");
+	TreeStates.prototype.serialize = function(base, objset) {
+		var ser = this.get_serializer();
+		if (BaseObject.is (ser, "ITreeStatesSerializer")) {
+			var linear = this.linearize(objset);
+			return ser.encodeFromLinear(base, linear);
+		} else {
+			this.LASTERROR("Serializer not set.","serialize");
+			return null;
+		}
+	}
 
 	TreeStates.prototype.delinearize = function(linear) {
 		return TreeStates.DelinearizeTSMaps(this.maps, linear);
 	}
+	TreeStates.prototype.deserialize = function(input, options) {
+		var ser = this.get_serializer();
+		if (BaseObject.is (ser, "ITreeStatesSerializer")) {
+			var linear = ser.parseToLinear(input, options);
+			return this.delinearize(linear);
+		} else {
+			this.LASTERROR("Serializer not set.","deserialize");
+			return null;
+		}
+	}
+
 
 
 	TreeStates.prototype.cutFromState = function(namedPath, state) {
@@ -220,6 +243,11 @@
 	*/
 	TreeStates.TSEUTestConditions = function(tseu, v) { // tests the conditions from the TSEU over the value v
 		if (!definer.isUnit(tseu)) return false;
+		var types = tseu[1];
+		var arrTypes = TreeStates.TSEUTypesValid(types);
+		if (this.isError(arrTypes)) return false;
+		var vtype = this.ValueType(v);
+		if (arrTypes.indexOf(vtype) < 0) return false;
 		var conditions = tseu[2];
 		if (BaseObject.is(conditions,"Array")) {
 			for (var i = 0; i < conditions.length;i++) {
@@ -244,9 +272,11 @@
 			return false;
 		}
 		var name = tseu[0];
-		var types = tseu[1];
-		var arrTypes = TreeStates.TSEUTypesValid(types);
-		if (this.isError(arrTypes)) return false;
+		//var types = tseu[1];
+		//var arrTypes = TreeStates.TSEUTypesValid(types);
+		//var vtype = this.ValueType(value);
+		//if (this.isError(arrTypes)) return false;
+		
 		if (!TreeStates.TSEUTestConditions(tseu, value)) return false;
 		obj[name] = value;
 		return true;
@@ -493,7 +523,7 @@
 		// TODO: Check if conserving the args in the outer closure is better
 		if (this.Conditions[condition] != null) {
 			return new Delegate(null, function(v /* params */) {
-				if (TreeStates.ValueType(v) != TreeStates.Conditions[condition].type) return null; // ignore
+				if (TreeStates.ValueType(v) != TreeStates.Conditions[condition].type) return null; // ignore because types do not match
 				return TreeStates.Conditions[condition].proc.apply(null, arguments);
 			}, Array.createCopyOf(arguments,1));
 		}

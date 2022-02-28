@@ -65,6 +65,14 @@ var map1 = new TreeStates(function(maps, map, element, unit, condition) {
 					condition("regex",/^[a-zA-Z]{2,4}$/)
 				),
 				{ meta: "b" }
+			),
+			map(
+				element( "nodeABC",
+					unit("o","num",
+						condition("range",20,80)
+					),
+					{ meta: "XXX" }
+				)	
 			)
 		),
 		map(
