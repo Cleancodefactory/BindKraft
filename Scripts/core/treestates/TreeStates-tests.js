@@ -1,3 +1,8 @@
+// Keep this file for the time being.
+// It is used for development purposes.
+
+
+
 /*
 	Test file included only manually or through tests profile (if exists)
 	These are not systematic tests, but only for use during development 
