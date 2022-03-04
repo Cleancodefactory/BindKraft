@@ -481,7 +481,7 @@ DOMUtil.setStyle = function(dom, style, val) {
 		}
 		return false;
 	} else if (dom instanceof NodeList || dom instanceof HTMLCollection || BaseObject.is(dom, "Array")) {
-		for (i = 0; i < dom.length; i++) {
+		for (var i = 0; i < dom.length; i++) {
 			if (dom[i] instanceof HTMLElement) {
 				if (!this.setStyle(dom[i], style, val)) return false;
 			}
