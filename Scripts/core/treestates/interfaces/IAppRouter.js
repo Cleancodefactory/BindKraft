@@ -25,12 +25,16 @@
      * @param {Array<object>} tail - state as decoded object set
      * 
      * @returns {) ??
+     * 
+     * [58, "profile", "personalinfo"]
+     * 
      */
     IAppRouter.prototype.routeTreeState = function(base_or_route, tail) { throw "not implemented";}
 
     /**
-     * @param {Array<string>} base - Optional array with element names. If they match an initial part of the current route - they are returned, null otherwise.
+     * @param {Array<string>|null} base - Optional array with element names. If they match an initial part of the current route - they are returned, null otherwise.
      *                               If omitted the full state object set is returned.
+     * @returns {Array<object>} State object set
      */
     IAppRouter.prototype.currentTreeState = function(/*optional*/base) { throw "not implemented";}
 

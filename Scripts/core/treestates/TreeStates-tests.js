@@ -76,6 +76,9 @@ var map1 = new TreeStates(function(maps, map, element, unit, condition) {
 					unit("o","num",
 						condition("range",20,80)
 					),
+					unit("p","string",
+						condition("regex",/^[a-z]+$/)
+					),
 					{ meta: "XXX" }
 				)	
 			)

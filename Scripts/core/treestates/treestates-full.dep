@@ -3,10 +3,11 @@
 
 //#using "./definer.js"
 //#using "./TreeStates.js"
+//#using "./TreeStatesManipulator.js"
 
 //#using "./serializations/serializations.dep"
 
 
 
 
-// //#using "./TreeStates-tests.js"
+//  //#using "./TreeStates-tests.js"
