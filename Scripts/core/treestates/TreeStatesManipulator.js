@@ -4,7 +4,7 @@
         ICloneObject = Interface("ICloneObject"),
         TreeStates = Class("TreeStates");
 
-    function TreeStatesManipulator(serializer) {
+    function TreeStatesManipulator(/*serializer, states, approuter*/) {
         BaseObject.apply(this, arguments);
         for (var i = 0; i < arguments.length; i++) {
             var arg = arguments[i];
@@ -47,12 +47,23 @@
         return this.$states.delinearize(linear);
     }
     TreeStatesManipulator.prototype.deserializeSubState = function(namedBase, subpath) {
-        // TODO Complete me!!!!
         var ser = this.get_serializer();
         var startMap = this.$states.navToMap(namedBase);
         if (startMap != null) {
             var sublinear = ser.parseToLinear(subpath);
             return TreeStates.DelinearizeTSSubMaps(startMap, sublinear);
+        }
+        return null;
+    }
+    TreeStatesManipulator.prototype.combineSubState = function(namedBase, subpath) {
+        var ser = this.get_serializer();
+        var current_state = this.$approuter.currentTreeState(namedBase);
+        if (current_state == null) return null;
+        var startMap = this.$states.navToMap(namedBase);
+        if (startMap != null) {
+            var sublinear = ser.parseToLinear(subpath);
+            var sub_objstate = TreeStates.DelinearizeTSSubMaps(startMap, sublinear);
+            return current_state.concat(sub_objstate);
         }
         return null;
     }

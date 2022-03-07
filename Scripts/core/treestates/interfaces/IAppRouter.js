@@ -21,7 +21,7 @@
      * @param {Array<object>} base_or_route - route (tail is ignored) - state as decoded object set 
      * @param {null} tail - ignored
      * Case 2
-     * @param {Array<string>} base_or_route - base route (as element names) 
+     * @param {Array<string>} base_or_route - base route (as element names - namedPath) 
      * @param {Array<object>} tail - state as decoded object set
      * 
      * @returns {) ??
@@ -35,6 +35,11 @@
      * @param {Array<string>|null} base - Optional array with element names. If they match an initial part of the current route - they are returned, null otherwise.
      *                               If omitted the full state object set is returned.
      * @returns {Array<object>} State object set
+     * 
+     * Examples:
+     * var arr = app.currentTreeState(); // Will return array of objects mathing the current state of the app
+     * 
+     * var arr = app.currentTreeState(["hrm","profile"]) // will return array with two objects if the app's state is /hrm/profile or any state under this one.
      */
     IAppRouter.prototype.currentTreeState = function(/*optional*/base) { throw "not implemented";}
 
