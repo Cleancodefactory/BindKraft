@@ -1,3 +1,7 @@
+/**
+ * Part of the command language(s) execution infrastructure. Combines all the contexts necessary for the execution.
+ * 
+ */
 function ICommandContext() {}
 ICommandContext.Interface("ICommandContext");
 /**

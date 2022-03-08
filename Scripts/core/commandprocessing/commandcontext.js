@@ -6,7 +6,7 @@ function CommandContext(args) {
 	var arg;
 	for (var i = 0; i <arguments.length; i++) {
 		arg = arguments[i];
-		if (BaseObject.is(arg,"CommandReg")) {
+		if (BaseObject.is(arg,"ICommandRegister")) {
 			this.$commands = arg;
 		} else if (BaseObject.is(arg, "IAppBase")) {
 			this.$application = arg;
