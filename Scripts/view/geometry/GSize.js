@@ -40,7 +40,7 @@
     GSize.fromDOMElement = function (_el) {
         var el = DOMUtil.toDOMElement(_el);
 		if (el != null && el instanceof HTMLElement) {
-            var r = el.getBoundingClientRect()
+            var r = IGRect.RoundBoundingRect(el.getBoundingClientRect());
             return new GSize(Math.floor(rc.right - rc.left),Math.floor(rc.bottom - rc.top));
         }
         return null;        

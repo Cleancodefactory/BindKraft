@@ -139,7 +139,7 @@
 	GRect.fromDOMElementViewport = function(_el) {
 		var el = DOMUtil.toDOMElement(_el);
 		if (el != null && el instanceof HTMLElement) {
-			var rc = el.getBoundingClientRect();
+			var rc = IGRect.RoundBoundingRect(el.getBoundingClientRect());
 			return new GRect(Math.floor(rc.left),Math.floor(rc.top),Math.floor(rc.right - rc.left),Math.floor(rc.bottom - rc.top));
 		}
 		return null;
