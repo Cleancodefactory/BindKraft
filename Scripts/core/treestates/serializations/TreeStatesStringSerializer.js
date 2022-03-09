@@ -1,7 +1,7 @@
 (function() {
 
     var ITreeStatesSerializer = Interface("ITreeStatesSerializer"),
-        BaseObject = Class("BaseObject")
+        BaseObject = Class("BaseObject"),
         TreeStates = Class("TreeStates");
 
     function TreeStatesStringSerializer() {
