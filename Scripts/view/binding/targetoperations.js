@@ -154,7 +154,7 @@ Binding.TargetOperations = {
 			write: function(_v,bind){
 				var v = _v;
 				var br = "br";
-				if (bind != null && /^[a-z_\-]+$/.test(bind.bindingParameter)) br = bind.bindingParameter + "";
+				if (bind != null && bind.bindingParameter != null && /^[a-z_\-]+$/.test(bind.bindingParameter)) br = bind.bindingParameter + "";
 				
 				if (!Array.isArray(v)) {
 					v = [_v];

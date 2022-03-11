@@ -3,6 +3,7 @@
 (function() {
 
     var IGPoint = Interface("IGPoint");
+    var IGRect = Interface("IGRect");
 
     function GPoint(x, y) {
         BaseObject.apply(this, arguments);
@@ -94,11 +95,11 @@
         var ref1 = new GPoint(0,0), ref2 = new GPoint(0,0);
         var dom_rect;
         if (el1 != null && el1 instanceof HTMLElement) {
-            dom_rect = el1.getBoundingClientRect();
+            dom_rect = IGRect.RoundBoundingRect(el1.getBoundingClientRect());
             ref1 = new GPoint(dom_rect.left + el1.clientLeft,dom_rect.top + el1.clientTop);
         }
         if (el2 != null && el2 instanceof HTMLElement) {
-            dom_rect = el2.getBoundingClientRect();
+            dom_rect = IGRect.RoundBoundingRect(el2.getBoundingClientRect());
             ref2 = new GPoint(dom_rect.left + el2.clientLeft,dom_rect.top + el2.clientTop);
         }
         return new GPoint(ref1.x + this.x - ref2.x, ref1.y + this.y - ref2.y);
