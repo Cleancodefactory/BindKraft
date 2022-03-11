@@ -1,11 +1,16 @@
 (function() {
 
+    var ICommandContext = Interface("ICommandContext"),
+        IEnvironmentContext = Interface("IEnvironmentContext"),
+        ICommandRegister = Interface("ICommandRegister");
+
     function CommandContextHelper(contextStack) {
         BaseObject.apply(this, arguments);
         this.contextStack = contextStack;
     }
     CommandContextHelper.Inherit(BaseObject, "CommandContextHelper")
-        .Implement(IEnvironmentContext);
+        .Implement(IEnvironmentContext)
+        .Implement(ICommandRegister);
 
     //#region Navigation and management
     CommandContextHelper.prototype.popContext = function() {
@@ -15,6 +20,7 @@
             return this.contextStack[0];
         }
     }
+    CommandContextHelper.prototype.pullContext = CommandContextHelper.prototype.popContext;
     CommandContextHelper.prototype.pushContext = function(ctx) {
         if (BaseObject.is(ctx, "ICommandContext")) {
             this.contextStack.push(ctx);
@@ -47,6 +53,16 @@
             var env = ctx.get_environment();
             if (env != null) {
                 output.result = env;
+                return true;
+            }
+            return false;
+        },null);
+    }
+    CommandContextHelper.prototype.topCommandContext = function() { 
+        return this.enumContexts(function(ctx, output) {
+            var cmd = ctx.get_command();
+            if (cmd != null) {
+                output.result = cmd;
                 return true;
             }
             return false;
@@ -100,8 +116,83 @@
     }
     /** Removes an environment variable by its name
     */
-     CommandContextHelper.prototype.unsetEnv = function(key) { throw "not implemented"; }
+    CommandContextHelper.prototype.unsetEnv = function(key) { 
+        var env = this.topEnvContext();
+        if (env != null) {
+            env.unsetEnv(key);
+        }
+    }
 
+    //#endregion
+
+    //#region 
+    CommandContextHelper.prototype.ownerString = function() {
+        var ctx = this.topCommandContext();
+        if (ctx != null) {
+            return ctx.ownerString();
+        }
+        return null;
+    }
+    /**
+     * Checks if command is registered with the top command register.
+     * 
+     * @param {string|CommandDescriptor} cmd_or_name - command to check for. Alias or command name can be used.
+     */
+     CommandContextHelper.prototype.exists = function(cmd_or_name) {
+         var ctx = this.topCommandContext();
+         if (ctx != null) {
+             return this.exists(cmd_or_name);
+         }
+         return null;
+     }
+    /**
+     * Gets the command queried
+     * 
+     * @param {string|CommandDescriptor} cmd_or_name - command to get.
+     */
+    CommandContextHelper.prototype.get = function(cmd_or_name) {
+        return this.enumContexts(function(cmdCtx, output) {
+            var cmd = cmdCtx.get_commands();
+            if (cmd != null) {
+                var c = cmd.get(cmd_or_name);
+                if (c != null) {
+                    output.result = c;
+                    return true;
+                }
+            }
+        }, null);
+    }
+    /**
+     * Finds and if found returns the command
+     * @param {string} token - the token to analyse or just command name/alias
+     * @param {object} meta - options defining how to recognize the command (not all languages use this to the full extent)
+     */
+    CommandContextHelper.prototype.find = function(token, meta) {
+        return this.enumContexts(function(cmdCtx, output) {
+            var cmd = cmdCtx.get_commands();
+            if (cmd != null) {
+                var c = cmd.find(token, meta);
+                if (c != null) {
+                    output.result = c;
+                    return true;
+                }
+            }
+        }, null);
+    }
+    CommandContextHelper.prototype.register = function(command, alias, regexp, action, help, bOverride) {
+        var cmdreg = this.topCommandContext();
+        if (cmdreg != null) {
+            return cmdreg.register(command, alias, regexp, action, help, bOverride);
+        }
+        return null;
+    }
+    CommandContextHelper.prototype.unregister = function(command) {
+        var cmdreg = this.topCommandContext();
+        if (cmdreg != null) {
+            return cmdreg.unregister(command);
+        }
+        return null;
+    }
     //#endregion
 
 })();

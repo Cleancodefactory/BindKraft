@@ -55,6 +55,9 @@
     CLNullLangRunner.prototype.$program = new InitializeArray("The program");
     CLNullLangRunner.prototype.$buildError = null;
 
+    CLNullLangRunner.prototype.$asyncRun = false;
+    CLNullLangRunner.prototype.$instructionTimeout = 60000;
+
     //#region Execution
 
     /**
@@ -129,18 +132,39 @@
     CLNullLangRunner.prototype.execute = function(commandContext, hardLimit) {
         var ctx = this.$checkContext(commandContext);
         if (ctx == null) return Operation.Failed("Invalid command context");
-        var contextStack = [commandContext];
-        var pc = 0;
-        var stack = [];
-        function _context() {
-            if (contextStack.length > 0) {
-                return contextStack[contextStack.length - 1];
-            }
-            return null;
-        }
+        var me = this;
+        // Local vars in an object to make it possible to pass it to objects
+        var state = {
+            contextStack: [commandContext],
+            pc: 0,
+            stack: [],
+            helper: null, // set below
+            args: [], // The arguments for the next function
+        };
+        
+        // The helper used mostly internally and somewhat internally in the API implementation.
+        state.helper = new CommandContextHelper(state.contextStack);
+        // API passed to the commands (2-nd argument)
+        var api = new $CLNullLangAPI(state);
 
-        function processInstruction() {
-            var instruction = this.$program[pc];
+        function processInstruction(lastOp) {
+            var i;
+            var instruction = this.$program[state.pc];
+            // Preprocess instruction
+            state.pc ++;
+            state.args.splice(0);
+            if (instruction.argCount > 0) {
+                for (i = 0; i < instruction.argCount; i++) {
+                    if (state.stack.length == 0) {
+                        me.LASTERROR("Stack underflow at pc=" + (state.pc-1));
+                    } else {
+                        state.args.push(state.stack.pop());
+                    }
+                }
+            }
+            var op = new Operation("CLNullLangRunner instruction execution", me.$instructionTimeout); // TODO instruction timeout
+            me.callAsyncIf(me.$asyncRun, execInstruction, instruction, state.args, op);
+            op.then(processInstruction);
         }
         function execInstruction(instruction, args) {
             switch (instr.operation) {
@@ -246,5 +270,84 @@
 
 
     //#endregion Runner
+
+
+    //#region API
+    /**
+     * This is a separate class and not combined with the CommandContextHelper because it is passed to each command as API for
+     * communication with the runtime.
+     * 
+     * @param {object} state - the internal execution state object.
+     */
+    function $CLNullLangAPI(state) {
+        BaseObject.apply(this,arguments);
+        this.state = state;
+    }
+    $CLNullLangAPI.Inherit(BaseObject,"$CLNullLangAPI");
+
+
+    $CLNullLangAPI.prototype.pushContext = function(ctx) {
+        if (BaseObject.is(ctx, "ICommandContext")) {
+            this.state.helper.pushContext(ctx);
+        }
+    }
+    $CLNullLangAPI.prototype.pullContext = function() {
+        return this.pullContext();
+    }
+    $CLNullLangAPI.prototype.get_currentcontext = function() {
+        return this.state.helper.pullContext();
+    }
+    /**
+        Intended for extracting a new context from apps or other sources. Usually done 
+        in order to call pushContext and change the current context for the next command(s)
+    */
+    $CLNullLangAPI.prototype.getContextFrom = function(source) {
+        if (BaseObject.is(source,"ISupportsCommandContext")) {
+            var ctx = source.get_commandcontext();
+            if ( BaseObject.is(ctx,"ICommandContext") ) return ctx;
+        }
+        return null;
+    }
+    // Obsolete - backward compatibility
+    $CLNullLangAPI.prototype.pullNextToken = function() {
+        return this.pullNextArgument();
+    }
+    // Obsolete - backward compatibility
+    $CLNullLangAPI.prototype.pullNextTokenRaw = function() {
+        return this.pullNextArgument();
+    }
+    $CLNullLangAPI.prototype.pullNextArgument = function() {
+        if (this.state.args != null && this.state.args.length > 0) {
+            return this.state.args.shift();
+        }
+        return null;
+    }
+    $CLNullLangAPI.prototype.peekNextArgument = function(n) {
+        if (this.state.args != null && this.state.args.length > 0) {
+            return this.state.args[0];
+        }
+        return null;
+    }
+    /**
+     * Peeks at the stack beyond the arguments (they are already pulled). n counts from top
+     */
+    $CLNullLangAPI.prototype.stackPeekAt = function(n) {
+        n = n || 0;
+        if (typeof n != 'number') return null;
+        if (Array.isArray(this.state.stack) && this.state.stack.length > 0) {
+            var pos = this.state.stack.length - 1 - n;
+            if (pos >= 0 && pos < this.state.stack.length) {
+                return this.state.stack[pos];
+            }
+        }
+        return null;
+    }
+    $CLNullLangAPI.prototype.stackDepth = function(n) {
+        if (Array.isArray(this.state.stack)) {
+            return this.state.stack.length;
+        }
+        return null;
+    }
+    //#endregion
 
 })();
