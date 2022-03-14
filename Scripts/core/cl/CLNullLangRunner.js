@@ -20,10 +20,13 @@
         Dump: 8, // () - Pulls and dumps (forgets) one entry from the stack
         JumpIfNot: 9, // (jumpaddress), 1 arg
         Jump: 10, // (jumpaddress), 0 arg
+
         GetVar: 11, // (varname)
         PushVar: 11,
+
         SetVar: 12, // (varname) - Sets a variable
         PullVar: 12,
+
         Halt: 13 // Exit program
     }
     function _DumpInstruction(instr) {
@@ -125,7 +128,7 @@
         }
 
     }
-    CLNullLangRunner.prototype.
+    //CLNullLangRunner.prototype.
     /**
      * @param {ICommandContext} commandContext
      */
@@ -133,6 +136,7 @@
         var ctx = this.$checkContext(commandContext);
         if (ctx == null) return Operation.Failed("Invalid command context");
         var me = this;
+        var execOp = new Operation("CLNullLang execution");
         // Local vars in an object to make it possible to pass it to objects
         var state = {
             contextStack: [commandContext],
@@ -148,34 +152,113 @@
         var api = new $CLNullLangAPI(state);
 
         function processInstruction(lastOp) {
-            var i;
-            var instruction = this.$program[state.pc];
-            // Preprocess instruction
-            state.pc ++;
-            state.args.splice(0);
-            if (instruction.argCount > 0) {
-                for (i = 0; i < instruction.argCount; i++) {
-                    if (state.stack.length == 0) {
-                        me.LASTERROR("Stack underflow at pc=" + (state.pc-1));
-                    } else {
-                        state.args.push(state.stack.pop());
+            if (!lastOp.isOperationSuccessful()) {
+                me.LASTERROR("CLNullLang runtime error:" + lastOp.getOperationErrorInfo(), "execute");
+                execOp.CompleteOperation(false, lastOp.getOperationErrorInfo());
+                return;
+            } else {
+                // Push the last result
+                state.stack.push(lastOp.getOperationResult());
+            }
+
+            var i, instruction;
+
+            while (true) {
+                instruction = this.$program[state.pc];
+                // Preprocess instruction
+                state.pc ++;
+                if (state.pc >= me.$program.length) { // End of program
+                    opExec.CompleteOperation(true, state.stack);
+                    return;
+                }
+                // prepare arguments for the instruction
+                state.args.splice(0);
+                if (instruction.argCount > 0) {
+                    for (i = 0; i < instruction.argCount; i++) {
+                        if (state.stack.length == 0) {
+                            me.LASTERROR("Stack underflow at pc=" + (state.pc-1));
+                            execOp.CompleteOperation(false,"Stack underflow at pc=" + (state.pc-1), "execute");
+                            return;
+                        } else {
+                            state.args.push(state.stack.pop());
+                        }
                     }
                 }
+                // Special cases
+                if (instruction.operation == Instructions.NoOp) continue;
+                if (instruction.operation == Instructions.Halt) {
+                    // Program completion
+                    opExec.CompleteOperation(true, state.stack);
+                    return;
+                }
+                // Call - async instruction (potentially)
+                if (instruction.operation == Instructions.Call) {
+                    var op = new Operation("CLNullLangRunner instruction execution", me.$instructionTimeout); // TODO instruction timeout
+                    op.then(processInstruction);
+                    me.callAsyncIf(me.$asyncRun, execInstruction, instruction, state.args, op);
+                    // Exit the executor and wait the operation
+                    return;
+                }
+                // Sync instructions
+
+
+                
+                
+                
             }
-            var op = new Operation("CLNullLangRunner instruction execution", me.$instructionTimeout); // TODO instruction timeout
-            me.callAsyncIf(me.$asyncRun, execInstruction, instruction, state.args, op);
-            op.then(processInstruction);
         }
-        function execInstruction(instruction, args) {
-            switch (instr.operation) {
+        function execSyncInstruction(instruction, args) {
+            switch(instruction.operation) {
+                case Instructions.PushParam:
+
+                break;
+                case Instructions.PushDouble:
+                break;
+                case Instructions.PushInt:
+                break;
+                case Instructions.PushNull:
+                break;
+                case Instructions.PushBool:
+                break;
+                case Instructions.PushString:
+                break;
+                case Instructions.Dump:
+                break;
+                case Instructions.JumpIfNot:
+                break;
+                case Instructions.Jump:
+                break;
+                case Instructions.GetVar:
+                break;
+                case Instructions.SetVar:
+                break;
+            }
+        }
+        function execInstruction(instruction, args, op) {
+            var cmd, operand, opaction;
+            switch (instruction.operation) {
                 case Instructions.NoOp:
                     // Nothing - just increase the pc
+                    op.CompleteOperation(true,null);
+                    return;
                 break;
                 case Instructions.PushParam:
-                    return Operation.Failed("PushParam not supported");
+                    return op.CompleteOperation(false,"PushParam instruction not supported");
+                    return;
                 break;
                 case Instructions.Call:
+                    cmd = state.helper.find(instruction.operand);
+                    if (cmd == null) {
+                        if (BaseObject.isCallback(cmd.action)) {
+                            opaction = BaseObject.applyCallback(cmd.action, args);
+                            if (BaseObject.is(opaction, "Operation")) {
+                                
+                                opaction.transfer(op);
+                            } else {
 
+                            }
+                        }
+                    }
                 break;
             }
         }
@@ -209,7 +292,10 @@
                 break;
                 default:
             }
-        }    
+        }
+
+
+        return execOp;    
     }
     //#endregion Execution
 
