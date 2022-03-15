@@ -171,7 +171,7 @@
         return this.enumContexts(function(cmdCtx, output) {
             var cmd = cmdCtx.get_commands();
             if (cmd != null) {
-                var c = cmd.find(token, meta);
+                var c = cmd.find(token, {subtype: "identifier"});
                 if (c != null) {
                     output.result = c;
                     return true;

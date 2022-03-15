@@ -3,7 +3,7 @@ function CommandReg(owner) {
 	this.owner = owner;
 }
 CommandReg.Inherit(BaseObject,"CommandReg");
-CommandReg.Implements(Interface("ICommandRegister"));
+CommandReg.Implement(Interface("ICommandRegister"));
 CommandReg.prototype.$commands = new InitializeArray("Commands register");
 CommandReg.prototype.$regexps = new InitializeArray("Array of the commands that have regexps ");
 CommandReg.prototype.ownerString = function() {

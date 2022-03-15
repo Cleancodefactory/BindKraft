@@ -1129,7 +1129,7 @@ BaseObject.prototype.callAsync = function (method /*args*/) { // Blind simple ex
  // BaseObject.prototype.callAsyncCallback = function (callback /*args*/) { 
  // }
  BaseObject.prototype.callAsyncIf = function (condition, method /*,arguments*/) {
-    var args = Array.createCopyOf(arguments, 2);
+    var args = Array.createCopyOf(arguments, 1);
     if (condition) {
         return this.callAsync.apply(this, args);
     } else {

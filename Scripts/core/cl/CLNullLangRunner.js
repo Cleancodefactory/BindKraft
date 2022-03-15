@@ -1,5 +1,5 @@
 (function() {
-
+    var CommandContextHelper = Class("CommandContextHelper");
 
     /**
      *  {
@@ -83,35 +83,7 @@
         SetVar: 12, // (varname) - Sets a variable
         PullVar: 12,
         Halt: 13 // Exit program
-     * 
-     * 
-     * @param {} context 
      */
-    CLNullLangRunner.prototype.exec = function(context) {
-        var op = new Operation();
-        // Execution registers
-        var pc = 0; // Program counter
-        var stack = [];
-        var me = this;
-        var interrupt = null;
-
-        function _execInstruction(callback) {
-            ///
-        }
-        function _callback(result, err) {
-            if (err != null) {
-                interrupt = { type: "error", message: err + ""};
-            } else {
-                stack.push(result)
-            }
-        }
-
-        _execInstruction(_callback);
-
-
-
-        return op;
-    }
 
 
     CLNullLangRunner.prototype.$checkContext = function(ctx) {
@@ -152,23 +124,25 @@
         var api = new $CLNullLangAPI(state);
 
         function processInstruction(lastOp) {
-            if (!lastOp.isOperationSuccessful()) {
-                me.LASTERROR("CLNullLang runtime error:" + lastOp.getOperationErrorInfo(), "execute");
-                execOp.CompleteOperation(false, lastOp.getOperationErrorInfo());
-                return;
-            } else {
-                // Push the last result
-                state.stack.push(lastOp.getOperationResult());
+            if (BaseObject.is(lastOp,"Operation")) {
+                if (!lastOp.isOperationSuccessful()) {
+                    me.LASTERROR("CLNullLang runtime error:" + lastOp.getOperationErrorInfo(), "execute");
+                    execOp.CompleteOperation(false, lastOp.getOperationErrorInfo());
+                    return;
+                } else {
+                    // Push the last result
+                    state.stack.push(lastOp.getOperationResult());
+                }
             }
 
             var i, instruction;
 
             while (true) {
-                instruction = this.$program[state.pc];
+                instruction = me.$program[state.pc];
                 // Preprocess instruction
                 state.pc ++;
                 if (state.pc >= me.$program.length) { // End of program
-                    opExec.CompleteOperation(true, state.stack);
+                    execOp.CompleteOperation(true, state.stack);
                     return;
                 }
                 // prepare arguments for the instruction
@@ -188,113 +162,128 @@
                 if (instruction.operation == Instructions.NoOp) continue;
                 if (instruction.operation == Instructions.Halt) {
                     // Program completion
-                    opExec.CompleteOperation(true, state.stack);
+                    execOp.CompleteOperation(true, state.stack);
                     return;
                 }
                 // Call - async instruction (potentially)
                 if (instruction.operation == Instructions.Call) {
                     var op = new Operation("CLNullLangRunner instruction execution", me.$instructionTimeout); // TODO instruction timeout
                     op.then(processInstruction);
-                    me.callAsyncIf(me.$asyncRun, execInstruction, instruction, state.args, op);
+                    me.callAsyncIf(me.$asyncRun, execAsyncInstruction, instruction, state.args, op);
                     // Exit the executor and wait the operation
+                    // TODO: Needs some protection !!!
                     return;
                 }
                 // Sync instructions
-
-
-                
-                
-                
+                // They MUST push their results themselves!!!
+                // The return result is FALSE if critical and the execOp is completed with the appropriate error
+                if (execSyncInstruction(instruction) === false) {
+                    // Critical error
+                    if (!execOp.isOperationComplete()) { // Just in case - finish the op if forgotten
+                        execOp.CompleteOperation(false, "Unidentified error occurred");
+                    }
+                    return;
+                } else {
+                    continue;
+                }
             }
         }
-        function execSyncInstruction(instruction, args) {
+        function execSyncInstruction(instruction) {
+            var n;
             switch(instruction.operation) {
                 case Instructions.PushParam:
-
+                    execOp.CompleteOperation(false, "PushParam instruction not supported.")
+                    return false;
                 break;
                 case Instructions.PushDouble:
+                    n = parseFloat(instruction.operand);
+                    if (!isNaN(n)) {
+                        state.stack.push(n);
+                    } else {
+                        state.stack.push(null);
+                    }
                 break;
                 case Instructions.PushInt:
+                    n = parseInt(instruction.operand, 10);
+                    if (!isNaN(n)) {
+                        state.stack.push(n);
+                    } else {
+                        state.stack.push(null);
+                    }
                 break;
                 case Instructions.PushNull:
+                    state.stack.push(null);
                 break;
                 case Instructions.PushBool:
+                    state.stack.push(instruction.operand?true:false);
                 break;
                 case Instructions.PushString:
+                    if (instruction.operand == null) {
+                        state.stack.push(null);
+                    } else {
+                        state.stack.push(instruction.operand + "");
+                    }
                 break;
                 case Instructions.Dump:
+                    state.stack.pop();
                 break;
                 case Instructions.JumpIfNot:
+                    if (instruction.argCount > 0) {
+                        n = state.args[0];
+                        if (!n) state.pc = instruction.operand; // Jump to the operand address
+                        // TODO: Add check for the address
+                    } else {
+                        execOp.CompleteOperation(false, "JumpIfNot instruction has no argument");
+                        return false;
+                    }
                 break;
                 case Instructions.Jump:
+                    state.pc = instruction.operand;
+                    // TODO: Add check for the address
                 break;
                 case Instructions.GetVar:
+                    n = state.helper.getEnv(instruction.operand,null);
+                    //TODO: handle type carefully to exclude NaN
+                    state.stack.push(n);
                 break;
                 case Instructions.SetVar:
+                    if (state.args.length > 0) {
+                        //TODO: handle type carefully to exclude NaN
+                        n = state.args[0];
+                        state.helper.setEnv(instruction.operand, n);
+                    } else {
+                        execOp.CompleteOperation(false, "SetVar not enough arguments.");
+                        return false;
+                    }
                 break;
+                default:
+                    execOp.CompleteOperation(false, "Unrecognized instruction.");
+                    return false;
             }
         }
-        function execInstruction(instruction, args, op) {
+        function execAsyncInstruction(instruction, args, op) {
             var cmd, operand, opaction;
             switch (instruction.operation) {
-                case Instructions.NoOp:
-                    // Nothing - just increase the pc
-                    op.CompleteOperation(true,null);
-                    return;
-                break;
-                case Instructions.PushParam:
-                    return op.CompleteOperation(false,"PushParam instruction not supported");
-                    return;
-                break;
                 case Instructions.Call:
                     cmd = state.helper.find(instruction.operand);
-                    if (cmd == null) {
-                        if (BaseObject.isCallback(cmd.action)) {
-                            opaction = BaseObject.applyCallback(cmd.action, args);
+                    if (cmd != null) {
+                        if (BaseObject.isCallback(cmd.get_action())) {
+                            opaction = BaseObject.applyCallback(cmd.get_action(), [args, api]);
                             if (BaseObject.is(opaction, "Operation")) {
-                                
                                 opaction.transfer(op);
                             } else {
-
+                                op.CompleteOperation(true, opaction);
                             }
                         }
+                        // TODO: Invalid actions???
+                    } else {
+                        execOp.CompleteOperation(false, "Call cannot find the command specified in the operand.");
                     }
                 break;
             }
         }
 
-
-        var instr;
-        while (pc < this.$program.length) {
-            /*  operation, operand, argCount */
-            instr = this.$program[pc];
-            switch (instr.operation) {
-                case Instructions.PushParam:
-
-                break;
-                case Instructions.Call:
-                break;
-                case Instructions.PushDouble:
-                break;
-                case Instructions.PushInt:
-                break;
-                case Instructions.PushNull:
-                break;
-                case Instructions.PushBool:
-                break;
-                case Instructions.PushString:
-                break;
-                case Instructions.Dump:
-                break;
-                case Instructions.JumpIfNot:
-                break;
-                case Instructions.Jump:
-                break;
-                default:
-            }
-        }
-
-
+        processInstruction(null);
         return execOp;    
     }
     //#endregion Execution
