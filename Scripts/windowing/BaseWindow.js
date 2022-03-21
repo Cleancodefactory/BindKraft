@@ -353,7 +353,7 @@ BaseWindow.prototype.$ensureCreated = function (viewString) {
 			this.OnDOMAttached();
 			this.root.activeClass = this;
 		} else {
-			throw "Empty window template";
+			throw "Empty window template class:" + this.classType() + " name:" + this.get_windowname();
 		}
 		/*
         var el = $(tml);
