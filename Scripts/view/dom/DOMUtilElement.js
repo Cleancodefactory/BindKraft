@@ -39,6 +39,8 @@ DOMUtilElement.prototype.reInit = function(el, bClone) {
 	}
 	return false;
 }
+
+//#region Properties
 DOMUtilElement.prototype.get_isempty = function() {
 	if (this.$element != null) {
 		if (this.$element.childNodes.length > 0) return false;
@@ -110,6 +112,21 @@ DOMUtilElement.prototype.get_owntext = function() {
 	}
 	return null;
 }
+DOMUtilElement.prototype.get_rect = function() {
+	var GRect = Class("GRect");
+	if (this.$element instanceof HTMLElement) {
+		return GRect.fromDOMElementOffset(this.$element);
+	}
+	return GRect.empty();
+}
+DOMUtilElement.prototype.get_clientrect = function() {
+	var GRect = Class("GRect");
+	if (this.$element instanceof HTMLElement) {
+		return GRect.fromDOMElementClient(this.$element);
+	}
+	return GRect.empty();
+}
+//#endregion
 DOMUtilElement.prototype.setTextAroundElements = function(text) {
 	if (this.$element instanceof HTMLElement) {
 		DOMUtil.setTextWithElements(this.$element, text);

@@ -299,6 +299,36 @@ Binding.TargetOperations = {
 				this.style.setProperty("width",v);
 			}
 		},
+		height: {
+			indexed: false,
+			read: function(){
+				var GSize = Class("GSize");
+				var size = GSize.fromDOMElement(this);
+				return size.height;
+			},
+			write: function(v) {
+				if (v == null) {
+					this.style.removeProperty("height");
+				} else {
+					this.style.setProperty("height",Math.round(v) + "px");
+				}
+			}
+		},
+		width: {
+			indexed: false,
+			read: function(){
+				var GSize = Class("GSize");
+				var size = GSize.fromDOMElement(this);
+				return size.width;
+			},
+			write: function(v) {
+				if (v == null) {
+					this.style.removeProperty("width");
+				} else {
+					this.style.setProperty("width",Math.round(v) + "px");
+				}
+			}
+		},
 		style: {
 			indexed: true,
 			read: function(idx,bind){

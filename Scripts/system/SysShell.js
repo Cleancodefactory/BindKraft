@@ -94,7 +94,8 @@ SysShell.prototype.get_workspacewindow = function () {
 SysShell.prototype.get_connecteddomelement = function(key) {
 	var w = this.get_workspacewindow();
 	if (BaseObject.is(w,"Base")) {
-		return w.root;
+		// TODO the change from raw seems ok, but look out for legacy issues anyway
+		return new DOMUtilElement(w.root);
 	}
 }
 

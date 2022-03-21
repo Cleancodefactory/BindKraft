@@ -134,7 +134,8 @@ Base.prototype.get_liveelement = function () { // Returns a jquery wrapped eleme
 };
 // IDOMConnectedObject implementation
 Base.prototype.get_connecteddomelement = function (key) {
-    return ((this.root != null) ? $(this.root) : null);
+    return new DOMUtilElement(this.root);
+    //return ((this.root != null) ? $(this.root) : null);
 }
 // IStructuralQueryRouter implementation
 Base.prototype.get_structuralQueryRoutingType = function () { return "DOM"; };
