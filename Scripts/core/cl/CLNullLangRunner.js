@@ -45,6 +45,71 @@
         return s;
 
     }
+    function _DumpValue(value) {
+        var s = "";
+        if (value == null) {
+            s = "null";
+        } else if (typeof value === "string") {
+            if (value.length > 30) {
+                s = "'" + value.slice(0,30) + "...'";
+            } else {
+                s = "'" + value + "'";
+            }
+        } else if (typeof value == "number" || typeof value == "boolean") {
+            s = value;
+        } else if (typeof value == "function") {
+            s = "(function)";
+        } else if (typeof value == "object") {
+            if (Array.isArray(value)) {
+                s = "(array[" + value.length + "])";
+            } else if (BaseObject.is(value, "BaseObject")) {
+                s = "(" + value.classType() + ")";
+            }
+        } else {
+            s = "unrecognized";
+        }
+        return s;
+    }
+    var state = {
+        contextStack: [commandContext],
+        pc: 0,
+        stack: [],
+        helper: null, // set below
+        args: [], // The arguments for the next function
+    };
+    function _DumpStack(stack) {
+        if (Array.isArray(stack)) {
+            var s = "",j = 0;
+            for (var i = stack.length - 1; i >= 0; i--) {
+                s += j + ":\t" + _DumpValue(stack[i]) + "\n";
+            }
+            return s;
+        } else {
+            return "no stack";
+        }
+    }
+    function _DumpArray(ar) {
+        if (Array.isArray(arr)) {
+            var s = "";
+            for (var i = 0; i < arr.length; i++) {
+                s += i + ":\t" + _DumpValue(arr[i]) + "\n";
+            }
+            return s;
+        } else {
+            return "no arguments";
+        }
+    }
+    function _DumpState(state) {
+        try {
+            var s = "pc=" + state.pc + "\n";
+            s += "stack depth=" + state.stack.length + "]\n";
+            s += _DumpStack(state.stack);
+
+
+        } catch (e) {
+            return "(cannot fetch state)\n";
+        }
+    }
 
 
     //#region Runner
@@ -58,8 +123,9 @@
     CLNullLangRunner.prototype.$program = new InitializeArray("The program");
     CLNullLangRunner.prototype.$buildError = null;
 
-    CLNullLangRunner.prototype.$asyncRun = false;
-    CLNullLangRunner.prototype.$instructionTimeout = 60000;
+    CLNullLangRunner.ImplementProperty("asyncRun", new InitializeBooleanParameter("Run calls asynchronously", true));
+    CLNullLangRunner.ImplementProperty("instructionTimeout", new InitializeNumericParameter("Timeout for an async instruction", 60000));
+    
 
     //#region Execution
 
