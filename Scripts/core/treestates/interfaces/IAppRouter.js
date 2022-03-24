@@ -17,12 +17,16 @@
     IAppRouter.Interface("IAppRouter");
 
     /**
-     * Case 1
+     * Case 1 (mandatory)
      * @param {Array<object>} base_or_route - route (tail is ignored) - state as decoded object set 
      * @param {null} tail - ignored
-     * Case 2
+     * Case 2 (required*)
      * @param {Array<string>} base_or_route - base route (as element names - namedPath) 
      * @param {Array<object>} tail - state as decoded object set
+     * 
+     * Case 3 (optional)
+     * @param {Array<string>} base_or_route - base route (as element names - namedPath) 
+     * @param {string} tail - state as string automatically decoded by the internal serializer (only for internal app use)
      * 
      * @returns {) ??
      * 
