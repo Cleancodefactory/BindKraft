@@ -170,13 +170,14 @@
     /**
      * @param {ICommandContext} commandContext
      */
-    CLNullLangRunner.prototype.execute = function(commandContext, hardLimit) {
+    CLNullLangRunner.prototype.execute = function(commandContext, constants) {
         var ctx = this.$checkContext(commandContext);
         if (ctx == null) return Operation.Failed("Invalid command context");
         var me = this;
         var execOp = new Operation("CLNullLang execution");
         // Local vars in an object to make it possible to pass it to objects
         var state = {
+            constants: constants,
             contextStack: [commandContext],
             pc: 0,
             stack: [],
@@ -258,8 +259,12 @@
             var n;
             switch(instruction.operation) {
                 case Instructions.PushParam:
-                    execOp.CompleteOperation(false, "PushParam instruction not supported.")
-                    return false;
+                    if (state.constants != null) {
+                        n = state.constants[instruction.operand];
+                        state.stack.push(n);
+                    } else {
+                        state.stack.push(null);
+                    }
                 break;
                 case Instructions.PushDouble:
                     n = parseFloat(instruction.operand);
@@ -359,6 +364,7 @@
      * Clears the entire program
      */
     CLNullLangRunner.prototype.clear = function() {
+        this.$buildError = null;
         this.$program.splice(0);
     }
     /**
@@ -426,6 +432,74 @@
     }
     $CLNullLangAPI.Inherit(BaseObject,"$CLNullLangAPI");
 
+    //#region Arguments (new)
+
+    /**
+     * Provides access to the arguments of the Call instruction.
+     * @param {integer|null} idx - optional index, if present returns the indexed argument or null if index is out of range. If missing returns all the arguments as array 
+     */
+    $CLNullLangAPI.prototype.arguments = function(idx) { 
+        if (arguments.length == 0 || idx == null) {
+            return this.state.args;
+        } else {
+            if (typeof idx == 'number' && idx >= 0 && idx < arguments.length) {
+                return this.state.args[idx];
+            }
+            return null;
+        }
+    }
+
+    //#endregion
+
+    //#region Environment
+
+    /**
+     * Gets the environment variable specified by key from teh first env context containing it.
+     * @param {String} key
+     * @param {any} defVal
+     */
+    $CLNullLangAPI.prototype.getEnv = function(key, defVal) {
+        return this.state.helper.getEnv(key, defVal);
+    }
+    /**
+     * Sets the variable in the environment of the top command context.
+     * @param {string} key 
+     * @param {any} val 
+     * @returns {boolean} Success/failure
+     */
+    $CLNullLangAPI.prototype.setEnv = function(key, val) {
+        return this.state.helper.setEnv(key, val);
+    }
+    $CLNullLangAPI.prototype.unsetEnv = function(key) {
+        this.state.helper.unsetEnv(key);
+    }
+    /**
+     * Exports the specified variables from the top environment context into the next one from the command context stack.
+     * This is useful when data created inside a sub-context must become available in the outside.
+     * @param {string*} arguments - the names of the variables to export.
+     */
+    $CLNullLangAPI.prototype.exportEnv = function(/* varnames */) {
+        var top = this.state.helper.topEnvContext();
+        if (top == null) return;
+        var next = this.state.helper.topEnvContext(1);
+        if (next == null) return;
+        var x, y;
+        for (var i = 0; i < arguments.length; i++) {
+            x = arguments[i];
+            y = top.getEnv(key);
+            next.setEnv(x, y); // This will replace the var in the +1 context even if it does not exist in the top environment
+            // TODO: Consider "exists" check for environments
+        }
+    }
+    /**
+     * Returns all the names of variable (from environment) from all levels of contexts 
+     */
+    $CLNullLangAPI.prototype.getAllEnvNames = function() {
+        return this.state.helper.getEnvVarnames();
+    }
+
+    //#endregion Environment
+
 
     $CLNullLangAPI.prototype.pushContext = function(ctx) {
         if (BaseObject.is(ctx, "ICommandContext")) {
@@ -436,7 +510,7 @@
         return this.pullContext();
     }
     $CLNullLangAPI.prototype.get_currentcontext = function() {
-        return this.state.helper.pullContext();
+        return this.state.helper.topContext();
     }
     /**
         Intended for extracting a new context from apps or other sources. Usually done 
@@ -449,6 +523,9 @@
         }
         return null;
     }
+
+    //#region Legacy compatibility
+
     // Obsolete - backward compatibility
     $CLNullLangAPI.prototype.pullNextToken = function() {
         return this.pullNextArgument();
@@ -469,6 +546,12 @@
         }
         return null;
     }
+    //#endregion Legacy compatibility
+    
+    //#region Runtime stack direct access
+    // These methods are not recommended
+
+
     /**
      * Peeks at the stack beyond the arguments (they are already pulled). n counts from top
      */
@@ -489,6 +572,8 @@
         }
         return null;
     }
+    //#endregion Runtime stack access
+
     //#endregion
 
 })();

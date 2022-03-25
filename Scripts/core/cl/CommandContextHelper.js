@@ -48,12 +48,17 @@
         }
         return output.result;
     }
-    CommandContextHelper.prototype.topEnvContext = function() { 
+    CommandContextHelper.prototype.topEnvContext = function(n) { 
+        if (typeof n != "number" || isNaN(n)) n = null;
         return this.enumContexts(function(ctx, output) {
             var env = ctx.get_environment();
             if (env != null) {
-                output.result = env;
-                return true;
+                if (n == null || n == 0) {
+                    output.result = env;
+                    return true;
+                } else {
+                    n--;
+                }
             }
             return false;
         },null);
@@ -122,6 +127,7 @@
             env.unsetEnv(key);
         }
     }
+    
 
     //#endregion
 

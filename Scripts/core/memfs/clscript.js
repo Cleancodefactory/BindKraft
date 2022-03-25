@@ -20,3 +20,6 @@ CLScript.Implement(IMemoryFileImpl);
 CLScript.ImplementProperty("script", new InitializeStringParameter("The packed script", null));
 CLScript.ImplementProperty("type", new InitializeStringParameter("Kind of script - runner class. E.g. Commander", null));
 CLScript.ImplementProperty("app", new InitializeStringParameter("Optional app Class name for which this script is intended - i.e. needs its context", null));
+CLScript.prototype.runScript = function(commandContext /* additional arguments - not all scripts will honor them */) {
+	///
+}

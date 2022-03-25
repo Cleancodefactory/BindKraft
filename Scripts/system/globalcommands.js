@@ -134,6 +134,7 @@ System.DefaultCommands = {
 	},
 	// +V 2.17.6
 	"set": function(ctx, api) {
+		if (!BaseObjects.is(ctx, "ICommandContext")) return;
 		var varname = api.pullNextToken();
 		var varval = api.pullNextToken();
 		if (typeof varname === "string") {
@@ -144,6 +145,7 @@ System.DefaultCommands = {
 		}
 	},
 	"unset": function(ctx, api) {
+		if (!BaseObjects.is(ctx, "ICommandContext")) return;
 		var varname = api.pullNextToken();
 		if (typeof varname === "string") {
 			var env = ctx.get_environment();

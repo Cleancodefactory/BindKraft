@@ -8,15 +8,21 @@
             this.context = CommandContext.Global();
         }
         
-        if (this.$initRunner(_script)) {
-            this.compile(_script);
-        } else {
+        if (!this.$initRunner(_script)) {
             this.LASTERROR("Cannot detect the script type");
         }
+        this.script = _script;
     }
     CLRun.Inherit(BaseObject, "CLRun");
+    CLRun.ImplementProperty("timelimit", new InitializeNumericParameter("Execution time limit, null - unlimited", null));
 
     CLRun.$Langs = [];
+    /**
+     * 
+     * @param {*} detect - method for detecting if the script is of this type
+     * @param {*} compile - compile the script to some object and return it
+     * @param {*} run - run the script by having the object and context passed
+     */
     CLRun.AddLang = function(detect, compile, run) {
         var o = {
             detect: detect,
@@ -31,21 +37,76 @@
             var lang = CLRun.$Langs[i];
             b = lang.detect.call(this,source);
             if (b) {
-                this.compile = lang.compile;
-                this.run = lang.run;
+                this.$compile = lang.compile;
+                this.$run = lang.run;
                 return true;
             }
         }
         return false;
     }
 
-    //#region 
-    CLRun.prototype.compile = function(source) {
-        throw "Not initialized";
+    //#region Compile and run
+    CLRun.prototype.script = null;
+    CLRun.prototype.context = null;
+    CLRun.prototype.program = null; // Compiled program
+    CLRun.prototype.errors = new InitializeArray("Compile-time errors are reported here.");
+    CLRun.prototype.compile = function() {
+        this.errors.splice(0);
+        var program = this.$compile(this.script);
+        if (this.errors.length > 0 || program == null) return null;
+        this.program = program;
+        return program;
     }
-    CLRun.prototype.run = function() {
-        throw "Not initialized";
+    CLRun.prototype.run = function(/* specific arguments */) {
+        if (this.program === null) {
+            this.program = this.compile(this.script);
+        }
+        if (this.program != null) {
+            var args = Array.createCopyOf(arguments);
+            return this.$run(this.program, this.context, args);
+        } else {
+            this.LASTERROR("Can't compile program", "run");
+            return Operation.Failed("Can't compile program");
+        }
     }
+    //#endregion
+
+    //#region Lang specific methods
+    CLRun.prototype.$compile = function(source) {
+        throw "CLRun not initialized";
+    }
+    CLRun.prototype.$run = function() {
+        throw "CLRun not initialized";
+    }
+    //#endregion
+
+
+
+    //#region internal registrations
+
+    CLRun.AddLang(
+        function(script) { // detect
+            if (/^#clnull\s+/.test(script)) {
+                return true;
+            }
+            return false;
+        },
+        function(script) { // compile
+            this.program = null;
+            var compiler = new CLNullLang();
+            var runner = compiler.compile(script);
+            if (runner.$buildError != null) {
+                this.errors.push(runner.$buildError);
+                return null;
+            }
+            this.runner = runner;
+            return runner;
+        },
+        function(runner, context, constants) { // run
+            return runner.execute(context, constants);
+        }
+    )
+
     //#endregion
 
 })();

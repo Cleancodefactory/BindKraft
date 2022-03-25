@@ -58,11 +58,12 @@
 		// Some system entries (more to come in the future)
 		var system = fs.mkdir("system"); // TODO Implement protection with read-only marking and use it here		
 		
-		// Buit in system data files - create them with defaults that can be changed/reloaded a bit later (in module init.js files mostly
+		// Built in system data files - create them with defaults that can be changed/reloaded a bit later (in module init.js files mostly
 		var f, dir;
 		// General settings for url commands
+		// Old version - will be phased out gradually
 		/*
-			file: system/urlcommands/general 		- property bag file general settings, for the moment only prefix is defined ther as $run
+			file: system/urlcommands/general 		- property bag file general settings, for the moment only prefix is defined there as $run
 			dir:  system/urlcommands/scripts		- CLScript files used as dependency variables
 			dir:  system/urlcommands/aliases		- aliases (TODO: list files)
 		*/
@@ -70,10 +71,22 @@
 		f = new PropertySetMemoryFile();
 		dir.register("general", f);
 		f.setProps({
-			prefix: "$run"
+			prefix: "$run",
+			
 		});
 		dir.mkdir("scripts");
 		dir.mkdir("aliases");
+
+		// General settings for url commands 2
+		dir = system.mkdir("urlcommands2");
+		f = new PropertySetMemoryFile();
+		// appfs:/system/urlmmands2/commands
+		dir.register("commands", f); // Property file where each script name is registered with an array (empty for the moment)
+		// appfs:/system/urlmmands2/scripts
+		dir.mkdir("scripts"); // All the runnable scripts, each must be also registered in the commands prop file in order to be executable by url
+		
+
+
 	// appfs: <app>\localization - subdirectory for localization files. Each file is named after the locale it represents.
 	//			API supporting this exists
 		
