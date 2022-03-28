@@ -298,7 +298,7 @@ Validator.prototype.get_message = function () {
     if (this.$messages != null && this.$messages.length > 0) {
         var s = "";
         for (var i = 0; i < this.$messages.length; i++) {
-            if (i > 0) s += " "; //Robert have to add this as html
+            if (i > 0) s += " ";
             s += this.$messages[i];
         }
         return s;
