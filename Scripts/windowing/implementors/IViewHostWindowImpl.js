@@ -243,7 +243,7 @@ IViewHostWindowImpl.classInitialize = function (cls) {
                 if (c != null && c.length > 0) {
                     this.currentView = ViewBase.materializeIn(c, useView);
                     if (this.currentView != null) {
-						this.currentView.rebind();
+						// this.currentView.rebind(); // I am watching you!!!
 						CacheManager.Default.applyToInstance(result, this.currentView);
 						this.$attachViewEvents(); // Attach subscriptions
 						this.$connectViewEventConnectors();
