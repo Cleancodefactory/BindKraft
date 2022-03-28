@@ -36,7 +36,12 @@
             BaseObject.is(this.$states, "TreeStates")) return true;
         return false;
     }
-    
+    TreeStatesManipulator.prototype.navToMap = function(namedPath) {
+        return this.$states.navToMap(namedPath);
+    }
+    TreeStatesManipulator.prototype.namedPathFromState = function(objSet) {
+        return TreeStates.namedPathFromState(objSet)
+    }
     TreeStatesManipulator.prototype.deserialize = function(input, options) { 
         if (!this.isFunctional()) {
             this.LASTERROR("Serializer or/and TreeStates map not set.","deserialize");
