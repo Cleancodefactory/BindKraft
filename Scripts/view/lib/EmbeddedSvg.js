@@ -3,7 +3,7 @@
         Base.apply(this,arguments);
     }
     EmbeddedSvg.Inherit(Base, "EmbeddedSvg")
-        .Implement(ICustomParameterizationStdImpl, "svgpath", "usedefault", "width", "height")
+        .Implement(ICustomParameterizationStdImpl, "svgpath", "usedefault", "width", "height","renderasync")
         .Implement(IPlatformUrlMapperImpl)
         .ImplementProperty("svgpath", new InitializeStringParameter("The path of the Svg image", null), null, "OnUpdate")
         .ImplementProperty("usedefault", new InitializeBooleanParameter("Should the control use default svg if the main one is not found or leave it empty (false)", true))
