@@ -3,3 +3,4 @@
 //#using "./ShellShortcut.js"
 //#using "./PropertySetMemoryFile.js"
 //#using "./ContentMemoryFile.js"
+//#using "./MemFSTools.js"

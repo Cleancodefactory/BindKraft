@@ -70,13 +70,7 @@
         }
         return s;
     }
-    var state = {
-        contextStack: [commandContext],
-        pc: 0,
-        stack: [],
-        helper: null, // set below
-        args: [], // The arguments for the next function
-    };
+    
     function _DumpStack(stack) {
         if (Array.isArray(stack)) {
             var s = "",j = 0;

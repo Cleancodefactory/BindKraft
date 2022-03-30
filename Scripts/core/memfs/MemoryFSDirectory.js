@@ -164,32 +164,56 @@ MemoryFSDirectory.prototype.rmdir = function(path) {
 	return 0;
 	*/
 }
+/**
+ * Implemented as instance method for easier usage, technically a static method.
+ * Extracts the path without the name from the passed full path.
+ * 
+ * @param {String} key - full path (without fs)
+ * 
+ */
 MemoryFSDirectory.prototype.pathof = function(key) {
 	if (typeof key == "string") {
 		var parts = key.split("/");
+		var endSlash = false;
 		parts = parts.Select(function(idx, item) {
 			if (item != null && item.length > 0) {
 				return item;
+			} else if (idx == parts.length - 1) {
+				endSlash = true;
 			}
 			return null;
 		});
-		var newname = parts.pop();
+		if (!endSlash) {
+			var name = parts.pop();
+		}
 		return parts.join("/");
 	} else {
 		return null;
 	}
 }
+/**
+ * Technically a static method implemented as instance one for easier usage
+ * Extracts the name part pf the passed path. The name is the last part after the last slash.
+ * 
+ * @param {String} key - a full path starting with "/"
+ * @return {String|null} - the name or null if there is no name in the path. Null is also returned when the passed parameter is not a string.
+ */
 MemoryFSDirectory.prototype.nameof = function(key) {
 	if (typeof key == "string") {
 		var parts = key.split("/");
+		var endSlash = false;
 		parts = parts.Select(function(idx, item) {
 			if (item != null && item.length > 0) {
 				return item;
+			} else if (idx == parts.length - 1) {
+				endSlash = true;
 			}
 			return null;
 		});
-		var newname = parts.pop();
-		return newname;
+		if (!endSlash) {
+			return parts.pop();
+		}
+		return null;
 	} else {
 		return null;
 	}
