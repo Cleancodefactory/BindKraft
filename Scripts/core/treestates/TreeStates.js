@@ -100,7 +100,7 @@
 			if (namedPath.length > 0) {
 				var curr = null;
 				var name = namedPath[0];
-				var i;
+				var i, j;
 				var map, tse;
 				for (i = 0; i < this.maps.length; i++) {
 					map = this.maps[i];
