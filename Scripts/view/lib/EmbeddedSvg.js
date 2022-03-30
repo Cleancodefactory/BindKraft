@@ -8,7 +8,8 @@
         .ImplementProperty("svgpath", new InitializeStringParameter("The path of the Svg image", null), null, "OnUpdate")
         .ImplementProperty("usedefault", new InitializeBooleanParameter("Should the control use default svg if the main one is not found or leave it empty (false)", true))
         .ImplementProperty("width", new InitializeStringParameter("Input for init width of the svg", null),null,"OnUpdate")
-        .ImplementProperty("height", new InitializeStringParameter("Input for init height of the svg", null),null, "OnUpdate");
+        .ImplementProperty("height", new InitializeStringParameter("Input for init height of the svg", null),null, "OnUpdate")
+        .ImplementProperty("renderasync", new InitializeBooleanParameter("Renders svg async. Default is true.", true));
 
     EmbeddedSvg.loadTimeOut = 30000;
     EmbeddedSvg.mapPath = function(url) {
@@ -29,14 +30,8 @@
         'c0,0,0.1-0.1,0.1-0.1c0.1-0.1,0.3-0.1,0.6-0.1c0.7,0,1.3-0.2,1.8-0.7c0.6-0.5,0.8-1.2,0.8-2c0-0.4-0.1-0.7-0.2-1s-0.3-0.5-0.5-0.7' +
         'V4.1c0.7,0.1,1.3,0.3,1.8,0.6c0.7,0.4,1.3,1,1.7,1.7c0.4,0.7,0.6,1.4,0.6,2.2C14.6,9.1,14.5,9.7,14.3,10.2z"/>' +
         '</svg>'
-    }; // Loaded SVGs
-    // EmbeddedSvg.cacheSvgString = function(url, svg) {
-    //     if (typeof svg == "string") {
-    //         this.$register[url] = svg;
-    //     } else {
-    //         throw "SVG can be cached only as string.";
-    //     }
-    // };
+    }; // Default SVGs when missing
+
     EmbeddedSvg.$failedEntry = { failed: true };
     EmbeddedSvg.$defaultName = "default"; // Must exist
 
@@ -124,9 +119,13 @@
         if (this.__obliterated) return;
         // This should be possible at any time regardless of bindings.
         // However it will cause inconsistencies if width/height and svgpath are bound differently (parameter vs normal binging)
-        this.discardAsync("update");
-        this.async(this.updateSvg).key("update").execute();
-
+        if (this.renderasync) {
+            this.discardAsync("update");
+            this.async(this.updateSvg).key("update").continuous(true).execute();
+        }
+        else{
+            this.updateSvg();
+        }
     };
     EmbeddedSvg.prototype.$updateSvg = function(svg) {
         if (svg instanceof Node) {
