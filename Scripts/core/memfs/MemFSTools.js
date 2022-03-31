@@ -95,9 +95,12 @@
         var path = this.openDir(info.fullpath);
         if (path == null) return Opration.Failed("Cannot find the directory");
         if (info.name != null) {
-            /////////
+            var item = path.item(info.name);
+            if (BaseObject.is(item, "CLScript")) {
+                
+            }
         } else {
-            return Operation.From(path);
+            return Operation.From(path); // execution results in open directory
         }
     }
 

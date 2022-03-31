@@ -73,6 +73,15 @@ MemoryFSDirectory.prototype.$set_parentdirectory = function(v) {
 	if (v != null && !BaseObject.is(v, "MemoryFSDirectory")) throw "Parent directory has to be MemoryFSDirectory object";
 	this.$parentdirectory = v;
 }
+/**
+ * Starting with this directory attempts to find the subdirectory specified by the path argument
+ * 
+ * @param {String|Array<string>} path - If string it is split by "/" into array
+ * 
+ * @return {MemoryFSDirectory|null} - if the directory is not found (at any point) null is returned.
+ * 
+ * .. and . are not fully supported.
+ */
 MemoryFSDirectory.prototype.cd = function(path) {
 	if (typeof path == "string") {
 		if (path == ".") return this;
@@ -104,6 +113,15 @@ MemoryFSDirectory.prototype.cd = function(path) {
 	}
 	return null;
 }
+/**
+ * Creates the specified directory recursively. 
+ * 
+ * @param {String} path - path to creata
+ * @param {TypeChecker} typechecker - specifies type checker for the newly created directories (optional)
+ * @param {String} specialclass - (optional) Class name to use instead of MemoryFSDirectory (must be derived from MemoryFSDirectory).
+ * 
+ * @return {MemoryFSDirectory|null} - the created directory or null if impossible to create.
+ */
 MemoryFSDirectory.prototype.mkdir = function(path, typechecker, specialclass) {
 	var newdirtypename = specialclass || "MemoryFSDirectory";
 	var newdirtype = Class.getClassDef(newdirtypename);
@@ -218,9 +236,17 @@ MemoryFSDirectory.prototype.nameof = function(key) {
 		return null;
 	}
 }
+/**
+ * See register
+ * @param {*} path 
+ * @param {*} item 
+ */
 MemoryFSDirectory.prototype.put = function(path, item) {
 	this.register(key,item);
 }
+/**
+ * Gets the contents of the directory as array of objects {key: name of the item, value: file/dir}
+ */
 MemoryFSDirectory.prototype.get_contents = function() {
 	return this.get_keyvalues();
 }
@@ -235,9 +261,15 @@ MemoryFSDirectory.prototype.$contentsstrip = function(idx, item) {
 MemoryFSDirectory.prototype.contents = function(filter) {
 	return this.filterItems(filter);
 }.Returns(" returns array of { key: filenam, value: file_or_dir }");
+/**
+ * Returns all the sub- directories (not recursively) in {key: value: } form
+ */
 MemoryFSDirectory.prototype.get_directories = function() {
 	return this.contents(new TypeChecker("MemoryFSDirectory"));
 }.Returns(" returns array of { key: filenam, value: dir }");
+/**
+ * Returns all the files in the directory in {key: value:} form.
+ */
 MemoryFSDirectory.prototype.get_files = function() {
 	return this.contents(new TypeChecker("!MemoryFSDirectory"));
 }.Returns(" returns array of { key: filenam, value: file }");
@@ -246,6 +278,16 @@ MemoryFSDirectory.prototype.$registername = null;
 MemoryFSDirectory.prototype.get_registername = function() { 
 	return this.$registername;
 }
+/**
+ * Registers an item in the directory
+ * 
+ * @param {String} key - path where to register the item. It can contain any number of subdirectories.
+ * @param {IMemoryfile} item - item to register. Can be even MemoryFSDirectory, but is not recommended.
+ * @returns {true|undefined} - true if successful
+ * 
+ * The directory where the item will be registered must exist.
+ * The item will replace anything, even a directory.
+ */
 MemoryFSDirectory.prototype.register = function(key, item) {
 	if (typeof key == "string") {
 		var parts = key.split("/");
@@ -285,7 +327,10 @@ MemoryFSDirectory.prototype.register = function(key, item) {
 };
 MemoryFSDirectory.prototype.unregister = function(key, /*optional*/ item) { 
 	this.remove(key);
- };
+};
+/**
+ * Returns the item from the path - can be file, dir, whatever exists there
+ */
 MemoryFSDirectory.prototype.item = function(key, /*optional*/ aspect) { 
 	if (typeof key == "string") {
 		var parts = key.split("/");

@@ -10,6 +10,9 @@
         
         if (!this.$initRunner(_script)) {
             this.LASTERROR("Cannot detect the script type");
+            this.$recognized = false;
+        } else {
+            this.$recognized = true;
         }
         this.script = _script;
     }
@@ -30,7 +33,10 @@
             run: run
         }
     }
-
+    CLRun.prototype.$recognized = false;
+    CLRun.prototype.get_recognized = function() {
+        return this.$recognized;
+    }
     CLRun.prototype.$initRunner = function(source) {
         var b;
         for (var i = 0; i < CLRun.$Langs.length; i++) {
@@ -84,9 +90,9 @@
 
     //#region internal registrations
 
-    CLRun.AddLang(
+    CLRun.AddLang( // Null lang
         function(script) { // detect
-            if (/^#clnull\s+/.test(script)) {
+            if (/^\s*#clnull\s+/.test(script)) {
                 return true;
             }
             return false;
@@ -104,6 +110,28 @@
         },
         function(runner, context, constants) { // run
             return runner.execute(context, constants);
+        }
+    );
+    // This one must be last!
+    CLRun.AddLang( // CL Commander
+        function(script) { // detect
+            if (!/^\s*#/.test(script)) {
+                return true;
+            }
+            return false;
+        },
+        function(script) { // compile
+            this.program = script;
+            
+            return script;
+        },
+        function(runner, context, constants) { // run
+            if (context != null) {
+                return Commander.RunInContext(this.program, context);
+            } else {
+                return Commander.runGlobal(this.program);
+            }
+            
         }
     )
 
