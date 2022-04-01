@@ -63,13 +63,37 @@
         this.program = program;
         return program;
     }
+    /**
+     * Runs the script with the recognized engine. Compiles the script if needed.
+     * 
+     * Arguments: 
+     *      For CLNullLang it is constants (object with fields accessed as read-only)
+     */
     CLRun.prototype.run = function(/* specific arguments */) {
         if (this.program === null) {
             this.program = this.compile(this.script);
         }
         if (this.program != null) {
             var args = Array.createCopyOf(arguments);
-            return this.$run(this.program, this.context, args);
+            return this.$run.apply(this, [this.program, this.context].concat(args));
+        } else {
+            this.LASTERROR("Can't compile program", "run");
+            return Operation.Failed("Can't compile program");
+        }
+    }
+    /**
+     * Runs the recognized script in the specified context.
+     * 
+     * @param {ICommandContext} context - context to run in
+     * @returns 
+     */
+    CLRun.prototype.runInContext = function(context /*, specific arguments */) {
+        if (this.program === null) {
+            this.program = this.compile(this.script);
+        }
+        if (this.program != null) {
+            var args = Array.createCopyOf(arguments, 1);
+            return this.$run.apply(this, [this.program, context].concat(args));
         } else {
             this.LASTERROR("Can't compile program", "run");
             return Operation.Failed("Can't compile program");
@@ -102,6 +126,7 @@
             var compiler = new CLNullLang();
             var runner = compiler.compile(script);
             if (runner.$buildError != null) {
+                this.LASTERROR("compile error:" + runner.$buildError);
                 this.errors.push(runner.$buildError);
                 return null;
             }
@@ -120,7 +145,7 @@
             }
             return false;
         },
-        function(script) { // compile
+        function(script) { // compile (none actually in this case)
             this.program = script;
             
             return script;

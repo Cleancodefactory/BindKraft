@@ -20,7 +20,7 @@ BkInit_CommandUrlGlobal.prototype.script = function(name, cl, app) {
 	if (app != null && typeof app != "string") throw "3-d argument 'app' has to be string or null (omitted)";
 	if (typeof cl != "string") throw "2-nd argument 'cl' has to be string";
 	if (typeof name != "string") throw "1-st argument 'name' has to be string";
-	var script = new CLScript(cl, "Commander", app);
+	var script = new CLScript(cl, "CLRun", app);
 	this.$scripts.register(name,script);
 	return this;
 }

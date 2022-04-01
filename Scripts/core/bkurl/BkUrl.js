@@ -503,7 +503,7 @@ BKUrl.getInitialUrl = function() {
 BKUrl.getInitialBaseUrl = function() {
 	var url = this.getInitialFullUrl();
 	if (url != null) {
-		return url.readAsString(url).get_baseUrl();
+		if (url.readAsString(url)) return url.get_baseUrl();
 	}
 	return url;
 }

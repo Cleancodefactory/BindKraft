@@ -4,7 +4,7 @@
 function CLMemoryFSHelper(memfs, runner) {
 	BaseObject.apply(this,arguments);
 	this.$fs = memfs;
-	this.$runner = runner || "Commander";
+	this.$runner = runner || "CLRun";
 	if (!BaseObject.is(memfs, "MemoryFSDirectory")) throw "MemoryFSHelper must be initialized with a valid MemoryFSDirectory";
 }
 CLMemoryFSHelper.Inherit(BaseObject,"CLMemoryFSHelper");

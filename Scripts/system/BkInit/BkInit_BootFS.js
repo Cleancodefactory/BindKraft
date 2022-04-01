@@ -13,7 +13,7 @@ BkInit_BootFS.prototype.write = function(name, cl, app) {
 	}
 	if (PatternChecker.FileName.checkValue(p.name)) {
 		if (this.$dir != null) {
-			var s = new CLScript(p.script,"Commander", p.app);
+			var s = new CLScript(p.script,"CLRun", p.app);
 			this.$dir.register(p.name, s);
 			return s;
 		} else {

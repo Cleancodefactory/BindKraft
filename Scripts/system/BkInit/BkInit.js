@@ -43,7 +43,7 @@ var BkInit = {
 	// Boot CLScript
 	MasterBoot: function(cl) { 
 		var memfs = Registers.Default().getRegister("bootfs");
-		memfs.register("boot", new CLScript(cl,"Commander"));
+		memfs.register("boot", new CLScript(cl,"CLRun"));
 		return this;
 	},
 	ModuleScript: function(modulename,fn) {

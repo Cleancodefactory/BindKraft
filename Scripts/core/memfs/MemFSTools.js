@@ -85,6 +85,24 @@
         }
         return null;
     }
+    MemFSTools.prototype.openFile = function(path) {
+        var info = this.$splitDir(dir);
+        if (info != null) {
+            var dir = null;
+            if (info.fs != null) {
+                dir = this.getFS(info.fs);
+            }
+            if (info.path != null) {
+                var p = this.pathOf(info.path);
+                if (p != null) dir = dir.cd(p);
+            }
+            if (dir != null) {
+                return dir.item(info.name);
+            }
+            return null;
+        }
+        return null;
+    }
 
     MemFSTools.prototype.executeInContext = function(path, context, constants ) {
         var info = this.pathInfo(path);
@@ -97,7 +115,7 @@
         if (info.name != null) {
             var item = path.item(info.name);
             if (BaseObject.is(item, "CLScript")) {
-                
+
             }
         } else {
             return Operation.From(path); // execution results in open directory
