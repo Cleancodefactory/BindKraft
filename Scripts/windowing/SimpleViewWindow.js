@@ -22,6 +22,10 @@ SimpleViewWindow.prototype.on_FirstShown = function (msg) {
         if (url != null || (this.createParameters.data.directData != null && this.createParameters.data.view != null)) {
             this.LoadView(this.createParameters.data);
             // this.LoadView({ url: url, data: this.createParameters.data.data, clientData: this.createParameters.data.clientData });
+        } else {
+            if (url == null && (this.createParameters.data.directData == null || this.createParameters.data.view == null)) {
+                this.LASTERROR("A SimpleViewWindow opened without url does not have at least one of directData or view or both. window name: " + this.get_windowName());
+            }
         }
     }
 };
@@ -83,7 +87,11 @@ SimpleViewWindow.prototype.on_Materialize = function () {
 				}
 			}
 			this.LoadView(this.createParameters.data);
-        } 
+        } else {
+            if (url == null && (this.createParameters.data.directData == null || this.createParameters.data.view == null)) {
+                this.LASTERROR("A SimpleViewWindow opened without url does not have at least one of directData or view or both. window name: " + this.get_windowName());
+            }
+        }
     }
 };
 
