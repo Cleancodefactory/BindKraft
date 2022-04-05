@@ -82,6 +82,9 @@
 		f = new PropertySetMemoryFile();
 		// appfs:/system/urlmmands2/commands
 		dir.register("commands", f); // Property file where each script name is registered with an array (empty for the moment)
+		f = new PropertySetMemoryFile();
+		dir.register("settings", f);
+		f.setProp("run","run"); // Default param name for the commands to run
 		// appfs:/system/urlmmands2/scripts
 		dir.mkdir("scripts"); // All the runnable scripts, each must be also registered in the commands prop file in order to be executable by url
 		

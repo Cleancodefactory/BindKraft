@@ -453,12 +453,24 @@ BKUrl.prototype.get_pathUrl = function() {
 
 
 // Static stuff
+/** 
+ * Returns the base path of the workspace. The base path is configured, because there is not fully trusted way to calculate it on the client.
+ * This function returns the g_ApplicationBasePath set from configuration on the server, only fixing the slashes.
+ * 
+ * @return {string} - the path
+ */
 BKUrl.basePath = function() {
 	var s = window.g_ApplicationBasePath;
 	if (s.charAt(0) != "/") s = "/" + s;
 	if (s.charAt(s.length-1) != "/") s = s + "/";
 	return s;
 }
+/**
+ * Return the basePath in a constructed BKUrl from the authority settings stripped from the location. E.g.
+ * BKUrl (https://myserver.com/basepath/)
+ * 
+ * @returns {BKUrl} - the baseUrl
+ */
 BKUrl.getBasePathAsUrl = function() {
 	var url = new BKUrl();
 	if (!url.get_scheme().readAsString(window.location.protocol.replace(/:$/,""))) return null;
@@ -471,6 +483,11 @@ BKUrl.getBasePathAsUrl = function() {
 	}
 	return url;
 }
+/**
+ * Maps a path passed as string into the baseUrl
+ * @param {string} str 
+ * @returns 
+ */
 BKUrl.mapToBaseUrl = function(str) {
 	var basePath = this.basePath();
 	var str = (str.indexOf(basePath) == 0)?str.slice(basePath.length):str;
