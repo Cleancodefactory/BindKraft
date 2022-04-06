@@ -1,0 +1,19 @@
+<div>
+    <input type="text"
+        data-key="input"
+        data-on-input="{bind source=__control path=onFilterInput}"
+        data-on-plugelement="{bind source=__control path=$filterbox}"
+    />
+    <div data-key="display">
+        display
+    </div>
+</div>
+<div data-key="drop">
+    <div data-class="SelectableRepeater"
+        data-on-pluginto="{bind source=__control path=$droplist}"
+        data-key="selector"
+        data-bind-$items="{read source=__control path=$choices readdata=$choices_changed}"
+        >
+
+    </div>
+</div>

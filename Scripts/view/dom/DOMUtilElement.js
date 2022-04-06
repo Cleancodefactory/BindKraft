@@ -41,6 +41,12 @@ DOMUtilElement.prototype.reInit = function(el, bClone) {
 }
 
 //#region Properties
+DOMUtilElement.IsEmpty = function(due) {
+	if (BaseObject.is(due, "DOMUtilElement")) {
+		return due.get_isempty();
+	}
+	return true;
+}
 DOMUtilElement.prototype.get_isempty = function() {
 	if (this.$element != null) {
 		if (this.$element.childNodes.length > 0) return false;

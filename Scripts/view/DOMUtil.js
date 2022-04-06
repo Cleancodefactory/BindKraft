@@ -617,10 +617,10 @@ DOMUtil.findElements = function(dom,selector,callback, _result, _nonroot) { // c
 		}
 	} else if (dom instanceof HTMLCollection || dom instanceof NodeList || BaseObject.is(dom, "Array")) {
 		for (var i = 0; i < dom.length; i++) {
-			DOMUtil.findElements(dom[i],selector,callback, result);
+			DOMUtil.findElements(dom[i],selector,callback, result, _nonroot);
 		}
 	} else if (dom instanceof Document) {
-		return DOMUtil.findElements(dom.body, selector, callback);
+		return DOMUtil.findElements(dom.body, selector, callback, _nonroot);
 	}
 	return result;
 }
@@ -648,7 +648,7 @@ DOMUtil.findElement = function(dom, selector, callback, _nonroot) { // callback(
 		return null;
 	} else if (dom instanceof HTMLCollection || dom instanceof NodeList || BaseObject.is(dom, "Array")) {
 		for (var i = 0; i < dom.length; i++) {
-			el = DOMUtil.findElement(dom[i],selector,callback);
+			el = DOMUtil.findElement(dom[i],selector,callback, _nonroot);
 			if (el != null) return el;
 		}
 	} else if (dom instanceof Document) {

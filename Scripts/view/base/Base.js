@@ -120,6 +120,28 @@ Base.prototype.$ = function(selector) {
 	}
 	return new DOMUtilElement();
 }
+Base.prototype.$$ = function(keys) {
+    var cur = new DOMUtilElement(this.root);
+    for (var i = 0; i < arguments.length; i++) {
+        var k = arguments[i];
+        var k1 = (i < arguments.length - 1)?arguments[i + 1]:null;
+        if (typeof k == 'string') {
+            if (!BaseObject.is(cur,"DOMUtilElement")) return new DOMUtilElement(null);
+            if (typeof k1 == 'number') {
+                cur = cur.queryAllByDataKey(k);
+            } else {
+                cur = cur.queryOneByDataKey(k);
+            }
+        } else if (typeof k == 'number') {
+            if (Array.isArray(cur) && k >= 0 && k < cur.length) {
+                cur = cur[k];
+            } else {
+                return new DOMUtilElement(null);
+            }
+        }
+    }
+    return BaseObject.is(cur,"DOMUtilElement")?cur:new DOMUtilElement(null);
+}
 // -V: 2.17.7
 Base.prototype.isLive = function () { // True if the element is in the dom
 	return (this.$().findParent("html") != null);
@@ -413,7 +435,7 @@ Base.prototype.get_dataContext = function () { // In contrast to get_data this m
 //					or dom or jquery element for DOM event, or if arg2 starts with "$" event on data-class if it exists.
 //					or Base object (if arg2 starts with "$")
 //			arg2 - event name
-//			arg3 - hanler (will be called with the "this" of this object).
+//			arg3 - handler (will be called with the "this" of this object).
 //
 Base.prototype.on = function (arg1, arg2, arg3) {
     var els;
