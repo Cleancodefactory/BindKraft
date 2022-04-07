@@ -21,6 +21,7 @@
 //#using "./IItemLoader.js"
 //#using "./IItemSetItemBehavior.js"
 //#using "./IItemTemplateSource.js"
+//#using "./IKeyboardProcessor.js"
 //#using "./IKeyboardHandler.js"
 //#using "./IKeyboardEventHandler.js"
 //#using "./IKeyboardLogicalSource.js"
