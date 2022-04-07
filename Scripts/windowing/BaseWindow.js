@@ -175,6 +175,15 @@ BaseWindow.updateParentlessWindows = function(wnd) {
 		BaseWindow.$parentlessWindows.removeElement(wnd);
 	}
 }
+/**
+ * Makes given child window visible and hides the other child windows.
+ * @param {BaseWindow} parentWindow - parent window to process
+ * @param {BaseWindow} childWindow - child window to show
+ * @param {flags} additionalFlags - (optional) Additional window flags to set/reset the same way as the visible flags.
+ * 
+ * Will not update targets on the parent and so any indication of the state of its children implemented in its UI (if exists) will 
+ * not be updated. This is so, because this method is for low level processing often used in state driven apps.
+ */
 BaseWindow.showChildHideTheRest = function(parentWindow,childWindow,additionalFlags) {
     additionalFlags = additionalFlags || 0;
     if (BaseObject.is(parentWindow,"BaseWindow") && BaseObject.is(childWindow,"BaseWindow")) {
@@ -221,8 +230,17 @@ BaseWindow.prototype.$persistSetting = function(key,v) {
 }
 
 // ------------ IWindowIdentification -----------------------------
-
+/**
+ * @returns {string} the window name
+ */
 BaseWindow.prototype.get_windowName = function() { return this.createParameters.$windowName; }
+/**
+ * Finds and returns the first window with the given name. Can search only the direct children 
+ * or recursively their children too and so on.
+ * @param {string} windowName the name of the window to find.
+ * @param {bool} recursive whether to search down the tree (true) or limit search to the children of this window only.
+ * @return {BaseWindow|null} the window found or null if not found.
+ */
 BaseWindow.prototype.findChildByName = function(windowName, /*optional*/ recursive) { 
     if (this.children == null) { return null; }
     var w = this.children.FirstOrDefault(function (idx, item) {
@@ -243,10 +261,17 @@ BaseWindow.prototype.findChildByName = function(windowName, /*optional*/ recursi
     }
     return null;
 }
+/**
+ * Equivalent to findChildByName called several times with different names, then the results packed in an array.
+ * 
+ * @param {string} windowName*  - one or more window names to find.
+ * @param {bool} recursive whether to search down the tree (true)
+ * @returns {Array<BaseWindow} Array of the windows found. Nulls are not included.
+ */
 BaseWindow.prototype.findChildrenByName = function(windowName, windowName2 /* etc. */, /*optional*/ recursive) {
     var names = Array.createCopyOf(arguments).Select(function(idx, item) { return (typeof item == "string"?item:null);});
     var isrecursive = false;
-    if (arguments.length > 0 && typeof arguments[arguments.length - 1] == "boolean") { isrecursive = true;}
+    if (arguments.length > 0 && typeof arguments[arguments.length - 1] == "boolean") { isrecursive = arguments[arguments.length - 1];}
     var w, result = [];
     for (var i = 0; i < names.length; i++) {
         w = this.findChildByName(names[i],isrecursive);
@@ -254,6 +279,18 @@ BaseWindow.prototype.findChildrenByName = function(windowName, windowName2 /* et
     }
     return result;
 }
+/**
+ * Attempts to find a chain of windows by their names
+ * 
+ * @param {*} windowName* - one or more window names to find.
+ * @returns {Array<BaseWindow>} Array of the windows found.
+ * 
+ * The search proceeds like this:
+ * The first window is found by the first name, 
+ * then the second name is searched in the found window and so on.
+ * 
+ * The result of the function is a chain of parent and child windows found by name.
+ */
 BaseWindow.prototype.findChildrenChain = function(windowName, windowName2) { 
     var w = this, result = [];
     for (var i = 0; i < arguments.length; i++) {
