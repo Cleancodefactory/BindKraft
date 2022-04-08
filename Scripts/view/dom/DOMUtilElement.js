@@ -137,6 +137,17 @@ DOMUtilElement.prototype.clearTextNodes = function(depth) {
 		DOMUtil.clearTextNodes(this.$element, depth);
 	}
 }
+DOMUtilElement.prototype.setStyle = function(style, val) {
+	if (this.$element instanceof HTMLElement) {
+		DOMUtil.setStyle(this.$element, style, val);
+	}
+}
+DOMUtilElement.prototype.getStyle = function(style, bComputed) {
+	if (this.$element instanceof HTMLElement) {
+		return DOMUtil.getStyle(this.$element, style, bComputed);
+	}
+	return null;
+}
 DOMUtilElement.prototype.addClass = function(cls) {
 	if (this.$element instanceof HTMLElement) {
 		return DOMUtil.addClass(this.$element, cls);

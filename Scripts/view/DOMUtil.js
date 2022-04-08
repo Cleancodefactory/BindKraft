@@ -465,6 +465,10 @@ DOMUtil.setTextWithElements = function(dom, text) {
  * @param {HTMLElement|NodeList|HTMLCollection|Array<HTMLElement>} dom
  * @param {object|string} style - Either css attribute name or object with multiple attribute with values
  * @param {string} val - Optional, required if style is string. The value to set to the style attribute.
+ * 
+ * The style name(s) are in the CSS syntax and not the style property syntax e.g.
+ * DOMUtil.setStyle(el, "background-color", "#DDDDDD")
+ * DOMUtil.setStyle(el, {"background-color", "#DDDDDD" })
  */
 DOMUtil.setStyle = function(dom, style, val) {
 	if (dom instanceof HTMLElement) {

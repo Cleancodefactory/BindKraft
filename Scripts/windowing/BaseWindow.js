@@ -616,10 +616,6 @@ BaseWindow.prototype.$applyStyleFlags = function (bDontFireEvents) {
 	if (this.__obliterated) { return; }
     var el = $(this.get_windowelement());
     var self = this;
-	if (this.$styleFlags & WindowStyleFlags.popup) {
-	} else {
-	
-	}
 	//this.$persistSetting("WndowStyleFlags",this.$styleFlags);
 	this.$persistSetting("draggable",this.$styleFlags & WindowStyleFlags.draggable);
     if (this.$styleFlags & WindowStyleFlags.draggable) {
@@ -642,7 +638,11 @@ BaseWindow.prototype.$applyStyleFlags = function (bDontFireEvents) {
 			el.draggable("destroy");
 		}
     }
-	el.css({ position: "absolute" });
+    if (this.$styleFlags & WindowStyleFlags.relative) {
+        DOMUtil.setStyle(DOMUtil.toDOMElement(el), "position", "relative");
+    } else {
+        DOMUtil.setStyle(DOMUtil.toDOMElement(el), "position", "absolute");
+    }
     /* Duplicated - why? If someone knows please tell Jesus
     if (this.$styleFlags & WindowStyleFlags.draggable) {
     el.draggable();
@@ -674,8 +674,12 @@ BaseWindow.prototype.$applyStyleFlags = function (bDontFireEvents) {
     }
     if (this.$styleFlags & WindowStyleFlags.fillparent) {
         if (this.$oldWindowRect == null) this.$oldWindowRect = this.get_windowrect();
-        el.css({ position: "absolute", width: "100%", height: "100%", left: "0px", top: "0px" });
-        //el.css({ position: "relative" });
+        DOMUtil.setStyle(this.get_windowelement(), { 
+            position: (this.$styleFlags & WindowStyleFlags.relative)?"relative":"absolute", 
+            width: "100%", height: "100%",
+            left: "0px", top: "0px" } 
+        );
+        
         if (!bDontFireEvents) {
             WindowingMessage.fireOn(self, WindowEventEnum.SizeChanged, {});
             WindowingMessage.fireOn(self, WindowEventEnum.PosChanged, {});
@@ -841,8 +845,11 @@ BaseWindow.prototype.preprocessWindowEvent = function (evnt) {
 				}
 			}			
             if (this.$styleFlags & WindowStyleFlags.fillparent) {
-                var el = $(this.get_windowelement());
-                el.css({ position: "absolute", width: "100%", height: "100%", left: "0px", top: "0px" });
+                DOMUtil.setStyle(this.get_windowelement(), { 
+                    position: (this.$styleFlags & WindowStyleFlags.relative)?"relative":"absolute", 
+                    width: "100%", height: "100%",
+                    left: "0px", top: "0px" } 
+                );
             }
             if ((this.$styleFlags & WindowStyleFlags.adjustclient) != 0) {
                 WindowingMessage.fireOn(this, WindowEventEnum.AdjustClient, {});
@@ -941,6 +948,9 @@ BaseWindow.prototype.windowmaxminchanged = new InitializeEvent("Fired when minim
             */
             if ((this.$styleFlags & WindowStyleFlags.parentnotify) != 0) {
                 WindowingMessage.fireOn(this.get_windowparent(), WindowEventEnum.ChildResized, { rect: this.get_windowrect() });
+            }
+            if ((this.$styleFlags & WindowStyleFlags.sizenotify) != 0) {
+                this.notifyChildren(WindowEventEnum.SizeChanged, { rect: this.get_windowrect() });
             }
             break;
         case WindowEventEnum.Show:
@@ -1102,8 +1112,8 @@ BaseWindow.prototype.$calcGapZOrder = function () {
 }
 // TODO: Should be put into the templates?
 BaseWindow.prototype.$createAndAttachGapCover = function () {
-    var cover = $('<div style="position:absolute;top:0px;left:0px;width:100%;height:100%;background-color:#FFFFFF;opacity:0.01;"></div>');
-    $(this.root).append(cover);
+    var cover = new DOMUtilElement('<div style="position:absolute;top:0px;left:0px;width:100%;height:100%;background-color:#FFFFFF;opacity:0.01;"></div>');
+    this.$().append(cover);
     this.$gapcover = cover;
     return cover;
 }
@@ -1112,12 +1122,12 @@ BaseWindow.prototype.showTopMostGapCover = function () {
     var ord = this.$calcGapZOrder();
     if (ord > 0) {
         var cover = this.$createAndAttachGapCover();
-        cover.css("z-index", ord);
+        cover.setStyle("z-index", ord);
     }
 }
 BaseWindow.prototype.hideTopMostGapCover = function () {
     if (this.$gapcover != null) {
-        this.$gapcover.remove();
+        this.$gapcover.Remove();
         this.$gapcover = null;
     }
 }
