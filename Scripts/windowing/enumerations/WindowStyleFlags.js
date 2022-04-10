@@ -18,5 +18,4 @@ var WindowStyleFlags = {
     sizenotify: 0x400, // Propagate size changed messages to children regardless of adjust client flag
     relative: 0x800, // Keeps the window position: relative instead of absolute
     Default: 0x30 // WindowStyleFlags.visible
-
 };
