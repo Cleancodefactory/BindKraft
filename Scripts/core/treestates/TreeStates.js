@@ -177,7 +177,7 @@
 					if (namedPath[i] === state[i].StateElementName) {
 						result.push(state[i]);
 					} else {
-						break;
+						return null;
 					}
 				}
 				return result;
@@ -201,6 +201,14 @@
 			return result;
 		}
 		return null;
+	}
+	TreeStates.compareNamedPaths = function(named1,named2) {
+		if (!this.isNamedState(named1) || !this.isNamedState(named2)) return false;
+		if (named1.length != named2.length) return false;
+		for (var i = 0; i < named1.length; i++) {
+			if (named1[i] != named2[i]) return false;
+		}
+		return true;
 	}
 	TreeStates.isNamedState = function(state) {
 		if (Array.isArray(state) && (state.length == 0 || state.All(function(idx,item) { 

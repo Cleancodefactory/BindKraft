@@ -36,12 +36,58 @@
             BaseObject.is(this.$states, "TreeStates")) return true;
         return false;
     }
+    TreeStatesManipulator.prototype.isNamedState = function(namedState) {
+        return TreeStates.isNamedState(namedState);
+    }
+    TreeStatesManipulator.prototype.isObjectState = function(objState) {
+        return TreeStates.isNamedState(namedState);
+    }
     TreeStatesManipulator.prototype.navToMap = function(namedPath) {
         return this.$states.navToMap(namedPath);
     }
     TreeStatesManipulator.prototype.namedPathFromState = function(objSet) {
         return TreeStates.namedPathFromState(objSet)
     }
+    TreeStatesManipulator.prototype.compareNamedPathWithState = function(namedPath, objSet) {
+        if (!TreeStates.isNamedState(namedPath)) return false;
+        var namedState = TreeStates.namedPathFromState(objSet);
+        if (namedState != null) {
+            return TreeStates.compareNamedPaths(namedPath, namedState);
+        }
+        return false;
+    }
+    /**
+     * 
+     * @param {*} namedPath 
+     * @param {*} callback - proto callback(stateNode, objSet)
+     * @returns 
+     */
+    TreeStatesManipulator.prototype.truncateFromState = function(namedPath) { 
+        var state = this.$approuter.currentTreeState();
+        var i;
+		if (Array.isArray(state)) {
+			if (Array.isArray(namedPath)) {
+				if (namedPath.length > state.length) return null;
+				var result = [];
+                var clean = [];
+				for (i = 0; i < namedPath.length; i++) {
+					if (namedPath[i] === state[i].StateElementName) {
+						result.push(state[i]);
+					} else {
+						return null;
+					}
+				}
+                if (state.length > namedPath.length) {
+                    clean = state.slice(namedPath.length + 1);
+                }
+				return { result: result, clean: clean.reverse() };
+			} else {
+				return null;
+			}
+		} else {
+			return null; // Kind of error - no state
+		}
+	}
     TreeStatesManipulator.prototype.deserialize = function(input, options) { 
         if (!this.isFunctional()) {
             this.LASTERROR("Serializer or/and TreeStates map not set.","deserialize");

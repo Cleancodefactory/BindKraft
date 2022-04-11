@@ -41,7 +41,7 @@
      * @returns {Array<object>} State object set
      * 
      * Examples:
-     * var arr = app.currentTreeState(); // Will return array of objects mathing the current state of the app
+     * var arr = app.currentTreeState(); // Will return array of objects matching the current state of the app (objSet)
      * 
      * var arr = app.currentTreeState(["hrm","profile"]) // will return array with two objects if the app's state is /hrm/profile or any state under this one.
      */
