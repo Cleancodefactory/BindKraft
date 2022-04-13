@@ -488,13 +488,26 @@ Validator.prototype.$validate = function (bIndicate) {
     }
     return result;
 };
-Validator.prototype.$waitingReports = 0;
+//Validator.prototype.$waitingReports = 0;
 Validator.prototype.waitReport = 0;
 Validator.prototype.get_waitingasynch = function () {
     return (this.waitReport > 0) ? true : false;
 };
+Validator.prototype.$busyValidating = false;
+Validator.prototype.$queuedValidation = null;
+
 Validator.prototype.reportResult = function (curRule, r) { // Callback for validation rules (asynch rules only!!!) proto: reportResult(this, result);
-	if (this.waitReport <= 0) return;
+	if (this.waitReport <= 0) {
+        // This should not happen in real life, but if it did, let us do everything
+        if (this.$queuedValidation != null) {
+            var args = this.$queuedValidation;
+            this.$queuedValidation = null;
+            this.$doValidate.apply(this, args);
+        } else {
+            this.$busyValidating = false;
+        }
+        return;
+    }
     this.waitReport--;
     if (this.waitReport < 0) this.waitReport = 0;
     if (this.get_disabled()) {
@@ -517,6 +530,13 @@ Validator.prototype.reportResult = function (curRule, r) { // Callback for valid
         if (this.$asyncCallBack != null) {
             BaseObject.callCallback(this.$asyncCallBack, this.result);
             this.$asyncCallBack = null;
+            if (this.$queuedValidation != null) {
+                var args = this.$queuedValidation;
+                this.$queuedValidation = null;
+                this.$doValidate.apply(this, args);
+            } else {
+                this.$busyValidating = false;
+            }
         }
     }
 };
@@ -538,9 +558,21 @@ Validator.prototype.$readyForValidation = function() {
     return op;
 }
 Validator.prototype.validate = function (bIndicate, fCallBack) { // fCallBack proto: function(result, isAsynch);
+    if (this.$busyValidating) {
+        this.$queuedValidation = Array.createCopyOf(arguments);
+        return ValidationResultEnum.pending;
+    } else {
+        this.$busyValidating = true;
+        return this.$doValidate(bIndicate, fCallBack);
+    }
+}
+Validator.prototype.$doValidate = function (bIndicate, fCallBack) { // fCallBack proto: function(result, isAsynch);
     if (this.get_disabled()) return ValidationResultEnum.correct;
     this.validating.invoke(this, null);
     var _callNeeded = false;
+    this.$asyncCallBack = null;
+    this.waitReport = 0; // 13.4.22
+    var args;
     var opready = this.$readyForValidation();
     opready.onsuccess(this.thisCall(function(_) {
         this.waitReport = 0;
@@ -549,8 +581,17 @@ Validator.prototype.validate = function (bIndicate, fCallBack) { // fCallBack pr
         }
         this.result = this.$validate(bIndicate); // on sync onsuccess pending will wait the rule and the callback will be called then.
         this.onValidityChanged();
-        if (_callNeeded && fCallBack != null) {
+        if (_callNeeded && this.waitReport <= 0 && fCallBack != null) {
+            // Completition of the validation
             BaseObject.callCallback(this.$asyncCallBack, this.result);
+            // Pick queued validation if any
+            if (this.$queuedValidation != null) {
+                args = this.$queuedValidation;
+                this.$queuedValidation = null;
+                this.$doValidate.apply(this, args);
+            } else {
+                this.$busyValidating = false;
+            }
         }
     }))
     .onfailure(this.thisCall(function(e) {
@@ -564,13 +605,20 @@ Validator.prototype.validate = function (bIndicate, fCallBack) { // fCallBack pr
         this.onValidityChanged();
         if (_callNeeded && fCallBack != null) {
             BaseObject.callCallback(this.$asyncCallBack, this.result);
+            if (this.$queuedValidation != null) {
+                args = this.$queuedValidation;
+                this.$queuedValidation = null;
+                this.$doValidate.apply(this, args);
+            } else {
+                this.$busyValidating = false;
+            }
         }
     }));
     
     if (this.waitReport <= 0 && opready.isOperationComplete()) {
         this.waitReport = 0;
         return this.result;
-    } else {
+    } else { // readyness not complete OR rule not complete OR both
         _callNeeded = true;
         return ValidationResultEnum.pending;
     }
