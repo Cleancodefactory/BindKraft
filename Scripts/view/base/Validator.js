@@ -567,7 +567,9 @@ Validator.prototype.validate = function (bIndicate, fCallBack) { // fCallBack pr
     }
 }
 Validator.prototype.$doValidate = function (bIndicate, fCallBack) { // fCallBack proto: function(result, isAsynch);
-    if (this.get_disabled()) return ValidationResultEnum.correct;
+    if (this.get_disabled()) {
+        return ValidationResultEnum.correct;
+    }
     this.validating.invoke(this, null);
     var _callNeeded = false;
     this.$asyncCallBack = null;
@@ -581,9 +583,11 @@ Validator.prototype.$doValidate = function (bIndicate, fCallBack) { // fCallBack
         }
         this.result = this.$validate(bIndicate); // on sync onsuccess pending will wait the rule and the callback will be called then.
         this.onValidityChanged();
-        if (_callNeeded && this.waitReport <= 0 && fCallBack != null) {
+        if (_callNeeded && this.waitReport <= 0) {
             // Completition of the validation
-            BaseObject.callCallback(this.$asyncCallBack, this.result);
+            if (fCallBack != null) {
+                BaseObject.callCallback(this.$asyncCallBack, this.result);
+            }
             // Pick queued validation if any
             if (this.$queuedValidation != null) {
                 args = this.$queuedValidation;
@@ -603,8 +607,10 @@ Validator.prototype.$doValidate = function (bIndicate, fCallBack) { // fCallBack
             this.$messages.push(this.get_notreadymessage());
         }
         this.onValidityChanged();
-        if (_callNeeded && fCallBack != null) {
-            BaseObject.callCallback(this.$asyncCallBack, this.result);
+        if (_callNeeded) {
+            if (fCallBack != null) {
+                BaseObject.callCallback(this.$asyncCallBack, this.result);
+            }
             if (this.$queuedValidation != null) {
                 args = this.$queuedValidation;
                 this.$queuedValidation = null;
@@ -617,6 +623,8 @@ Validator.prototype.$doValidate = function (bIndicate, fCallBack) { // fCallBack
     
     if (this.waitReport <= 0 && opready.isOperationComplete()) {
         this.waitReport = 0;
+        this.$queuedValidation = null;
+        this.$busyValidating = false;
         return this.result;
     } else { // readyness not complete OR rule not complete OR both
         _callNeeded = true;
