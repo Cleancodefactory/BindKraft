@@ -529,14 +529,14 @@ Validator.prototype.reportResult = function (curRule, r) { // Callback for valid
     if (this.waitReport <= 0) {
         if (this.$asyncCallBack != null) {
             BaseObject.callCallback(this.$asyncCallBack, this.result);
-            this.$asyncCallBack = null;
-            if (this.$queuedValidation != null) {
-                var args = this.$queuedValidation;
-                this.$queuedValidation = null;
-                this.$doValidate.apply(this, args);
-            } else {
-                this.$busyValidating = false;
-            }
+        }
+        this.$asyncCallBack = null;
+        if (this.$queuedValidation != null) {
+            var args = this.$queuedValidation;
+            this.$queuedValidation = null;
+            this.$doValidate.apply(this, args);
+        } else {
+            this.$busyValidating = false;
         }
     }
 };
