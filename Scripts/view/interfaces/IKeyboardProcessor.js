@@ -11,8 +11,31 @@
 
     IKeyboardProcessor.prototype.keydataevent = new InitializeEvent("Fired to emit keyboard event data event(sender, data:KeyData)")
 
-    IKeyboardProcessor.prototype.onKeyInput = function(e, dc, bind) { throw "not implemented"; }
+    /**
+     * Handler for the native browser KeyboardEvent and directs it to the onKeyInput.
+     * Depending on the return result from the latter it may prevent default.
+     * 
+     * @param {*} e - Event
+     * @param {*} dc - dataContext unused
+     * @param {*} bind - binding - some usages may be implemented
+     */
+    IKeyboardProcessor.prototype.onKeyInput = function(e) { throw "not implemented"; }
+    /**
+     * Converts the event to keyData and passes it to the onKeyObject
+     * @return {boolean|undefined} true if the key was consumed down the chain, undefined otherwise.
+     */
     IKeyboardProcessor.prototype.processKeyInput = function(e) { throw "not implemented"; }
+
+    /**
+     * Processes keyData objects either converted from browser keyboard events captured by onKeyInput 
+     * or passed directly from another component.
+     * 
+     * @param {BaseObject} sender
+     * @param {keyData} keyData
+     * @param {Binding} bind
+     * 
+     * @return {boolean|undefined}
+     */
     IKeyboardProcessor.prototype.onKeyObject = function(sender, keyData, bind) { throw "not implemented"; }
     IKeyboardProcessor.prototype.processKeyObject = function(keyData) { throw "not implemented"; }
 
@@ -31,7 +54,7 @@
         if (typeof ke.key == "string") {
             r.key = ke.key;
         }
-        r.which = 
+        //r.which = 
         r.ctrlKey = ke.ctrlKey;
         r.shiftKey = ke.shiftKey;
         r.altKey = ke.altKey;

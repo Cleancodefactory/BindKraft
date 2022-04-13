@@ -3,6 +3,10 @@
  */
 
  (function() {
+    
+    var GRect = Class("GRect"),
+        GPoint = Class("GPoint");
+    
     function ViewUtil() {
         throw "ViewUtil is a static class, instances of it cannot be created."
     }
@@ -121,4 +125,70 @@
         }
         return result;
     };
+    ViewUtil.adjustPopupInHost = function(view, el, shiftLeft, shiftTop, mode) {
+        var th;
+        if (!BaseObject.is(view, "Base")) {
+            BaseObject.LASTERROR("ViewUtil.adjustPopupInHost: view is not a Base object");
+            return;
+        }
+        if (typeof el == "string") {
+            th = ViewUtil.getRelatedElements(view.root, el);
+        } else if (el instanceof HTMLElement) {
+            th = el;
+        }
+        if (th == null) {
+            BaseObject.LASTERROR("ViewUtil.adjustPopupInHost: el is not found or null has been passed.");
+            return;
+        }
+        var query = new HostCallQuery(HostCallCommandEnum.gethost);
+        view.throwStructuralQuery(query);
+        var viewcontainer = null;
+        if (query.host != null) {
+            if (BaseObject.is(query.host, "IViewHostQuery")) {
+                viewcontainer = query.host.get_viewcontainerelement();
+                if (viewcontainer != null) {
+                    if (!DOMUtil.findParent(th, viewcontainer)) {
+                        viewcontainer = null;
+                    }
+                }
+            }
+            if (viewcontainer == null) {
+                // Try window
+                if (BaseObject.is(query.host, "BaseWindow")) {
+                    viewcontainer = query.host.get_windowelement();
+                }
+            }
+    
+            if (viewcontainer == null) {
+                BaseObject.LASTERROR("ViewUtil.adjustPopupInHost: Cannot find appropriate container.");
+                return;
+            }
+            // Viewport coordinates, we will calc relatives to enable more relaxed choice of styling
+            var containerRect = GRect.fromDOMElementClientViewport(viewcontainer);
+            var controlRect = GRect.fromDOMElementClientViewport(view.root);
+            // Viewport coordinates of the control's left/top corner, plus shifts
+            var pt = new Point(controlRect.x + (shiftLeft ? shiftLeft : 0), controlRect.y + (shiftTop ? shiftTop : 0));
+            /////////////////////////////////////////////////
+            var ballonRect = Rect.fromDOMElementOffset(th);
+            // Safety madness
+            if (ballonRect.w <= 0) {
+                ballonRect.w = 250;
+            }
+            if (ballonRect.h <= 0) {
+                ballonRect.h = 20;
+            }
+            var placementRect = containerRect.adjustPopUp(controlRect, ballonRect, (typeof mode == "string"?mode:"aboveunder"), 0);
+            // Assume the control is relative and correct to that
+            placementRect.x = placementRect.x - controlRect.x;
+            placementRect.y = placementRect.y - controlRect.y;
+            th.css("z-index", "9999");
+            // We do not want to change the size - the popup is glued to the host element and if something remains hidden we are good with that.
+            placementRect.w = null;
+            placementRect.h = null;
+            placementRect.toDOMElement(th);
+        } else {
+            BaseObject.LASTERROR("JBUtil.adjustPopupInHost: cannot find the view's host.");
+        }
+    
+    }
  })();

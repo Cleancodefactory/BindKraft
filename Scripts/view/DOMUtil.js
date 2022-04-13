@@ -513,6 +513,27 @@ DOMUtil.getStyle = function(dom, style, bComputed) {
 		return null;
 	}
 }
+DOMUtil.hideElement = function(dom) {
+	if (!(dom instanceof HTMLElement)) return;
+	var _displ = dom.style.display;
+	dom.style.display = "none";
+	if (_displ != null && _displ.length != 0) {
+		dom.__lastStyleDisplay = _displ;
+	} else {
+		delete dom.__lastStyleDisplay;
+	}
+	
+}
+DOMUtil.unHideElement = function(dom) {
+	if (!(dom instanceof HTMLElement)) return;
+	var _displ = null;
+	if (dom.__lastStyleDisplay != null && dom.__lastStyleDisplay.length > 0) {
+		_displ = dom.__lastStyleDisplay;
+	} else {
+		_displ = "";
+	}
+	dom.style.display = _displ;
+}
 //#endregion
 /**
 	Checks if the element or set of elements all match a selector or at least one of the selectors (if array of
@@ -661,7 +682,7 @@ DOMUtil.findParent = function(dom, selector, callback) {
 	if (dom instanceof HTMLElement) {
 		b = null;
 		if (callback != null && (b = callback(dom)) === false) return null;
-		if (dom.matches(selector)) {
+		if (dom == selector || dom.matches(selector)) {
 			return dom;
 		}
 		if (b === true) return null;
@@ -669,7 +690,7 @@ DOMUtil.findParent = function(dom, selector, callback) {
 		while (p != null && p instanceof HTMLElement) {
 			b = null;
 			if (callback != null && (b = callback(dom)) === false) return null;
-			if (p.matches(selector)) return p;
+			if (p == selector || p.matches(selector)) return p;
 			p = p.parentElement;
 			if (b === true) return null;
 		}
@@ -764,6 +785,9 @@ DOMUtil.queryAll = function(node, selector) {
 }
 DOMUtil.parentByDataKey = function(node, datakey) {
 	return DOMUtil.findParent(node, '[data-key="' + datakey + '"]',DOMUtil.BorderCallbacks.DataKeysInViewOut);
+}
+DOMUtil.hasParent = function(node, dparent) {
+	return DOMUtil.findParent(node, dparent, DOMUtil.BorderCallbacks.DataKeysInViewOut);
 }
 DOMUtil.queryForMainSlot = function(node) {
 	return DOMUtil.findElement(node, '[data-key="_client"]',DOMUtil.BorderCallbacks.DataKeysInViewOut);
