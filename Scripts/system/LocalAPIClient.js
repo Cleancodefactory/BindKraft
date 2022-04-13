@@ -159,7 +159,7 @@ LocalAPIClient.prototype.getAPI = function (ifacedef_or_name) {
 	if (BaseObject.is(this.API[ifacename], ifacedef_or_name)) { // Check if we have it and return 
 		return this.API[ifacename];
 	}
-	this.LASTERROR(_Errors.compose(),"Cannot find the requested interface in the configured LocalAPI hubs");
+	this.LASTERROR(_Errors.compose(),"Cannot find the requested interface in the configured LocalAPI hubs (" + ifacename + ")");
 	return null;
 	//this.attachAPI
 }
