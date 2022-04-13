@@ -229,6 +229,10 @@ DataArea.prototype.resetDataContext = function() {
     this.set_data(null);
     this.set_count(0);
 };
+DataArea.prototype.resetConnector = function() {
+    this.$contentConnector = null;
+    this.$countConnector = null;
+};
 DataArea.prototype.loadContent = function() { // No arguments - everything is collected from parameters and bindings
 	if (this.__obliterated) return;
 	this.preloadevent.invoke(this, this.get_parameters());
