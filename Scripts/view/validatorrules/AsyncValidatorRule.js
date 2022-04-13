@@ -83,5 +83,5 @@ AsyncValidatorRule.prototype.reportBack = function (result, message, forceIndica
 	the forceIndicate triggers any indication of the state of the validation supported by the container 
 	even if the result is correct (by default correct values do not show part or all of the validation indication UI)
 */
-var AsyncValidatorControl = AsyncValidatorRule
+var AsyncValidatorControl = AsyncValidatorRule;
 //////////////////////END/////////////////////////////
