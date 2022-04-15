@@ -125,14 +125,27 @@
         }
         return result;
     };
+    /**
+     * @param {Base} view - Teh component to which the popup is to be aligned
+     * @param {HTMLElement|string} - The popup specified as DOM element or parent/child key path
+     * @param {integer} shiftLeft - shift the calculated position x
+     * @param {integer} shiftTop - shift the calculated position y
+     * @param {string} mode - how to calc the position ()
+     */
     ViewUtil.adjustPopupInHost = function(view, el, shiftLeft, shiftTop, mode) {
-        var th;
+        var th; // The popup element
         if (!BaseObject.is(view, "Base")) {
             BaseObject.LASTERROR("ViewUtil.adjustPopupInHost: view is not a Base object");
             return;
         }
         if (typeof el == "string") {
+            // Support relative specification of the control
             th = ViewUtil.getRelatedElements(view.root, el);
+            if (Array.isArray(th) && th.length > 0) {
+                th = th[0];
+            } else {
+                th = 0;
+            }
         } else if (el instanceof HTMLElement) {
             th = el;
         }
@@ -164,30 +177,31 @@
                 return;
             }
             // Viewport coordinates, we will calc relatives to enable more relaxed choice of styling
-            var containerRect = GRect.fromDOMElementClientViewport(viewcontainer);
-            var controlRect = GRect.fromDOMElementClientViewport(view.root);
+            var containerRect = GRect.fromDOMElementClientViewport(viewcontainer); // Container window client usually
+            var controlRect = GRect.fromDOMElementClientViewport(view.root); // the control in it
             // Viewport coordinates of the control's left/top corner, plus shifts
-            var pt = new Point(controlRect.x + (shiftLeft ? shiftLeft : 0), controlRect.y + (shiftTop ? shiftTop : 0));
-            /////////////////////////////////////////////////
-            var ballonRect = Rect.fromDOMElementOffset(th);
-            // Safety madness
-            if (ballonRect.w <= 0) {
-                ballonRect.w = 250;
-            }
-            if (ballonRect.h <= 0) {
-                ballonRect.h = 20;
-            }
-            var placementRect = containerRect.adjustPopUp(controlRect, ballonRect, (typeof mode == "string"?mode:"aboveunder"), 0);
-            // Assume the control is relative and correct to that
-            placementRect.x = placementRect.x - controlRect.x;
-            placementRect.y = placementRect.y - controlRect.y;
-            th.css("z-index", "9999");
-            // We do not want to change the size - the popup is glued to the host element and if something remains hidden we are good with that.
-            placementRect.w = null;
-            placementRect.h = null;
-            placementRect.toDOMElement(th);
+            var pt = new GPoint(controlRect.x + (shiftLeft ? shiftLeft : 0), controlRect.y + (shiftTop ? shiftTop : 0));
+            // Viewport coordinates of the popup ballon/panel
+            // The element has to be visible at this point
+            var balloonRect = GRect.GRect.fromDOMElementClientViewport(th);
+
+                // Safety madness
+                if (balloonRect.w <= 0) {
+                    BaseObject.LASTERROR("Cannot obtain the popup ballon's size. It is probably not displayed. Rearrange the code to invoke the calculation when it is displayed");
+                    balloonRect.w = 250;
+                }
+                if (balloonRect.h <= 0) {
+                    balloonRect.h = 20;
+                }
+            // Still in viewport coordinates
+            var placementRect = containerRect.adjustPopUp(controlRect, balloonRect, (typeof mode == "string"?mode:"aboveunder"));
+            placementRect = placementRect.mapTo(containerRect);
+            DOMUtil.setStyle(th,"z-index", "9999");
+
+            placementRect.toDOMElementAsViewport(th);
+            
         } else {
-            BaseObject.LASTERROR("JBUtil.adjustPopupInHost: cannot find the view's host.");
+            BaseObject.LASTERROR("ViewUtil.adjustPopupInHost: cannot find the view's host.");
         }
     
     }
