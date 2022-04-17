@@ -43,7 +43,6 @@
                 }
             });
         }
-        
     }
 
     LookupBoxControl.prototype.$itemTemplate = null;
@@ -71,12 +70,52 @@
     }
     //#region Data
     LookupBoxControl.prototype.$choicesRefresh = InitializeMethodTrigger("Initiates new search", function () { 
+        var flt = this.get_filter();
+        var op = null;
+        var  me = this;
         if (this.get_callback() != null) {
-
+            var cb = this.get_callback();
+            if (BaseObject.is(cb, "Delegate")) {
+                op = cb.invoke(this, flt);
+            } else if (typeof cb == "function") {
+                op = cb.call(this, this, filter);
+            } else {
+                this.LASTERROR("Cannot call the callback, it is nor delegate, nor function");
+            }
+            if (BaseObject.is(op, "Opration")) {
+                op.onsuccess(function(ch) {
+                    me.set_choices(ch);
+                })
+            } else {
+                // Use it as a result
+                this.set_choices(op);
+            }
+        } else {
+            this.$internalCallback(flt);
         }
     }, 300);
-    LookupBoxControl.prototype.$internalCallback = function() {
-
+    LookupBoxControl.prototype.$internalCallback = function(flt) {
+        if (Array.isArray(this.get_sourcedata())) {
+            var ind = this.get_identification();
+            var me = this;
+            if (typeof ind == "string") {
+                if (flt == null || flt.length == 0) {
+                    this.set_choices(me.get_sourcedata());
+                } else {
+                    this.callAsync(function() {
+                        var items = me.get_sourcedata();
+                        var ch = items.Select(function(idx, item) {
+                            if (item[ind] == flt) return item;
+                        });
+                        this.set_choices(ch);
+                    })
+                }
+            } else {
+                this.set_choices(null);    
+            }
+        } else {
+            this.set_choices(null);
+        }
     }
 
     //#endregion
