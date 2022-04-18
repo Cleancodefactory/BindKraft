@@ -30,7 +30,7 @@
         }
         cls.prototype.onKeyObject = function(sender, keyData, bind) {
             if (!this.processKeyObject(keyData)) {
-                return this.keydataevent.invoke(this, KeyData); // fire to descendant consumers and Prevent further handlers if consumed.
+                return this.keydataevent.invoke(this, keyData); // fire to descendant consumers and Prevent further handlers if consumed.
             } else {
                 return true; // Prevent further handlers
             }

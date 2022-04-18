@@ -1,5 +1,9 @@
 (function(){
-    var viewUtil = Class("ViewUtil");
+    var ViewUtil = Class("ViewUtil"),
+        IKeyboardProcessorImpl = InterfaceImplementer("IKeyboardProcessorImpl"),
+        ICustomParameterizationStdImpl = InterfaceImplementer("ICustomParameterizationStdImpl"),
+        ITemplateSourceImpl = InterfaceImplementer("ITemplateSourceImpl");
+
     function LookupBoxControl() {
         Base.apply(this,arguments);
     }
@@ -7,7 +11,7 @@
         .Implement(IUIControl)
         .Implement(IDisablable)
         .Implement(IKeyboardProcessorImpl)
-        .Implement(ICustomParameterizationStdImpl)
+        .Implement(ICustomParameterizationStdImpl, "sourcedata", "identification", "filterbyfield","dropwidth", "dropheight")
         .Implement(ITemplateSourceImpl, new Defaults("templateName"))
         .Defaults({
             templateName: "bindkraft/control-combobox"
@@ -17,14 +21,21 @@
         .ImplementProperty("filterbox") // The text box
         .ImplementProperty("droplist") // The drop list - selectable repeater
         .ImplementProperty("droppanel") // The DOM element of the drop panel
+        .ImplementProperty("display") // Selection display
+        .ImplementProperty("dropwidth", new InitializeNumericParameter("",null))
+        .ImplementProperty("dropheight", new InitializeNumericParameter("",null))
         .ImplementActiveProperty("choices", new InitializeArray("Choices for selection"),true) // The drop list - selectable repeater
+        .ImplementActiveProperty("selectedobject", new Initialize("the current selection"), true)
         .ImplementProperty("callback", new Initialize("Callback providing choices as objects, can be used together with identification.", null))
-        .ImplementProperty("sourcedata", new Initialize("Optional, for use by the callback, the default internal callback expects array with identification property holding strings."))
-        .ImplementProperty("filter", new InitializeStringParameter("Bound to the text (filter) box, change invokes refresh of choices", null,function(oval, nval){
+        .ImplementProperty("sourcedata", new Initialize("Optional, for use by the callback, the default internal callback expects array with identification property holding strings."), true, function(oval,nval){
+            this.$choicesRefresh.windup();
+        })
+        .ImplementProperty("filterbyfield", new InitializeStringParameter("field by which to filter the items, used by the internal callback and optionally by the user callback", null))
+        .ImplementProperty("filter", new InitializeStringParameter("Bound to the text (filter) box, change invokes refresh of choices", null),null, function(oval, nval){
             if (nval != oval) {
-                this.$choicesRefresh().windup();
+                this.$choicesRefresh.windup();
             }
-        }));
+        });
 
     LookupBoxControl.prototype.get_identification = function() {
         if (this.get_droplist() != null) {
@@ -39,7 +50,7 @@
                 if (this.get_droplist() != null) {
                     this.get_droplist().identification = val;
                 } else {
-                    this.LASTERROR("droplist is not bound while trying to set identification field")
+                    this.LASTERROR("droplist is not bound while trying to set identification field");
                 }
             });
         }
@@ -56,10 +67,13 @@
             this.LASTERROR("No template for the drop items. Please specify the template as content of the control element.");
         } else {
             if (this.get_droplist() == null) {
-                this.LASTERROR("The template for the control does not bind the drop down list SelectableRepeater to the droplist property.")
+                this.LASTERROR("The template for the control does not bind the drop down list SelectableRepeater to the droplist property.");
             } else {
                 this.get_droplist().set_itemTemplate(this.$itemTemplate);
                 this.keydataevent.add(new Delegate(this.get_droplist(), this.get_droplist().onKeyObject));
+            }
+            if (this.get_display() != null) {
+                this.get_display().set_template(this.$itemTemplate);
             }
         }
         if (this.get_filterbox() == null) {
@@ -67,9 +81,11 @@
         } else {
             // Anything?
         }
+        // Initial state
+
     }
     //#region Data
-    LookupBoxControl.prototype.$choicesRefresh = InitializeMethodTrigger("Initiates new search", function () { 
+    LookupBoxControl.prototype.$choicesRefresh = new InitializeMethodTrigger("Initiates new search", function () { 
         var flt = this.get_filter();
         var op = null;
         var  me = this;
@@ -82,7 +98,7 @@
             } else {
                 this.LASTERROR("Cannot call the callback, it is nor delegate, nor function");
             }
-            if (BaseObject.is(op, "Opration")) {
+            if (BaseObject.is(op, "Operation")) {
                 op.onsuccess(function(ch) {
                     me.set_choices(ch);
                 })
@@ -96,7 +112,9 @@
     }, 300);
     LookupBoxControl.prototype.$internalCallback = function(flt) {
         if (Array.isArray(this.get_sourcedata())) {
-            var ind = this.get_identification();
+
+            var ind = this.get_filterbyfield();
+            if (ind == null || ind.length == 0) ind = this.get_identification();
             var me = this;
             if (typeof ind == "string") {
                 if (flt == null || flt.length == 0) {
@@ -105,7 +123,7 @@
                     this.callAsync(function() {
                         var items = me.get_sourcedata();
                         var ch = items.Select(function(idx, item) {
-                            if (item[ind] == flt) return item;
+                            if (item[ind] != null && item[ind].toString().indexOf(flt) >= 0) return item;
                         });
                         this.set_choices(ch);
                     })
@@ -137,6 +155,16 @@
             } else {
                 
                 DOMUtil.unHideElement(this.get_droppanel());
+                if (this.get_dropwidth() == null) {
+                    this.get_droppanel().style.removeProperty("width");
+                } else {
+                    this.get_droppanel().style.width = this.get_dropwidth() + "px";
+                }
+                if (this.get_dropheight() == null) {
+                    this.get_droppanel().style.removeProperty("height");
+                } else {
+                    this.get_droppanel().style.height = this.get_dropheight() + "px";
+                }
                 ViewUtil.adjustPopupInHost(this, this.get_droppanel());
 
                 // TODO: May be update the drop
@@ -146,13 +174,7 @@
         }
     };
 
-    LookupBoxControl.prototype.showDropList = function() { 
-        var panel = this.get_droppanel();
-
-    }
-    LookupBoxControl.prototype.hideDropList = function() { 
-        
-    }
+    
     //#endregion
 
     //#region focusing
@@ -164,6 +186,12 @@
     }
 
     //#endregion focusing
+
+    //#region Selector
+    LookupBoxControl.prototype.onMakeSelection = function(sender, dc) {
+        this.set_selectedobject(dc);
+    }
+    //#endregion
 
 
     //#region IKeyboardProcessor

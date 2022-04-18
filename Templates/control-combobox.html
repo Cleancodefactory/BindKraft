@@ -1,19 +1,35 @@
 <div>
+    <style>
+        .srA.sr1A {
+            width: 200px; 
+            max-height: 100px;
+        }
+        .sr1.sr .selected {
+            background-color: aqua;
+        }
+    </style>
     <input type="text"
         data-key="input"
+        data-bind-val="{bind source=__control path=$filter writedata=input}"
         data-on-focus="{bind source=__control path=onFocusFilter}"
         data-on-blur="{bind source=__control path=onBlurFilter}"
         data-on-keydown="{bind source=__control path=onKeyInput}"
         data-on-plugelement="{bind source=__control path=$filterbox}"
     />
-    <div data-key="display">
-        display
+    <div data-key="display" 
+        data-class="TemplateSwitcher" data-context-border="true"
+        data-bind-$item="{read source=__control path=$selectedobject readdata=$selectedobject_changed}"
+        data-on-pluginto="{bind source=__control path=$display}">
+        
     </div>
 </div>
-<div data-key="drop" data-on-plugelement="{bind source=__control path=$droppanel}">
-    <div data-class="SelectableRepeater"
-        data-on-pluginto="{bind source=__control path=$droplist}"
+<div class="srA sr1A" data-key="drop" data-on-plugelement="{bind source=__control path=$droppanel}" style="color:black;background-color: azure; position:absolute;">
+    <div data-class="SelectableRepeater selectedCssClass='selected'"
+        class="sr sr1"
+        style="width:100%;height:100%;overflow-y:auto;"
         data-key="selector"
+        data-on-pluginto="{bind source=__control path=$droplist}"
+        data-on-$activatedevent="{bind source=__control path=onMakeSelection}"
         data-bind-$items="{read source=__control path=$choices readdata=$choices_changed}"
         >
 

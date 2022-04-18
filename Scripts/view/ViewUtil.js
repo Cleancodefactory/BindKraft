@@ -183,7 +183,7 @@
             var pt = new GPoint(controlRect.x + (shiftLeft ? shiftLeft : 0), controlRect.y + (shiftTop ? shiftTop : 0));
             // Viewport coordinates of the popup ballon/panel
             // The element has to be visible at this point
-            var balloonRect = GRect.GRect.fromDOMElementClientViewport(th);
+            var balloonRect = GRect.fromDOMElementClientViewport(th);
 
                 // Safety madness
                 if (balloonRect.w <= 0) {
@@ -198,7 +198,7 @@
             placementRect = placementRect.mapTo(containerRect);
             DOMUtil.setStyle(th,"z-index", "9999");
 
-            placementRect.toDOMElementAsViewport(th);
+            placementRect.toDOMElement(th); // toDOMElementAsViewport(th);
             
         } else {
             BaseObject.LASTERROR("ViewUtil.adjustPopupInHost: cannot find the view's host.");

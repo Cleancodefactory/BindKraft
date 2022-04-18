@@ -24,7 +24,7 @@ function SelectableRepeater() {
 
 SelectableRepeater.Inherit(Repeater, "SelectableRepeater");
 SelectableRepeater.Implement(IKeyboardHandler);
-SelectableRepeater.Implement(InterfaceImpl("IKeyboardProcessorImpl"));
+SelectableRepeater.Implement(InterfaceImplementer("IKeyboardProcessorImpl"));
 SelectableRepeater.Implement(IDisplayDataSupplierImpl);
 SelectableRepeater.prototype.obliterate = function() {
     Repeater.prototype.obliterate.call(this);

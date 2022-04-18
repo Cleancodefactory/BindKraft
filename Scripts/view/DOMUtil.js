@@ -1,3 +1,17 @@
+
+/**
+ * Low level DOM utilities. This will soon be moved into IIFE, please import it to avoid errors when this happens.
+ * 
+ * Some general principles used in this file:
+ * 
+ * Border callback: A callback function called to determine if an HTMLElement is a border beyond which the operations 
+ * should not be performed. This is widely used across many methods below. The border callback can return 3 kinds of values:
+ * true - checked with === it means DO process the element and go no further
+ * false - checked with === do NOT process the element and go no further
+ * null|undefined - not a border, go further.
+ * 
+ * 
+ */
 var DOMUtil = {};
 DOMUtil.$defaultTrimRegEx = /^\s*(.*?)\s*$/;
 /**
@@ -677,12 +691,23 @@ DOMUtil.findElement = function(dom, selector, callback, _nonroot) { // callback(
 	}
 	return null;
 }
+/**
+ * Looks for a parent specified by the selector and returns it. If a border of a view is hit 
+ * or otherwise the parent is not found null is returned.
+ * 
+ * @param dom {HTMLElement} - the element whose parent to find
+ * @param selector {string|HTMLElement} - the parent to find - string selector or an element 
+ * 					to check if it is a parent of dom
+ * @param callback {function} - Border callback
+ * 
+ */
 DOMUtil.findParent = function(dom, selector, callback) {
 	var b;
 	if (dom instanceof HTMLElement) {
 		b = null;
 		if (callback != null && (b = callback(dom)) === false) return null;
-		if (dom == selector || dom.matches(selector)) {
+		if (selector instanceof HTMLElement && dom == selector) return dom;
+		if (typeof selector == "string" && dom.matches(selector)) {
 			return dom;
 		}
 		if (b === true) return null;
@@ -690,7 +715,10 @@ DOMUtil.findParent = function(dom, selector, callback) {
 		while (p != null && p instanceof HTMLElement) {
 			b = null;
 			if (callback != null && (b = callback(dom)) === false) return null;
-			if (p == selector || p.matches(selector)) return p;
+			if (selector instanceof HTMLElement && p == selector) return p;
+			if (typeof selector == "string" && p.matches(selector)) {
+				return p;
+			}
 			p = p.parentElement;
 			if (b === true) return null;
 		}
