@@ -109,15 +109,17 @@ EventDispatcher.prototype.invoke = function () {
         this.$happened = args;
         if (this.handlers != null && this.handlers.length) {
             var f;
-            
             for (var i = 0; this.handlers != null && i < this.handlers.length; i++) { // To keep this reentrant we need to check if the handlers is not cleaned up on every iteration
                 f = this.handlers[i];
                 if (f != null) {
-                    if (f.applyHandler(this.target, args) === false) {
+                    var result = f.applyHandler(this.target, args);
+                    if (result === false) {
                         this.handlers.splice(i,1);
                         i--;
                         continue; // To keep this reentrant we delete immediately the unneeded handler and continue the cycle
                         // (fd = fd || []).push(i);
+                    } else if (result === true) {
+                        return true;
                     }
                 }
             }
@@ -125,7 +127,6 @@ EventDispatcher.prototype.invoke = function () {
     } finally {
         this.$invocationInProgress--;
     }
-    return this;
 };
 EventDispatcher.prototype.invokeWithArgsArray = function (args) {
     if (this.isFrozen()) return;

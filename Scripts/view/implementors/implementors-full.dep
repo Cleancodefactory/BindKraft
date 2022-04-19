@@ -18,4 +18,5 @@
 //#using "./IAppElementImpl.js"
 //#using "./IValidatableImpl.js"
 //#using "./IUIControlReadinessImpl.js"
+//#using "./IKeyboardProcessorImpl.js"
 
