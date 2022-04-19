@@ -37,6 +37,10 @@
             }
         });
 
+    //#region Events
+    LookupBoxControl.prototype.activatedevent = new InitializeEvent("Event fired on user made selection");
+    //#endregion
+
     LookupBoxControl.prototype.get_identification = function() {
         if (this.get_droplist() != null) {
             return this.get_droplist().identification;
@@ -82,6 +86,7 @@
             // Anything?
         }
         // Initial state
+        this.set_bodyVisible(false);
 
     }
     //#region Data
@@ -94,7 +99,7 @@
             if (BaseObject.is(cb, "Delegate")) {
                 op = cb.invoke(this, flt);
             } else if (typeof cb == "function") {
-                op = cb.call(this, this, filter);
+                op = cb.call(this, this, flt);
             } else {
                 this.LASTERROR("Cannot call the callback, it is nor delegate, nor function");
             }
@@ -165,7 +170,11 @@
                 } else {
                     this.get_droppanel().style.height = this.get_dropheight() + "px";
                 }
-                ViewUtil.adjustPopupInHost(this, this.get_droppanel());
+                var pos = ViewUtil.adjustLocalPopupInHost(this, this.get_droppanel());
+                // if (pos != null) {
+                //     pos.placementRect.mapTo()
+                // }
+                
 
                 // TODO: May be update the drop
             }
@@ -173,9 +182,15 @@
             DOMUtil.hideElement(this.get_droppanel());
         }
     };
-
-    
     //#endregion
+
+    //#region box visual management
+    LookupBoxControl.prototype.get_filterVisible = function() {
+
+    }
+    LookupBoxControl.prototype.set_filterVisible = function(v) {
+    }
+    //#endregion box visual management
 
     //#region focusing
     LookupBoxControl.prototype.onBlurFilter = function(e,dc, bind) {
@@ -190,6 +205,8 @@
     //#region Selector
     LookupBoxControl.prototype.onMakeSelection = function(sender, dc) {
         this.set_selectedobject(dc);
+        this.activatedevent.invoke(this, dc);
+        this.set_bodyVisible(false);
     }
     //#endregion
 

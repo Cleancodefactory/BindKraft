@@ -2,10 +2,14 @@
     <style>
         .srA.sr1A {
             width: 200px; 
-            max-height: 100px;
+            
+        }
+        .sr1.sr {
+            height: 200px !important;
         }
         .sr1.sr .selected {
             background-color: aqua;
+            
         }
     </style>
     <input type="text"
@@ -16,22 +20,25 @@
         data-on-keydown="{bind source=__control path=onKeyInput}"
         data-on-plugelement="{bind source=__control path=$filterbox}"
     />
-    <div data-key="display" 
+    <ul data-key="display" tabstop="-1" style="list-style-type: none; height: 1.5rem; background-color:#C0c0c0;"
         data-class="TemplateSwitcher" data-context-border="true"
+        data-on-focus="{bind source=__control path=onFocusFilter}"
+        data-on-blur="{bind source=__control path=onBlurFilter}"
         data-bind-$item="{read source=__control path=$selectedobject readdata=$selectedobject_changed}"
         data-on-pluginto="{bind source=__control path=$display}">
         
-    </div>
+    </ul>
 </div>
-<div class="srA sr1A" data-key="drop" data-on-plugelement="{bind source=__control path=$droppanel}" style="color:black;background-color: azure; position:absolute;">
-    <div data-class="SelectableRepeater selectedCssClass='selected'"
+<div class="scrollarea" data-key="drop" data-on-plugelement="{bind source=__control path=$droppanel}" 
+    style="color:black;background-color: azure; position:absolute;border:1px solid darkgray; height:200px;">
+    <ul data-class="SelectableRepeater selectedCssClass='selected'"
         class="sr sr1"
-        style="width:100%;height:100%;overflow-y:auto;"
+        style="width:100%;height:100%;overflow-y:auto;list-style-type: none;"
         data-key="selector"
         data-on-pluginto="{bind source=__control path=$droplist}"
         data-on-$activatedevent="{bind source=__control path=onMakeSelection}"
         data-bind-$items="{read source=__control path=$choices readdata=$choices_changed}"
         >
 
-    </div>
+</ul>
 </div>

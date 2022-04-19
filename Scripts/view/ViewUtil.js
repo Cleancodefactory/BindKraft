@@ -133,6 +133,22 @@
      * @param {string} mode - how to calc the position ()
      */
     ViewUtil.adjustPopupInHost = function(view, el, shiftLeft, shiftTop, mode) {
+        var p = this.calcPopupInHost.apply(this, arguments);
+            placementRect = p.placementRect.mapTo(p.containerRect);
+            DOMUtil.setStyle(p.panel,"z-index", "9999");
+            placementRect.toDOMElement(p.panel); // toDOMElementAsViewport(th);
+    }
+    ViewUtil.adjustLocalPopupInHost = function(view, el, shiftLeft, shiftTop, mode) {
+        var p = this.calcPopupInHost.apply(this, arguments);
+            if (p.panel.offsetParent != null) {
+                placementRect = p.placementRect.mapFromToElements(null,p.panel.offsetParent);
+            } else {
+                placementRect = p.placementRect.mapTo(p.containerRect);
+            }
+            DOMUtil.setStyle(p.panel,"z-index", "9999");
+            placementRect.toDOMElement(p.panel); // toDOMElementAsViewport(th);
+    }
+    ViewUtil.calcPopupInHost = function(view, el, shiftLeft, shiftTop, mode) {
         var th; // The popup element
         if (!BaseObject.is(view, "Base")) {
             BaseObject.LASTERROR("ViewUtil.adjustPopupInHost: view is not a Base object");
@@ -195,10 +211,16 @@
                 }
             // Still in viewport coordinates
             var placementRect = containerRect.adjustPopUp(controlRect, balloonRect, (typeof mode == "string"?mode:"aboveunder"));
-            placementRect = placementRect.mapTo(containerRect);
-            DOMUtil.setStyle(th,"z-index", "9999");
-
-            placementRect.toDOMElement(th); // toDOMElementAsViewport(th);
+            return {
+                placementRect: placementRect,
+                containerRect: containerRect,
+                controlRect: controlRect,
+                container: viewcontainer,
+                panel: th
+            };
+            //placementRect = placementRect.mapTo(containerRect);
+            //return ;
+            
             
         } else {
             BaseObject.LASTERROR("ViewUtil.adjustPopupInHost: cannot find the view's host.");

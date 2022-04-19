@@ -531,7 +531,7 @@ DOMUtil.hideElement = function(dom) {
 	if (!(dom instanceof HTMLElement)) return;
 	var _displ = dom.style.display;
 	dom.style.display = "none";
-	if (_displ != null && _displ.length != 0) {
+	if (_displ != null && _displ.length != 0 && _displ != "none") {
 		dom.__lastStyleDisplay = _displ;
 	} else {
 		delete dom.__lastStyleDisplay;
@@ -541,7 +541,7 @@ DOMUtil.hideElement = function(dom) {
 DOMUtil.unHideElement = function(dom) {
 	if (!(dom instanceof HTMLElement)) return;
 	var _displ = null;
-	if (dom.__lastStyleDisplay != null && dom.__lastStyleDisplay.length > 0) {
+	if (dom.__lastStyleDisplay != null && dom.__lastStyleDisplay.length > 0 && dom.__lastStyleDisplay != "none") {
 		_displ = dom.__lastStyleDisplay;
 	} else {
 		_displ = "";
