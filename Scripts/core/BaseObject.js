@@ -321,6 +321,7 @@ BaseObject.isJQuery = function(o) {
  .Returns("true or false");
 
 BaseObject.isDOM = function (o) {
+    if (o instanceof Element) return true;
     if (o != null && o.tagName && o.nodeName && o.nodeType) return true;
     return false;
 }.Description("Checks if javascript object is a DOM element")

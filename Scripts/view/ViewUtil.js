@@ -138,7 +138,7 @@
             DOMUtil.setStyle(p.panel,"z-index", "9999");
             placementRect.toDOMElement(p.panel); // toDOMElementAsViewport(th);
     }
-    ViewUtil.adjustLocalPopupInHost = function(view, el, shiftLeft, shiftTop, mode) {
+    ViewUtil.adjustPopupInHostLocally = function(view, el, shiftLeft, shiftTop, mode) {
         var p = this.calcPopupInHost.apply(this, arguments);
             if (p.panel.offsetParent != null) {
                 placementRect = p.placementRect.mapFromToElements(null,p.panel.offsetParent);

@@ -4,6 +4,12 @@
         ICustomParameterizationStdImpl = InterfaceImplementer("ICustomParameterizationStdImpl"),
         ITemplateSourceImpl = InterfaceImplementer("ITemplateSourceImpl");
 
+    function ILookupBoxCallback() {}
+    ILookupBoxCallback.Interface("ILookupBoxCallback");
+    ILookupBoxCallback.prototype.getLookupBoxChoices = function(flt, offset, limit) { throw "not implemented"; }
+    ILookupBoxCallback.prototype.translateLookupBoxSelection = function(selection, forDisplay) { throw "not implemented"; }
+    
+
     function LookupBoxControl() {
         Base.apply(this,arguments);
     }
@@ -27,6 +33,7 @@
         .ImplementActiveProperty("choices", new InitializeArray("Choices for selection"),true) // The drop list - selectable repeater
         .ImplementActiveProperty("selectedobject", new Initialize("the current selection"), true)
         .ImplementProperty("callback", new Initialize("Callback providing choices as objects, can be used together with identification.", null))
+        .ImplementProperty("translate", new Initialize("Callback providing translation from object (selected) to text in the filter or display.", null))
         .ImplementProperty("sourcedata", new Initialize("Optional, for use by the callback, the default internal callback expects array with identification property holding strings."), true, function(oval,nval){
             this.$choicesRefresh.windup();
         })
@@ -85,8 +92,12 @@
         } else {
             // Anything?
         }
+        if (this.get_droppanel() != null) {
+            this.on(this.get_droppanel(),"mousedown", this.Open);
+        }
         // Initial state
-        this.set_bodyVisible(false);
+        // this.set_bodyVisible(false);
+        this.Close();
 
     }
     //#region Data
@@ -170,11 +181,7 @@
                 } else {
                     this.get_droppanel().style.height = this.get_dropheight() + "px";
                 }
-                var pos = ViewUtil.adjustLocalPopupInHost(this, this.get_droppanel());
-                // if (pos != null) {
-                //     pos.placementRect.mapTo()
-                // }
-                
+                var pos = ViewUtil.adjustPopupInHostLocally(this, this.get_droppanel());
 
                 // TODO: May be update the drop
             }
@@ -182,6 +189,36 @@
             DOMUtil.hideElement(this.get_droppanel());
         }
     };
+    LookupBoxControl.prototype.$pendingOpenClose = null; // odd open/even close, priority rises with the number.
+    LookupBoxControl.prototype.$pendingOpenCloseTrigger = new InitializeMethodTrigger("Operates open close", function(){
+        if (this.$pendingOpenClose != null) {
+            if (this.$pendingOpenClose % 2 == 0) {
+                this.goClose();
+            } else {
+                this.goOpen();
+            }
+            this.$pendingOpenClose = null;
+        }
+    }, 50);
+    LookupBoxControl.prototype.goOpen = function() {
+        this.set_bodyVisible(true);
+    }
+    LookupBoxControl.prototype.goClose = function() {
+        this.set_bodyVisible(false);
+    }
+    LookupBoxControl.prototype.Open = function() {
+        if (this.$pendingOpenClose == null || this.$pendingOpenClose < 1) {
+            this.$pendingOpenClose = 1;
+            this.$pendingOpenCloseTrigger.windup();
+        }
+    }
+    LookupBoxControl.prototype.Close = function(force) {
+        var act = force?2:0;
+        if (this.$pendingOpenClose == null || this.$pendingOpenClose < act) {
+            this.$pendingOpenClose = act;
+            this.$pendingOpenCloseTrigger.windup();
+        }
+    }
     //#endregion
 
     //#region box visual management
@@ -194,10 +231,10 @@
 
     //#region focusing
     LookupBoxControl.prototype.onBlurFilter = function(e,dc, bind) {
-        this.set_bodyVisible(false);
+        this.Close();
     }
     LookupBoxControl.prototype.onFocusFilter = function(e,dc, bind) {
-        this.set_bodyVisible(true);
+        this.Open();
     }
 
     //#endregion focusing
@@ -206,7 +243,7 @@
     LookupBoxControl.prototype.onMakeSelection = function(sender, dc) {
         this.set_selectedobject(dc);
         this.activatedevent.invoke(this, dc);
-        this.set_bodyVisible(false);
+        this.Close(true);
     }
     //#endregion
 
