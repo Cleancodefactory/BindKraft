@@ -222,10 +222,21 @@
     //#endregion
 
     //#region box visual management
+    LookupBoxControl.prototype.$filterVisible = false;
     LookupBoxControl.prototype.get_filterVisible = function() {
-
+        return this.$filterVisible;
     }
     LookupBoxControl.prototype.set_filterVisible = function(v) {
+        var v = v?true:false;
+        var f = this.get_filterbox(), d = this.get_display().root;
+        if (v) {
+            DOMUtil.hideElement(d);
+            DOMUtil.unHideElement(f);
+        } else {
+            DOMUtil.hideElement(f);
+            DOMUtil.unHideElement(d);
+        }
+        this.$filterVisible = v; 
     }
     //#endregion box visual management
 
