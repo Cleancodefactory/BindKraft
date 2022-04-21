@@ -31,13 +31,36 @@
         .ImplementProperty("dropwidth", new InitializeNumericParameter("",null))
         .ImplementProperty("dropheight", new InitializeNumericParameter("",null))
         .ImplementActiveProperty("choices", new InitializeArray("Choices for selection"),true) // The drop list - selectable repeater
-        .ImplementActiveProperty("selectedobject", new Initialize("the current selection"), true)
+        .ImplementProperty("noselection", new InitializeStringParameter("text for no selection", "(please select)"))
+        .ImplementActiveProperty("selectedobject", new Initialize("the current selection"), null, true, function(oval, nval) {
+            if (nval != oval) {
+                this.callAsync(function() {
+                    this.$filter = this.$translateSelection();
+                    this.updateTargets("filterbox");
+                });
+            }
+        })
+        /**
+         * Bind using data-on-$callback
+         * proto: this function(filter): Array<objs>
+         * @param {string} filter - the text entered by the user
+         * 
+         * objs - objects returned by the callback, item template must bind what needs to be seen from them
+         */
         .ImplementProperty("callback", new Initialize("Callback providing choices as objects, can be used together with identification.", null))
+        /**
+         * Bind using data-on-$callback
+         * proto: this function(obj)
+         * @param {object} obj - a single object to translate to text appropriate for the filter.
+         * Typically called when the filter box needs to be populated with initial text
+         */
         .ImplementProperty("translate", new Initialize("Callback providing translation from object (selected) to text in the filter or display.", null))
+        //#region  Mostly for the internal callback and translate - can be used by custom ones if convenient.
         .ImplementProperty("sourcedata", new Initialize("Optional, for use by the callback, the default internal callback expects array with identification property holding strings."), true, function(oval,nval){
             this.$choicesRefresh.windup();
         })
         .ImplementProperty("filterbyfield", new InitializeStringParameter("field by which to filter the items, used by the internal callback and optionally by the user callback", null))
+        //#endregion
         .ImplementProperty("filter", new InitializeStringParameter("Bound to the text (filter) box, change invokes refresh of choices", null),null, function(oval, nval){
             if (nval != oval) {
                 this.$choicesRefresh.windup();
@@ -100,7 +123,7 @@
         this.Close();
 
     }
-    //#region Data
+    //#region Data, choices and translation
     LookupBoxControl.prototype.$choicesRefresh = new InitializeMethodTrigger("Initiates new search", function () { 
         var flt = this.get_filter();
         var op = null;
@@ -150,6 +173,25 @@
         } else {
             this.set_choices(null);
         }
+    }
+    LookupBoxControl.prototype.$translateSelection = function() {
+        var sel = this.get_selectedobject();
+        var result;
+        if (sel != null) {
+            var cb = this.get_translate();
+            if (BaseObject.is(cb, "Delegate")) {
+                result = cb.invoke(this, sel);
+            } else if (typeof cb == "function") {
+                result = cb.call(this, this, sel);
+            } else {
+                this.LASTERROR("Cannot call the callback, it is nor delegate, nor function");
+            }
+            if (result != null) return result;
+            return this.$internalTranslate(sel)
+        }
+    }
+    LookupBoxControl.prototype.$internalTranslate = function(obj) {
+        return this.get_display().root.innerText;
     }
 
     //#endregion
@@ -201,9 +243,12 @@
         }
     }, 50);
     LookupBoxControl.prototype.goOpen = function() {
+        this.set_filterVisible(true);
         this.set_bodyVisible(true);
+        this.get_filterbox().focus();
     }
     LookupBoxControl.prototype.goClose = function() {
+        this.set_filterVisible(false);
         this.set_bodyVisible(false);
     }
     LookupBoxControl.prototype.Open = function() {
@@ -246,6 +291,14 @@
     }
     LookupBoxControl.prototype.onFocusFilter = function(e,dc, bind) {
         this.Open();
+    }
+    LookupBoxControl.prototype.onSelectDisplayTemplate = function(switcher) {
+        var item = switcher.get_item();
+        if (item != null) {
+            return switcher.get_template();
+        } else {
+            return '<span>' + this.get_noselection() + '</span>'
+        }
     }
 
     //#endregion focusing

@@ -14,17 +14,18 @@
     </style>
     <input type="text"
         data-key="input"
-        data-bind-val="{bind source=__control path=$filter writedata=input}"
+        data-bind-val="{bind source=__control path=$filter writedata=input flags=filterbox}"
         data-on-focus="{bind source=__control path=onFocusFilter}"
         data-on-click="{bind source=__control path=onFocusFilter}"
         data-on-blur="{bind source=__control path=onBlurFilter}"
         data-on-keydown="{bind source=__control path=onKeyInput}"
         data-on-plugelement="{bind source=__control path=$filterbox}"
     />
-    <ul data-key="display" tabstop="-1" style="list-style-type: none; height: 1.5rem; background-color:#C0c0c0;"
+    <ul data-key="display" tabindex="-1" style="list-style-type: none; height: 1.5rem; background-color:#C0c0c0;"
         data-class="TemplateSwitcher" data-context-border="true"
         data-on-focus="{bind source=__control path=onFocusFilter}"
         data-on-blur="{bind source=__control path=onBlurFilter}"
+        data-on-$select="{bind source=__control path=onSelectDisplayTemplate}"
         data-bind-$item="{read source=__control path=$selectedobject readdata=$selectedobject_changed}"
         data-on-pluginto="{bind source=__control path=$display}">
         
