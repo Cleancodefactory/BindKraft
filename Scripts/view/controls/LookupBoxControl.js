@@ -49,12 +49,20 @@
          */
         .ImplementProperty("callback", new Initialize("Callback providing choices as objects, can be used together with identification.", null))
         /**
-         * Bind using data-on-$callback
+         * Bind using data-on-$translate
          * proto: this function(obj)
          * @param {object} obj - a single object to translate to text appropriate for the filter.
          * Typically called when the filter box needs to be populated with initial text
          */
         .ImplementProperty("translate", new Initialize("Callback providing translation from object (selected) to text in the filter or display.", null))
+        /**
+         * Bind using data-on-$makeselection
+         * proto: this function(obj)
+         * @param {object} obj - a single object to transform for final form for the selectedobject property.
+         * Called when selection is made
+         */
+        .ImplementProperty("makeselection", new Initialize("Callback finalizing the selection. The selected object is not necessarily the same as the choices", null))
+
         //#region  Mostly for the internal callback and translate - can be used by custom ones if convenient.
         .ImplementProperty("sourcedata", new Initialize("Optional, for use by the callback, the default internal callback expects array with identification property holding strings."), true, function(oval,nval){
             this.$choicesRefresh.windup();
@@ -305,10 +313,31 @@
 
     //#region Selector
     LookupBoxControl.prototype.onMakeSelection = function(sender, dc) {
-        this.set_selectedobject(dc);
-        this.activatedevent.invoke(this, dc);
-        this.Close(true);
+        var me = this;
+        this.$makeSelection(dc).onsuccess(function(sel) {
+            me.set_selectedobject(sel);
+            me.activatedevent.invoke(me, sel);
+            me.Close(true);
+        }).onfailure(function(e) {
+            me.LASTERROR("Error resolving the selected item:" + e, "onMakeSelection");
+        });
     }
+    LookupBoxControl.prototype.$makeSelection = function(obj) {
+        if (this.get_makeselection() != null) {
+            var d = this.get_makeselection();
+            var result;
+            if (BaseObject.is(d, "Delegate")) {
+                result = d.invoke(this, obj);
+            } else if (typeof d == "function") {
+                result = d.call(this, this, obj);
+            }
+            if (BaseObject.is(result, "Operation")) return result;
+            return Operation.From(result);
+        } else {
+            return Operation.From(obj); // No transform
+        }
+    }
+
     //#endregion
 
 
