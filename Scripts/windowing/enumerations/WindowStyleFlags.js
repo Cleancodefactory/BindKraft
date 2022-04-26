@@ -5,7 +5,8 @@
 /**
  * Not all flags combine painlessly with each other.
  */
-var WindowStyleFlags = {
+var WindowStyleFlags = Enumeration("WindowStyleFlags",
+{
     draggable: 0x01,
     sizable: 0x02,
     fillparent: 0x04, // maximized in parent
@@ -18,4 +19,4 @@ var WindowStyleFlags = {
     sizenotify: 0x400, // Propagate size changed messages to children regardless of adjust client flag
     relative: 0x800, // Keeps the window position: relative instead of absolute
     Default: 0x30 // WindowStyleFlags.visible
-};
+});
