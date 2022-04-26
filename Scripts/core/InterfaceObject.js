@@ -41,7 +41,7 @@ function InterfaceObject(target, classDef) {
 }
 InterfaceObject.Inherit(BaseObject, "InterfaceObject");
 InterfaceObject.CreateWrapper = function(orig_method) {
-	var self = this;
+	//var self = this;
 	return function() {
 		return orig_method.apply(this.$__target, arguments);
 	}

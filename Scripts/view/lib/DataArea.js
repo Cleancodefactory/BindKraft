@@ -194,8 +194,8 @@ DataArea.prototype.$contentLoaded = function (result, success, err_info) {
     this.$isloading = false;
 	if (this.__obliterated) return;
     if (success === false) {
-        if (!this.get_lastCallProcessing()) this.loaderrorevent.invoke(this, err_info);
         this.set_lastError(err_info);
+        if (!this.get_lastCallProcessing()) this.loaderrorevent.invoke(this, err_info);
         this.loadfinishedevent.invoke(this, false);
     } else {
 		var resource = result;
