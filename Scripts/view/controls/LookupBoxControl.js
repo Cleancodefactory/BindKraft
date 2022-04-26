@@ -8,6 +8,7 @@
     ILookupBoxCallback.Interface("ILookupBoxCallback");
     ILookupBoxCallback.prototype.getLookupBoxChoices = function(flt, offset, limit) { throw "not implemented"; }
     ILookupBoxCallback.prototype.translateLookupBoxSelection = function(selection, forDisplay) { throw "not implemented"; }
+    ILookupBoxCallback.prototype.makeLookupSelection = function(selection, forDisplay) { throw "not implemented"; }
     
 
     function LookupBoxControl() {
