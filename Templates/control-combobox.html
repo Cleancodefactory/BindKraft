@@ -1,12 +1,4 @@
 <div>
-    <style>
-        .selected {
-            background-color: aqua;            
-        }
-        .drop{
-            width: 100%;
-        }
-    </style>
     <input type="text"
         data-key="input"
         data-bind-val="{bind source=__control path=$filter writedata=input flags=filterbox}"
@@ -14,8 +6,7 @@
         data-on-click="{bind source=__control path=onFocusFilter}"
         data-on-blur="{bind source=__control path=onBlurFilter}"
         data-on-keydown="{bind source=__control path=onKeyInput}"
-        data-on-plugelement="{bind source=__control path=$filterbox}"
-    />
+        data-on-plugelement="{bind source=__control path=$filterbox}"/>
     <input type="text"
         style="display:none;"
         data-key="display" tabindex="-1"
@@ -27,11 +18,8 @@
 <div 
     class="drop"
     data-key="drop" 
-    data-on-plugelement="{bind source=__control path=$droppanel}" 
-    style="color:black;background-color: azure; position:absolute;border:1px solid darkgray; height:200px;display:none;">
+    data-on-plugelement="{bind source=__control path=$droppanel}">
     <ul data-class="SelectableRepeater selectedCssClass='selected'"
-        class="drop-el"
-        style="width:100%;height:100%;overflow-y:auto;list-style-type: none;"
         data-key="selector"
         data-on-pluginto="{bind source=__control path=$droplist}"
         data-on-$activatedevent="{bind source=__control path=onMakeSelection}"
