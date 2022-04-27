@@ -84,7 +84,7 @@
         if (this.get_droplist() != null) {
             return this.get_droplist().identification;
         }
-    }
+    };
     LookupBoxControl.prototype.set_identification = function(v) {
         if (this.get_droplist() != null) {
             this.get_droplist().identification = v;
@@ -97,14 +97,14 @@
                 }
             });
         }
-    }
+    };
 
     LookupBoxControl.prototype.$itemTemplate = null;
     
     LookupBoxControl.prototype.init = function () {
         this.$itemTemplate = this.root.innerHTML;
         ITemplateSourceImpl.InstantiateTemplate(this);
-    }
+    };
     LookupBoxControl.prototype.finalinit = function () {
         if (this.$itemTemplate == null) {
             this.LASTERROR("No template for the drop items. Please specify the template as content of the control element.");
@@ -130,8 +130,7 @@
         // Initial state
         // this.set_bodyVisible(false);
         this.Close();
-
-    }
+    };
     //#region Data, choices and translation
     LookupBoxControl.prototype.$choicesRefresh = new InitializeMethodTrigger("Initiates new search", function () { 
         var flt = this.get_filter();
@@ -149,7 +148,7 @@
             if (BaseObject.is(op, "Operation")) {
                 op.onsuccess(function(ch) {
                     me.set_choices(ch);
-                })
+                });
             } else {
                 // Use it as a result
                 this.set_choices(op);
@@ -174,7 +173,7 @@
                             if (item[ind] != null && item[ind].toString().indexOf(flt) >= 0) return item;
                         });
                         this.set_choices(ch);
-                    })
+                    });
                 }
             } else {
                 this.set_choices(null);    
@@ -182,7 +181,7 @@
         } else {
             this.set_choices(null);
         }
-    }
+    };
     LookupBoxControl.prototype.$translateSelection = function() {
         var sel = this.get_selectedobject();
         var result;
@@ -196,12 +195,12 @@
                 this.LASTERROR("Cannot call the callback, it is nor delegate, nor function");
             }
             if (result != null) return result;
-            return this.$internalTranslate(sel)
+            return this.$internalTranslate(sel);
         }
-    }
+    };
     LookupBoxControl.prototype.$internalTranslate = function(obj) {
         return this.get_display().root.innerText;
-    }
+    };
 
     //#endregion
 
@@ -291,24 +290,24 @@
             DOMUtil.unHideElement(d);
         }
         this.$filterVisible = v; 
-    }
+    };
     //#endregion box visual management
 
     //#region focusing
     LookupBoxControl.prototype.onBlurFilter = function(e,dc, bind) {
         this.Close();
-    }
+    };
     LookupBoxControl.prototype.onFocusFilter = function(e,dc, bind) {
         this.Open();
-    }
+    };
     LookupBoxControl.prototype.onSelectDisplayTemplate = function(switcher) {
         var item = switcher.get_item();
         if (item != null) {
             return switcher.get_template();
         } else {
-            return '<span>' + this.get_noselection() + '</span>'
+            return '<span>' + this.get_noselection() + '</span>';
         }
-    }
+    };
 
     //#endregion focusing
 
@@ -337,7 +336,7 @@
         } else {
             return Operation.From(obj); // No transform
         }
-    }
+    };
 
     //#endregion
 
@@ -353,7 +352,7 @@
         }
 
         return true;
-    }
+    };
     //#endregion
 
 })();

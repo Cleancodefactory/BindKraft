@@ -1,15 +1,10 @@
 <div>
     <style>
-        .srA.sr1A {
-            width: 200px; 
-            
+        .selected {
+            background-color: aqua;            
         }
-        .sr1.sr {
-            height: 200px !important;
-        }
-        .sr1.sr .selected {
-            background-color: aqua;
-            
+        .drop{
+            width: 100%;
         }
     </style>
     <input type="text"
@@ -21,26 +16,28 @@
         data-on-keydown="{bind source=__control path=onKeyInput}"
         data-on-plugelement="{bind source=__control path=$filterbox}"
     />
-    <ul data-key="display" tabindex="-1" style="list-style-type: none; height: 1.5rem; background-color:#C0c0c0;"
-        data-class="TemplateSwitcher" data-context-border="true"
+    <div 
+        data-key="display" tabindex="-1"
+        data-class="TemplateSwitcher" 
+        data-context-border="true"
         data-on-focus="{bind source=__control path=onFocusFilter}"
         data-on-blur="{bind source=__control path=onBlurFilter}"
         data-on-$select="{bind source=__control path=onSelectDisplayTemplate}"
         data-bind-$item="{read source=__control path=$selectedobject readdata=$selectedobject_changed}"
-        data-on-pluginto="{bind source=__control path=$display}">
-        
-    </ul>
+        data-on-pluginto="{bind source=__control path=$display}">        
+    </div>
 </div>
-<div class="scrollarea" data-key="drop" data-on-plugelement="{bind source=__control path=$droppanel}" 
+<div 
+    class="drop"
+    data-key="drop" 
+    data-on-plugelement="{bind source=__control path=$droppanel}" 
     style="color:black;background-color: azure; position:absolute;border:1px solid darkgray; height:200px;">
     <ul data-class="SelectableRepeater selectedCssClass='selected'"
-        class="sr sr1"
+        class="drop-el"
         style="width:100%;height:100%;overflow-y:auto;list-style-type: none;"
         data-key="selector"
         data-on-pluginto="{bind source=__control path=$droplist}"
         data-on-$activatedevent="{bind source=__control path=onMakeSelection}"
-        data-bind-$items="{read source=__control path=$choices readdata=$choices_changed}"
-        >
-
-</ul>
+        data-bind-$items="{read source=__control path=$choices readdata=$choices_changed}">
+    </ul>
 </div>
