@@ -146,7 +146,9 @@
                 placementRect = p.placementRect.mapTo(p.containerRect);
             }
             DOMUtil.setStyle(p.panel,"z-index", "9999");
-            placementRect.toDOMElement(p.panel); // toDOMElementAsViewport(th);
+            var pt = new GPoint(placementRect);
+            pt.toDOMElement(p.panel); 
+            //placementRect.toDOMElement(p.panel); // toDOMElementAsViewport(th);
     }
     ViewUtil.calcPopupInHost = function(view, el, shiftLeft, shiftTop, mode) {
         var th; // The popup element
