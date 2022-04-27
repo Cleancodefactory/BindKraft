@@ -111,4 +111,18 @@
 			el.style.top = this.y + "px";
 		}
 	};
+    GRect.prototype.toDOMElementAsViewport = function(_el) {
+		var el = DOMUtil.toDOMElement(_el);
+		if (el instanceof HTMLElement) {
+			var offp = el.offsetParent;
+			if (offp != null) {
+				var rect = this.mapFromToElements(null, offp);
+				el.style.left = rect.x + "px";
+				el.style.top = rect.y + "px";
+			} else { // Assume the element is fixed
+				el.style.left = this.x + "px";
+				el.style.top = this.y + "px";
+			}
+		}
+	}
 })();
