@@ -774,7 +774,21 @@ Function.prototype.ExtendMethod = function(method, withMethod, bRunFirst, bRetur
  .Param("bRunFirst","Indicates if the replacement method is executed first")
  .Param("bReturnFromOverride","By default the value returned by the original (replaced) method is returned in the end unless it is undefined (no return value) in which case the return value of the new method is returned. If this argument is set to true the return value of the new method is always returned regardless of the return result of the old one.")
  .Returns("this - can be chained");
- 
+
+//// INTERFACE PROXY IMPLEMENTATION ///////////////////////////////////////
+
+Function.prototype.ImplementInterface = function(pname, iface, impl) {
+	var pstoreprop = "$_iface_" + pname;
+	var ifaceName = Class.getInterfaceName(iface);
+	if (ifaceName == null) {
+		CompileTime.err("ImplementProperty in " + this.classType + " has wrong argument.");
+		if (JBCoreConstants.CompileTimeThrowOnErrors) {
+			throw "ImplementProperty in " + this.classType + " has wrong argument.";
+		}
+	}
+	var proxyclass = "$_" + this.classType + "_" + pname + "_"
+	//this.prototype[pstoreprop] = 
+}
 
 //// PROPERTY IMPLEMENTATION HELPERS //////////////////////////////////////
  
