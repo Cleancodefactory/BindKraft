@@ -16,22 +16,19 @@
         data-on-keydown="{bind source=__control path=onKeyInput}"
         data-on-plugelement="{bind source=__control path=$filterbox}"
     />
-    <div 
+    <input type="text"
+        style="display:none;"
         data-key="display" tabindex="-1"
-        data-class="TemplateSwitcher" 
-        data-context-border="true"
         data-on-focus="{bind source=__control path=onFocusFilter}"
         data-on-blur="{bind source=__control path=onBlurFilter}"
-        data-on-$select="{bind source=__control path=onSelectDisplayTemplate}"
-        data-bind-$item="{read source=__control path=$selectedobject readdata=$selectedobject_changed}"
-        data-on-pluginto="{bind source=__control path=$display}">        
-    </div>
+        data-bind-val="{read source=__control path=$passivetext readdata=$selectedobject_changed}"
+        data-on-plugelement="{bind source=__control path=$display}"/>        
 </div>
 <div 
     class="drop"
     data-key="drop" 
     data-on-plugelement="{bind source=__control path=$droppanel}" 
-    style="color:black;background-color: azure; position:absolute;border:1px solid darkgray; height:200px;">
+    style="color:black;background-color: azure; position:absolute;border:1px solid darkgray; height:200px;display:none;">
     <ul data-class="SelectableRepeater selectedCssClass='selected'"
         class="drop-el"
         style="width:100%;height:100%;overflow-y:auto;list-style-type: none;"

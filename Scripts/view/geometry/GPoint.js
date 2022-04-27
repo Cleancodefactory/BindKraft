@@ -111,7 +111,7 @@
 			el.style.top = this.y + "px";
 		}
 	};
-    GRect.prototype.toDOMElementAsViewport = function(_el) {
+    GPoint.prototype.toDOMElementAsViewport = function(_el) {
 		var el = DOMUtil.toDOMElement(_el);
 		if (el instanceof HTMLElement) {
 			var offp = el.offsetParent;

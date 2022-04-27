@@ -4,6 +4,19 @@
         ICustomParameterizationStdImpl = InterfaceImplementer("ICustomParameterizationStdImpl"),
         ITemplateSourceImpl = InterfaceImplementer("ITemplateSourceImpl");
 
+    /**
+     * LookupBoxControl
+     * 
+     * Objects in use:
+     * 
+     * The callback callback must serve array of objects shown in the dropdown list: Object_Type1. The item template has such an object as data context
+     * The makeselection callback translates Object_Type1 to a Object_Type2 which is set as selectedobject. So, the selected object consumed further
+     *  can be different from the item objects. The reason: Listed items can be obtained from anywhere with any structure and it is not hard to design simple
+     *  item template for them. However the selected object is used by the business logic further and must be in convenient form for the application.
+     * 
+     * 
+     * 
+     */
     function ILookupBoxCallback() {}
     ILookupBoxCallback.Interface("ILookupBoxCallback");
     ILookupBoxCallback.prototype.getLookupBoxChoices = function(flt, offset, limit) { throw "not implemented"; }
@@ -28,7 +41,7 @@
         .ImplementProperty("filterbox") // The text box
         .ImplementProperty("droplist") // The drop list - selectable repeater
         .ImplementProperty("droppanel") // The DOM element of the drop panel
-        .ImplementProperty("display") // Selection display
+        .ImplementProperty("display") // Selection display HTML Element (readonly textbox)
         .ImplementProperty("dropwidth", new InitializeNumericParameter("",null))
         .ImplementProperty("dropheight", new InitializeNumericParameter("",null))
         .ImplementActiveProperty("choices", new InitializeArray("Choices for selection"),true) // The drop list - selectable repeater
@@ -55,7 +68,7 @@
          * @param {object} obj - a single object to translate to text appropriate for the filter.
          * Typically called when the filter box needs to be populated with initial text
          */
-        .ImplementProperty("translate", new Initialize("Callback providing translation from object (selected) to text in the filter or display.", null))
+        .ImplementProperty("translate", new Initialize("Callback providing translation from the selected object (Object_Type2) to text in the filter or display.", null))
         /**
          * Bind using data-on-$makeselection
          * proto: this function(obj)
@@ -114,9 +127,6 @@
             } else {
                 this.get_droplist().set_itemTemplate(this.$itemTemplate);
                 this.keydataevent.add(new Delegate(this.get_droplist(), this.get_droplist().onKeyObject));
-            }
-            if (this.get_display() != null) {
-                this.get_display().set_template(this.$itemTemplate);
             }
         }
         if (this.get_filterbox() == null) {
@@ -195,11 +205,8 @@
                 this.LASTERROR("Cannot call the callback, it is nor delegate, nor function");
             }
             if (result != null) return result;
-            return this.$internalTranslate(sel);
+            return "--";
         }
-    };
-    LookupBoxControl.prototype.$internalTranslate = function(obj) {
-        return this.get_display().root.innerText;
     };
 
     //#endregion
@@ -222,12 +229,12 @@
                 
                 DOMUtil.unHideElement(this.get_droppanel());
                 if (this.get_dropwidth() == null) {
-                    this.get_droppanel().style.removeProperty("width");
+                    //this.get_droppanel().style.removeProperty("width");
                 } else {
                     this.get_droppanel().style.width = this.get_dropwidth() + "px";
                 }
                 if (this.get_dropheight() == null) {
-                    this.get_droppanel().style.removeProperty("height");
+                    //this.get_droppanel().style.removeProperty("height");
                 } else {
                     this.get_droppanel().style.height = this.get_dropheight() + "px";
                 }
@@ -275,13 +282,20 @@
     //#endregion
 
     //#region box visual management
+    LookupBoxControl.prototype.get_passivetext = function() {
+        if (this.get_selectedobject() == null) {
+            return this.get_noselection();
+        } else {
+            return this.$translateSelection();
+        }
+    }
     LookupBoxControl.prototype.$filterVisible = false;
     LookupBoxControl.prototype.get_filterVisible = function() {
         return this.$filterVisible;
     }
     LookupBoxControl.prototype.set_filterVisible = function(v) {
         var v = v?true:false;
-        var f = this.get_filterbox(), d = this.get_display().root;
+        var f = this.get_filterbox(), d = this.get_display();
         if (v) {
             DOMUtil.hideElement(d);
             DOMUtil.unHideElement(f);
@@ -300,15 +314,6 @@
     LookupBoxControl.prototype.onFocusFilter = function(e,dc, bind) {
         this.Open();
     };
-    LookupBoxControl.prototype.onSelectDisplayTemplate = function(switcher) {
-        var item = switcher.get_item();
-        if (item != null) {
-            return switcher.get_template();
-        } else {
-            return '<span>' + this.get_noselection() + '</span>';
-        }
-    };
-
     //#endregion focusing
 
     //#region Selector
