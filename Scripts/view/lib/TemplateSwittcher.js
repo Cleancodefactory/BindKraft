@@ -26,6 +26,7 @@ TemplateSwitcher.prototype.notNullTemplate = new InitializeStringParameter("The 
 TemplateSwitcher.prototype.$template = null;
 TemplateSwitcher.prototype.isTemplateRoot = function() { return false; };
 TemplateSwitcher.prototype.switchevent = new InitializeEvent("Fired every time the template is instantiated/reinstnatiated and data updated");
+TemplateSwitcher.prototype.preswitchevent = new InitializeEvent("Fired every time the before template is instantiated/reinstnatiated and data updated");
 // the repeater cannot be used as template root! This will cause endless recursion.
 TemplateSwitcher.prototype.$init = function() {
     // In the repeater we need to cut the innerHTML and keep it as a template for repeating items
@@ -140,6 +141,7 @@ TemplateSwitcher.prototype.set_item = function(newData) {
     //}
 };
 TemplateSwitcher.prototype.$reset = function() {
+    this.preswitchevent.invoke(this, this.get_item());
     this.$createChild();
     this.rebind();
     this.updateTargets();
