@@ -568,6 +568,7 @@ Validator.prototype.validate = function (bIndicate, fCallBack) { // fCallBack pr
 }
 Validator.prototype.$doValidate = function (bIndicate, fCallBack) { // fCallBack proto: function(result, isAsynch);
     if (this.get_disabled()) {
+        this.$busyValidating = false;
         return ValidationResultEnum.correct;
     }
     this.validating.invoke(this, null);
