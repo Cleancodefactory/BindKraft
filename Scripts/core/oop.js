@@ -777,17 +777,12 @@ Function.prototype.ExtendMethod = function(method, withMethod, bRunFirst, bRetur
 
 //// INTERFACE PROXY IMPLEMENTATION ///////////////////////////////////////
 
-Function.prototype.ImplementInterface = function(pname, iface, impl) {
+Function.prototype.ImplementInterfaceBubble = function(pname, iface, impl, beStrict) {
 	var pstoreprop = "$_iface_" + pname;
-	var ifaceName = Class.getInterfaceName(iface);
-	if (ifaceName == null) {
-		CompileTime.err("ImplementProperty in " + this.classType + " has wrong argument.");
-		if (JBCoreConstants.CompileTimeThrowOnErrors) {
-			throw "ImplementProperty in " + this.classType + " has wrong argument.";
-		}
-	}
-	var proxyclass = "$_" + this.classType + "_" + pname + "_"
-	//this.prototype[pstoreprop] = 
+	this.prototype["get_" + pname] = function () { return this[pstoreprop]; };
+	var InitializeInterfaceBubble = Class("InitializeInterfaceBubble");
+	this.prototype[pstoreprop] = new InitializeInterfaceBubble("Bubble interface", iface, impl, pstoreprop, beStrict)
+	return this;
 }
 
 //// PROPERTY IMPLEMENTATION HELPERS //////////////////////////////////////
