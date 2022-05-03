@@ -61,7 +61,7 @@
         // All ok. now create the className
         var basecls = this;
         cls = new Function("host",
-			'$InterfaceBubbleBase.call(this,host);');
+			'Class("$InterfaceBubbleBase").call(this,host);');
         cls.Inherit(basecls, className);
         cls.ImplementEx(ifaceDef);
 
@@ -70,7 +70,7 @@
             //	constructor - does not need changes
             if (key != "constructor" && key.charAt(0) != "$") {
                 if (typeof ifaceDef.prototype[key] == "function") {
-                    if (typeof impl.prototype[key] != "function") {
+                    if (typeof impl[key] != "function") {
                         if (beStrict) {
                             throw "Method " + key + " is not supplied for the implementation of bubble interface " + iface_name + ".";
                         } else {
@@ -78,7 +78,7 @@
                         }
                         throw "The " + ifaceName + "." + key + " is not implemented as function in " + className + " and a local proxy cannot be created.";
                     } else {
-                        cls.prototype[key] = this.CreateWrapper(impl.prototype[key]);
+                        cls.prototype[key] = this.CreateWrapper(impl[key]);
                     }
                 }
             }

@@ -19,9 +19,9 @@
      */
     function ILookupBoxCallback() {}
     ILookupBoxCallback.Interface("ILookupBoxCallback");
-    ILookupBoxCallback.prototype.getLookupBoxChoices = function(flt, offset, limit) { throw "not implemented"; }
-    ILookupBoxCallback.prototype.translateLookupBoxSelection = function(selection, forDisplay) { throw "not implemented"; }
-    ILookupBoxCallback.prototype.makeLookupSelection = function(selection, forDisplay) { throw "not implemented"; }
+    ILookupBoxCallback.prototype.getChoices = function(flt, offset, limit) { throw "not implemented"; }
+    ILookupBoxCallback.prototype.translateSelection = function(selection, forDisplay) { throw "not implemented"; }
+    ILookupBoxCallback.prototype.makeSelection = function(selection, forDisplay) { throw "not implemented"; }
     
 
     function LookupBoxControl() {
@@ -76,6 +76,7 @@
          * Called when selection is made
          */
         .ImplementProperty("makeselection", new Initialize("Callback finalizing the selection. The selected object is not necessarily the same as the choices", null))
+        .ImplementProperty("interface", new Initialize("Callback interface (alternative to callbacks) see ILookupBoxCallback.", null))
 
         //#region  Mostly for the internal callback and translate - can be used by custom ones if convenient.
         .ImplementProperty("sourcedata", new Initialize("Optional, for use by the callback, the default internal callback expects array with identification property holding strings."), true, function(oval,nval){
@@ -146,7 +147,17 @@
         var flt = this.get_filter();
         var op = null;
         var  me = this;
-        if (this.get_callback() != null) {
+        if (BaseObject.is(this.get_interface(), ILookupBoxCallback )) {
+            var iface = this.get_interface();
+            op = iface.getChoices(flt);
+            if (BaseObject.is(op, "Operation")) {
+                op.onsuccess(function(ch) {
+                    me.set_choices(ch);
+                });
+            } else {
+                this.set_choices(op);
+            }
+        } else if (this.get_callback() != null) {
             var cb = this.get_callback();
             if (BaseObject.is(cb, "Delegate")) {
                 op = cb.invoke(this, flt);
@@ -196,13 +207,17 @@
         var sel = this.get_selectedobject();
         var result;
         if (sel != null) {
-            var cb = this.get_translate();
-            if (BaseObject.is(cb, "Delegate")) {
-                result = cb.invoke(this, sel);
-            } else if (typeof cb == "function") {
-                result = cb.call(this, this, sel);
+            if (BaseObject.is(this.get_interface(), ILookupBoxCallback )) {
+                result = this.get_interface().translateSelection(sel);
             } else {
-                this.LASTERROR("Cannot call the callback, it is nor delegate, nor function");
+                var cb = this.get_translate();
+                if (BaseObject.is(cb, "Delegate")) {
+                    result = cb.invoke(this, sel);
+                } else if (typeof cb == "function") {
+                    result = cb.call(this, this, sel);
+                } else {
+                    this.LASTERROR("Cannot call the callback, it is nor delegate, nor function");
+                }
             }
             if (result != null) return result;
             return "--";
@@ -329,12 +344,16 @@
     }
     LookupBoxControl.prototype.$makeSelection = function(obj) {
         if (this.get_makeselection() != null) {
-            var d = this.get_makeselection();
             var result;
-            if (BaseObject.is(d, "Delegate")) {
-                result = d.invoke(this, obj);
-            } else if (typeof d == "function") {
-                result = d.call(this, this, obj);
+            if (BaseObject.is(this.get_interface(), "ILookupBoxCallback")) {
+                result = this.get_interface().makeSelection(obj);
+            } else {
+                var d = this.get_makeselection();
+                if (BaseObject.is(d, "Delegate")) {
+                    result = d.invoke(this, obj);
+                } else if (typeof d == "function") {
+                    result = d.call(this, this, obj);
+                }
             }
             if (BaseObject.is(result, "Operation")) return result;
             return Operation.From(result);
