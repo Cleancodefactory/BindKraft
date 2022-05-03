@@ -24,9 +24,11 @@ Validator.$defaults = {
 Validator.ImplementProperty("throwqueryonvaliditychanged", new InitializeStringParameter("Any string will enable that, values of view, window, app will limit it to the corresponding scope (ignored for now)",null));
 Validator.ImplementProperty("waitreadiness", new InitializeBooleanParameter("If truthy value is set the validator will run the rules after the control is ready (if there is a control attached to the binding's target and no effect otherwise)",false));
 Validator.ImplementProperty("notreadymessage", new InitializeStringParameter("Message when readiness fails - if null or empty the error message reported will be displayed.",null));
+Validator.ImplementProperty("validateonenable", new InitializeBooleanParameter("Perform validation if the validator is enabled (was disabled before). See comments in set_disabled.",false));
 
 Validator.prototype.validitychanged = new InitializeEvent("Fired whenever the validity changes");
 Validator.prototype.validating = new InitializeEvent("Fired before performing validation");
+Validator.prototype.validatorenabled = new InitializeEvent("Fired when the validator transitions from disabled to enabled to allow immediate validation or other actions in response to that (when desired)");
 
 Validator.validatorsRegistry = {};
 Validator.reRegistrationNameCheck = /^[a-z0-9]+$/;
@@ -437,7 +439,19 @@ Validator.prototype.set_disabled = function (v) {
         this.closeValidator();
     } else if (!v && this.$disabled) {
         this.$disabled = v;
-        this.validate(true);
+        this.validatorenabled.invoke(this, null);
+        // Until April 2022 automatic validation was invoked when the validator is enabled.
+        //  However this seems increasingly inappropriate with the rising number of cases of asynchronous validation, it
+        //  can be messy even in relatively normal scenarios. So the validatorenabled event was added as replacement to allow
+        //  reacting to the fact if needed, but not by default anymore. If just validation is required on enabling the validator this
+        //  can be achieved by setting to #validateonenable=1 parameter. This is not recommended when async rules are executed - 
+        //  especially rules that can take considerable time (e.g. requests to a server). Overusing asynchronous validation may
+        //  force one to ensure that previous validation was completed before starting a new one and this will add complexity that 
+        //  can be usually neglected if the user is led though steps, instead of entering and validating everything at once. Yet, this
+        //  is scenario dependent decision and both ways have their merits, one should decide wisely.
+        if (this.get_validateonenable()) {
+            this.validate(true);
+        }
     }
     this.$disabled = v;
 };
