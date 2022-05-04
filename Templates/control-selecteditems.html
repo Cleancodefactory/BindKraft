@@ -1,0 +1,6 @@
+<div data-class="SelectableRepeater"
+    data-on-pluginto="{bind source=__control path=$itemlist}"
+    data-on-$activatedevent="{bind source=__control path=onSelectItem}"
+    data-bind-$items="{read source=__control path=$items format=__control:TranslateItems readdata=$items_changed options=operation}"
+></div>
+<button data-on-click="{bind source=__control path=onClearAll}"

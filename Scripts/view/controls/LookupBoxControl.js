@@ -34,7 +34,7 @@
         .Implement(ICustomParameterizationStdImpl, "sourcedata", "identification", "filterbyfield","dropwidth", "dropheight")
         .Implement(ITemplateSourceImpl, new Defaults("templateName"))
         .Defaults({
-            templateName: "bindkraft/control-combobox"
+            templateName: "bindkraft/control-lookupbox"
         });
 
     LookupBoxControl
@@ -103,7 +103,7 @@
         if (this.get_droplist() != null) {
             this.get_droplist().identification = v;
         } else if (!this.isFullyInitialized()) {
-            this.ExecWhenInitialized([v],function(val) {
+            this.ExecBeforeFinalInit([v],function(val) {
                 if (this.get_droplist() != null) {
                     this.get_droplist().identification = val;
                 } else {
@@ -343,11 +343,11 @@
         });
     }
     LookupBoxControl.prototype.$makeSelection = function(obj) {
-        if (this.get_makeselection() != null) {
-            var result;
+            var result = obj;
             if (BaseObject.is(this.get_interface(), "ILookupBoxCallback")) {
-                result = this.get_interface().makeSelection(obj);
-            } else {
+                var r = this.get_interface().makeSelection(obj);
+                if (r != null) result = r;
+            } else if (this.get_makeselection() != null) {
                 var d = this.get_makeselection();
                 if (BaseObject.is(d, "Delegate")) {
                     result = d.invoke(this, obj);
@@ -357,9 +357,6 @@
             }
             if (BaseObject.is(result, "Operation")) return result;
             return Operation.From(result);
-        } else {
-            return Operation.From(obj); // No transform
-        }
     };
 
     //#endregion

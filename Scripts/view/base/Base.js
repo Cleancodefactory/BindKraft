@@ -264,6 +264,7 @@ Base.prototype.onSwallowEvent = function(e, dc) {
 // END Overridables
 // Delayer
 Base.prototype.$execBeforeFinalInit = null;
+// Avoid using this method, prefer ExecBeforeFinalInit for better readability. This one is for legacy support
 Base.prototype.ExecWhenInitialized = function(args, action) {
 	if (typeof action == "function") {
 		if (this.isFullyInitialized()) {
