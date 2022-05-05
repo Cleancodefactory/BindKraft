@@ -25,3 +25,45 @@ IItemTemplateSource.prototype.set_itemTemplate = function(value_or_index, null_o
 // These should be the official ones.
 IItemTemplateSource.prototype.get_itemtemplate = function() { return this.get_itemTemplate.apply(this,arguments); }.Description("Alias for get_itemTemplate. Do not change.").Sealed();
 IItemTemplateSource.prototype.set_itemtemplate = function() { return this.set_itemTemplate.apply(this, arguments); }.Description("Alias for set_itemTemplate. Do not change.").Sealed();
+
+IItemTemplateSource.prototype.get_singletemplateconsumerkey = function() { throw "not impl";}
+IItemTemplateSource.prototype.set_singletemplateconsumerkey = function(v) { throw "not impl";}
+
+IItemTemplateSource.collectItemTemplatesFromDom = function(dom) {
+	dom = DOMUtil.toDOMElement(dom);
+	if (dom instanceof HTMLElement) {
+		var b = false;
+		var result = {};
+		var containers = [];
+		for (var i = 0; i < dom.children.length; i++) {
+			var el = dom.children[i];
+			if (el instanceof HTMLElement) {
+				if (/^\w+-\w+(-\w+)?$/.test(el.tagName)) {
+					containers.push(el);
+				}
+			}
+		}
+		if (containers.length > 0) {
+			for (var i = 0; i < containers.length; i++) {
+				b = true;
+				result[containers[i].tagName] = containers[i].innerHTML;
+			}
+			if (b) return result;
+		} else {
+			var key;
+			for (var i = 0; i < dom.children.length; i++) {
+				var el = dom.children[i];
+				if (el instanceof HTMLElement) {
+					key = el.getAttribute("data-key");
+					if (key != null && key.length > 0) {
+						b = true;
+						result[key] = el.outerHTML;
+					}
+				}
+			}
+			if (b) return result;
+
+		}
+	} 
+	return null;
+}

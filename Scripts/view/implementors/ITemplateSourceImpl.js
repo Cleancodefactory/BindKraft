@@ -26,6 +26,12 @@ ITemplateSourceImpl.InterfaceImpl(ITemplateSource, "ITemplateSourceImpl");
 ITemplateSourceImpl.RequiredTypes("Base");
 ITemplateSourceImpl.ForbiddenTypes("BaseWindow");
 ITemplateSourceImpl.classInitialize = function(cls, defaultTemplateSelector, options) {
+	var autofill = (options === true || options === "autofill");
+	if (autofill) {
+		cls.ExtendMethod("inspectTemplate", function() {
+			ITemplateSourceImpl.InstantiateTemplate(this);
+		});
+	}
 	// For backward compatibility reasons we use this.templateName
 	cls.ImplementProperty("templateName", new InitializeStringParameter("module/templatename",defaultTemplateSelector),"templateName");
 	ICustomParameterizationStdImpl.addParameters(cls, "templateName");

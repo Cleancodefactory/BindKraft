@@ -12,3 +12,5 @@
 //#using "SortHeaderControl.js"
 //#using "UploadWidgetControl.js"
 //#using "LookupBoxControl.js"
+//#using "SelectedItemsControl.js"
+//#using "LookupMultiSelectionComposite.js"

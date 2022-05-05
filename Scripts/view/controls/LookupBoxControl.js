@@ -32,7 +32,8 @@
         .Implement(IDisablable)
         .Implement(IKeyboardProcessorImpl)
         .Implement(ICustomParameterizationStdImpl, "sourcedata", "identification", "filterbyfield","dropwidth", "dropheight")
-        .Implement(ITemplateSourceImpl, new Defaults("templateName"))
+        .Implement(ITemplateSourceImpl, new Defaults("templateName"),"autofill")
+        .Implement(IItemTemplateSourceImpl, true, "single")
         .Defaults({
             templateName: "bindkraft/control-lookupbox"
         });
@@ -92,6 +93,7 @@
 
     //#region Events
     LookupBoxControl.prototype.activatedevent = new InitializeEvent("Event fired on user made selection");
+    LookupBoxControl.prototype.clearselectionevent = new InitializeEvent("Fired when the selection is cleared by the user.");
     //#endregion
 
     LookupBoxControl.prototype.get_identification = function() {
@@ -113,20 +115,20 @@
         }
     };
 
-    LookupBoxControl.prototype.$itemTemplate = null;
+    // LookupBoxControl.prototype.$itemTemplate = null;
     
     LookupBoxControl.prototype.init = function () {
-        this.$itemTemplate = this.root.innerHTML;
-        ITemplateSourceImpl.InstantiateTemplate(this);
+        //this.$itemTemplate = this.root.innerHTML;
+        //ITemplateSourceImpl.InstantiateTemplate(this);
     };
     LookupBoxControl.prototype.finalinit = function () {
-        if (this.$itemTemplate == null) {
+        if (this.get_itemTemplate() == null) {
             this.LASTERROR("No template for the drop items. Please specify the template as content of the control element.");
         } else {
             if (this.get_droplist() == null) {
                 this.LASTERROR("The template for the control does not bind the drop down list SelectableRepeater to the droplist property.");
             } else {
-                this.get_droplist().set_itemTemplate(this.$itemTemplate);
+                this.get_droplist().set_itemTemplate(this.get_itemTemplate());
                 this.keydataevent.add(new Delegate(this.get_droplist(), this.get_droplist().onKeyObject));
             }
         }
@@ -332,6 +334,12 @@
     //#endregion focusing
 
     //#region Selector
+    LookupBoxControl.prototype.onClearSelection = function() {
+        if (get_selectedobject() == null) return;
+        me.set_selectedobject(null);
+        me.clearselectionevent.invoke(this, null);
+        me.Close(true);
+    }
     LookupBoxControl.prototype.onMakeSelection = function(sender, dc) {
         var me = this;
         this.$makeSelection(dc).onsuccess(function(sel) {

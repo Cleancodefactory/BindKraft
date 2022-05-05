@@ -25,7 +25,6 @@
      *  id - a value uniquely identifying an item
      *  identification - a field containing the id
      * 
-     * 
      */
     function SelectedItemsControl() {
         Base.apply(this,arguments);
@@ -35,13 +34,17 @@
     .Implement(IDisablable)
     .Implement(IKeyboardProcessorImpl)
     .Implement(ICustomParameterizationStdImpl)
-    .Implement(ITemplateSourceImpl, new Defaults("templateName"))
+    .Implement(ITemplateSourceImpl, new Defaults("templateName"), "autofill")
+    .Implement(IItemTemplateSourceImpl, true, "single")
     .Defaults({
         templateName: "bindkraft/control-selecteditems"
     });
 
     SelectedItemsControl
         .ImplementActiveProperty("items", new Initialize("items shown in the list", null), true, function(oval, nval) {
+            if (nval != null && !Array.isArray(nval)) {
+                this.LASTERROR("items must be bound to an array or null");
+            }
             // Setting the items even if the reference is the same can be often used to signal changes.
             this.$cachedItems.splice(0);
         })

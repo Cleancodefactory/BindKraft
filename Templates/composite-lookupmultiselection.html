@@ -1,0 +1,11 @@
+<div data-class="SelectedItemsControl @itemTemplateSource={bind source=__control} singletemplateconsumerkey='selected-item'"
+    data-key="selector"
+    data-on-pluginto="{bind source=__control path=$selector}"
+>
+</div>
+<div data-class="LookupBoxControl @itemTemplateSource={bind source=__control} singletemplateconsumerkey='list-item'}"
+    data-key="lookup"
+    data-on-pluginto="{bind source=__control path=$lookup}"
+    data-on-$activatedevent="{bind source=__control/selector path=onAddItem}{bind source=self path=onClearSelection}"
+>
+</div>
