@@ -1,5 +1,8 @@
-(function(){
 
+(function() {
+
+
+    var IKeyboardProcessorImpl = InterfaceImplementer("IKeyboardProcessorImpl");
 
     function ISelectedItemsCallback() {}
     ISelectedItemsCallback.Interface("ISelectedItemsCallback");
@@ -33,7 +36,8 @@
     .Implement(IUIControl)
     .Implement(IDisablable)
     .Implement(IKeyboardProcessorImpl)
-    .Implement(ICustomParameterizationStdImpl)
+    .Implement(ICustomParameterizationStdImpl, "identification", "interface")
+    .Implement(IItemTemplateConsumerImpl)
     .Implement(ITemplateSourceImpl, new Defaults("templateName"), "autofill")
     .Implement(IItemTemplateSourceImpl, true, "single")
     .Defaults({
@@ -63,18 +67,19 @@
 
 
     //#region Construction and initialization
-    SelectedItemsControl.prototype.init = function () {
-        this.$itemTemplate = this.root.innerHTML;
-        ITemplateSourceImpl.InstantiateTemplate(this);
-    };
     SelectedItemsControl.prototype.finalinit = function () {
-        if (this.$itemTemplate == null) {
+        if (this.get_identification() != null) {
+            if (this.get_itemlist() != null) {
+                this.get_itemlist().identification = this.get_identification();
+            }
+        }
+        if (this.get_itemTemplate() == null) {
             this.LASTERROR("No template for the selected items. Please specify the template as content of the control element.");
         } else {
             if (this.get_itemlist() == null) {
                 this.LASTERROR("The template for the control does not bind the item list (SelectableRepeater) to the itemlist property.");
             } else {
-                this.get_itemlist().set_itemTemplate(this.$itemTemplate);
+                this.get_itemlist().set_itemTemplate(this.get_itemTemplate());
                 this.keydataevent.add(new Delegate(this.get_itemlist(), this.get_itemlist().onKeyObject));
             }
         }
@@ -105,12 +110,12 @@
             for (var i = 0; i < transItems.length; i++) {
                 // Use first or default to remove existing cache of the item in order to add it after that without more checks.
                 var itm = this.$cachedItems.FirstOrDefault(function(idx, item) {
-                    if (item[ind] == translateItems[i][ind]) {
+                    if (item[ind] == transItems[i][ind]) {
                         me.$cachedItems.splice(i,1);
-                        return translateItems[i];
+                        return transItems[i];
                     }
                 });
-                this.$cachedItems.push(translateItems[i]);
+                this.$cachedItems.push(transItems[i]);
             }
         }
     }
@@ -148,7 +153,7 @@
             // Extract only non-cached items to minimize the external processing
             var forTrans = allRawItems.Select(function(idx, item) {
                 if (me.$cachedItems.FirstOrDefault(function(i,it) {
-                    if (iface.identifyItem(item) == it[imd]) return it;
+                    if (iface.identifyItem(item) == it[ind]) return it;
                 }) == null) return item;
             });
             if (forTrans.length > 0) {
@@ -162,6 +167,8 @@
                     this.$updateCache(r);
                     op.CompleteOperation(true, this.$mapRawItemsFromCache(allRawItems));
                 }
+            } else {
+                op.CompleteOperation(true, this.$mapRawItemsFromCache(allRawItems));
             }
 
             return op;
@@ -176,7 +183,7 @@
         if (BaseObject.is(iface, ISelectedItemsCallback)) {
             if (Array.isArray(originalItems)) {
                 for (var i = originalItems.length - 1; i >= 0;i--) {
-                    if (iface.identifyItem(originalItems[i] == id)) {
+                    if (iface.identifyItem(originalItems[i]) == id) {
                         originalItems.splice(i,1);
                         return true;
                     }
@@ -198,6 +205,7 @@
         }
         if (item != null && item[ind] != null) {
             if (this.$removeRawItemById(item[ind])) {
+                this.items_changed.invoke(this, null);
                 this.itemremovedevent.invoke(this,null);
             }
         }
@@ -209,6 +217,7 @@
         var originalItems = this.get_items();
         if (Array.isArray(originalItems)) {
             originalItems.splice(0);
+            this.items_changed.invoke(this, null);
             this.itemremovedevent.invoke(this,null);
         }
     }
@@ -226,8 +235,9 @@
                     if (id != null) {
                         this.$removeRawItemById(id);
                         originalItems.push(item); 
+                        this.items_changed.invoke(this, null);
                     } else {
-                        this.LASTERROR("Cannot identify item");
+                        this.LASTERROR("Cannot identify item", "onAddItem");
                     }
                 } else {
                     this.LASTERROR("There is no callback interface - cannot identity item.");

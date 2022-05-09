@@ -20,7 +20,7 @@ IItemTemplateSource.Interface("IItemTemplateSource");
 
 // These two were planned as places for implementation that are called by the other two (the offical ones).
 // TODO: We want to remove from the interface these two - please DON't USE THEM anymore.
-IItemTemplateSource.prototype.get_itemTemplate = function(index_or_null) {}.Description("Returns the item template. If a paramater is specified it should return the corresponding template. Indexing support depends on the control and may not be implemented. Without index this should be the main template (whatever makes it main).") 
+IItemTemplateSource.prototype.get_itemTemplate = function(index_or_null) { throw "not implemented";}.Description("Returns the item template. If a paramater is specified it should return the corresponding template. Indexing support depends on the control and may not be implemented. Without index this should be the main template (whatever makes it main).");
 IItemTemplateSource.prototype.set_itemTemplate = function(value_or_index, null_or_value) { throw "set_itemTemplate is not implemented in " + this.fullClassType(); } 
 // These should be the official ones.
 IItemTemplateSource.prototype.get_itemtemplate = function() { return this.get_itemTemplate.apply(this,arguments); }.Description("Alias for get_itemTemplate. Do not change.").Sealed();
@@ -46,7 +46,7 @@ IItemTemplateSource.collectItemTemplatesFromDom = function(dom) {
 		if (containers.length > 0) {
 			for (var i = 0; i < containers.length; i++) {
 				b = true;
-				result[containers[i].tagName] = containers[i].innerHTML;
+				result[containers[i].tagName.toLowerCase()] = containers[i].innerHTML;
 			}
 			if (b) return result;
 		} else {

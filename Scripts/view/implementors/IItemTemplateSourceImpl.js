@@ -17,7 +17,7 @@ IItemTemplateSourceImpl.classInitialize = function(cls, autofill, _singleTemplat
 			ICustomParameterizationStdImpl.addParameters(cls, "singletemplateconsumerkey");
 			cls.ExtendMethod("inspectTemplate", function() {
 				var template = this.root.innerHTML;
-				if (template != null && /^\s*$/.test(template)) this.set_itemTemplate(template);
+				if (template != null && !/^\s*$/.test(template)) this.set_itemTemplate(template);
 				DOMUtil.Empty(this.root);
 			}, true);
 		} else {

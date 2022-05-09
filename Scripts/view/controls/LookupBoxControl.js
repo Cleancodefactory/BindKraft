@@ -19,9 +19,34 @@
      */
     function ILookupBoxCallback() {}
     ILookupBoxCallback.Interface("ILookupBoxCallback");
+    /**
+     * 
+     * @param {string|null} flt - filter for the choices to serve
+     * @param {null|integer} offset - optional (not used in LookupBox)
+     * @param {null|integer} limit - optional (not used in LookupBox)
+     * 
+     * @returns {Opration<Array<object>>|Array<object>|null} - choices to display to the user
+     */
     ILookupBoxCallback.prototype.getChoices = function(flt, offset, limit) { throw "not implemented"; }
+    /**
+     * 
+     * @param {object} selection - selected object from the $selectedobject property
+     * @param {boolean} forDisplay - optional for future use
+     * 
+     * @returns {string|null} - text to display as selection to the user
+     * 
+     * Never called with null for the @selection
+     */
     ILookupBoxCallback.prototype.translateSelection = function(selection, forDisplay) { throw "not implemented"; }
-    ILookupBoxCallback.prototype.makeSelection = function(selection, forDisplay) { throw "not implemented"; }
+    /**
+     * 
+     * @param {object|null} choice - an object from choices just chosen by the user in the drop list.
+     * @param {boolean} forDisplay - optional for future use
+     * 
+     * @returns {Operation<object>|object|null} - The same or morphed/translated form of the object from choices being selected. It may be desired to
+     * consume different/transformed objects from the selection, thus the lookup box has the option to do this here.
+     */
+    ILookupBoxCallback.prototype.makeSelection = function(choice, forDisplay) { throw "not implemented"; }
     
 
     function LookupBoxControl() {
@@ -31,7 +56,8 @@
         .Implement(IUIControl)
         .Implement(IDisablable)
         .Implement(IKeyboardProcessorImpl)
-        .Implement(ICustomParameterizationStdImpl, "sourcedata", "identification", "filterbyfield","dropwidth", "dropheight")
+        .Implement(ICustomParameterizationStdImpl, "sourcedata", "identification", "filterbyfield","dropwidth", "dropheight", "interface")
+        .Implement(IItemTemplateConsumerImpl)
         .Implement(ITemplateSourceImpl, new Defaults("templateName"),"autofill")
         .Implement(IItemTemplateSourceImpl, true, "single")
         .Defaults({
@@ -122,6 +148,11 @@
         //ITemplateSourceImpl.InstantiateTemplate(this);
     };
     LookupBoxControl.prototype.finalinit = function () {
+        if (this.get_identification() != null) {
+            if (this.get_droplist() != null) {
+                this.get_droplist().identification = this.get_identification();
+            }
+        }
         if (this.get_itemTemplate() == null) {
             this.LASTERROR("No template for the drop items. Please specify the template as content of the control element.");
         } else {
@@ -335,10 +366,10 @@
 
     //#region Selector
     LookupBoxControl.prototype.onClearSelection = function() {
-        if (get_selectedobject() == null) return;
-        me.set_selectedobject(null);
-        me.clearselectionevent.invoke(this, null);
-        me.Close(true);
+        if (this.get_selectedobject() == null) return;
+        this.set_selectedobject(null);
+        this.clearselectionevent.invoke(this, null);
+        this.Close(true);
     }
     LookupBoxControl.prototype.onMakeSelection = function(sender, dc) {
         var me = this;

@@ -1,5 +1,7 @@
 (function() {
 
+    var ILookupBoxCallback = Interface("ILookupBoxCallback"),
+        ISelectedItemsCallback = Interface("ISelectedItemsCallback");
     function LookupMultiSelectionComposite() {
         Base.apply(this, arguments);
     }
@@ -12,7 +14,7 @@
     LookupMultiSelectionComposite.Inherit(Base, "LookupMultiSelectionComposite")
     .Implement(IUIControl)
     .Implement(IDisablable)
-    .Implement(ICustomParameterizationStdImpl)
+    .Implement(ICustomParameterizationStdImpl, "identification", "description")
     .Implement(ITemplateSourceImpl, new Defaults("templateName"), "autofill")
     .Implement(IItemTemplateSourceImpl, true)
     .Defaults({
@@ -23,6 +25,40 @@
         .ImplementProperty("selector")
         .ImplementProperty("lookup");
 
+
+    //#region Data properties
+    LookupMultiSelectionComposite
+        .ImplementProperty("identification", new InitializeStringParameter("The name of the id field"))
+        .ImplementProperty("description", new InitializeStringParameter("The name of the display field"))
+        .ImplementProperty("items", new Initialize("Items for selection in the LookupBoxControl"))
+        .ImplementProperty("selectedobjects", new InitializeArray("Items for handling in the SelectedItemsControl. Must be the same type as the $selectedobject of the lookup box"))
+    //#endregion
+
+    //#region ILookupBoxCallback
+    LookupMultiSelectionComposite.ImplementInterfaceBubble("lookupcallback", ILookupBoxCallback,{
+        getChoices: function(flt, offset, limit) { 
+            return this.get_items();
+        },
+        translateSelection: function(selection, forDisplay) { 
+            return BaseObject.getProperty(selection, this.get_description());
+        },
+        makeSelection: function(choice, forDisplay) { 
+            return choice;
+        }
+    })
+    //#endregion
+
+    //#region ISelectedItemsCallback
+    LookupMultiSelectionComposite.ImplementInterfaceBubble("selectioncallback", ISelectedItemsCallback,{
+        translateItems: function(rawItems) { return rawItems; }, // returns Operation<Array>|Array
+        identifyItem: function(rawItem) { 
+            if (rawItem != null) {
+                return BaseObject.getProperty(rawItem, this.get_identification());
+            }
+            return null;
+        }
+    });
+    //#endregion
 
     LookupMultiSelectionComposite.prototype.init = function() {
         this.$itemTemplate = this.root.innerHTML;
