@@ -14,6 +14,7 @@
         nodefault|preventdefault 	- only data-on for DOM events - prevents default
         stoppropagation|
         nopropagation               - only data-on for DOM events - stops further propagation
+        handlers                    - only for data-on. Sets last error when handler is not found (turn it only during testing)
                        
         
 
@@ -1734,6 +1735,7 @@ Binding.prototype.$set_targetValue = function (vin) {
 	if ( this.__obliterated ) { return; }
     this.$traceBinding("set", vin);
     this.$resolveBindingParameter();
+    var me = this;
     if (this.$debugDelegate != null) this.$debugDelegate.invoke("$set_targetValue", this, this.$target, vin);
     try {
         if (this.$targetAction != null && this.$targetAction.length > 0) {
@@ -1755,21 +1757,43 @@ Binding.prototype.$set_targetValue = function (vin) {
                 }
             } else if (this.$target != null) {
                 var v = this.$formatToTarget(vin);
-                if (this.$targetAction.charAt(0) == "$") {
-                    if (this.$targetIndex != null) {
-                        this.$target.activeClass["set_" + this.$targetAction.slice(1)].call(this.$target.activeClass, this.$targetIndex, v);
-                    } else {
-                        this.$target.activeClass["set_" + this.$targetAction.slice(1)].call(this.$target.activeClass, v);
-                    }
+                if (this.options.operation && BaseObject.is(v, "Operation")) {
+                    v.onsuccess(function(r) {
+                        var v = r;
+                        if ( me.__obliterated ) { return; }
+                        if (me.$targetAction.charAt(0) == "$") {
+                            if (me.$targetIndex != null) {
+                                me.$target.activeClass["set_" + this.$targetAction.slice(1)].call(me.$target.activeClass, me.$targetIndex, v);
+                            } else {
+                                me.$target.activeClass["set_" + me.$targetAction.slice(1)].call(me.$target.activeClass, v);
+                            }
+                        } else {
+                            if (me.$targetIndex != null) {
+                                Binding.TargetOperations.$callwriteindexed(me.$targetAction, me.$target, me.$targetIndex, v, me);
+                            } else {
+                                Binding.TargetOperations.$callwrite(me.$targetAction, me.$target, v, me);
+                            }
+                        }
+                    }).onfailure(function(e) {
+                        me.LASTERROR("Operation returned from formatter failed");
+                    });
                 } else {
-                    if (this.$targetIndex != null) {
-						Binding.TargetOperations.$callwriteindexed(this.$targetAction, this.$target, this.$targetIndex, v, this);
+                    if (this.$targetAction.charAt(0) == "$") {
+                        if (this.$targetIndex != null) {
+                            this.$target.activeClass["set_" + this.$targetAction.slice(1)].call(this.$target.activeClass, this.$targetIndex, v);
+                        } else {
+                            this.$target.activeClass["set_" + this.$targetAction.slice(1)].call(this.$target.activeClass, v);
+                        }
                     } else {
-						Binding.TargetOperations.$callwrite(this.$targetAction, this.$target, v, this);
+                        if (this.$targetIndex != null) {
+                            Binding.TargetOperations.$callwriteindexed(this.$targetAction, this.$target, this.$targetIndex, v, this);
+                        } else {
+                            Binding.TargetOperations.$callwrite(this.$targetAction, this.$target, v, this);
+                        }
                     }
                 }
             }
-            $(this.$target).trigger(Binding.$targetUpdatejQueryEvent);
+            //$(this.$target).trigger(Binding.$targetUpdatejQueryEvent);
         }
 
     } catch (ex) {

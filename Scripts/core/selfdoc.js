@@ -73,6 +73,7 @@ Function.prototype.Sealed = function(b) {
     } else {
         this.$issealed = true;
     }
+    return this;
 }.Hide();
 Function.prototype.Deprecated = function() {
     this.$isdeprecated = true;

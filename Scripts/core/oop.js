@@ -849,6 +849,7 @@ Function.prototype.ImplementActiveProperty = function (pname, initialize, pstore
 	initialize = initialize || new Initialize("no description", null);
 	if (typeof pstore_or_force == "boolean") {
 		force = pstore_or_force;
+		changeCallback = force_in;
 	} else if (typeof pstore_or_force == "string") {
 		pstore = pstore_or_force;
 		force = force_in;

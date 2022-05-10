@@ -20,8 +20,50 @@ IItemTemplateSource.Interface("IItemTemplateSource");
 
 // These two were planned as places for implementation that are called by the other two (the offical ones).
 // TODO: We want to remove from the interface these two - please DON't USE THEM anymore.
-IItemTemplateSource.prototype.get_itemTemplate = function(index_or_null) {}.Description("Returns the item template. If a paramater is specified it should return the corresponding template. Indexing support depends on the control and may not be implemented. Without index this should be the main template (whatever makes it main).") 
+IItemTemplateSource.prototype.get_itemTemplate = function(index_or_null) { throw "not implemented";}.Description("Returns the item template. If a paramater is specified it should return the corresponding template. Indexing support depends on the control and may not be implemented. Without index this should be the main template (whatever makes it main).");
 IItemTemplateSource.prototype.set_itemTemplate = function(value_or_index, null_or_value) { throw "set_itemTemplate is not implemented in " + this.fullClassType(); } 
 // These should be the official ones.
 IItemTemplateSource.prototype.get_itemtemplate = function() { return this.get_itemTemplate.apply(this,arguments); }.Description("Alias for get_itemTemplate. Do not change.").Sealed();
 IItemTemplateSource.prototype.set_itemtemplate = function() { return this.set_itemTemplate.apply(this, arguments); }.Description("Alias for set_itemTemplate. Do not change.").Sealed();
+
+IItemTemplateSource.prototype.get_singletemplateconsumerkey = function() { throw "not impl";}
+IItemTemplateSource.prototype.set_singletemplateconsumerkey = function(v) { throw "not impl";}
+
+IItemTemplateSource.collectItemTemplatesFromDom = function(dom) {
+	dom = DOMUtil.toDOMElement(dom);
+	if (dom instanceof HTMLElement) {
+		var b = false;
+		var result = {};
+		var containers = [];
+		for (var i = 0; i < dom.children.length; i++) {
+			var el = dom.children[i];
+			if (el instanceof HTMLElement) {
+				if (/^\w+-\w+(-\w+)?$/.test(el.tagName)) {
+					containers.push(el);
+				}
+			}
+		}
+		if (containers.length > 0) {
+			for (var i = 0; i < containers.length; i++) {
+				b = true;
+				result[containers[i].tagName.toLowerCase()] = containers[i].innerHTML;
+			}
+			if (b) return result;
+		} else {
+			var key;
+			for (var i = 0; i < dom.children.length; i++) {
+				var el = dom.children[i];
+				if (el instanceof HTMLElement) {
+					key = el.getAttribute("data-key");
+					if (key != null && key.length > 0) {
+						b = true;
+						result[key] = el.outerHTML;
+					}
+				}
+			}
+			if (b) return result;
+
+		}
+	} 
+	return null;
+}

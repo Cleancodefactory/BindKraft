@@ -55,7 +55,7 @@ Handler.prototype.$filterEvent = function (args /* ...arguments */) {
 }
 
 Handler.prototype.OmniHandlerDom = function (ev) {
-	if ( this.__obliterated ) { return; }
+	if ( this.__obliterated ) { return false; }
 	if ((this.options.nodefault || this.options.preventdefault) && ev != null && ev.preventDefault) {
 		ev.preventDefault();
 	}
@@ -82,6 +82,8 @@ Handler.prototype.OmniHandlerDom = function (ev) {
 					return hndlr.call(this.$sourceNode, ev, dc, this, this.bindingParameter);
 				}
 			}
+		} else if (this.options.handlers) {
+			this.LASTERROR("Handler not found " + this.$expression, "Handling DOM event");
 		}
 	});
 };
@@ -111,7 +113,7 @@ Handler.prototype.OmniPlugDom = function(ev) {
 // The actual arguments are up to the implementor of the event. However, there is a convention to pass sender and data parameters only.
 // Recomended: Stick to the convention, you can break it safely only for events intended for local private usage between a couple of classes entirely under your control.
 Handler.prototype.OmniHandlerDisp = function (sender, dc) {
-	if ( this.__obliterated ) { return; }
+	if ( this.__obliterated ) { return false; }
 	var args = Array.createCopyOf(arguments);
 	if (!this.$filterEvent(sender, dc, this, this.bindingParameter)) return;
 	return this.callAsyncIf(this.options.async, function () {
@@ -134,6 +136,8 @@ Handler.prototype.OmniHandlerDisp = function (sender, dc) {
 			return hndlr.call(this.$sourceNode, sender, dc, this, this.bindingParameter);
 			}
 			*/
+		} else if (this.options.handlers) {
+			this.LASTERROR("Handler not found " + this.$expression, "Handling DISP event");
 		}
 	});
 };
@@ -142,7 +146,7 @@ Handler.prototype.OmniHandlerDisp = function (sender, dc) {
 //	So they just do that during binding and do not attach to an event source.
 // The handler remains registered in the handlers collection only to provide unbinding functionality during obliteration/unbinding.
 Handler.prototype.OmniPlugDisp = function(target1, target2) {
-	if ( this.__obliterated ) { return; }
+	if ( this.__obliterated ) { return false; }
 	var args = Array.createCopyOf(arguments);
 	var val = target1 || target2; // The method is called with two args containing the target and backup target - e.g. we prefer activeClass, but if not available we inject the DOM element (obvious for the view writter)
 	return this.callAsyncIf(this.options.async, function () {

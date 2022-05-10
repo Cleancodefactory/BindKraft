@@ -76,7 +76,7 @@
                         } else {
                             cls.prototype[key] = __emptyproc;
                         }
-                        throw "The " + ifaceName + "." + key + " is not implemented as function in " + className + " and a local proxy cannot be created.";
+                        throw "The " + iface_name + "." + key + " is not implemented as function in " + className + " and a local proxy cannot be created.";
                     } else {
                         cls.prototype[key] = this.CreateWrapper(impl[key]);
                     }

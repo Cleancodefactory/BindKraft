@@ -10,6 +10,7 @@
     <input type="text"
         style="display:none;"
         data-key="display" tabindex="-1"
+        readonly
         data-on-focus="{bind source=__control path=onFocusFilter}"
         data-on-blur="{bind source=__control path=onBlurFilter}"
         data-bind-val="{read source=__control path=$passivetext readdata=$selectedobject_changed}"
