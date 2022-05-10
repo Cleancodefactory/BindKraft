@@ -434,7 +434,63 @@
 		}
 	};
 
-
+	/**
+	 * 
+	 */
+	GRect.prototype.adjustPopUp = function (pt, rect, method, shifttop, shiftleft) {
+		var lshift = 0;
+		var tshift = 0;
+		if (typeof shifttop == "number" && !isNaN(shifttop)) tshift = shifttop;
+		if (typeof shiftleft == "number" && !isNaN(shiftleft)) lshift = shiftleft;
+		if (BaseObject.is(rect, "IGRect") && BaseObject.is(pt, "IGRect")) {
+			if (method == "aboveunder") {
+				return GRect.maxRect([this.intersectWith(new GRect(pt.x, pt.y + pt.h, rect.w, rect.h)),
+									  this.intersectWith(new GRect(pt.x, pt.y - rect.h, rect.w, rect.h)),
+									  this.intersectWith(new GRect(pt.x + pt.w - rect.w, pt.y + pt.h, rect.w, rect.h)),
+									  this.intersectWith(new GRect(pt.x + pt.w - rect.w, pt.y - rect.h, rect.w, rect.h))
+									 ]);
+			} else if (method == "sideways") {
+				return GRect.maxRect([this.intersectWith(new GRect(pt.x + pt.w, pt.y - rect.h, rect.w, rect.h)),
+									  this.intersectWith(new GRect(pt.x + pt.w, pt.y + pt.h, rect.w, rect.h)),                                  
+									  this.intersectWith(new GRect(pt.x - rect.w, pt.y - rect.h, rect.w, rect.h)),
+									  this.intersectWith(new GRect(pt.x - rect.w, pt.y + pt.h, rect.w, rect.h))
+				]);
+			}
+		} else if (BaseObject.is(rect, "IGRect") && BaseObject.is(pt, "IGPoint")) {
+			var r, a;
+			if (method == "center") {
+				return GRect.maxRect([this.intersectWith(new GRect(pt.x - rect.w / 2, pt.y - rect.h - tshift, rect.w, rect.h)),
+									  this.intersectWith(new GRect(pt.x - rect.w / 2, pt.y + tshift, rect.w, rect.h))
+									  ]);
+			} else if (method == "middle") {
+				return GRect.maxRect([this.intersectWith(new GRect(pt.x + tshift, pt.y - rect.h / 2, rect.w, rect.h)),
+									  this.intersectWith(new GRect(pt.x - rect.w - tshift, pt.y - rect.h / 2, rect.w, rect.h))]);
+			} else if (method == "centermiddle") {
+				return GRect.maxRect([this.intersectWith(new GRect(pt.x - rect.w - tshift, pt.y - rect.h / 2, rect.w, rect.h)),
+									 this.intersectWith(new GRect(pt.x + tshift, pt.y - rect.h / 2, rect.w, rect.h)),
+									 this.intersectWith(new GRect(pt.x - rect.w / 2, pt.y - rect.h - lshift, rect.w, rect.h)),
+									 this.intersectWith(new GRect(pt.x - rect.w / 2, pt.y + lshift, rect.w, rect.h))
+									 ]);
+			} else if (method == "corners") {
+				return GRect.maxRect([this.intersectWith(new GRect(pt.x + tshift, pt.y + lshift, rect.w, rect.h)),
+									 this.intersectWith(new GRect(pt.x - rect.w - tshift, pt.y + lshift, rect.w, rect.h)),
+									 this.intersectWith(new GRect(pt.x - rect.w - tshift, pt.y - rect.h - lshift, rect.w, rect.h)),
+									 this.intersectWith(new GRect(pt.x + tshift, pt.y - rect.h - lshift, rect.w, rect.h))]);
+			}
+			else if (method == "all") {
+				return GRect.maxRect([this.intersectWith(new GRect(pt.x + tshift, pt.y + lshift, rect.w, rect.h)),
+									  this.intersectWith(new GRect(pt.x - rect.w - tshift, pt.y + lshift, rect.w, rect.h)),
+									  this.intersectWith(new GRect(pt.x - rect.w - tshift, pt.y - rect.h - lshift, rect.w, rect.h)),
+									  this.intersectWith(new GRect(pt.x + tshift, pt.y - rect.h - lshift, rect.w, rect.h)),
+									  this.intersectWith(new GRect(pt.x - rect.w - tshift, pt.y - rect.h / 2, rect.w, rect.h)),
+									  this.intersectWith(new GRect(pt.x + tshift, pt.y - rect.h / 2, rect.w, rect.h)),
+									  this.intersectWith(new GRect(pt.x - rect.w / 2, pt.y - rect.h - lshift, rect.w, rect.h)),
+									  this.intersectWith(new GRect(pt.x - rect.w / 2, pt.y + lshift, rect.w, rect.h))
+									  ]);
+			}
+		}
+	
+	};
 
 	//#endregion
 

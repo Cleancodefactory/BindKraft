@@ -13,6 +13,6 @@ IKeyboardEventHandler.prototype.processKey = function(e) {
 	if (this.supports("IKeyboardHandler")) return this.processKeyData(IKeyboardHandler.packKeyDataFromEvent(e));
 	return false;
 };
-IKeyboardHandler.prototype.handleProcessKey = function (e) { // This method is only for symetry with other cases. In fact we do not need it - all info is in the browser's keyboard event.
+IKeyboardHandler.prototype.handleProcessKey = function (e) { // This method is only for symmetry with other cases. In fact we do not need it - all info is in the browser's keyboard event.
 	return this.processKey(e);
 };

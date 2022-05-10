@@ -1,0 +1,28 @@
+<div>
+    <input type="text"
+        data-key="input"
+        data-bind-val="{bind source=__control path=$filter writedata=input flags=filterbox}"
+        data-on-focus="{bind source=__control path=onFocusFilter}"
+        data-on-click="{bind source=__control path=onFocusFilter}"
+        data-on-blur="{bind source=__control path=onBlurFilter}"
+        data-on-keydown="{bind source=__control path=onKeyInput}"
+        data-on-plugelement="{bind source=__control path=$filterbox}"/>
+    <input type="text"
+        style="display:none;"
+        data-key="display" tabindex="-1"
+        data-on-focus="{bind source=__control path=onFocusFilter}"
+        data-on-blur="{bind source=__control path=onBlurFilter}"
+        data-bind-val="{read source=__control path=$passivetext readdata=$selectedobject_changed}"
+        data-on-plugelement="{bind source=__control path=$display}"/>        
+</div>
+<div 
+    class="drop"
+    data-key="drop" 
+    data-on-plugelement="{bind source=__control path=$droppanel}">
+    <ul data-class="SelectableRepeater selectedCssClass='selected'"
+        data-key="selector"
+        data-on-pluginto="{bind source=__control path=$droplist}"
+        data-on-$activatedevent="{bind source=__control path=onMakeSelection}"
+        data-bind-$items="{read source=__control path=$choices readdata=$choices_changed}">
+    </ul>
+</div>

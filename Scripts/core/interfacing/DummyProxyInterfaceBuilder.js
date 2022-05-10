@@ -36,7 +36,7 @@ DummyInterfaceProxyBuilder.prototype.buildProxy = function (instnce, interfaceDe
 			var _ifaceDef = Class.getInterfaceDef(interfaceDef); // Make sure we have the definition and not the name
 			if (this.$strictMode) {
 				if (!Class.doesextend(interfaceDef, "IManagedInterface")) {
-					this.LASTERROR(_Errors.compose(),"The interface does not extend IManagedInterface.");
+					this.LASTERROR(_Errors.compose(),"The interface does not extend IManagedInterface. (" + interfaceDef.classType + ")");
 					return null;
 				}
 			}

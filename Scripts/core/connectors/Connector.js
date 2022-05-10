@@ -161,7 +161,7 @@ Connector.prototype.set_parameters = function (idx, v) {
     } else {
 		newval = idx;
 	}
-	if (this.$parameters != null && (typeof this.$parameters == "object") && (typeof newval == "object")) {
+	if (newval != null && this.$parameters != null && (typeof this.$parameters == "object") && (typeof newval == "object")) {
 		this.$parameters = BaseObject.CombineObjects(this.$parameters, newval);
 	} else {
 		this.$parameters = newval; // if called with a single arg we assume the caller calls this as normal (non-indexed property).

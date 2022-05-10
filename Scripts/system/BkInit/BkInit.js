@@ -101,5 +101,8 @@ var BkInit = {
 			fn (new (Class("BKInit_AjaxPipeline"))(name));
 		}
 		
+	},
+	Workspace: function(fn) {
+		fn(new (Class("BKinit_WorkspaceWindow"))());
 	}
 };

@@ -104,5 +104,25 @@
         }
         return new GPoint(ref1.x + this.x - ref2.x, ref1.y + this.y - ref2.y);
     }.Description("maps the point coordinates from el1 space to el2 space, if any of them is null, it is considered to be the viewport (client coordinates of the browser window)")
-
+    GPoint.prototype.toDOMElement = function (_el) {
+		var el = DOMUtil.toDOMElement(_el);
+		if (el instanceof HTMLElement) {
+			el.style.left = this.x + "px";
+			el.style.top = this.y + "px";
+		}
+	};
+    GPoint.prototype.toDOMElementAsViewport = function(_el) {
+		var el = DOMUtil.toDOMElement(_el);
+		if (el instanceof HTMLElement) {
+			var offp = el.offsetParent;
+			if (offp != null) {
+				var rect = this.mapFromToElements(null, offp);
+				el.style.left = rect.x + "px";
+				el.style.top = rect.y + "px";
+			} else { // Assume the element is fixed
+				el.style.left = this.x + "px";
+				el.style.top = this.y + "px";
+			}
+		}
+	}
 })();
