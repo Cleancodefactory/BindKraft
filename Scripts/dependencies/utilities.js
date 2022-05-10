@@ -1,8 +1,4 @@
 
-
-
-/// <reference path="~/Scripts/jquery-vsdoc.js"/>
-
 // Usage IsNull(arg), IsNull("!all", arg, arg ...)
 // If the first arg is a string and starts with "?" or "!" it is a command
 //  ! - means check for null, ? - means check for null or empty, all - means all args must be null (or empty), one - means at least one must be null (or empty).
