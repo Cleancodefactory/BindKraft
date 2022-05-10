@@ -30,13 +30,15 @@
     LookupMultiSelectionComposite
         .ImplementProperty("identification", new InitializeStringParameter("The name of the id field"))
         .ImplementProperty("description", new InitializeStringParameter("The name of the display field"))
-        .ImplementProperty("items", new Initialize("Items for selection in the LookupBoxControl"),true, function(oval,nval) {
-            this.updateTargets();
+        .ImplementActiveProperty("items", new Initialize("Items for selection in the LookupBoxControl"),true, function(oval,nval) {
+            if (BaseObject.is(this.get_lookup(),"SelectedItemsControl")) {
+                this.get_lookup().refreshChoices();
+            }
         })
         .ImplementProperty("noselection", new InitializeStringParameter("Text shown in the lookup box before typing","(select to add)"))
         .ImplementProperty("clearselection", new InitializeStringParameter("Text for the clear selection button/icon","clear selection"))
-        .ImplementProperty("selectedobjects", new InitializeArray("Items for handling in the SelectedItemsControl. Must be the same type as the $selectedobject of the lookup box"),true,function(oval,nval){
-            this.updateTargets();
+        .ImplementActiveProperty("selectedobjects", new InitializeArray("Items for handling in the SelectedItemsControl. Must be the same type as the $selectedobject of the lookup box"),true,function(oval,nval){
+            // May be needed for fine tunning
         })
     //#endregion
 
@@ -58,11 +60,11 @@
             } else {
                 sels = [];
             }
-            if (flt == null || flt.length == 0) return items;
-            if (Array.isArray(items) && typeof flt == "string" && d != null) {
+            //if (flt == null || flt.length == 0) return items;
+            if (Array.isArray(items) && d != null) {
                 return items.Select(function(idx, item) {
                     var it = item[d];
-                    if (typeof it == "string" && it.toLowerCase().indexOf(flt.toLowerCase()) >= 0) {
+                    if (flt == null || flt.length == 0 || (typeof it == "string" && it.toLowerCase().indexOf(flt.toLowerCase()) >= 0)) {
                         if (sels.indexOf(me.get_selectioncallback().identifyItem(item)) >= 0) return;
                         return item;
                     }

@@ -2,7 +2,7 @@
     data-key="selector"
     data-bind-$identification="{read source=__control path=$identification}"
     data-bind-$interface="{read(5) source=__control path=$selectioncallback}"
-    data-bind-$items="{read source=__control path=$selectedobjects}"
+    data-bind-$items="{read source=__control path=$selectedobjects readdata=$selectedobjects_changed}"
     data-on-pluginto="{bind source=__control path=$selector}"
     data-on-$selchangedevent="{bind source=__control path=selchangedevent options=handlers}"
 >
