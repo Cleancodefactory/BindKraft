@@ -42,8 +42,22 @@ EventDispatcher.prototype.$orderedAdd = function (func, priority) {
     var newhandler = new EventDispatherRegHelper(func, priority);
     return this.handlers.addOrderedElement(newhandler);
 };
+EventDispatcher.prototype.$actionQueue = null;
+EventDispatcher.prototype.$queueAction = function(proc, args) {
+    if (this.$actionQueue == null) this.$actionQueue = new (Class("QueuedActionsContainer"))();
+    this.$actionQueue.addApply(this, proc, Array.createCopyOf(args));
+}
+EventDispatcher.prototype.$queueFinalizeActions = function() {
+    if (this.$actionQueue == null) return;
+    this.$actionQueue.execute();
+    this.$actionQueue = null;
+}
 EventDispatcher.prototype.add = function (func, bPriority) {
-    if (this.__obliterated || this.$invocationInProgress > 0) return;
+    if (this.__obliterated) return;
+    if (this.$invocationInProgress > 0) {
+        this.$queueAction(this.add, arguments);
+        return this;
+    }
     if (this.handlers == null) return this;
 	// TODO: This line looks antique?
     //var n = this.handlers.findElement(func);
@@ -53,14 +67,22 @@ EventDispatcher.prototype.add = function (func, bPriority) {
     return this;
 };
 EventDispatcher.prototype.remove = function (func) {
-    if (this.__obliterated || this.$invocationInProgress > 0) return;
+    if (this.__obliterated) return;
+    if (this.$invocationInProgress > 0) {
+        this.$queueAction(this.remove, arguments);
+        return this;
+    }
     if (this.handlers == null) return this;
     var h = this.handlers.removeElement(func);
     if (h != null) h.obliterate();
     return this;
 };
 EventDispatcher.prototype.removeByTarget = function (target) {
-    if (this.__obliterated || this.$invocationInProgress > 0) return;
+    if (this.__obliterated) return;
+    if (this.$invocationInProgress > 0) {
+        this.$queueAction(this.removeByTarget, arguments);
+        return this;
+    }
     if (this.handlers == null) return this;
     this.handlers.Delete(function(idx, item) {
         if (BaseObject.is(item, "EventDispatcherReg") && BaseObject.is(item.handler, "ITargeted")) {
@@ -71,7 +93,11 @@ EventDispatcher.prototype.removeByTarget = function (target) {
     return this;
 };
 EventDispatcher.prototype.removeAll = function () {
-    if (this.__obliterated || this.$invocationInProgress > 0) return;
+    if (this.__obliterated) return;
+    if (this.$invocationInProgress > 0) {
+        this.$queueAction(this.add, arguments);
+        return this;
+    }
     for (var i = 0; this.handlers != null && i < this.handlers.length; i++) {
         // TODO: Should we oliterate them?
         if (this.handlers[i] != null) {
@@ -126,6 +152,9 @@ EventDispatcher.prototype.invoke = function () {
         }
     } finally {
         this.$invocationInProgress--;
+        if (this.$invocationInProgress <= 0) {
+            this.$queueFinalizeActions();
+        }
     }
 };
 EventDispatcher.prototype.invokeWithArgsArray = function (args) {

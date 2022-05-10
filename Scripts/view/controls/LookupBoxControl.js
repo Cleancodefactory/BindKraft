@@ -56,7 +56,7 @@
         .Implement(IUIControl)
         .Implement(IDisablable)
         .Implement(IKeyboardProcessorImpl)
-        .Implement(ICustomParameterizationStdImpl, "sourcedata", "identification", "filterbyfield","dropwidth", "dropheight", "interface")
+        .Implement(ICustomParameterizationStdImpl, "sourcedata", "identification", "filterbyfield","dropwidth", "dropheight", "interface", "noselection")
         .Implement(IItemTemplateConsumerImpl)
         .Implement(ITemplateSourceImpl, new Defaults("templateName"),"autofill")
         .Implement(IItemTemplateSourceImpl, true, "single")
@@ -176,6 +176,13 @@
         this.Close();
     };
     //#region Data, choices and translation
+    /**
+     * For external (and internal sometimes) choices refresh invocation. Works the same as when the user writes, but can be called in all the cases 
+     * when change of the choices may occur because of the data to make sure user see what's appropriate. Refresh will happen
+     */
+    LookupBoxControl.prototype.refreshChoices = function() {
+        this.$choicesRefresh.windup();
+    }
     LookupBoxControl.prototype.$choicesRefresh = new InitializeMethodTrigger("Initiates new search", function () { 
         var flt = this.get_filter();
         var op = null;
@@ -263,6 +270,7 @@
     LookupBoxControl.prototype.$bodyVisible = false;
     LookupBoxControl.prototype.get_bodyVisible = function () { return this.$bodyVisible; };
     LookupBoxControl.prototype.set_bodyVisible = function (v) {
+        var prevstate = this.get_bodyVisible();
         if (this.get_disabled()) {
             this.$bodyVisible = false;
         } else {
@@ -287,8 +295,9 @@
                     this.get_droppanel().style.height = this.get_dropheight() + "px";
                 }
                 var pos = ViewUtil.adjustPopupInHostLocally(this, this.get_droppanel());
-
-                // TODO: May be update the drop
+                
+                // TODO: May be update the drop => Yes!
+                if (!prevstate) this.refreshChoices();
             }
         } else {
             DOMUtil.hideElement(this.get_droppanel());

@@ -36,7 +36,7 @@
     .Implement(IUIControl)
     .Implement(IDisablable)
     .Implement(IKeyboardProcessorImpl)
-    .Implement(ICustomParameterizationStdImpl, "identification", "interface")
+    .Implement(ICustomParameterizationStdImpl, "identification", "interface","clear")
     .Implement(IItemTemplateConsumerImpl)
     .Implement(ITemplateSourceImpl, new Defaults("templateName"), "autofill")
     .Implement(IItemTemplateSourceImpl, true, "single")
@@ -52,6 +52,7 @@
             // Setting the items even if the reference is the same can be often used to signal changes.
             this.$cachedItems.splice(0);
         })
+        .ImplementProperty("clear", new InitializeStringParameter("the text for the clear button", "clear"))
         .ImplementProperty("interface", new Initialize("Bubble interface implementation of ISelectedItemsCallback"))
         .ImplementProperty("identification", new InitializeStringParameter("Property by which the items can be uniquely identified.", null), true, function(oval, nval) {
             this.ExecBeforeFinalInit(null, function() {
@@ -89,6 +90,7 @@
     //#region Events
 
     SelectedItemsControl.prototype.itemremovedevent = new InitializeEvent("Fired when one or more items have been removed");
+    SelectedItemsControl.prototype.selchangedevent = new InitializeEvent("Fired when one or more items have been removed");
 
     //#endregion
 
@@ -207,6 +209,7 @@
             if (this.$removeRawItemById(item[ind])) {
                 this.items_changed.invoke(this, null);
                 this.itemremovedevent.invoke(this,null);
+                this.selchangedevent.invoke(this,this.get_items());
             }
         }
     }
@@ -219,6 +222,7 @@
             originalItems.splice(0);
             this.items_changed.invoke(this, null);
             this.itemremovedevent.invoke(this,null);
+            this.selchangedevent.invoke(this,this.get_items());
         }
     }
     /**
@@ -236,6 +240,7 @@
                         this.$removeRawItemById(id);
                         originalItems.push(item); 
                         this.items_changed.invoke(this, null);
+                        this.selchangedevent.invoke(this,originalItems);
                     } else {
                         this.LASTERROR("Cannot identify item", "onAddItem");
                     }

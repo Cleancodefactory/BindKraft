@@ -14,6 +14,7 @@
         nodefault|preventdefault 	- only data-on for DOM events - prevents default
         stoppropagation|
         nopropagation               - only data-on for DOM events - stops further propagation
+        handlers                    - only for data-on. Sets last error when handler is not found (turn it only during testing)
                        
         
 

@@ -14,7 +14,7 @@
     LookupMultiSelectionComposite.Inherit(Base, "LookupMultiSelectionComposite")
     .Implement(IUIControl)
     .Implement(IDisablable)
-    .Implement(ICustomParameterizationStdImpl, "identification", "description")
+    .Implement(ICustomParameterizationStdImpl, "identification", "description", "noselection")
     .Implement(ITemplateSourceImpl, new Defaults("templateName"), "autofill")
     .Implement(IItemTemplateSourceImpl, true)
     .Defaults({
@@ -30,14 +30,45 @@
     LookupMultiSelectionComposite
         .ImplementProperty("identification", new InitializeStringParameter("The name of the id field"))
         .ImplementProperty("description", new InitializeStringParameter("The name of the display field"))
-        .ImplementProperty("items", new Initialize("Items for selection in the LookupBoxControl"))
-        .ImplementProperty("selectedobjects", new InitializeArray("Items for handling in the SelectedItemsControl. Must be the same type as the $selectedobject of the lookup box"))
+        .ImplementProperty("items", new Initialize("Items for selection in the LookupBoxControl"),true, function(oval,nval) {
+            this.updateTargets();
+        })
+        .ImplementProperty("noselection", new InitializeStringParameter("Text shown in the lookup box before typing","(select to add)"))
+        .ImplementProperty("clearselection", new InitializeStringParameter("Text for the clear selection button/icon","clear selection"))
+        .ImplementProperty("selectedobjects", new InitializeArray("Items for handling in the SelectedItemsControl. Must be the same type as the $selectedobject of the lookup box"),true,function(oval,nval){
+            this.updateTargets();
+        })
+    //#endregion
+
+    //#region Events
+    LookupMultiSelectionComposite.prototype.selchangedevent = new InitializeEvent("Fired when selection changed");
     //#endregion
 
     //#region ILookupBoxCallback
     LookupMultiSelectionComposite.ImplementInterfaceBubble("lookupcallback", ILookupBoxCallback,{
         getChoices: function(flt, offset, limit) { 
-            return this.get_items();
+            var me = this;
+            var d = this.get_description();
+            var items =  this.get_items();
+            var sels = this.get_selectedobjects();
+            if (Array.isArray(sels)) {
+                sels = sels.Select(function(i,o) {
+                    return me.get_selectioncallback().identifyItem(o);
+                });
+            } else {
+                sels = [];
+            }
+            if (flt == null || flt.length == 0) return items;
+            if (Array.isArray(items) && typeof flt == "string" && d != null) {
+                return items.Select(function(idx, item) {
+                    var it = item[d];
+                    if (typeof it == "string" && it.toLowerCase().indexOf(flt.toLowerCase()) >= 0) {
+                        if (sels.indexOf(me.get_selectioncallback().identifyItem(item)) >= 0) return;
+                        return item;
+                    }
+                });
+            }
+            return items;
         },
         translateSelection: function(selection, forDisplay) { 
             return BaseObject.getProperty(selection, this.get_description());
