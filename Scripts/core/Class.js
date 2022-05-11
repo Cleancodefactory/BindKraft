@@ -80,7 +80,7 @@ var Class = {
     supports: function (cls, prot) {
         var cur = cls;
 		var prot_name = this.getInterfaceName(prot);
-		if (prot_name) return false;
+		if (prot_name == null) return false;
 		// +V: 2.18.2
 		if (typeof cls == "string") {
 			cur = this.getType(cls);
