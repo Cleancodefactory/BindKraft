@@ -198,6 +198,16 @@ BaseWindow.showChildHideTheRest = function(parentWindow,childWindow,additionalFl
         }
     }
 }
+BaseWindow.hideAllChildren = function(parentWindow,additionalFlags) {
+    additionalFlags = additionalFlags || 0;
+    if (BaseObject.is(parentWindow,"BaseWindow")) {
+        if (parentWindow.children != null) {
+            for (var i = 0;i < parentWindow.children.length;i++) {
+                parentWindow.children[i].setWindowStyles(WindowStyleFlags.visible | additionalFlags,"reset");
+            }
+        }
+    }
+}
 BaseWindow.prototype.$iconpath = null; // Set this in the module-configuration.js file. On some platforms it may be called application-configuration.js.
 BaseWindow.prototype.set_iconpath = function(v) {
 	this.$iconpath = v;
