@@ -79,6 +79,8 @@ var Class = {
     },
     supports: function (cls, prot) {
         var cur = cls;
+		var prot_name = this.getInterfaceName(prot);
+		if (prot_name == null) return false;
 		// +V: 2.18.2
 		if (typeof cls == "string") {
 			cur = this.getType(cls);
@@ -86,7 +88,7 @@ var Class = {
 		
 		// +-: 2.7.1
         if (cls == null) return false;
-        if (cur.interfaces && cur.interfaces[prot]) return true;
+        if (cur.interfaces && cur.interfaces[prot_name]) return true;
         if (cur.parent) return Class.supports(cur.parent.constructor, prot);
         return false;
     },
