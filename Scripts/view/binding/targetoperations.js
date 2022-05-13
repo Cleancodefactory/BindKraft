@@ -138,6 +138,38 @@ Binding.TargetOperations = {
 			}
 
 		},
+		textlines: {
+			indexed: false,
+			read: function() {
+				var result = [];
+				var node;
+				for (var i = 0; i < this.childNodes.length; i++) {
+					node = this.childNodes[i];
+					if (node.nodeType == 3) {
+						result.push(node.textContent);
+					}
+				}
+				return result;
+			},
+			write: function(_v,bind){
+				var v = _v;
+				var br = "br";
+				if (bind != null && bind.bindingParameter != null && /^[a-z_\-]+$/.test(bind.bindingParameter)) br = bind.bindingParameter + "";
+				
+				if (!Array.isArray(v)) {
+					v = [_v];
+				}
+				DOMUtil.Empty(this);
+				for (var i = 0; i < v.length; i++) {
+					if (v[i] != null) {
+						this.appendChild(document.createTextNode(v[i] + ""));
+						if (i < v.length - 1) {
+							this.appendChild(document.createElement(br));
+						}
+					}
+				}
+			}
+		},
 		textaroundelements: {
 			indexed: false,
 			read: function(){
@@ -265,6 +297,36 @@ Binding.TargetOperations = {
 			},
 			write: function(v){
 				this.style.setProperty("width",v);
+			}
+		},
+		height: {
+			indexed: false,
+			read: function(){
+				var GSize = Class("GSize");
+				var size = GSize.fromDOMElement(this);
+				return size.height;
+			},
+			write: function(v) {
+				if (v == null) {
+					this.style.removeProperty("height");
+				} else {
+					this.style.setProperty("height",Math.round(v) + "px");
+				}
+			}
+		},
+		width: {
+			indexed: false,
+			read: function(){
+				var GSize = Class("GSize");
+				var size = GSize.fromDOMElement(this);
+				return size.width;
+			},
+			write: function(v) {
+				if (v == null) {
+					this.style.removeProperty("width");
+				} else {
+					this.style.setProperty("width",Math.round(v) + "px");
+				}
 			}
 		},
 		style: {

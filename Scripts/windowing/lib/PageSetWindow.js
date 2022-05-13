@@ -218,7 +218,14 @@ PageSetWindow.prototype.set_selectedpage = function (page) {
     this.selectPage(page);
 }
 PageSetWindow.prototype.selectPage = function (page) {
-    WindowingMessage.fireOn(this, PageSetEventEnum.selectPage, { page: page });
+    if (typeof page == 'string') {
+        page = this.findChildByName(page);
+    }
+    if (BaseObject.is(page, "BaseWindow")) {
+        WindowingMessage.fireOn(this, PageSetEventEnum.selectPage, { page: page });
+    } else {
+        this.LASTERROR("The page argument is not a BaseWindow or the window cannot be found.")
+    }
 };
 PageSetWindow.prototype.on_selectPage = function (msg) {
     var current = null, old = this.get_selectedpage(), newIndex = -1;

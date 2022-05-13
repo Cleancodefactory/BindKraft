@@ -151,7 +151,7 @@ LocalAPI.prototype.getAPI = function(iface, variation) {
 			}
 		}
 	}
-	this.LASTERROR(_Errors.compose(),"API not found");
+	this.LASTERROR(_Errors.compose(),"API not found " + ifname);
 	return null;
 }
 

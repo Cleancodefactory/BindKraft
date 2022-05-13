@@ -39,6 +39,14 @@ DOMUtilElement.prototype.reInit = function(el, bClone) {
 	}
 	return false;
 }
+
+//#region Properties
+DOMUtilElement.IsEmpty = function(due) {
+	if (BaseObject.is(due, "DOMUtilElement")) {
+		return due.get_isempty();
+	}
+	return true;
+}
 DOMUtilElement.prototype.get_isempty = function() {
 	if (this.$element != null) {
 		if (this.$element.childNodes.length > 0) return false;
@@ -110,6 +118,21 @@ DOMUtilElement.prototype.get_owntext = function() {
 	}
 	return null;
 }
+DOMUtilElement.prototype.get_rect = function() {
+	var GRect = Class("GRect");
+	if (this.$element instanceof HTMLElement) {
+		return GRect.fromDOMElementOffset(this.$element);
+	}
+	return GRect.empty();
+}
+DOMUtilElement.prototype.get_clientrect = function() {
+	var GRect = Class("GRect");
+	if (this.$element instanceof HTMLElement) {
+		return GRect.fromDOMElementClient(this.$element);
+	}
+	return GRect.empty();
+}
+//#endregion
 DOMUtilElement.prototype.setTextAroundElements = function(text) {
 	if (this.$element instanceof HTMLElement) {
 		DOMUtil.setTextWithElements(this.$element, text);
@@ -119,6 +142,17 @@ DOMUtilElement.prototype.clearTextNodes = function(depth) {
 	if (this.$element instanceof HTMLElement) {
 		DOMUtil.clearTextNodes(this.$element, depth);
 	}
+}
+DOMUtilElement.prototype.setStyle = function(style, val) {
+	if (this.$element instanceof HTMLElement) {
+		DOMUtil.setStyle(this.$element, style, val);
+	}
+}
+DOMUtilElement.prototype.getStyle = function(style, bComputed) {
+	if (this.$element instanceof HTMLElement) {
+		return DOMUtil.getStyle(this.$element, style, bComputed);
+	}
+	return null;
 }
 DOMUtilElement.prototype.addClass = function(cls) {
 	if (this.$element instanceof HTMLElement) {

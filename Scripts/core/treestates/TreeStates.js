@@ -64,8 +64,12 @@
 			throw "TreeStates must be initialized with map or map set";
 		}
 	}
-	TreeStates.Inherit(BaseObject,"TreeStates")
-		.ImplementProperty("serializer");
+	TreeStates.Inherit(BaseObject,"TreeStates");
+
+	TreeStates.prototype.createManipulator = function(a,b) {
+		var man = Class("TreeStatesManipulator");
+		return new man(a,b,this);
+	}
 
 	TreeStates.prototype.maps = null;
 	TreeStates.prototype.linearize = function(objset) {
@@ -73,32 +77,10 @@
 	}.Description("Converts the array of state objects to array of linearized state values")
 		.Param("states","Array of state objects matching the map (MetaData in them is ignored for this process)")
 		.Returns("If successful an array of linearized state values, each of them is an array in turn. The result can be empty, on error null is returned and last error set.");
-	TreeStates.prototype.serialize = function(base, objset) {
-		var ser = this.get_serializer();
-		if (BaseObject.is (ser, "ITreeStatesSerializer")) {
-			var linear = this.linearize(objset);
-			return ser.encodeFromLinear(base, linear);
-		} else {
-			this.LASTERROR("Serializer not set.","serialize");
-			return null;
-		}
-	}
-
+	
 	TreeStates.prototype.delinearize = function(linear) {
 		return TreeStates.DelinearizeTSMaps(this.maps, linear);
 	}
-	TreeStates.prototype.deserialize = function(input, options) {
-		var ser = this.get_serializer();
-		if (BaseObject.is (ser, "ITreeStatesSerializer")) {
-			var linear = ser.parseToLinear(input, options);
-			return this.delinearize(linear);
-		} else {
-			this.LASTERROR("Serializer not set.","deserialize");
-			return null;
-		}
-	}
-
-
 
 	TreeStates.prototype.cutFromState = function(namedPath, state) {
 		return TreeStates.CutFromState(namedPath, state);
@@ -111,6 +93,66 @@
 		if (base != null) {
 			return base.concat(tail);
 		}
+		return null;
+	}
+	TreeStates.prototype.navToMap = function(namedPath) {
+		if (Array.isArray(namedPath)) {
+			if (namedPath.length > 0) {
+				var curr = null;
+				var name = namedPath[0];
+				var i, j;
+				var map, tse;
+				for (i = 0; i < this.maps.length; i++) {
+					map = this.maps[i];
+					tse = map[0];
+					if (definer.isElement(tse)) {
+						if (tse.$tsname == name) {
+							curr = map;
+							break;
+						}
+					} else {
+						this.LASTERROR("Expected map", "navToMap");
+						return null;
+					}
+				}
+				if (curr != null) { 
+					var succeed = true;
+					for (i = 1; i < namedPath.length; i++) {
+						name = namedPath[i];
+						if (curr.length <= 1) {
+							this.LASTERROR("The " + i + " element cannot be found from this namedPath [" + namedPath.join(",") + "] cannot be found in the state", "navToMap");
+							return null;
+						}
+						succeed = false;
+						for (j = 1; j < curr.length; j++) {
+							map = curr[j];
+							tse = map[0];
+							if (definer.isElement(tse)) {
+								if (tse.$tsname == name) {
+									curr = map;
+									succeed = true;
+									break;
+								}
+							} else {
+								this.LASTERROR("Expected map", "navToMap");
+								return null;
+							}
+						}
+						if (!succeed) {
+							this.LASTERROR("The " + i + " element cannot be found from this namedPath [" + namedPath.join(",") + "] cannot be found in the state", "navToMap");
+							return null;
+						}
+					}
+					return curr;
+				} else {
+					this.LASTERROR("The first map in [" + namedPath.join(",") + "] cannot be found in the state", "navToMap");
+					return null;
+				}
+			} else {
+				return this.maps;
+			}
+		}
+
 		return null;
 	}
 	// Static creators
@@ -135,7 +177,7 @@
 					if (namedPath[i] === state[i].StateElementName) {
 						result.push(state[i]);
 					} else {
-						break;
+						return null;
 					}
 				}
 				return result;
@@ -146,7 +188,7 @@
 			return null; // Kind of error - no state
 		}
 	}
-	TreeStates.prototype.namedPathFromState = function(state) {
+	TreeStates.namedPathFromState = function(state) {
 		if (Array.isArray(state)) {
 			var result = [];
 			for (var i = 0; i < state.length;i++) {
@@ -159,6 +201,32 @@
 			return result;
 		}
 		return null;
+	}
+	TreeStates.compareNamedPaths = function(named1,named2) {
+		if (!this.isNamedState(named1) || !this.isNamedState(named2)) return false;
+		if (named1.length != named2.length) return false;
+		for (var i = 0; i < named1.length; i++) {
+			if (named1[i] != named2[i]) return false;
+		}
+		return true;
+	}
+	TreeStates.isNamedState = function(state) {
+		if (Array.isArray(state) && (state.length == 0 || state.All(function(idx,item) { 
+			if (typeof item == 'string') return true;
+			return false;
+		}))) {
+			return true;
+		}
+		return false;
+	}
+	TreeStates.isObjectState = function(state) {
+		if (Array.isArray(state) && (state.length == 0 || state.All(function(idx,item) { 
+			if (typeof item == 'object') return true;
+			return false;
+		}))) {
+			return true;
+		}
+		return false;
 	}
 
 	//#endregion
@@ -481,6 +549,24 @@
 		if (definer.isMapSet(tsms)) {
 			for (var i = 0; i < tsms.length; i++) {
 				var objset = this.DelinearizeTSM(tsms[i],linear);
+				if (objset != null) { return objset; }
+			}
+		}
+		return null;
+	}
+	TreeStates.LinearizeTSSubMaps = function(tsm, objset, _linear) {
+		if (definer.isMap(tsm)) {
+			for (var i = 1; i < tsm.length; i++) {
+				var linear = this.LinearizeTSM(tsm[i],objset);
+				if (linear != null) { return linear; }
+			}
+		}
+		return null;
+	}
+	TreeStates.DelinearizeTSSubMaps = function(tsm, linear, _objset) {
+		if (definer.isMap(tsm)) {
+			for (var i = 1; i < tsm.length; i++) {
+				var objset = this.DelinearizeTSM(tsm[i],linear);
 				if (objset != null) { return objset; }
 			}
 		}

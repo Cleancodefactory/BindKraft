@@ -27,6 +27,7 @@
 //#using "../delegation/delegation-full.dep"
 //#using "../implementors/implementors-full.dep"
 //#using "../interfacing/interfacing-full.dep"
+//#using "../interfacebubbles/interfacebubbles.dep"
 
 //#using "../queries/queries.dep"
 //#using "../DataHolder.js"

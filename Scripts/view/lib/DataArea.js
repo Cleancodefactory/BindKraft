@@ -74,8 +74,21 @@ DataArea.ImplementProperty("contentflags", new Initialize("Specific option for s
 DataArea.ImplementProperty("packetmode", new Initialize("If this is nonempty string the content connector will be instructed to return the packet root - i.e. all the data with views, resources and so on. The value specified must be the property under data returned by the connector where the actual data resides (usually 'data'). If not specified or empty only the data will be reported back. Note that this is supported only by some connectors and will cause unexpected data structure results with others.", null));
 DataArea.ImplementProperty("setviewto", new InitializeStringParameter("Address to a template switcher inside the DataArea to which the returned view (normal) is set. Usable only together with packetmode = true and suitable connector.",null));
 DataArea.ImplementProperty("viewpath", new InitializeStringParameter("String that specifies dotted path to the view in the result. The path is from the received data root no matter the packetmode.",null));
+DataArea.ImplementActiveProperty("lastError", new InitializeStringParameter("Last loading error is saved here.",null), true);
 
 // Events
+/*
+    Order of firing
+    preload - best time to set parameters from fields and elsewhere
+    loadstartevent - the Connector bind WAS called (request sent)
+        + dataloadedevent - if successful the response just returned
+            dataappliedevent - the data has been applied to the DataArea's data context
+        - loaderrorevent - if unsuccessful error "response"
+    loadfinishedevent - load operation finished successfully or not.
+
+    countsetevent - fired when the count becomes known - usefulness depends on how the area is used.
+*/
+
 DataArea.prototype.preloadevent = new InitializeEvent("Fired before any load operation starts - both for data and count. Use this event in bindings setting parameters on the data area.");
 DataArea.prototype.dataloadedevent = new InitializeEvent("Fired whenever data has been loaded. prototype: handler(sender_dataarea,loaded_data)");
 DataArea.prototype.dataappliedevent = new InitializeEvent("Fired whenever data has been applied after loading. prototype: handler(sender_dataarea,loaded_data)");
@@ -181,6 +194,7 @@ DataArea.prototype.$contentLoaded = function (result, success, err_info) {
     this.$isloading = false;
 	if (this.__obliterated) return;
     if (success === false) {
+        this.set_lastError(err_info);
         if (!this.get_lastCallProcessing()) this.loaderrorevent.invoke(this, err_info);
         this.loadfinishedevent.invoke(this, false);
     } else {
@@ -229,9 +243,14 @@ DataArea.prototype.resetDataContext = function() {
     this.set_data(null);
     this.set_count(0);
 };
+DataArea.prototype.resetConnector = function() {
+    this.$contentConnector = null;
+    this.$countConnector = null;
+};
 DataArea.prototype.loadContent = function() { // No arguments - everything is collected from parameters and bindings
 	if (this.__obliterated) return;
-	this.preloadevent.invoke(this, this.get_parameters());
+    this.set_lastError(null);
+    this.preloadevent.invoke(this, this.get_parameters());
     if (this.$prepareConnector()) {
         this.$isloading = true;
         this.loadstartedevent.invoke(this, this.$contentConnector);

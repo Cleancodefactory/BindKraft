@@ -234,7 +234,7 @@ UtilityNode.prototype.$getOrderlings = function() {
     if (typeof this.get_zorder() == "string") {
         var els = this.getRelatedElements(this.get_zorder());
         // To simplify jq removal
-        var arr = []
+        var arr = [];
         for (var i = 0; i < els.length; i++) {
             arr.push(els.get(i));
         }

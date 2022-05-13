@@ -3,6 +3,7 @@
 (function() {
 
     var IGPoint = Interface("IGPoint");
+    var IGRect = Interface("IGRect");
 
     function GPoint(x, y) {
         BaseObject.apply(this, arguments);
@@ -94,14 +95,34 @@
         var ref1 = new GPoint(0,0), ref2 = new GPoint(0,0);
         var dom_rect;
         if (el1 != null && el1 instanceof HTMLElement) {
-            dom_rect = el1.getBoundingClientRect();
+            dom_rect = IGRect.RoundBoundingRect(el1.getBoundingClientRect());
             ref1 = new GPoint(dom_rect.left + el1.clientLeft,dom_rect.top + el1.clientTop);
         }
         if (el2 != null && el2 instanceof HTMLElement) {
-            dom_rect = el2.getBoundingClientRect();
+            dom_rect = IGRect.RoundBoundingRect(el2.getBoundingClientRect());
             ref2 = new GPoint(dom_rect.left + el2.clientLeft,dom_rect.top + el2.clientTop);
         }
         return new GPoint(ref1.x + this.x - ref2.x, ref1.y + this.y - ref2.y);
     }.Description("maps the point coordinates from el1 space to el2 space, if any of them is null, it is considered to be the viewport (client coordinates of the browser window)")
-
+    GPoint.prototype.toDOMElement = function (_el) {
+		var el = DOMUtil.toDOMElement(_el);
+		if (el instanceof HTMLElement) {
+			el.style.left = this.x + "px";
+			el.style.top = this.y + "px";
+		}
+	};
+    GPoint.prototype.toDOMElementAsViewport = function(_el) {
+		var el = DOMUtil.toDOMElement(_el);
+		if (el instanceof HTMLElement) {
+			var offp = el.offsetParent;
+			if (offp != null) {
+				var rect = this.mapFromToElements(null, offp);
+				el.style.left = rect.x + "px";
+				el.style.top = rect.y + "px";
+			} else { // Assume the element is fixed
+				el.style.left = this.x + "px";
+				el.style.top = this.y + "px";
+			}
+		}
+	}
 })();

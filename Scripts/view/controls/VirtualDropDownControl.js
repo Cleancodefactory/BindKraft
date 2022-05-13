@@ -492,7 +492,7 @@ VirtualDropDownControl.prototype.multiselectionformatter = { // Attach it to $se
                 case "list":
                     s = "";
                     for (var i = 0; i < sitems.length; i++) {
-                        if (s.length > 0) s += ",";
+                        if (s.length > 0) s += ", ";
                         s += sitems[i][this.get_descproperty()];
                     }
                     return s;

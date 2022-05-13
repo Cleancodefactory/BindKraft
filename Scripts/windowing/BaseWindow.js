@@ -175,6 +175,15 @@ BaseWindow.updateParentlessWindows = function(wnd) {
 		BaseWindow.$parentlessWindows.removeElement(wnd);
 	}
 }
+/**
+ * Makes given child window visible and hides the other child windows.
+ * @param {BaseWindow} parentWindow - parent window to process
+ * @param {BaseWindow} childWindow - child window to show
+ * @param {flags} additionalFlags - (optional) Additional window flags to set/reset the same way as the visible flags.
+ * 
+ * Will not update targets on the parent and so any indication of the state of its children implemented in its UI (if exists) will 
+ * not be updated. This is so, because this method is for low level processing often used in state driven apps.
+ */
 BaseWindow.showChildHideTheRest = function(parentWindow,childWindow,additionalFlags) {
     additionalFlags = additionalFlags || 0;
     if (BaseObject.is(parentWindow,"BaseWindow") && BaseObject.is(childWindow,"BaseWindow")) {
@@ -185,6 +194,16 @@ BaseWindow.showChildHideTheRest = function(parentWindow,childWindow,additionalFl
                 } else {
                     parentWindow.children[i].setWindowStyles(WindowStyleFlags.visible | additionalFlags,"set");
                 }
+            }
+        }
+    }
+}
+BaseWindow.hideAllChildren = function(parentWindow,additionalFlags) {
+    additionalFlags = additionalFlags || 0;
+    if (BaseObject.is(parentWindow,"BaseWindow")) {
+        if (parentWindow.children != null) {
+            for (var i = 0;i < parentWindow.children.length;i++) {
+                parentWindow.children[i].setWindowStyles(WindowStyleFlags.visible | additionalFlags,"reset");
             }
         }
     }
@@ -221,8 +240,17 @@ BaseWindow.prototype.$persistSetting = function(key,v) {
 }
 
 // ------------ IWindowIdentification -----------------------------
-
+/**
+ * @returns {string} the window name
+ */
 BaseWindow.prototype.get_windowName = function() { return this.createParameters.$windowName; }
+/**
+ * Finds and returns the first window with the given name. Can search only the direct children 
+ * or recursively their children too and so on.
+ * @param {string} windowName the name of the window to find.
+ * @param {bool} recursive whether to search down the tree (true) or limit search to the children of this window only.
+ * @return {BaseWindow|null} the window found or null if not found.
+ */
 BaseWindow.prototype.findChildByName = function(windowName, /*optional*/ recursive) { 
     if (this.children == null) { return null; }
     var w = this.children.FirstOrDefault(function (idx, item) {
@@ -243,10 +271,17 @@ BaseWindow.prototype.findChildByName = function(windowName, /*optional*/ recursi
     }
     return null;
 }
+/**
+ * Equivalent to findChildByName called several times with different names, then the results packed in an array.
+ * 
+ * @param {string} windowName*  - one or more window names to find.
+ * @param {bool} recursive whether to search down the tree (true)
+ * @returns {Array<BaseWindow} Array of the windows found. Nulls are not included.
+ */
 BaseWindow.prototype.findChildrenByName = function(windowName, windowName2 /* etc. */, /*optional*/ recursive) {
     var names = Array.createCopyOf(arguments).Select(function(idx, item) { return (typeof item == "string"?item:null);});
     var isrecursive = false;
-    if (arguments.length > 0 && typeof arguments[arguments.length - 1] == "boolean") { isrecursive = true;}
+    if (arguments.length > 0 && typeof arguments[arguments.length - 1] == "boolean") { isrecursive = arguments[arguments.length - 1];}
     var w, result = [];
     for (var i = 0; i < names.length; i++) {
         w = this.findChildByName(names[i],isrecursive);
@@ -254,6 +289,18 @@ BaseWindow.prototype.findChildrenByName = function(windowName, windowName2 /* et
     }
     return result;
 }
+/**
+ * Attempts to find a chain of windows by their names
+ * 
+ * @param {*} windowName* - one or more window names to find.
+ * @returns {Array<BaseWindow>} Array of the windows found.
+ * 
+ * The search proceeds like this:
+ * The first window is found by the first name, 
+ * then the second name is searched in the found window and so on.
+ * 
+ * The result of the function is a chain of parent and child windows found by name.
+ */
 BaseWindow.prototype.findChildrenChain = function(windowName, windowName2) { 
     var w = this, result = [];
     for (var i = 0; i < arguments.length; i++) {
@@ -353,7 +400,7 @@ BaseWindow.prototype.$ensureCreated = function (viewString) {
 			this.OnDOMAttached();
 			this.root.activeClass = this;
 		} else {
-			throw "Empty window template";
+			throw "Empty window template class:" + this.classType() + " name:" + this.get_windowname();
 		}
 		/*
         var el = $(tml);
@@ -579,10 +626,6 @@ BaseWindow.prototype.$applyStyleFlags = function (bDontFireEvents) {
 	if (this.__obliterated) { return; }
     var el = $(this.get_windowelement());
     var self = this;
-	if (this.$styleFlags & WindowStyleFlags.popup) {
-	} else {
-	
-	}
 	//this.$persistSetting("WndowStyleFlags",this.$styleFlags);
 	this.$persistSetting("draggable",this.$styleFlags & WindowStyleFlags.draggable);
     if (this.$styleFlags & WindowStyleFlags.draggable) {
@@ -605,7 +648,11 @@ BaseWindow.prototype.$applyStyleFlags = function (bDontFireEvents) {
 			el.draggable("destroy");
 		}
     }
-	el.css({ position: "absolute" });
+    if (this.$styleFlags & WindowStyleFlags.relative) {
+        DOMUtil.setStyle(DOMUtil.toDOMElement(el), "position", "relative");
+    } else {
+        DOMUtil.setStyle(DOMUtil.toDOMElement(el), "position", "absolute");
+    }
     /* Duplicated - why? If someone knows please tell Jesus
     if (this.$styleFlags & WindowStyleFlags.draggable) {
     el.draggable();
@@ -637,8 +684,12 @@ BaseWindow.prototype.$applyStyleFlags = function (bDontFireEvents) {
     }
     if (this.$styleFlags & WindowStyleFlags.fillparent) {
         if (this.$oldWindowRect == null) this.$oldWindowRect = this.get_windowrect();
-        el.css({ position: "absolute", width: "100%", height: "100%", left: "0px", top: "0px" });
-        //el.css({ position: "relative" });
+        DOMUtil.setStyle(this.get_windowelement(), { 
+            position: (this.$styleFlags & WindowStyleFlags.relative)?"relative":"absolute", 
+            width: "100%", height: "100%",
+            left: "0px", top: "0px" } 
+        );
+        
         if (!bDontFireEvents) {
             WindowingMessage.fireOn(self, WindowEventEnum.SizeChanged, {});
             WindowingMessage.fireOn(self, WindowEventEnum.PosChanged, {});
@@ -804,8 +855,11 @@ BaseWindow.prototype.preprocessWindowEvent = function (evnt) {
 				}
 			}			
             if (this.$styleFlags & WindowStyleFlags.fillparent) {
-                var el = $(this.get_windowelement());
-                el.css({ position: "absolute", width: "100%", height: "100%", left: "0px", top: "0px" });
+                DOMUtil.setStyle(this.get_windowelement(), { 
+                    position: (this.$styleFlags & WindowStyleFlags.relative)?"relative":"absolute", 
+                    width: "100%", height: "100%",
+                    left: "0px", top: "0px" } 
+                );
             }
             if ((this.$styleFlags & WindowStyleFlags.adjustclient) != 0) {
                 WindowingMessage.fireOn(this, WindowEventEnum.AdjustClient, {});
@@ -904,6 +958,9 @@ BaseWindow.prototype.windowmaxminchanged = new InitializeEvent("Fired when minim
             */
             if ((this.$styleFlags & WindowStyleFlags.parentnotify) != 0) {
                 WindowingMessage.fireOn(this.get_windowparent(), WindowEventEnum.ChildResized, { rect: this.get_windowrect() });
+            }
+            if ((this.$styleFlags & WindowStyleFlags.sizenotify) != 0) {
+                this.notifyChildren(WindowEventEnum.SizeChanged, { rect: this.get_windowrect() });
             }
             break;
         case WindowEventEnum.Show:
@@ -1065,8 +1122,8 @@ BaseWindow.prototype.$calcGapZOrder = function () {
 }
 // TODO: Should be put into the templates?
 BaseWindow.prototype.$createAndAttachGapCover = function () {
-    var cover = $('<div style="position:absolute;top:0px;left:0px;width:100%;height:100%;background-color:#FFFFFF;opacity:0.01;"></div>');
-    $(this.root).append(cover);
+    var cover = new DOMUtilElement('<div style="position:absolute;top:0px;left:0px;width:100%;height:100%;background-color:#FFFFFF;opacity:0.01;"></div>');
+    this.$().append(cover);
     this.$gapcover = cover;
     return cover;
 }
@@ -1075,12 +1132,12 @@ BaseWindow.prototype.showTopMostGapCover = function () {
     var ord = this.$calcGapZOrder();
     if (ord > 0) {
         var cover = this.$createAndAttachGapCover();
-        cover.css("z-index", ord);
+        cover.setStyle("z-index", ord);
     }
 }
 BaseWindow.prototype.hideTopMostGapCover = function () {
     if (this.$gapcover != null) {
-        this.$gapcover.remove();
+        this.$gapcover.Remove();
         this.$gapcover = null;
     }
 }
@@ -1475,7 +1532,7 @@ BaseWindow.prototype.$autoCalcClientHeight = function () {
 		if (c.length > 0) { c = c.get(0); } else { c = null; }
 	}
     if (c != null) {
-		if (this.root == c) return false;
+		if (this.root == c) return true;
         // var clnt = $(c);
 		if (c.offsetParent != null) {
 			var h = this.$autoCalcClientHeight();

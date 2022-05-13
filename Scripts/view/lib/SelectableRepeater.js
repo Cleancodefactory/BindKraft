@@ -11,7 +11,11 @@ function SelectableRepeater() {
     this.findItem = null;
     var el = $(this.root);
     var localThis = this;
-    el.keydown(function(evnt) { localThis.onKeyPress(evnt, null); });
+    el.keydown(function(evnt) { 
+        //localThis.onKeyPress(evnt, null); 
+        localThis.onKeyInput(evnt, null);
+        evnt.stopPropagation(); 
+    });
     //this.selchangedevent = new EventDispatcher(this);
     //this.activatedevent = new EventDispatcher(this);
     this.$bodyVisible = true;
@@ -20,6 +24,7 @@ function SelectableRepeater() {
 
 SelectableRepeater.Inherit(Repeater, "SelectableRepeater");
 SelectableRepeater.Implement(IKeyboardHandler);
+SelectableRepeater.Implement(InterfaceImplementer("IKeyboardProcessorImpl"));
 SelectableRepeater.Implement(IDisplayDataSupplierImpl);
 SelectableRepeater.prototype.obliterate = function() {
     Repeater.prototype.obliterate.call(this);
@@ -200,7 +205,27 @@ SelectableRepeater.prototype.fireActivatedEvent = function() {
         }
     }
 }
-
+SelectableRepeater.prototype.processKeyObject = function(keyData) {
+    if (keyData == null || !keyData.__isKeyData) return true; // Prevents propagation of wrong data.
+    if (keyData.key == "ArrowUp" || keyData.key == "ArrowLeft") {
+        if (this.moveSelection(-1)) {
+			return true;
+        }
+    } else if (keyData.key == "ArrowRigth" || keyData.key == "ArrowDown") {
+        if (this.moveSelection(1)) {
+			return true;
+        }
+    } else if (keyData.key == "Enter" || keyData.key == " ") {
+        var dc = this.get_items();
+        var curSelIndex = this.get_selectedindex();
+        if (dc != null && curSelIndex >= 0 && curSelIndex < dc.length) {
+            this.fireActivatedEvent();
+            // this.activatedevent.invoke(this, dc[curSelIndex]);
+        }
+		return true;
+    }
+}
+// legacy support
 SelectableRepeater.prototype.processKeyData = function(e) { // e === kd e is keydata and not an event
 	if (e == null) return false;
 	if (e.which == 38 || e.which == 37) {
@@ -222,10 +247,12 @@ SelectableRepeater.prototype.processKeyData = function(e) { // e === kd e is key
     }
 	return false;
 }
+// legacy support
 SelectableRepeater.prototype.processKey = function(e) {
 	return this.processKeyData(IKeyboardHandler.packKeyDataFromEvent(e,e.target));
 	
-}.Description("Gusss .... ");
+}
+// legacy support
 SelectableRepeater.prototype.onKeyPress = function (evnt) {
 	if (this.processKey(evnt)) {
 		evnt.stopPropagation();

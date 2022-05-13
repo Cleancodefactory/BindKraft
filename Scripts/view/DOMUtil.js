@@ -1,3 +1,17 @@
+
+/**
+ * Low level DOM utilities. This will soon be moved into IIFE, please import it to avoid errors when this happens.
+ * 
+ * Some general principles used in this file:
+ * 
+ * Border callback: A callback function called to determine if an HTMLElement is a border beyond which the operations 
+ * should not be performed. This is widely used across many methods below. The border callback can return 3 kinds of values:
+ * true - checked with === it means DO process the element and go no further
+ * false - checked with === do NOT process the element and go no further
+ * null|undefined - not a border, go further.
+ * 
+ * 
+ */
 var DOMUtil = {};
 DOMUtil.$defaultTrimRegEx = /^\s*(.*?)\s*$/;
 /**
@@ -465,6 +479,10 @@ DOMUtil.setTextWithElements = function(dom, text) {
  * @param {HTMLElement|NodeList|HTMLCollection|Array<HTMLElement>} dom
  * @param {object|string} style - Either css attribute name or object with multiple attribute with values
  * @param {string} val - Optional, required if style is string. The value to set to the style attribute.
+ * 
+ * The style name(s) are in the CSS syntax and not the style property syntax e.g.
+ * DOMUtil.setStyle(el, "background-color", "#DDDDDD")
+ * DOMUtil.setStyle(el, {"background-color", "#DDDDDD" })
  */
 DOMUtil.setStyle = function(dom, style, val) {
 	if (dom instanceof HTMLElement) {
@@ -481,7 +499,7 @@ DOMUtil.setStyle = function(dom, style, val) {
 		}
 		return false;
 	} else if (dom instanceof NodeList || dom instanceof HTMLCollection || BaseObject.is(dom, "Array")) {
-		for (i = 0; i < dom.length; i++) {
+		for (var i = 0; i < dom.length; i++) {
 			if (dom[i] instanceof HTMLElement) {
 				if (!this.setStyle(dom[i], style, val)) return false;
 			}
@@ -512,6 +530,27 @@ DOMUtil.getStyle = function(dom, style, bComputed) {
 		}
 		return null;
 	}
+}
+DOMUtil.hideElement = function(dom) {
+	if (!(dom instanceof HTMLElement)) return;
+	var _displ = dom.style.display;
+	dom.style.display = "none";
+	if (_displ != null && _displ.length != 0 && _displ != "none") {
+		dom.__lastStyleDisplay = _displ;
+	} else {
+		delete dom.__lastStyleDisplay;
+	}
+	
+}
+DOMUtil.unHideElement = function(dom) {
+	if (!(dom instanceof HTMLElement)) return;
+	var _displ = null;
+	if (dom.__lastStyleDisplay != null && dom.__lastStyleDisplay.length > 0 && dom.__lastStyleDisplay != "none") {
+		_displ = dom.__lastStyleDisplay;
+	} else {
+		_displ = "";
+	}
+	dom.style.display = _displ;
 }
 //#endregion
 /**
@@ -617,10 +656,10 @@ DOMUtil.findElements = function(dom,selector,callback, _result, _nonroot) { // c
 		}
 	} else if (dom instanceof HTMLCollection || dom instanceof NodeList || BaseObject.is(dom, "Array")) {
 		for (var i = 0; i < dom.length; i++) {
-			DOMUtil.findElements(dom[i],selector,callback, result);
+			DOMUtil.findElements(dom[i],selector,callback, result, _nonroot);
 		}
 	} else if (dom instanceof Document) {
-		return DOMUtil.findElements(dom.body, selector, callback);
+		return DOMUtil.findElements(dom.body, selector, callback, _nonroot);
 	}
 	return result;
 }
@@ -648,7 +687,7 @@ DOMUtil.findElement = function(dom, selector, callback, _nonroot) { // callback(
 		return null;
 	} else if (dom instanceof HTMLCollection || dom instanceof NodeList || BaseObject.is(dom, "Array")) {
 		for (var i = 0; i < dom.length; i++) {
-			el = DOMUtil.findElement(dom[i],selector,callback);
+			el = DOMUtil.findElement(dom[i],selector,callback, _nonroot);
 			if (el != null) return el;
 		}
 	} else if (dom instanceof Document) {
@@ -656,12 +695,23 @@ DOMUtil.findElement = function(dom, selector, callback, _nonroot) { // callback(
 	}
 	return null;
 }
+/**
+ * Looks for a parent specified by the selector and returns it. If a border of a view is hit 
+ * or otherwise the parent is not found null is returned.
+ * 
+ * @param dom {HTMLElement} - the element whose parent to find
+ * @param selector {string|HTMLElement} - the parent to find - string selector or an element 
+ * 					to check if it is a parent of dom
+ * @param callback {function} - Border callback
+ * 
+ */
 DOMUtil.findParent = function(dom, selector, callback) {
 	var b;
 	if (dom instanceof HTMLElement) {
 		b = null;
 		if (callback != null && (b = callback(dom)) === false) return null;
-		if (dom.matches(selector)) {
+		if (selector instanceof HTMLElement && dom == selector) return dom;
+		if (typeof selector == "string" && dom.matches(selector)) {
 			return dom;
 		}
 		if (b === true) return null;
@@ -669,7 +719,10 @@ DOMUtil.findParent = function(dom, selector, callback) {
 		while (p != null && p instanceof HTMLElement) {
 			b = null;
 			if (callback != null && (b = callback(dom)) === false) return null;
-			if (p.matches(selector)) return p;
+			if (selector instanceof HTMLElement && p == selector) return p;
+			if (typeof selector == "string" && p.matches(selector)) {
+				return p;
+			}
 			p = p.parentElement;
 			if (b === true) return null;
 		}
@@ -764,6 +817,9 @@ DOMUtil.queryAll = function(node, selector) {
 }
 DOMUtil.parentByDataKey = function(node, datakey) {
 	return DOMUtil.findParent(node, '[data-key="' + datakey + '"]',DOMUtil.BorderCallbacks.DataKeysInViewOut);
+}
+DOMUtil.hasParent = function(node, dparent) {
+	return DOMUtil.findParent(node, dparent, DOMUtil.BorderCallbacks.DataKeysInViewOut);
 }
 DOMUtil.queryForMainSlot = function(node) {
 	return DOMUtil.findElement(node, '[data-key="_client"]',DOMUtil.BorderCallbacks.DataKeysInViewOut);

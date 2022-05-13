@@ -40,7 +40,7 @@ var JBFrameworkVersion = {
 		  "notice": true,
 		  "trace": false
 		},
-		"CompileTimeThrowOnErrors": false,
+		"CompileTimeThrowOnErrors": true,
 		"CollectDiagnostics": false,
 		"CompileTimeValidationTasks": true, // Better disable this for production. If true additional compile time validation checks are runned to log (mostly warnings) information for discovered problems.
 		"AlwaysCalcBasePath": false, // Always set g_ApplicationBasePath to the base path calculated from the initial load URL, if false this will happen only if the variable is missing.

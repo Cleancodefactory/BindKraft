@@ -1,0 +1,17 @@
+<div data-class="SelectedItemsControl @itemTemplateSource={bind source=__control} singletemplateconsumerkey='selected-item' @clear={read source=__control path=$clearselection}"
+    data-key="selector"
+    data-bind-$identification="{read source=__control path=$identification}"
+    data-bind-$interface="{read(5) source=__control path=$selectioncallback}"
+    data-bind-$items="{read source=__control path=$selectedobjects readdata=$selectedobjects_changed}"
+    data-on-pluginto="{bind source=__control path=$selector}"
+    data-on-$selchangedevent="{bind source=__control path=selchangedevent options=handlers}"
+>
+</div>
+<div data-class="LookupBoxControl @itemTemplateSource={bind source=__control} singletemplateconsumerkey='list-item' @noselection={bind source=__control path=$noselection}"
+    data-key="lookup"
+    data-bind-$interface="{read(5) source=__control path=$lookupcallback}"
+    data-bind-$identification="{read source=__control path=$identification}"
+    data-on-pluginto="{bind source=__control path=$lookup}"
+    data-on-$activatedevent="{bind source=__control/selector path=onAddItem}{bind source=self path=onClearSelection}"
+>
+</div>
