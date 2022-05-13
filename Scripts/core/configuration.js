@@ -52,7 +52,9 @@ var JBFrameworkVersion = {
 		"TrackingDefaultMode": "pointer", // Sets the PointerTracker to simulate capture with mouse or pointer messages (or touch ad hoc implementation in future)
 		"TrackTouchEvents": true, // Enable disable touch events tracking by PointerTracker and all the dependent classes
 		"NormalOperationTimeout": 30000, // Whenever timeout is set to operations, this one is used by default
-		"LongOperationTimeout": 120000 // Timeout for operations that require longer one.
+		"LongOperationTimeout": 120000, // Timeout for operations that require longer one.
+		"entityStatePropertyName": "state",
+		"updateEntityState": false
 	  };
 	
 	for (var k in defaults) {

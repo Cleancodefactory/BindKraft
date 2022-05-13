@@ -11,9 +11,9 @@
 // For example include this afte the lib and misc framework files.
 
 // Enitity state configuration
-Binding.updateEntityState = true;
-Binding.entityStatePropertyName = "state";
-Binding.entityStateValues = DataStateEnum;
+// Binding.updateEntityState = true;
+// Binding.entityStatePropertyName = "state";
+// Binding.entityStateValues = DataStateEnum;
 //{ 
 //    Unchanged: "0",
 //    Insert: "1",

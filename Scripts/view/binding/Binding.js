@@ -57,6 +57,11 @@ function Binding(domTarget, target, targetAction, expr, parentContext) {
 Binding.Inherit(BaseObject, "Binding");
 Binding.interfaces = { PBinding: true };
 Binding.Implement(ITargeted);
+
+Binding.updateEntityState = window.JBCoreConstants.updateEntityState;
+Binding.entityStatePropertyName = window.JBCoreConstants.entityStatePropertyName;
+Binding.entityStateValues = Enumeration("DataStateEnum");
+
 Binding.prototype.obliterate = function (bFull) {
 	if ( this.__obliterated ) { return; }
     // Just to make sure we do not forget what is what lets delete some refs manually. It may be needed to do more over some of them.
