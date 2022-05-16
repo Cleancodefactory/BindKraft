@@ -12,4 +12,5 @@
 //#using "./BKInit_AppInfo.js"
 //#using "./BKInit_Translation.js"
 //#using "./BKInit_WorkspaceWindow.js"
+//#using "./BkInit_RunFromUrl.js"
 //#using "./ajax/ajax.dep"

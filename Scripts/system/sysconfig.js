@@ -78,6 +78,7 @@
 		dir.mkdir("aliases");
 
 		// General settings for url commands 2
+		// Read details on how they work in BKInit_RunFromUrl
 		dir = system.mkdir("urlcommands2");
 		f = new PropertySetMemoryFile();
 		// appfs:/system/urlmmands2/commands
