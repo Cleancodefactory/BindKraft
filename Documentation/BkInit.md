@@ -148,11 +148,15 @@ This can go much further in more complex web sites - e.g. the directories can be
 
 ### BKInit.commands
 
-### BKInit.commandUrlAliases
+### BKInit.urlCommands
 
-### BKInit.commandUrlAlias
+Configures commands that can be executed during the workspace initialization in response to certain URL query parameters. See [BKInit.urlCommands](BKInit_urlCommands.md)
 
-### BKInit.commandUrlGlobal
+### (deprecated) BKInit.commandUrlAliases
+
+### (deprecated) BKInit.commandUrlAlias
+
+### (deprecated) BKInit.commandUrlGlobal
 
 ### BKInit.AppData
 

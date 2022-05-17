@@ -54,6 +54,9 @@ var BkInit = {
 		fn (new BkInit_Cmd());
 		return this;
 	},
+	urlCommands: function(fn) {
+		fn(new (Class("BkInit_RunFromUrl"))());
+	},	
 	commandUrlAliases: function(fn) {
 		fn(new BkInit_CommandUrlAliases("appfs","system/urlcommands/aliases"));
 		return this;
