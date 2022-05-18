@@ -166,6 +166,27 @@ System.DefaultCommands = {
 	"inithistory": function(ctx, api) {
 		BrowserHistoryTracker.Default();
 	},
+	"urlcommands": function(args, api) {
+		var UrlActionsService2 = Class("UrlActionsService2");
+		var svc = UrlActionsService2.Default();
+		var url;
+		if (args.length > 0) {
+			if (BaseIbject.is(args[0], "BKUrl")) {
+				url = args[0];
+			} else {
+				url = new BKUrl();
+				if (!url.readAsString(args[0])) {
+					return Operation.Failed("Cannot parse URL");
+				}
+			}
+		} else {
+			url = BKUrl.getInitialFullUrl();
+		}
+		if (url == null) {
+			return Operation.Failed("Null or empty url");
+		}
+		return svc.runCommandsFromUrl(url); // Returns Operation.
+	},
 	"runurlcommands": function(ctx, api) {
 		var proc = new UrlCommandsProcessor();
 		var url = new BKUrl();
@@ -325,4 +346,6 @@ System.DefaultCommands = {
 	// +V 2.24.0
 	gc.register("externalscript", null, null, defs["externalscript"], "Loads additional javascripts from URL. syntax: externalscript 'url'");
 	// -V 2.24.0
+
+	gc.register("urlcommands", "runurlcommands2", defs["urlcommands"], "Runs the registered commands from the initial URL");
 })();
