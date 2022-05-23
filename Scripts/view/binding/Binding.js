@@ -57,6 +57,8 @@ function Binding(domTarget, target, targetAction, expr, parentContext) {
 Binding.Inherit(BaseObject, "Binding");
 Binding.interfaces = { PBinding: true };
 Binding.Implement(ITargeted);
+
+
 Binding.prototype.obliterate = function (bFull) {
 	if ( this.__obliterated ) { return; }
     // Just to make sure we do not forget what is what lets delete some refs manually. It may be needed to do more over some of them.
@@ -105,9 +107,12 @@ Binding.$lookups = null; // OBSOLETE global lookups cache StringResources
 Binding.dynamicresources = null; // OBSOLETE dynamic global resources (consumed with query for update if needed)
 Binding.updateEntityState = false; // Default, should be false from (including) version 1.7.5 because of the new policy to explicitly allow it on each individual binding
 								   // The old code still works if this is true, but in future versions this and the entire old mechanism will be removed.
-Binding.entityStatePropertyName = "state";
+
+Binding.updateEntityState = window.JBCoreConstants.updateEntityState;
+Binding.entityStatePropertyName = window.JBCoreConstants.entityStatePropertyName;
+Binding.entityStateValues = Enumeration("DataStateEnum");
+                                   
 Binding.entityOldStatePropertyName = "$__oldstate__";
-Binding.entityStateValues = null;
 Binding.bindingLibrary = {};
 
 Binding.markChangedState = function (el, bUnDelete) { this.markDataState(el, null, bUnDelete); };
