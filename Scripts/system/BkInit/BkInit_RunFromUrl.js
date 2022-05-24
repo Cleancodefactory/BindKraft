@@ -53,7 +53,7 @@
         } else if (!Array.isArray(params)) {
             params = [];
         }
-        pf.setProp(name,[]);
+        pf.setProp(name,params);
         var dir = this.tools.openDir("appfs:/system/urlcommands2/scripts");
         var script = new CLScript(script);
         if (!dir.register(name, script)) {

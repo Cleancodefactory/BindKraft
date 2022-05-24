@@ -97,7 +97,7 @@
                 if (p != null) dir = dir.cd(p);
             }
             if (dir != null) {
-                return dir.item(info.name);
+                return dir.item(this.nameOf(info.path));
             }
             return null;
         }

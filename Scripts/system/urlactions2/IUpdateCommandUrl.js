@@ -6,7 +6,7 @@
      * be multi step process and allows an input URL.
      */
     function IUpdateCommandUrl() {}
-    IUpdateCommandUrl.Interface("IUpdateCommandUrl");
+    IUpdateCommandUrl.Interface("IUpdateCommandUrl","IManagedInterface");
 
     /**
      * Updates or creates an URL with the parameters necessary for on load command execution. For multiple commands call this

@@ -27,6 +27,7 @@
         var pf = fsh.openFile("appfs:/system/urlcommands2/settings");
         if (BaseObject.is(pf, "PropertySetMemoryFile" )) {
             this.$runname = pf.getProp("run");
+            return true;
         } else {
             return false;
         }
@@ -104,7 +105,7 @@
         }
         var commands = fsh.openFile("appfs:/system/urlcommands2/commands");
         var op = new Operation("runCommandsFromUrl");
-        if (BaseObject.is(commands, "PropertySetMemoryFiler")) {
+        if (BaseObject.is(commands, "PropertySetMemoryFile")) {
             // Get the list of scripts to execute
             var runScripts = url.get_query().get(this.$runname);
             if (runScripts.length > 0) {
@@ -124,12 +125,13 @@
      * @param {*} arrScriptNames 
      */
     UrlActionsService2.prototype.$runCommands = function(op, arrScriptNames, url) {
+        var fsh = new MemFSTools();
         var scripts = fsh.openDir("appfs:/system/urlcommands2/scripts");
         var me = this;
         var script; // script name
         
         function _step() {
-            var script = arrScriptNames.shift();
+            script = arrScriptNames.shift();
             if (script == null) {
                 // Finished
                 // TODO Consider failing the entire execution for some reasons.
@@ -159,11 +161,11 @@
      * @param {file} script
      */
     UrlActionsService2.prototype.$runCommand = function(command, url, script) {
-        if (!BaseObject.is("CLScript")) {
+        if (!BaseObject.is(script,"CLScript")) {
             return Operation.Failed("script is missing or is unsupported format");
         }
         var qry = url.get_query();
-        var reg = this.getReg(command);
+        var reg = this.$getReg(command);
         var v;
         if (reg != null) {
             if (BaseObject.is(url, "BKUrl")) {

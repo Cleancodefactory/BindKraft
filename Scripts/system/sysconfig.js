@@ -122,6 +122,8 @@
 		BkInit.$execDelayed();
 		// Before boot complete compilation phase
 		CompileTime.Tasks.run("completion");
+		// Init later singletons
+		System.initLaterSingletons();
 		// No more compile time tasks - forget them.
 		CompileTime.finish();
 		CompileTime.Tasks = null;
