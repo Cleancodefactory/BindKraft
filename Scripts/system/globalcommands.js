@@ -347,5 +347,5 @@ System.DefaultCommands = {
 	gc.register("externalscript", null, null, defs["externalscript"], "Loads additional javascripts from URL. syntax: externalscript 'url'");
 	// -V 2.24.0
 
-	gc.register("urlcommands", "runurlcommands2", defs["urlcommands"], "Runs the registered commands from the initial URL");
+	gc.register("urlcommands", "runurlcommands2", null, defs["urlcommands"], "Runs the registered commands from the initial URL");
 })();

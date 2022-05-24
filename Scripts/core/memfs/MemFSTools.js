@@ -86,7 +86,7 @@
         return null;
     }
     MemFSTools.prototype.openFile = function(path) {
-        var info = this.$splitDir(dir);
+        var info = this.$splitDir(path);
         if (info != null) {
             var dir = null;
             if (info.fs != null) {

@@ -130,10 +130,12 @@
 		if (bootfs != null) {
 			var bootscript = bootfs.item("boot");
 			if (bootscript != null) {
-				var op = Commander.RunGlobal(bootscript.get_script());
-				op.whencomplete().tell(function(_op) {
-					console.log("Boot finished " + (_op.isOperationSuccessful()?"successfuly":"unsuccessfuly"));
-				});
+				bootscript.run(null,{});
+				// V:2.26.0- switching to the new way
+				// var op = Commander.RunGlobal(bootscript.get_script());
+				// op.whencomplete().tell(function(_op) {
+				// 	console.log("Boot finished " + (_op.isOperationSuccessful()?"successfuly":"unsuccessfuly"));
+				// });
 			} else {
 				alert("the boot script is not found.");
 			}

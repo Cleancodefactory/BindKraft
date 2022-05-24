@@ -38,6 +38,30 @@
     EmbeddedSvg.$loadDefaultSVG = function() {
         return EmbeddedSvg.$loadSVG(EmbeddedSvg.$defaultName);
     };
+    EmbeddedSvg.cacheSvgString = function(url,content) {
+        if (typeof url != "string" || /^\s+$/.test(url)) {
+            BaseObject.LASTERROR("Cached SVG must have non-empty names");
+            return;
+        }
+        if (content == null) {
+            if (url == EmbeddedSvg.$defaultName) {
+                BaseObject.LASTERROR("The default SVG cannot be removed");
+                return;
+            }
+            delete this.$register[url];
+        } else {
+            var fr = DOMUtil.fragmentFromHTML(content,true);
+            if (fr != null) {
+                var nodes = DOMUtil.filterElements(fr.childNodes,null, Element);
+                if (nodes != null && nodes.length > 0) {
+                    this.$register[url] = nodes[0];
+                    return;
+                } else { // Empty
+                    BaseObject.LASTERROR("Cannot cache empty SVG");
+                }
+            }
+        }
+    }
     /**
      * Low level loading. No cloning occurs here because multiple parties may be interested in the same entry.
      * The results MUST be cloned before use (in both cases Operation and Element).

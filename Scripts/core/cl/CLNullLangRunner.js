@@ -218,6 +218,7 @@
                             state.args.push(state.stack.pop());
                         }
                     }
+                    state.args.reverse();
                 }
                 // Special cases
                 if (instruction.operation == Instructions.NoOp) continue;

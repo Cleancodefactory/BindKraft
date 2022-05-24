@@ -1,5 +1,8 @@
 (function() {
 
+    var CLNullLang = Class("CLNullLang");
+
+
     function CLRun(_script, ctx) {
         BaseObject.apply(this, arguments);
         if (BaseObject.is(ctx, "ICommandContext")) {
@@ -31,7 +34,8 @@
             detect: detect,
             compile: compile,
             run: run
-        }
+        };
+        this.$Langs.push(o);
     }
     CLRun.prototype.$recognized = false;
     CLRun.prototype.get_recognized = function() {

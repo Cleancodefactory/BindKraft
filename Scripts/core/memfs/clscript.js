@@ -27,8 +27,9 @@ CLScript.ImplementProperty("app", new InitializeStringParameter("Optional app Cl
  * @param {*} additional_constants 
  */
 CLScript.prototype.run = function(commandContext, additional_constants) {
+	var CLRun = Class("CLRun");
 	if (!BaseObject.is(this.$clrun, "CLRun")) {
-		var clrun = new CLRun(this.get_script);
+		var clrun = new CLRun(this.get_script());
 		if (clrun.get_recognized()) {
 			this.$clrun = clrun;
 		}

@@ -1,6 +1,7 @@
 (function(){
 
-    var IUpdateCommandUrl = Interface("IUpdateCommandUrl");
+    var IUpdateCommandUrl = Interface("IUpdateCommandUrl"),
+        MemFSTools = Class("MemFSTools");
 
     /**
      * Implements the two sides of the Url actions2 feature:
@@ -204,7 +205,6 @@
             return instance;
         };
     })();
-    UrlActionsService2.Default();
     //#endregion
 
 })();
