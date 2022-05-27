@@ -317,6 +317,7 @@
                         //TODO: handle type carefully to exclude NaN
                         n = state.args[0];
                         state.helper.setEnv(instruction.operand, n);
+                        state.stack.push(n);
                     } else {
                         execOp.CompleteOperation(false, "SetVar not enough arguments.");
                         return false;
