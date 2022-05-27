@@ -68,7 +68,7 @@
 
 
 
-    var _regex = /(\s+)|(true|false|null)|(while|if|halt)|(?:\$([a-zA-Z0-9_\.\-]+))|([a-zA-Z_][a-zA-Z0-9_\.\-]*)|(\()|(\))|(?:\'((?:\\'|[^\'])*)\')|([\+\-]?\d+(?:\.\d*)?)|(,)|($)|(#.*?(?:\n|\r|$)+)/g;
+    var _regex = /(\s+)|(true|false|null)|(while|if|halt)|(?:\$([a-zA-Z0-9_\.\-]+))|([/.]?[a-zA-Z_][a-zA-Z0-9_\.\-]*)|(\()|(\))|(?:\'((?:\\'|[^\'])*)\')|([\+\-]?\d+(?:\.\d*)?)|(,)|($)|(#.*?(?:\n|\r|$)+)/g;
 
     //#region Compiler
 
@@ -136,7 +136,7 @@
                         case Terms.closebracket:
                             if (undecided != null && undecided.term == Terms.varidentifier) {
                                 opstack.incArgs();
-                                runner.add(_Instruction(Instructions.PushVar, undecided.value)) // todo
+                                runner.add(_Instruction(Instructions.PushVar, undecided.value)) // todo - count the args and identify errors (args count)
                                 undecided = null;
                             } else if (undecided != null && undecided.term == Terms.identifier) {
                                 opstack.incArgs();
@@ -152,7 +152,13 @@
                                 runner.add(_Instruction(Instructions.PullVar, entry.value, entry.arguments));
                             } else if (entry.term == Terms.identifier) {
                                 opstack.incArgs();
-                                runner.add(_Instruction(Instructions.Call, entry.value, entry.arguments));
+                                if (entry.value.charAt(0) == "/") {
+                                    runner.add(_Instruction(Instructions.CallRoot, entry.value.slice(1), entry.arguments));
+                                } else if (entry.value.charAt(0) == ".") {
+                                    runner.add(_Instruction(Instructions.CallParent, entry.value.slice(1), entry.arguments));
+                                } else {
+                                    runner.add(_Instruction(Instructions.Call, entry.value, entry.arguments));
+                                }
                             } else if (entry.term == Terms.keyword) {
                                 opstack.incArgs();
                                 if (entry.value == "if") {

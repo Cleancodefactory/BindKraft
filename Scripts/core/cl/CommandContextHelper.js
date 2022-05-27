@@ -39,9 +39,15 @@
      * @param {callback} callback - A callback(context:ICommandContext, output:object). The callback should return truthy value if done
      *                              The result must be set into output.result;
      */
-    CommandContextHelper.prototype.enumContexts = function(callback, defresult) {
+    CommandContextHelper.prototype.enumContexts = function(callback, defresult, startFrom) {
         var output = { result: defresult || null };
-        for (var i = this.contextStack.length - 1; i >= 0;i--) {
+        var initialIndex = this.contextStack.length - 1;
+        if (startFrom == "parent") {
+            if (initialIndex > 0) initialIndex = initialIndex - 1;
+        } else if (startFrom == "root") {
+            if (initialIndex >= 0) initialIndex = 0;
+        }
+        for (var i = initialIndex; i >= 0;i--) {
             if (BaseObject.callCallback(callback, this.contextStack[i],output)) {
                 break;
             }
@@ -173,7 +179,7 @@
      * @param {string} token - the token to analyse or just command name/alias
      * @param {object} meta - options defining how to recognize the command (not all languages use this to the full extent)
      */
-    CommandContextHelper.prototype.find = function(token, meta) {
+    CommandContextHelper.prototype.find = function(token, startFrom) {
         return this.enumContexts(function(cmdCtx, output) {
             var cmd = cmdCtx.get_commands();
             if (cmd != null) {
@@ -183,7 +189,7 @@
                     return true;
                 }
             }
-        }, null);
+        }, null, startFrom);
     }
     CommandContextHelper.prototype.register = function(command, alias, regexp, action, help, bOverride) {
         var cmdreg = this.topCommandContext();

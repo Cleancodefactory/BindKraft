@@ -27,7 +27,9 @@
         SetVar: 12, // (varname) - Sets a variable
         PullVar: 12,
 
-        Halt: 13 // Exit program
+        Halt: 13, // Exit program
+        CallRoot: 14, // Calls a routine from the host's root context (otherwise like Call)
+        CallParent: 15 // Calls a routine from the host's parent context (otherwise like Call)
     }
     function _DumpInstruction(instr) {
         var s = "!!!";
@@ -228,7 +230,9 @@
                     return;
                 }
                 // Call - async instruction (potentially)
-                if (instruction.operation == Instructions.Call) {
+                if (instruction.operation == Instructions.Call ||
+                    instruction.operation == Instructions.CallRoot ||
+                    instruction.operation == Instructions.CallParent) {
                     var op = new Operation("CLNullLangRunner instruction execution", me.$instructionTimeout); // TODO instruction timeout
                     op.then(processInstruction);
                     me.callAsyncIf(me.$asyncRun, execAsyncInstruction, instruction, state.args, op);
@@ -329,10 +333,14 @@
             }
         }
         function execAsyncInstruction(instruction, args, op) {
-            var cmd, operand, opaction;
+            var cmd, operand, opaction, ctxFrom = null;
             switch (instruction.operation) {
                 case Instructions.Call:
-                    cmd = state.helper.find(instruction.operand);
+                case Instructions.CallRoot:
+                case Instructions.CallParent:
+                    if (instruction.operation == Instructions.CallRoot) ctxFrom = "root";
+                    if (instruction.operation == Instructions.CallParent) ctxFrom = "parent";
+                    cmd = state.helper.find(instruction.operand, null, ctxFrom);
                     if (cmd != null) {
                         if (BaseObject.isCallback(cmd.get_action())) {
                             opaction = BaseObject.applyCallback(cmd.get_action(), [args, api]);
