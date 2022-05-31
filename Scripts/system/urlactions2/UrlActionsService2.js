@@ -67,8 +67,13 @@
      */
     UrlActionsService2.prototype.updateUrl = function(inurl, command, vars) { 
         var reg = this.$getReg(command);
+        var mode = false;
         if (reg != null) {
             var url = inurl;
+            if (typeof inurl == "string") {
+                url = new BKUrl(inurl);
+                mode = true;
+            }
             if (!BaseObject.is(url, "BKUrl")) {
                 url = BKUrl.getInitialBaseUrl();
             }
@@ -87,8 +92,11 @@
                 }
             }
         }
-        
-        return url;
+        if (mode) {
+            return url.toString();
+        } else {
+            return url;
+        }
     }
     UrlActionsService2.prototype.isRegistered = function(command) { 
         return (this.getReg(command) != null);
