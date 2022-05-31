@@ -3,5 +3,7 @@
 //#using "./CommandContextHelper.js"
 //#using "./CLNullLangRunner.js"
 //#using "./CLNullLang.js"
+//#using "./CLLibraries.js"
+//#using "./CLLibrary-base.js"
 
 //#using "./CLRun.js"

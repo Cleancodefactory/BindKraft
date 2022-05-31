@@ -73,6 +73,7 @@
 //#using "./IServiceHub.js"
 //#using "./IService.js"
 //#using "./ICommandRegister.js"
+//#using "./ICommandRegisterLibrary.js"
 //#using "./ICommandContext.js"
 //#using "./ICommandExecutorInterface.js"
 //#using "./IMemoryFile.js"

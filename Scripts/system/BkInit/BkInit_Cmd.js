@@ -20,3 +20,8 @@ BkInit_Cmd.prototype.registerPatterned = function (cmdname, pattern, action, hel
 BkInit_Cmd.prototype.exists = function (cmdname) {
     return this.$reg.exists(cmdname);
 };
+BkInit_Cmd.prototype.addLibrary = function (libname) {
+    var lib = CLLibraries.$libraries[libname];
+	if (lib == null) throw "Library does not exist";
+	this.$reg.addLibrary(lib);
+};

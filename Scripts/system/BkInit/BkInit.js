@@ -50,7 +50,7 @@ var BkInit = {
 		fn(new BkInit_BootFS("bootfs", modulename));
 		return this;
 	},
-	commands: function (fn) {
+	commands: function (fn) { // BkInit.commands(function(reg) { reg.addLibrary("base")})
 		fn (new BkInit_Cmd());
 		return this;
 	},

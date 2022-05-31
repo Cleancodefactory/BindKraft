@@ -3,9 +3,11 @@ function CommandReg(owner) {
 	this.owner = owner;
 }
 CommandReg.Inherit(BaseObject,"CommandReg");
-CommandReg.Implement(Interface("ICommandRegister"));
+CommandReg.Implement(Interface("ICommandRegisterLibrary"));
 CommandReg.prototype.$commands = new InitializeArray("Commands register");
 CommandReg.prototype.$regexps = new InitializeArray("Array of the commands that have regexps ");
+
+//#region ICommandRegister
 CommandReg.prototype.ownerString = function() {
 	if (typeof this.owner == "string") return this.owner;
 	if (BaseObject.is(owner, "BaseObject")) return owner.fullClassType();
@@ -16,6 +18,14 @@ CommandReg.prototype.exists = function(cmd_or_name) {
 	return false;
 }
 CommandReg.prototype.get = function(cmdname) {
+	var cmd = this.$get(cmdname);
+	if (cmd != null) return cmd;
+	for (var i = this.$libraries.length - 1; i >= 0; i--) {
+		cmd = this.$libraries[i].get(cmdname);
+		if (cmd!= null) return cmd;
+	}
+}
+CommandReg.prototype.$get = function(cmdname) {
 	if (typeof cmdname == "string") {
 		return this.$commands.FirstOrDefault(function(idx, item) {
 			if (item.get_name() == cmdname || item.get_alias() == cmdname) return item;
@@ -41,6 +51,14 @@ CommandReg.prototype.get = function(cmdname) {
 	During execution this is the method used for finding the command in the register
 */
 CommandReg.prototype.find = function(token,meta) {
+	var cmd = this.$find(token,meta);
+	if (cmd != null) return cmd;
+	for (var i = this.$libraries.length - 1; i >= 0; i--) {
+		cmd = this.$libraries[i].find(token, meta);
+		if (cmd!= null) return cmd;
+	}
+}
+CommandReg.prototype.$find = function(token,meta) {
 	var cmd = null; // The result - found command
 	var subtype = BaseObject.getProperty(meta,"subtype",null);
 	if (typeof token == "string" && subtype == "identifier") {
@@ -101,6 +119,32 @@ CommandReg.prototype.unregister = function(command) {
 	}
 	return false;
 }
+
+//#endregion ICommandRegister
+
+//#region ICommandRegisterLibrary
+
+CommandReg.prototype.$libraries = new InitializeArray("All the linked libraries");
+CommandReg.prototype.addLibrary = function(lib) { 
+	if (BaseObject.is(lib, "ICommandRegister")) {
+		if (this.$libraries.indexOf(lib) < 0) {
+			this.$libraries.push(lib);
+		}
+	} 
+}
+CommandReg.prototype.removeLibrary = function(lib) { 
+	if (BaseObject.is(lib, "ICommandRegister")) {
+		var index = this.$libraries.indexOf(lib);
+		if (index >= 0) {
+			this.$libraries.splice(index,1);
+		}
+	} 
+}
+CommandReg.prototype.removeAllLibraries = function() { 
+	this.$libraries.splice(0);
+}
+
+//#endregion
 
 
 
