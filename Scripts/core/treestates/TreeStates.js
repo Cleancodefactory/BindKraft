@@ -228,6 +228,41 @@
 		}
 		return false;
 	}
+	TreeStates.compareStates = function(state1, state2) {
+		var result = {
+			incompatible: false
+		};
+		if (state1 == null || state2 == null) {
+			result.incompatible = true;
+			return result;
+		}
+		var oset1 = this.linearize(state1);
+		var oset2 = this.linearize(state2);
+		if (Array.isArray(oset1) && Array.isArray(oset2)) {
+			for (var i = 0;i < Math.min(oset1.length,oset2.length); i++) {
+				var el1 = oset1[i];
+				var el2 = oset2[i];
+				if (el1.length != el2.length) {
+					result.sameTo = i-1;
+					result.differentFrom = i;
+					return result;
+				}
+				for (var j = 0;j < el1.length;j++) {
+					if (el1[j] != el2[j]) {
+						result.sameTo = i-1;
+						result.differentFrom = i;
+						return result;
+					}
+				}
+			}
+			result.sameTo = i - 1;
+			result.differentFrom = i;
+			result.equal = true;
+		} else {
+			result.incompatible = true;
+			return result;
+		}
+	}
 
 	//#endregion
 

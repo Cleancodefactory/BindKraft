@@ -62,6 +62,18 @@
      * @param {*} callback - proto callback(stateNode, objSet)
      * @returns 
      */
+    TreeStatesManipulator.prototype.compareStates = function(s1, s2) {
+        var r = TreeStates.compareStates(s1,s2);
+        if (r.incompatible) return null;
+        if (r.equal) return {
+            base: s1, // length can be used as truncation index if the states themselves are not necessary
+            nav: []
+        }
+        return {
+            base: s1.slice(0,r.differentFrom),
+            nav: s2.slice(r.differentFrom)
+        }
+    }
     TreeStatesManipulator.prototype.truncateFromState = function(namedPath) { 
         var state = this.$approuter.currentTreeState();
         var i;
@@ -112,9 +124,13 @@
         if (current_state == null) return null;
         var startMap = this.$states.navToMap(namedBase);
         if (startMap != null) {
-            var sublinear = ser.parseToLinear(subpath);
-            var sub_objstate = TreeStates.DelinearizeTSSubMaps(startMap, sublinear);
-            return current_state.concat(sub_objstate);
+            if (this.isObjectState(subpath)) {
+                return current_state.concat(subpath);
+            } else if (typeof subpath == "string") {
+                var sublinear = ser.parseToLinear(subpath);
+                var sub_objstate = TreeStates.DelinearizeTSSubMaps(startMap, sublinear);
+                return current_state.concat(sub_objstate);
+            }
         }
         return null;
     }
