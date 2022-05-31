@@ -124,9 +124,13 @@
         if (current_state == null) return null;
         var startMap = this.$states.navToMap(namedBase);
         if (startMap != null) {
-            var sublinear = ser.parseToLinear(subpath);
-            var sub_objstate = TreeStates.DelinearizeTSSubMaps(startMap, sublinear);
-            return current_state.concat(sub_objstate);
+            if (this.isObjectState(subpath)) {
+                return current_state.concat(subpath);
+            } else if (typeof subpath == "string") {
+                var sublinear = ser.parseToLinear(subpath);
+                var sub_objstate = TreeStates.DelinearizeTSSubMaps(startMap, sublinear);
+                return current_state.concat(sub_objstate);
+            }
         }
         return null;
     }
