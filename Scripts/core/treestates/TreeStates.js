@@ -228,7 +228,7 @@
 		}
 		return false;
 	}
-	TreeStates.compareStates = function(state1, state2) {
+	TreeStates.prototype.compareStates = function(state1, state2) {
 		var result = {
 			incompatible: false
 		};
@@ -257,11 +257,16 @@
 			}
 			result.sameTo = i - 1;
 			result.differentFrom = i;
-			result.equal = true;
+			if (oset1.length != oset2.length) {
+				result.equal = false;
+			} else {
+				result.equal = true;	
+			}
 		} else {
 			result.incompatible = true;
-			return result;
+
 		}
+		return result;
 	}
 
 	//#endregion
@@ -510,9 +515,7 @@
 						} else if (this.isError(r)) { // Error - immediate bail out
 							this.LASTERROR(this.getTextFromError(r));
 							return null;
-						} else {// Try next
-							return null;
-						}
+						} // else {// Try next
 					}
 					// No matches - technically not an error, but it usually is. Just detect it outside
 					return null;
