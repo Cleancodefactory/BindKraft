@@ -162,34 +162,54 @@
      * 
      * @param {string|CommandDescriptor} cmd_or_name - command to get.
      */
-    CommandContextHelper.prototype.get = function(cmd_or_name) {
+    CommandContextHelper.prototype.getEx = function(cmd_or_name) {
         return this.enumContexts(function(cmdCtx, output) {
             var cmd = cmdCtx.get_commands();
             if (cmd != null) {
                 var c = cmd.get(cmd_or_name);
                 if (c != null) {
-                    output.result = c;
+                    output.result = {
+                        command: c,
+                        context: cmdCtx
+                    };
                     return true;
                 }
             }
         }, null);
+    }
+    CommandContextHelper.prototype.get = function(cmd_or_name) {
+        var r = this.getEx(cmd_or_name);
+        if (r != null) { 
+            return r.command;
+        }
+        return null;
     }
     /**
      * Finds and if found returns the command
      * @param {string} token - the token to analyse or just command name/alias
      * @param {object} meta - options defining how to recognize the command (not all languages use this to the full extent)
      */
-    CommandContextHelper.prototype.find = function(token, startFrom) {
+    CommandContextHelper.prototype.findEx = function(token, startFrom) {
         return this.enumContexts(function(cmdCtx, output) {
             var cmd = cmdCtx.get_commands();
             if (cmd != null) {
                 var c = cmd.find(token, {subtype: "identifier"});
                 if (c != null) {
-                    output.result = c;
+                    output.result = {
+                        command: c,
+                        context: cmdCtx
+                    };
                     return true;
                 }
             }
         }, null, startFrom);
+    }
+    CommandContextHelper.prototype.find = function(token, startFrom) {
+        var r = this.findEx(token,startFrom);
+        if (r != null) {
+            return r.command;
+        }
+        return null;
     }
     CommandContextHelper.prototype.register = function(command, alias, regexp, action, help, bOverride) {
         var cmdreg = this.topCommandContext();
