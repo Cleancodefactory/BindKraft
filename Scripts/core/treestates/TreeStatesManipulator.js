@@ -40,7 +40,7 @@
         return TreeStates.isNamedState(namedState);
     }
     TreeStatesManipulator.prototype.isObjectState = function(objState) {
-        return TreeStates.isNamedState(namedState);
+        return TreeStates.isObjectState(objState);
     }
     TreeStatesManipulator.prototype.navToMap = function(namedPath) {
         return this.$states.navToMap(namedPath);
@@ -57,13 +57,21 @@
         return false;
     }
     /**
+     * Compares two object set states and returns a result that contains the same and different parts.
+     * The best illustration is usage of the method when navigation should occur and s1 is the current state
+     * and s2 is the state we want to switch to.
      * 
-     * @param {*} namedPath 
-     * @param {*} callback - proto callback(stateNode, objSet)
-     * @returns 
+     * 
+     * @param {Array<object>} s1 the first state
+     * @param {Array<object>} s2 the second state
+     * @returns {object} The two parts of the comparison:
+     * {
+     *  base: {Array<object>} The part where the both states are equal
+     *  nav: {Array<object>} The part from s2 that is different
+     * }
      */
     TreeStatesManipulator.prototype.compareStates = function(s1, s2) {
-        var r = TreeStates.compareStates(s1,s2);
+        var r = this.$states.compareStates(s1,s2);
         if (r.incompatible) return null;
         if (r.equal) return {
             base: s1, // length can be used as truncation index if the states themselves are not necessary
