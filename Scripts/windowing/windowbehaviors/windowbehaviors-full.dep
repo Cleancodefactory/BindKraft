@@ -3,3 +3,4 @@
 //#using "./heightwindowbehavior.js"
 //#using "./scrollablewindowbehavior.js"
 //#using "./dockerslotsbehavior.js"
+//#using "./childrenlocatorbehavior.js"

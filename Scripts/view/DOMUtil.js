@@ -846,7 +846,7 @@ DOMUtil.querySlots = function(node) {
 		el = arr[i];
 		if (arr[i].matches('[data-key]')) {
 			n = arr[i].getAttribute("data-key");
-			if (typeof n == "string") {
+			if (typeof n == "string" && !/^\s*$/.test(n)) {
 				if (n != "_client") { // This one should be found already if it exists and put in the main slot
 					result.nonamed = false;
 					result.named[n] = arr[i];

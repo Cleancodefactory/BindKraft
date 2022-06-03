@@ -27,7 +27,7 @@ WindowBehaviorBase.prototype.onuninit = function(wnd) {
 }
 /*
 	You can attach to window messages through BaseWindow.registerExternalHandler in init, but there is easier way:
-	just define on_<messagename> methods and they willbe called with a message parameter each time they are handled on the window on which you are attached.
+	just define on_<messagename> methods and they will be called with a message parameter each time they are handled on the window on which you are attached.
 	init and uninit are more useful for implementation of a deeper attachments, for example: viewDelegate, connectToViewEvent of windows hosting views and other non-trivial hooks.
 */
 WindowBehaviorBase.prototype.$paused = false;
