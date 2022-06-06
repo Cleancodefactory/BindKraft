@@ -48,7 +48,7 @@
         if (level <= 0) return null;
         var i,c = null;
         if (BaseObject.is(w, "BaseWindow")) {
-            for (i = 0; i < w.children; i++) {
+            for (i = 0; i < w.children.length; i++) {
                 c = w.children[i];
                 if (!BaseObject.is(c, "BaseWindow")) continue;
                 if (this.get_lookup().indexOf("windows") >= 0) {
@@ -61,13 +61,13 @@
                     }
                 }
                 if (this.get_lookup().indexOf("views") >= 0) {
-                    if (BaseObject.is(c.currentView, "ifacename")) {
+                    if (BaseObject.is(c.currentView, ifacename)) {
                         return c.currentView;
                     }
                 }
             }
             if (level > 1) {
-                for (i = 0; i < w.children; i++) {
+                for (i = 0; i < w.children.length; i++) {
                     c = w.children[i];
                     c = this.$searchService(c, ifacename, reason, level - 1);
                     if (c != null) return c;
