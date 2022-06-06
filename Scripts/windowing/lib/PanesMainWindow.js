@@ -227,6 +227,10 @@
     PanesMainWindow.prototype.set_bottompaneopened = function() { 
         return this.openPane("bottompane");
     }
+    PanesMainWindow.prototype.toggleLeftPane = function() { this.togglePane("left"); }
+    PanesMainWindow.prototype.toggleTopPane = function() { this.togglePane("top"); }
+    PanesMainWindow.prototype.toggleRightPane = function() { this.togglePane("right"); }
+    PanesMainWindow.prototype.toggleBottomPane = function() { this.togglePane("bottom"); }
 
     //#endregion
 
