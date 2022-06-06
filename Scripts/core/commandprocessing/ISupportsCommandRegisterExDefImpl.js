@@ -9,7 +9,11 @@ ISupportsCommandRegisterExDefImpl.prototype.get_commandregister = function() {
 // wrapper
 ISupportsCommandRegisterExDefImpl.$wrapcommandaction = function(action) {
 	return function(ctx,api) {
-		return action.call(ctx.get_application(), ctx,api);
+		if (Array.isArray(ctx)) { // New style
+			return action.call(api.get_application(), ctx,api);
+		} else { // Old style
+			return action.call(ctx.get_application(), ctx,api);
+		}
 	}
 }
 /**

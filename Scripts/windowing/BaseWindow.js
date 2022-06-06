@@ -161,11 +161,19 @@ BaseWindow.getElementPositionRect = function (domEl) {
 }.Description ( "Returns the {h,w} position of element domEl ( string ) " );
 
 BaseWindow.setElementPositionRect = function (domEl, rect) {
-    var el = $(domEl);
-    if (rect.x != null) el.css({ left: rect.x });
-    if (rect.y != null) el.css({ top: rect.y });
-    if (rect.w != null) el.width(rect.w);
-    if (rect.h != null) el.height(rect.h);
+    var el = DOMUtil.toDOMElement(domEl);
+    var GRect = Class("GRect");
+    if (el != null) {
+        var r = new GRect(rect);
+        if (r.isValid()) {
+            r.toDOMElement(el);
+        }
+    }
+    // var el = $(domEl);
+    // if (rect.x != null) el.css({ left: rect.x });
+    // if (rect.y != null) el.css({ top: rect.y });
+    // if (rect.w != null) el.width(rect.w);
+    // if (rect.h != null) el.height(rect.h);
 }.Description ( "Sets the position of element domEl (string) with rect ( {h,w} )" );
 BaseWindow.$parentlessWindows = [];
 BaseWindow.updateParentlessWindows = function(wnd) {
@@ -533,7 +541,7 @@ BaseWindow.prototype.OnDOMAttached = function () {
 	// Named slots
 	if (!slots.nonamed) {
 		// Transfer the named slots
-		this.$clientSlotElements = result.named; 
+		this.$clientSlotElements = slots.named; 
 	}
 	/* TODO: It is possible to have only named slots without main, but
 		our CURRENT LOGIC PUTS AS MAIN THE FIRST FOUND (a duplicate).

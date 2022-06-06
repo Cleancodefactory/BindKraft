@@ -179,6 +179,7 @@
             stack: [],
             helper: null, // set below
             args: [], // The arguments for the next function
+            commandContext: null // Set during execution of external command - holds the context in which it was found
         };
         
         // The helper used mostly internally and somewhat internally in the API implementation.
@@ -201,6 +202,7 @@
             var i, instruction;
 
             while (true) {
+                state.commandContext = null; // clear the context
                 instruction = me.$program[state.pc];
                 // Preprocess instruction
                 state.pc ++;
@@ -340,13 +342,16 @@
                 case Instructions.CallParent:
                     if (instruction.operation == Instructions.CallRoot) ctxFrom = "root";
                     if (instruction.operation == Instructions.CallParent) ctxFrom = "parent";
-                    cmd = state.helper.find(instruction.operand, null, ctxFrom);
-                    if (cmd != null) {
+                    var result = state.helper.findEx(instruction.operand, null, ctxFrom);
+                    if (result != null) {
+                        cmd = result.command;
+                        state.commandContext = result.context;
                         if (BaseObject.isCallback(cmd.get_action())) {
                             opaction = BaseObject.applyCallback(cmd.get_action(), [args, api]);
                             if (BaseObject.is(opaction, "Operation")) {
                                 opaction.transfer(op);
                             } else {
+                                // opaction is the result value if it is not an operation.
                                 op.CompleteOperation(true, opaction);
                             }
                         }
@@ -504,6 +509,29 @@
 
     //#endregion Environment
 
+    //#region Source context
+    // Deals with the command context sourcing the currently executed command. 
+    // Available only during the command execution!
+    $CLNullLangAPI.prototype.get_application = function() {
+        if (this.state != null && this.state.commandContext != null) {
+            return this.state.commandContext.get_application();
+        }
+        return null;
+    }
+    $CLNullLangAPI.prototype.get_customContextData = function() {
+        if (this.state != null && this.state.commandContext != null) {
+            return this.state.commandContext.get_custom();
+        }
+        return null;
+    }
+    $CLNullLangAPI.prototype.get_commandContext = function() {
+        if (this.state != null && this.state.commandContext != null) {
+            return this.state.commandContext;
+        }
+        return null;
+    }
+
+    //#endregion
 
     $CLNullLangAPI.prototype.pushContext = function(ctx) {
         if (BaseObject.is(ctx, "ICommandContext")) {
