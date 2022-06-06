@@ -96,7 +96,7 @@ CommandReg.prototype.register = function(command, alias, regexp, action, help, b
 	} else if (BaseObject.is(command, "CommandDescriptor")) {
 		cmd = command;
 	} else if (typeof command == "object") {
-		cmd = new CommandDescriptor(command.command, command.alias, command.regexp, command.action, command.help);
+		cmd = new CommandDescriptor(command.name, command.alias, command.regexp, command.action, command.help);
 	} else {
 		throw "Unusable arguments - check documentation";
 	}
