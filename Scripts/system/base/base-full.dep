@@ -1,2 +1,5 @@
 
+
+//#using "../AppBase.js"
+//#using "../AppBaseEx.js"
 //#using "./AppElementBase.js"
