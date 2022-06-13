@@ -247,6 +247,15 @@ ViewBase.prototype.set_caption = function(v) {
 ViewBase.prototype.get_caption = function () {
     return this.$caption;
 };
+ViewBase.prototype.$iconpath = null; //"Todo: Implement get_caption please";
+ViewBase.prototype.set_iconpath = function(v) {
+	this.$iconpath = v;
+	this.throwStructuralQuery(new UpdateCommandBars());
+};
+
+ViewBase.prototype.get_iconpath = function () {
+    return this.$iconpath;
+};
 
 // TODO: Deprecate this - such a thing should not be here!
 ViewBase.prototype.get_command_by_id = function (id) {
