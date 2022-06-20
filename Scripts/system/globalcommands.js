@@ -125,7 +125,11 @@ System.DefaultCommands = {
 		var scriptname = api.pullNextToken();
 		var script = System.BootFS().readScript(scriptname);
 		if (script != null) {
-			return Commander.RunGlobal(script);
+			var CLRun = Class("CLRun");
+			var run = new CLRun(script);
+			if (!run.get_recognized()) return Operation.Failed("Script not recognized");
+			return run.run({});
+			//return Commander.RunGlobal(script);
 		}
 		return false;
 	},
