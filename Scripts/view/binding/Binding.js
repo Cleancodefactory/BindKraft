@@ -1989,7 +1989,12 @@ Binding.prototype.$set_sourceValue = function (val, bFormat, bDontMarkState) {
 
     }
 };
-
+/**
+ * Needs to be also persistable! There is logical reason for it - if you do not depend on the binding to update the state it can be confusing or even wrong to use checkstate.
+ * @param {*} eventOrSender 
+ * @param {*} dcOrNothing 
+ * @returns 
+ */
 Binding.prototype.$onCheckSourceState = function (eventOrSender, dcOrNothing) {
 	if ( this.__obliterated ) { return; }
     if (this.testSourceState()) {
