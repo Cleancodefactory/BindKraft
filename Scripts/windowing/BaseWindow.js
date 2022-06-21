@@ -644,6 +644,7 @@ BaseWindow.prototype.$styleFlags = 0;
 //protected//
 BaseWindow.prototype.$applyStyleFlags = function (bDontFireEvents) {	
 	if (this.__obliterated) { return; }
+    var rawElement = DOMUtil.toDOMElement(this.get_windowelement());
     var el = $(this.get_windowelement());
     var self = this;
 	//this.$persistSetting("WndowStyleFlags",this.$styleFlags);
@@ -722,16 +723,12 @@ BaseWindow.prototype.$applyStyleFlags = function (bDontFireEvents) {
     }
 	this.$persistSetting("visible",this.$styleFlags & WindowStyleFlags.visible);
     if (this.$styleFlags & WindowStyleFlags.visible) {
-        if (el.css('display') == "none") {
-            el.show();
-            if (!bDontFireEvents) {
-                WindowingMessage.fireOn(self, WindowEventEnum.Show, { visible: this.isWindowVisible(), wasvisible: false });
-            } // guaranteed transition from invisible
+        if (DOMUtil.unHideElement(rawElement) && !bDontFireEvents) {
+            WindowingMessage.fireOn(self, WindowEventEnum.Show, { visible: this.isWindowVisible(), wasvisible: false });
         }
     } else {
-        if (el.css('display') != "none") {
-            el.hide();
-            if (!bDontFireEvents) WindowingMessage.fireOn(self, WindowEventEnum.Show, { visible: false, wasvisible: this.$wasvisible });
+        if (DOMUtil.hideElement(rawElement) && !bDontFireEvents) {
+            WindowingMessage.fireOn(self, WindowEventEnum.Show, { visible: false, wasvisible: this.$wasvisible });
         }
     }
     if (this.$styleFlags & WindowStyleFlags.adjustclient) {
