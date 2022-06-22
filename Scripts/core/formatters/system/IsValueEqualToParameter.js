@@ -16,27 +16,21 @@ IsValueEqualToParameter.Implement(IArgumentListParserStdImpl,"trim");
 
 IsValueEqualToParameter.prototype.Read = function(val, bind, params) {
     if (bind != null) {
+        var bp = bind.bindingParameter;
+        if (params != null && !/^\s*$/.test(params)) {
+            bp = bind.getRef(params);
+        }
         if ((val == null || val == "") 
              && 
-             (bind.bindingParameter == null || bind.bindingParameter == "")) {
+             (bp == null || bp == "")) {
                  return true;
              }
-        return (val == bind.bindingParameter);
+        return (val == bp);
     } else {
         return false;
     }
 }
-IsValueEqualToParameter.prototype.Write = function(val, bind, params) {
-    if (bind != null) {
-        if ((val == null || val == "") 
-             && 
-             (bind.bindingParameter == null || bind.bindingParameter == "")) {
-                 return true;
-             }
-        return (val == bind.bindingParameter);
-    } else {
-        return false;
-    }
-}
+IsValueEqualToParameter.prototype.Write = IsValueEqualToParameter.prototype.Read;
+
 
 })();

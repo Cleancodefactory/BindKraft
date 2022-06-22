@@ -98,7 +98,7 @@
 					}
 				}
                 if (state.length > namedPath.length) {
-                    clean = state.slice(namedPath.length + 1);
+                    clean = state.slice(namedPath.length);
                 }
 				return { result: result, clean: clean.reverse() };
 			} else {

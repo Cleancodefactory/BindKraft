@@ -217,12 +217,22 @@ BaseWindow.hideAllChildren = function(parentWindow,additionalFlags) {
     }
 }
 BaseWindow.prototype.$iconpath = null; // Set this in the module-configuration.js file. On some platforms it may be called application-configuration.js.
-BaseWindow.prototype.set_iconpath = function(v) {
-	this.$iconpath = v;
-}
-BaseWindow.prototype.get_iconpath = function() {
-	return this.$iconpath;
+BaseWindow.prototype.get_iconpath = function () { // Quite possibly we will need captions not dictated by views or even windows themselves
+	var icon = null;
+	
+	if (BaseObject.is(this.currentView,"ViewBase")) {
+		icon =  this.currentView.get_iconpath();
+	}
+	
+	if (icon != null) return icon;
+	
+    return ViewBase.prototype.get_iconpath.call(this);
 };
+
+BaseWindow.prototype.set_iconpath = function (v) {
+    this.$iconpath = v;
+};
+
 
 BaseWindow.prototype.sysvertical = new InitializeStringParameter("Comma separated list of data-keys of elements to be considered when calculating the height taken by the system part of the window", null);
 BaseWindow.prototype.syshorizontal = new InitializeStringParameter("Comma separated list of data-keys of elements to be considered when calculating the width taken by the system part of the window", null);
@@ -367,7 +377,7 @@ BaseWindow.prototype.$finishCreatingForReal = function (viewString) {
     //if (viewString != null) this.$customSystemTemplate = viewString;
     var args = this.createParameters;
     if (args.data != null && args.data.caption != null) {
-        this.$staticCaption = args.data.caption;
+        this.$caption = args.data.caption;
     }
 	// Now viewString has to be here
     if (this.createParameters.parent) {
@@ -447,17 +457,19 @@ BaseWindow.prototype.get_caption = function () { // Quite possibly we will need 
 	
 	if (caption != null) return caption;
 	
-    if (this.$staticCaption != null) return this.$staticCaption;
+    //if (this.$staticCaption != null) return this.$staticCaption;
 	
     return ViewBase.prototype.get_caption.call(this);
 }.Description("Returns a caption to be displayed in the system part of the window or in outside tools and UI")
 	.Remarks("The current implementation will attempt to extract caption from a hosted view and return it insread of the window's caption, but the logic that decides when this is to be done is not final.");
 
 BaseWindow.prototype.set_caption = function (v) {
-    this.$staticCaption = v;
-    return ViewBase.prototype.get_caption.call(this);
+    return ViewBase.prototype.set_caption.call(this, v);
+    //this.$staticCaption = v;
 }.Remarks("Setting caption to the window makes it priority").
 	Param("v","The caption to set - string");
+
+
 
 // Do not use
 /*
@@ -632,6 +644,7 @@ BaseWindow.prototype.$styleFlags = 0;
 //protected//
 BaseWindow.prototype.$applyStyleFlags = function (bDontFireEvents) {	
 	if (this.__obliterated) { return; }
+    var rawElement = DOMUtil.toDOMElement(this.get_windowelement());
     var el = $(this.get_windowelement());
     var self = this;
 	//this.$persistSetting("WndowStyleFlags",this.$styleFlags);
@@ -710,16 +723,12 @@ BaseWindow.prototype.$applyStyleFlags = function (bDontFireEvents) {
     }
 	this.$persistSetting("visible",this.$styleFlags & WindowStyleFlags.visible);
     if (this.$styleFlags & WindowStyleFlags.visible) {
-        if (el.css('display') == "none") {
-            el.show();
-            if (!bDontFireEvents) {
-                WindowingMessage.fireOn(self, WindowEventEnum.Show, { visible: this.isWindowVisible(), wasvisible: false });
-            } // guaranteed transition from invisible
+        if (DOMUtil.unHideElement(rawElement) && !bDontFireEvents) {
+            WindowingMessage.fireOn(self, WindowEventEnum.Show, { visible: this.isWindowVisible(), wasvisible: false });
         }
     } else {
-        if (el.css('display') != "none") {
-            el.hide();
-            if (!bDontFireEvents) WindowingMessage.fireOn(self, WindowEventEnum.Show, { visible: false, wasvisible: this.$wasvisible });
+        if (DOMUtil.hideElement(rawElement) && !bDontFireEvents) {
+            WindowingMessage.fireOn(self, WindowEventEnum.Show, { visible: false, wasvisible: this.$wasvisible });
         }
     }
     if (this.$styleFlags & WindowStyleFlags.adjustclient) {
@@ -918,7 +927,7 @@ BaseWindow.prototype.windowmaxminchanged = new InitializeEvent("Fired when minim
     switch (evnt.type) {
         case WindowEventEnum.Create:
             if (evnt.data != null && evnt.data.caption != null) {
-                this.$staticCaption = evnt.data.caption;
+                this.$caption = evnt.data.caption;
             }
             WindowingMessage.fireOn(this, WindowEventEnum.Show, { visible: this.isWindowVisible(), wasvisible: this.$wasvisible });
             break;

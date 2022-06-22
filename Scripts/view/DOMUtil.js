@@ -533,17 +533,24 @@ DOMUtil.getStyle = function(dom, style, bComputed) {
 }
 DOMUtil.hideElement = function(dom) {
 	if (!(dom instanceof HTMLElement)) return;
+	var result = false;
 	var _displ = dom.style.display;
+	if (_displ != "none") { result = true;}
 	dom.style.display = "none";
 	if (_displ != null && _displ.length != 0 && _displ != "none") {
 		dom.__lastStyleDisplay = _displ;
 	} else {
 		delete dom.__lastStyleDisplay;
 	}
-	
+	return result;	
 }
 DOMUtil.unHideElement = function(dom) {
 	if (!(dom instanceof HTMLElement)) return;
+	var result = false;
+	var _curdispl = dom.style.display;
+	if (_curdispl == "none") {
+		result = true;
+	}
 	var _displ = null;
 	if (dom.__lastStyleDisplay != null && dom.__lastStyleDisplay.length > 0 && dom.__lastStyleDisplay != "none") {
 		_displ = dom.__lastStyleDisplay;
@@ -551,6 +558,7 @@ DOMUtil.unHideElement = function(dom) {
 		_displ = "";
 	}
 	dom.style.display = _displ;
+	return result;
 }
 //#endregion
 /**
