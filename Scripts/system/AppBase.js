@@ -51,6 +51,8 @@ AppBase.prototype.locateService = function (type, reason) {
     switch (type) {
         case "IAmbientDefaults":
             return this.$__appAmbientDefaults;
+        case "IApp":
+            return this;
     }
     return null;
 }
