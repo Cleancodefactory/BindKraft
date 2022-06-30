@@ -4,7 +4,7 @@
 function FormatInteger() {
 	SystemFormatterBase.apply(this,arguments);
 }
-FormatInteger.DoNotRegister = true;
+//FormatInteger.DoNotRegister = true;
 FormatInteger.Inherit(SystemFormatterBase,"FormatInteger");
 FormatInteger.Implement(IArgumentListParserStdImpl,"spaced",true);
 FormatInteger.ImplementProperty("culture", new InitializeStringParameter("Culture name (must be loaded in order to use it), null means the system default - initialized with CL initculture", null));
