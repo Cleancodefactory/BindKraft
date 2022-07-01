@@ -16,4 +16,5 @@
      * This enables the 3-d party to decide what to do with the misbehaving control in border cases.
      */
     IUIControlReadiness.prototype.get_waitcontrolreadystate = function() { throw "not implemented.";}
+    IUIControlReadiness.prototype.reportControlReadiness = function(isready) { throw "not implemented.";}
 })();
