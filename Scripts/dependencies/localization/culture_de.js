@@ -18,7 +18,7 @@ Globalize.addCultureInfo("de", "default", {
                 pattern: ["-n $", "n $"],
                 ",": ".",
                 ".": ",",
-                symbol: "€"
+                symbol: "ï¿½"
             }
         },
         calendars: {
@@ -31,7 +31,7 @@ Globalize.addCultureInfo("de", "default", {
                     namesShort: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"]
                 },
                 months: {
-                    names: ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember", ""],
+                    names: ["Januar", "Februar", "Mï¿½rz", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember", ""],
                     namesAbbr: ["Jan", "Feb", "Mrz", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez", ""]
                 },
                 AM: null,
@@ -39,13 +39,23 @@ Globalize.addCultureInfo("de", "default", {
                 eras: [{ "name": "n. Chr.", "start": null, "offset": 0}],
                 patterns: {
                     d: "dd.MM.yyyy",
-                    D: "dddd, d. MMMM yyyy",
+                    D: "dd MMMM yyyy",
                     t: "HH:mm",
                     T: "HH:mm:ss",
-                    f: "dddd, d. MMMM yyyy HH:mm",
-                    F: "dddd, d. MMMM yyyy HH:mm:ss",
+                    f: "dd MMMM yyyy HH:mm",
+                    F: "dd MMMM yyyy HH:mm:ss",
                     M: "dd MMMM",
-                    Y: "MMMM yyyy"
+					n: "dd.MM.yyyy HH:mm",
+					//  long date-time numbers only
+					N: "dd.MM.yyyy HH:mm:ss",
+                    Y: "MMMM yyyy",
+                    S: "yyyy\u0027-\u0027MM\u0027-\u0027dd\u0027T\u0027HH\u0027:\u0027mm\u0027:\u0027ss",
+                    K: "M/d",
+					// f + weekday
+					w: "dddd, dd MMMM yyyy HH:mm",
+					// F + weekday
+					W: "dddd, dd MMMM yyyy HH:mm:ss"
+					
                 }
             }
         }

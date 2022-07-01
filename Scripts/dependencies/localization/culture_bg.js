@@ -43,14 +43,16 @@
                     f: "dd MMMM yyyy 'г.' HH:mm",
                     F: "dd MMMM yyyy 'г.' HH:mm:ss",
                     M: "dd MMMM",
-					n: "dd.MM.yyyy hh:mm",
+					n: "dd.MM.yyyy HH:mm",
 					//  long date-time numbers only
-					N: "dd.MM.yyyy hh:mm:ss",
+					N: "dd.MM.yyyy HH:mm:ss",
                     Y: "MMMM yyyy 'г.'",
+                    S: "yyyy\u0027-\u0027MM\u0027-\u0027dd\u0027T\u0027HH\u0027:\u0027mm\u0027:\u0027ss",
+                    K: "M/d",
 					// f + weekday
-					w: "dddd, dd MMMM yyyy hh:mm",
+					w: "dddd, dd MMMM yyyy HH:mm",
 					// F + weekday
-					W: "dddd, dd MMMM yyyy hh:mm:ss"
+					W: "dddd, dd MMMM yyyy HH:mm:ss"
 					
                 }
             }
