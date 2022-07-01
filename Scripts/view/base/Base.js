@@ -266,6 +266,10 @@ Base.prototype.onSwallowEvent = function(e, dc) {
 Base.prototype.$execBeforeFinalInit = null;
 // Avoid using this method, prefer ExecBeforeFinalInit for better readability. This one is for legacy support
 Base.prototype.ExecWhenInitialized = function(args, action) {
+    if (typeof args == "function") {
+        action = args;
+        args = [];
+    }
 	if (typeof action == "function") {
 		if (this.isFullyInitialized()) {
 			action.apply(this, args);
@@ -281,6 +285,10 @@ Base.prototype.ExecBeforeFinalInit = Base.prototype.ExecWhenInitialized;
 
 Base.prototype.$execAfterFinalInit = null;
 Base.prototype.ExecAfterFinalInit = function(args, action) {
+    if (typeof args == "function") { 
+        action = args;
+        args = [];
+    }
 	if (typeof action == "function") {
 		if (this.isFullyInitialized()) {
 			action.apply(this, args);
