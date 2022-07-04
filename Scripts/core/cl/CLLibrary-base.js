@@ -241,7 +241,31 @@
                 if (ARGS.length != 1) {
                     return Operation.Failed("EncodeBase64 requires 1 parameter!");
                 } else {
-                    return btoa(ARGS[0]);
+                    if (BaseObject.is(ARGS[0], "string")) {
+                        var str = ARGS[0];
+                        var utf8 = [];
+                        for (var i=0; i < str.length; i++) {
+                            var charcode = str.charCodeAt(i);
+                            if (charcode < 0x80) {
+                                utf8.push(charcode);
+                            } else if (charcode < 0x800) {
+                                utf8.push(0xc0 | (charcode >> 6), 
+                                          0x80 | (charcode & 0x3f));
+                            } else if (charcode < 0xd800 || charcode >= 0xe000) {
+                                utf8.push(0xe0 | (charcode >> 12), 
+                                          0x80 | ((charcode>>6) & 0x3f), 
+                                          0x80 | (charcode & 0x3f));
+                            } else {
+                                i++;
+                                charcode = ((charcode&0x3ff)<<10)|(str.charCodeAt(i)&0x3ff)
+                                utf8.push(0xf0 | (charcode >>18), 
+                                          0x80 | ((charcode>>12) & 0x3f), 
+                                          0x80 | ((charcode>>6) & 0x3f), 
+                                          0x80 | (charcode & 0x3f));
+                            }
+                        }
+                        return btoa(utf8);
+                    }
                 }
             },
             help: "... NO HELP!"
@@ -254,7 +278,42 @@
                 if (ARGS.length != 1) {
                     return Operation.Failed("DecodeBase64 requires 1 parameter!");
                 } else {
-                    return atob(ARGS[0]);
+                    if (BaseObject.is(ARGS[0], "Array")) {
+                        var array, out, len, i, c, char2, char3;
+                        array = ARGS[0];
+                        out = "";
+                        len = array.length;
+                        i = 0;
+                        while (i < len) {
+                            c = array[i];
+                            i += 1;
+                            switch (c >> 4)
+                            { 
+                                case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
+                                    // 0xxxxxxx
+                                    out += String.fromCharCode(c);
+                                    break;
+                                case 12: case 13:
+                                    // 110x xxxx   10xx xxxx
+                                    char2 = array[i];
+                                    i += 1;
+                                    out += String.fromCharCode(((c & 0x1F) << 6) | (char2 & 0x3F));
+                                    break;
+                                case 14:
+                                    // 1110 xxxx  10xx xxxx  10xx xxxx
+                                    char2 = array[i];
+                                    i += 1;
+                                    char3 = array[i];
+                                    i += 1;
+                                    out += String.fromCharCode(((c & 0x0F) << 12) |
+                                                ((char2 & 0x3F) << 6) |
+                                                ((char3 & 0x3F) << 0));
+                                break;
+                            }
+                        }
+                    
+                        return atob(out);
+                    }
                 }
             },
             help: "... NO HELP!"
