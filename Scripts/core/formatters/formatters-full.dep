@@ -1,6 +1,6 @@
 
 //#using "./SystemFormattersRegister.js"
-//#using "./CustomFormatterBase.js"
+//#using "./customformatterbase.js"
 //#using "./SystemFormatterBase.js"
 //#using "./SystemFormatterAggregateBase.js"
 //#using "./legacy-formatters.js"
