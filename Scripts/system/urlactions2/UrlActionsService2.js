@@ -51,6 +51,12 @@
         }
         return null;
     }
+    UrlActionsService2.prototype.$getAllRegs = function(alias) { 
+        if (this.$registrations != null) { 
+            return this.$registrations.getProps();
+        }
+        return null;
+    }
     //#endregion
 
     //#region IUpdateCommandUrl
@@ -101,7 +107,10 @@
     UrlActionsService2.prototype.isRegistered = function(command) { 
         return (this.getReg(command) != null);
     }
-
+    UrlActionsService2.prototype.copyToRedirectUrl = function() { 
+        var url;
+        return BKUrl.getInitialBaseUrl();
+    }
 
     //#endregion
 

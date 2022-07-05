@@ -31,4 +31,6 @@
      */
     IUpdateCommandUrl.prototype.isRegistered = function(command) { throw "not implemented"; }
 
+    IUpdateCommandUrl.prototype.copyToRedirectUrl = function(url) { throw "not implemented"; }
+
 })();
