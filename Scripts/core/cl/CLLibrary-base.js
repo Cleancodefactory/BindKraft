@@ -23,7 +23,7 @@
                     }
                     return sum;
                 } else {
-                    return Operation.Failed("Not all passed parameters are numbers!");
+                    return Operation.Failed("Sum - Not all passed parameters are numbers!");
                 }
             },
             help: "... NO HELP!"
@@ -33,6 +33,7 @@
             alias: null,
             regexp: null,
             action: function (ARGS, api) {
+                if (ARGS.length == 0) return Operation.Failed("Concat - expects some arguments!");
                 var sum = '';
                 for (var i = 0; i < ARGS.length; i++) {
                     sum += ('' + ARGS[i]);
@@ -344,15 +345,13 @@
             regexp: null,
             action: function (ARGS, api) {
                 var arr = [];
-                if (ARGS.length > 0) {
-                    for (var i = 0; i < ARGS.length; i++) {
-                        var el = ARGS[i];
-                        if (el != null) {
-                            if (BaseObject.is(el, "Array")) {
-                                arr = arr.concat(el);
-                            } else {
-                                arr.push(el);
-                            }
+                for (var i = 0; i < ARGS.length; i++) {
+                    var el = ARGS[i];
+                    if (el != null) {
+                        if (BaseObject.is(el, "Array")) {
+                            arr = arr.concat(el);
+                        } else {
+                            arr.push(el);
                         }
                     }
                 }
