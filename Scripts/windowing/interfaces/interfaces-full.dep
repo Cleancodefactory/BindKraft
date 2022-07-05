@@ -3,7 +3,7 @@
 //#using "./IInfoDisplayPanel.js"
 //#using "./IWindowTemplate.js"
 //#using "./IWorkspaceWindow.js"
-//#using "./IDialogView.js"
+//#using "./IDIalogView.js"
 //#using "./IAttachedWindowBehaviors.js"
 //#using "./IWindowBehavior.js"
 //#using "./IWindowIdentification.js"
