@@ -228,6 +228,16 @@
 		}
 		return false;
 	}
+	/**
+	 * Compares s2 to s1 and returns a result describing their relation to each other.
+	 * @return An object:
+	 * {
+	 * 	equal: boolean,
+	 *  incompatible: boolean // Nothing in common - full navigation is needed.
+	 *  sameTo: integer // The same up to index (but excluding it)
+	 *  differentFrom: index from which (inclusive) they are different.
+	 * }
+	 */
 	TreeStates.prototype.compareStates = function(state1, state2) {
 		var result = {
 			incompatible: false
