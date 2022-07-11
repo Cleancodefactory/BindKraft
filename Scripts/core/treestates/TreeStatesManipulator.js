@@ -115,7 +115,24 @@
      * }
      */
     TreeStatesManipulator.prototype.navigateBackAndForth = function(namedPath, targetState) {
-        var baseObjectState = this.$approuter.currentTreeState(namedPath);
+        var baseObjectState;
+        if (typeof targetState == 'string') {
+            namedPath = this.stateMan().deserialize(namedPath);
+        }
+        if (this.isNamedState(namedPath)) {
+            baseObjectState = this.$approuter.currentTreeState(namedPath);
+        } else if (this.isObjectState(namedPath) && targetState == null) {
+            var t = this.compareStates(this.$approuter.currentTreeState(),namedPath);
+            if (t != null) {
+                return t;
+            } else {
+                baseObjectState = null;
+                targetState = namedPath;
+            }
+        } else {
+            throw "targetState should be omitted when object state is passed as first argument";
+        }
+        
         if (baseObjectState == null || baseObjectState.length == 0) {
             // TODO Do we need checks here?
             return {
