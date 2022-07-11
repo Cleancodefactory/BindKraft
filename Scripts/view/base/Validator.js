@@ -656,6 +656,9 @@ Validator.prototype.close = Validator.prototype.closeValidator; // temporary
 Validator.prototype.uninit = function () {
     //this.$closeHint();
     this.result = ValidationResultEnum.uninitialized;
+    this.$busyValidating = false;
+    this.$queuedValidation = false;
+    this.waitReport = 0;
     this.onValidityChanged();
 
 }
