@@ -94,11 +94,13 @@
         var r = this.$states.compareStates(s1,s2);
         if (r.incompatible) return null;
         if (r.equal) return {
+            full: s1,
             base: s1, // length can be used as truncation index if the states themselves are not necessary
             nav: [],
             clean: []
         }
         return {
+            full: s1.slice(0,r.differentFrom).concat(s2.slice(r.differentFrom)),
             base: s1.slice(0,r.differentFrom),
             nav: s2.slice(r.differentFrom),
             clean: s1.slice(r.differentFrom).reverse()
@@ -115,14 +117,14 @@
      * }
      */
     TreeStatesManipulator.prototype.navigateBackAndForth = function(namedPath, targetState) {
-        var baseObjectState;
+        var baseObjectState, t;
         if (typeof targetState == 'string') {
             namedPath = this.stateMan().deserialize(namedPath);
         }
         if (this.isNamedState(namedPath)) {
             baseObjectState = this.$approuter.currentTreeState(namedPath);
         } else if (this.isObjectState(namedPath) && targetState == null) {
-            var t = this.compareStates(this.$approuter.currentTreeState(),namedPath);
+            t = this.compareStates(this.$approuter.currentTreeState(),namedPath);
             if (t != null) {
                 return t;
             } else {
@@ -135,9 +137,11 @@
         
         if (baseObjectState == null || baseObjectState.length == 0) {
             // TODO Do we need checks here?
+            t = this.isObjectState(targetState)?targetState:this.$states.delinearize(this.get_serializer().parseToLinear(targetState));
             return {
+                full: t,
                 base: null,
-                nav: this.isObjectState(targetState)?targetState:this.$states.delinearize(this.get_serializer().parseToLinear(targetState)),
+                nav: t,
                 clean: this.$approuter.currentTreeState().reverse()
             };
         } else if (baseObjectState.length > 0) {
