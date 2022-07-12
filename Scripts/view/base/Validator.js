@@ -651,7 +651,8 @@ Validator.prototype.validateHandler = function(event_or_sender, dc, bind) {
 }
 Validator.prototype.closeValidator = function () {
     this.$closeHint();
-};
+    this.uninit();
+}
 Validator.prototype.close = Validator.prototype.closeValidator; // temporary
 Validator.prototype.uninit = function () {
     //this.$closeHint();
