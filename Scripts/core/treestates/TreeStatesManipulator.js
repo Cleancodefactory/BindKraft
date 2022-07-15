@@ -45,8 +45,27 @@
     TreeStatesManipulator.prototype.navToMap = function(namedPath) {
         return this.$states.navToMap(namedPath);
     }
+    /**
+     * @param {Array<object>} objSet - the state to strip named path for. If omitted will use the current app state
+     * @return {Array<string>} - the named path for this state
+     */
     TreeStatesManipulator.prototype.namedPathFromState = function(objSet) {
-        return TreeStates.namedPathFromState(objSet)
+        if (arguments.length == 0) {
+            return TreeStates.namedPathFromState(this.$approuter.currentTreeState());
+        } else {
+            return TreeStates.namedPathFromState(objSet);
+        }
+    }
+    /**
+     * @param {Array<string>} namedPath - the path to cut
+     * @param {Array<object>} state - object set state - optional. If supplied will cut from it. If missing will use the current app state.
+     */
+    TreeStatesManipulator.prototype.cutFromState = function(namedPath, state) {
+        if (arguments.length <= 1) {
+            return TreeStates.cutFromState(namedPath, this.$approuter.currentTreeState());
+        } else {
+            return TreeStates.cutFromState(namedPath, state);
+        }
     }
     TreeStatesManipulator.prototype.compareNamedPathWithState = function(namedPath, objSet) {
         if (!TreeStates.isNamedState(namedPath)) return false;
@@ -62,26 +81,84 @@
      * and s2 is the state we want to switch to.
      * 
      * 
-     * @param {Array<object>} s1 the first state
-     * @param {Array<object>} s2 the second state
+     * @param {Array<object>} s1 the first state (the state to which you want to go down and preserve)
+     * @param {Array<object>} s2 the second state (the new state to which you want to go.)
      * @returns {object} The two parts of the comparison:
      * {
      *  base: {Array<object>} The part where the both states are equal
      *  nav: {Array<object>} The part from s2 that is different
+     *  clean: {Array<object>} The part to deconstruct, reversed,ready to use in a forward cycle
      * }
      */
     TreeStatesManipulator.prototype.compareStates = function(s1, s2) {
         var r = this.$states.compareStates(s1,s2);
         if (r.incompatible) return null;
         if (r.equal) return {
+            full: s1,
             base: s1, // length can be used as truncation index if the states themselves are not necessary
-            nav: []
+            nav: [],
+            clean: []
         }
         return {
+            full: s1.slice(0,r.differentFrom).concat(s2.slice(r.differentFrom)),
             base: s1.slice(0,r.differentFrom),
-            nav: s2.slice(r.differentFrom)
+            nav: s2.slice(r.differentFrom),
+            clean: s1.slice(r.differentFrom).reverse()
         }
     }
+    /**
+     * @param {Array<string>} namedPath - The part of the path to preserve (base)
+     * @param {Array<object>|string} targetState - The relative route to which we want to go from the namedPath
+     * @return {object} -
+     * {
+     *  base: {Array<object>} The part where the both states are equal
+     *  nav: {Array<object>} The part from s2 that is different
+     *  clean: {Array<object>} The part to deconstruct, reversed,ready to use in a forward cycle
+     * }
+     */
+    TreeStatesManipulator.prototype.navigateBackAndForth = function(namedPath, targetState) {
+        var baseObjectState, t;
+        if (typeof targetState == 'string') {
+            namedPath = this.stateMan().deserialize(namedPath);
+        }
+        if (this.isNamedState(namedPath)) {
+            baseObjectState = this.$approuter.currentTreeState(namedPath);
+        } else if (this.isObjectState(namedPath) && targetState == null) {
+            t = this.compareStates(this.$approuter.currentTreeState(),namedPath);
+            if (t != null) {
+                return t;
+            } else {
+                baseObjectState = null;
+                targetState = namedPath;
+            }
+        } else {
+            throw "targetState should be omitted when object state is passed as first argument";
+        }
+        
+        if (baseObjectState == null || baseObjectState.length == 0) {
+            // TODO Do we need checks here?
+            t = this.isObjectState(targetState)?targetState:this.$states.delinearize(this.get_serializer().parseToLinear(targetState));
+            return {
+                full: t,
+                base: null,
+                nav: t,
+                clean: this.$approuter.currentTreeState().reverse()
+            };
+        } else if (baseObjectState.length > 0) {
+            var startMap = this.$states.navToMap(namedPath);
+            var navObjectSet = [];
+            if (this.isObjectState(targetState)) {
+                navObjectSet = targetState;
+            } else if(typeof targetState == "string") {
+                var sublinear = ser.parseToLinear(targetState);
+                navObjectSet = TreeStates.DelinearizeTSSubMaps(startMap, sublinear);
+            } else {
+                throw "targetState argument can be either object state or string";
+            }
+            return this.compareStates(this.$approuter.currentTreeState(), baseObjectState.concat(navObjectSet));
+        }
+    }
+
     TreeStatesManipulator.prototype.truncateFromState = function(namedPath) { 
         var state = this.$approuter.currentTreeState();
         var i;

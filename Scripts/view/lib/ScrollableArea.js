@@ -29,7 +29,7 @@ ScrollableArea.ImplementProperty("minvalue", new InitializeNumericParameter("Min
 ScrollableArea.ImplementProperty("maxvalue", new InitializeNumericParameter("Maximum value", 100), null, "sizeScroller");
 ScrollableArea.ImplementProperty("smallmove", new InitializeNumericParameter("A size of the small step", 1));
 ScrollableArea.ImplementProperty("bigmove", new InitializeNumericParameter("A size of the big step", 10));
-ScrollableArea.ImplementProperty("posoffset", new InitializeNumericParameter("Pos offset", 30), null, "sizeScroller");
+ScrollableArea.ImplementProperty("posoffset", new InitializeNumericParameter("Pos offset", 0), null, "sizeScroller");
 ScrollableArea.ImplementProperty("poslimit", new InitializeNumericParameter("Pos limit", 10), null, "sizeScroller");
 ScrollableArea.ImplementProperty("autocorrect", new InitializeBooleanParameter("Pos limit", true));
 ScrollableArea.prototype.poschangedevent = new InitializeEvent("Fired when the position is changed");

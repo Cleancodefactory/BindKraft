@@ -1,5 +1,5 @@
 //#using "./IBKUrlObject.js"
-//#using "./IBKUrlPart.js"
+//#using "./IBkUrlPart.js"
 //#using "./BKUrlObjectBase.js"
 //#using "./BKUrlObjectBaseChild.js"
 //#using "./BKUrlString.js"
@@ -8,5 +8,5 @@
 //#using "./BKUrlQuery.js"
 //#using "./BKUrlScheme.js"
 //#using "./BKUrlFragmentQuery.js"
-//#using "./BKUrl.js"
+//#using "./BkUrl.js"
 

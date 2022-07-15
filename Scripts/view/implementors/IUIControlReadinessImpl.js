@@ -43,5 +43,6 @@
             this.$controlreadystate = false;
         }
     }
+    IUIControlReadinessImpl.prototype.reportControlReadiness = IUIControlReadinessImpl.prototype.$reportControlReadiness;
 
 })();

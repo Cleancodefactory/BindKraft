@@ -1,6 +1,6 @@
 //#using "./MemoryFSDirectory.js"
-//#using "./CLScript.js"
+//#using "./clscript.js"
 //#using "./ShellShortcut.js"
-//#using "./PropertySetMemoryFile.js"
+//#using "./propertysetmemoryfile.js"
 //#using "./ContentMemoryFile.js"
 //#using "./MemFSTools.js"

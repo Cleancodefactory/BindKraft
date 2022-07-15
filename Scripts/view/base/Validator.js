@@ -651,11 +651,15 @@ Validator.prototype.validateHandler = function(event_or_sender, dc, bind) {
 }
 Validator.prototype.closeValidator = function () {
     this.$closeHint();
-};
+    this.uninit();
+}
 Validator.prototype.close = Validator.prototype.closeValidator; // temporary
 Validator.prototype.uninit = function () {
     //this.$closeHint();
     this.result = ValidationResultEnum.uninitialized;
+    this.$busyValidating = false;
+    this.$queuedValidation = null;
+    this.waitReport = 0;
     this.onValidityChanged();
 
 }

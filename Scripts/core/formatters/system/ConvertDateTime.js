@@ -10,15 +10,46 @@ ConvertDateTime.Inherit(SystemFormatterBase,"ConvertDateTime");
 ConvertDateTime.Implement(IArgumentListParserStdImpl,"trim");
 ConvertDateTime.ImplementProperty("defaultencoding", new InitializeStringParameter("The default format if nothing is specified", "ISO"));
 ConvertDateTime.$reMS = /\/Date\(([+-]?\d+)\)\//i;
-ConvertDateTime.$reISODate = /^(\d{4}-\d{1,2}-\d{1,2})(T|\s)(\d{1,2}:\d{1,2}:\d{1,2}(?:\.\d+)?)(Z)$/;
+ConvertDateTime.$reISODate = /^(\d{4}-\d{1,2}-\d{1,2})(T|\s)(\d{1,2}:\d{1,2}:\d{1,2}(?:\.\d+)?)(?:(Z)|(?:(\+|-)(\d{2})(?::?(\d{2}))?))$/;
+ConvertDateTime.$reISOLocalDate = /^(\d{4}-\d{1,2}-\d{1,2})(T|\s)(\d{1,2}:\d{1,2}:\d{1,2}(?:\.\d+)?)$/;
 ConvertDateTime.prototype.ToDate = {
 	ISO: function(val) {
 		// Limitator - intentionally limiting the syntax  to the one widely agreed upon.
 		var done = false;
+		var tSign = null,tMilliseconds = 0;
 		if (typeof val == "string") {
-			val = val.replace(ConvertDateTime.$reISODate, function(matched, y,sep,h,tz) {
+			val = val.replace(ConvertDateTime.$reISODate, function(matched, y,sep,h,z,tzsign,tzH, tzM) {
 				done = true;
-				return y + "T" + h + "Z";
+				if (z != null && z.length > 0) {
+					return y + "T" + h + "Z";
+				} else {
+					tSign = (tzsign == "+")?true:false;
+					tMilliseconds = parseInt(tzH, 10) * 1000 * 3600;
+					if (tzM != null && tzM.length > 0) {
+						tMilliseconds += parseInt(tzM, 10) * 60 * 1000;
+					}
+					return y + "T" + h + "Z";
+				}
+				
+			});
+		}
+		var rdate;
+		if (!done) return null;
+		rdate = new Date(val);
+		if (tSign === true) {
+			rdate.setTime(rdate.getTime() + tMilliseconds);
+		} else if (tSign === false) {
+			rdate.setTime(rdate.getTime() - tMilliseconds);
+		}
+		return rdate;
+	},
+	ISOLocal: function(val) {
+		// Limitator - intentionally limiting the syntax  to the one widely agreed upon.
+		var done = false;
+		if (typeof val == "string") {
+			val = val.replace(ConvertDateTime.$reISOLocalDate, function(matched, y,sep,h) {
+				done = true;
+				return y + "T" + h;
 			});
 		}
 		if (done) return new Date(val);
@@ -53,6 +84,15 @@ ConvertDateTime.prototype.ToDate = {
 ConvertDateTime.prototype.FromDate = {
 	ISO: function(val) {
 		return val.toISOString();
+	},
+	ISOLocal: function(val) {
+		var d = val;
+		tMilliseconds = (d.getHours() - d.getUTCHours()) * 3600 * 1000;
+		tMilliseconds += (d.getMinutes() - d.getUTCMinutes()) * 60 * 1000;
+		var d = new Date(val.getTime() + tMilliseconds);
+		var s = d.toISOString();
+		return s.slice(0,s.length - 1);
+
 	},
 	MS: function(val) {
 		return "\\/Date(" + val.getTime().toString() + ")\\/";

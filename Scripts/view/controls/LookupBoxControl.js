@@ -56,7 +56,7 @@
         .Implement(IUIControl)
         .Implement(IDisablable)
         .Implement(IKeyboardProcessorImpl)
-        .Implement(ICustomParameterizationStdImpl, "sourcedata", "identification", "filterbyfield","dropwidth", "dropheight", "interface", "noselection")
+        .Implement(ICustomParameterizationStdImpl, "sourcedata", "identification", "filterbyfield","dropwidth", "dropheight", "interface", "noselection", "showclear")
         .Implement(IItemTemplateConsumerImpl)
         .Implement(ITemplateSourceImpl, new Defaults("templateName"),"autofill")
         .Implement(IItemTemplateSourceImpl, true, "single")
@@ -73,6 +73,7 @@
         .ImplementProperty("dropheight", new InitializeNumericParameter("",null))
         .ImplementActiveProperty("choices", new InitializeArray("Choices for selection"),true) // The drop list - selectable repeater
         .ImplementProperty("noselection", new InitializeStringParameter("text for no selection", "(please select)"))
+        .ImplementProperty("showclear", new InitializeBooleanParameter("text for no selection", true))
         .ImplementActiveProperty("selectedobject", new Initialize("the current selection"), null, true, function(oval, nval) {
             if (nval != oval) {
                 this.callAsync(function() {
