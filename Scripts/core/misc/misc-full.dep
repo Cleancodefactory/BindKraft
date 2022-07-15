@@ -8,4 +8,5 @@
 //#using "./KeyedTokenStorage.js"
 //#using "./SimpleStopWatch.js"
 //#using "./ExternalScripts.js"
+//#using "./utf8.js"
 

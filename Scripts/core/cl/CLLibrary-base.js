@@ -1,7 +1,23 @@
 (function () {
+
+
+
     var $__ReplaceAll = function (str, patt, rep) {
         var regex = new RegExp(patt, 'g');
         return str.replace(regex, rep);
+    }
+    function toUtf8(inp) {
+        var src = encodeURIComponent(inp);
+        var bstr = "";
+        for (var i = 0;i<src.length;i++) {
+            if (src.charAt(i) == '%') {
+                bstr += String.fromCharCode(parseInt(src.slice(i+1,i+3),16));
+                i +=2;
+            } else {
+                bstr += src.charAt(i);
+            }
+        }
+        return bstr;
     }
 
     var libs = Class("CLLibraries");
@@ -26,21 +42,22 @@
                     return Operation.Failed("Sum - Not all passed parameters are numbers!");
                 }
             },
-            help: "... NO HELP!"
+            help: "Sums all the arguments if they are all numbers."
         },
         {
             name: "Concat",
             alias: null,
             regexp: null,
             action: function (ARGS, api) {
-                if (ARGS.length == 0) return Operation.Failed("Concat - expects some arguments!");
                 var sum = '';
+                if (ARGS.length == 0) return sum;
+                
                 for (var i = 0; i < ARGS.length; i++) {
                     sum += ('' + ARGS[i]);
                 }
                 return sum;
             },
-            help: "... NO HELP!"
+            help: "Concatenates all the arguments in one string."
         },
         {
             name: "Throw",
@@ -53,7 +70,7 @@
                     return Operation.Failed("Exception raised intentionally from an CLLibrarie code!");
                 }
             },
-            help: "... NO HELP!"
+            help: "Causes an exception."
         },
         {
             name: "Log",
@@ -67,7 +84,7 @@
                     return null;
                 }
             },
-            help: "... NO HELP!"
+            help: "Logs all the arguments to the browser's console."
         },
         {
             name: "IsNumeric",
@@ -77,21 +94,21 @@
                 if (ARGS.length != 1) {
                     return Operation.Failed("IsNumeric requires 1 argument!");
                 }
-                return BaseObject.is(ARGS[0], "number");
+                return !isNaN(ARGS[0]);
             },
-            help: "... NO HELP!"
+            help: "Checks if the argument is a number."
         },
         {
             name: "Neg",
             alias: null,
             regexp: null,
             action: function (ARGS, api) {
-                if (ARGS.length != 1 && BaseObject.is(ARGS[0], "number")) {
+                if (ARGS.length != 1 || isNaN(ARGS[0])) {
                     return Operation.Failed("Neg requires 1 numeric argument!");
                 }
-                return (ARGS[0] * -1);
+                return (Number(ARGS[0]) * -1);
             },
-            help: "... NO HELP!"
+            help: "Reverses the sign of the numeric argument."
         },
         {
             name: "Or",
@@ -108,7 +125,7 @@
                     return false;
                 });
             },
-            help: "... NO HELP!"
+            help: "Checks if any argument is truthy"
         },
         {
             name: "IsEmpty",
@@ -129,7 +146,7 @@
                     }
                 }
             },
-            help: "... NO HELP!"
+            help: "Checks if the argument is null or empty."
         },
         {
             name: "Slice",
@@ -141,10 +158,13 @@
                 } else {
                     var item = ARGS[0];
                     if (item != null && (BaseObject.is(item, "string") || BaseObject.is(item, "Array"))) {
-                        var start = ARGS[1];
+                        var start = 0;
+                        if (isNaN(ARGS[1])) { return Operation.Failed("Slice - start argument is not a number.") } else { start = Number(ARGS[1]); }
+
                         var end = item.length;
                         if (ARGS.length > 2 && ARGS[2] != null) {
-                            end = ARGS[2];
+                            end = Number(ARGS[2]);
+                            if (isNaN(end)) return Operation.Failed("Slice - end argument is not a number.");
                         }
                         return item.slice(start, end);
                     } else {
@@ -152,7 +172,7 @@
                     }
                 }
             },
-            help: "... NO HELP!"
+            help: "Returns a slice from a string."
         },
         {
             name: "Split",
@@ -163,12 +183,30 @@
                     return Operation.Failed("Split - incorrect number of arguments, 2 are expected!");
                 } else {
                     var item = ARGS[0];
-                    var spliter = ARGS[1];
-                    if (item != null && BaseObject.is(item, "string")) {
-                        return item.split(spliter);
+                    var spliter = ARGS[1] != null ? ARGS[1] + "" : ",";
+                    if (item != null) {
+                        return (item + "").split(spliter);
                     } else {
-                        return Operation.Failed("Split - the first parameter must be a string!");
+                        return [];
                     }
+                }
+            },
+            help: "Splits the first argument converted to string by comma or (if specified) the delimiter given by the second argument."
+        },
+        {
+            name: "Length",
+            alias: null,
+            regexp: null,
+            action: function (ARGS, api) {
+                if (ARGS.length != 1) {
+                    return Operation.Failed("Length - 1 argument expected!");
+                } else {
+                    var item = ARGS[0];
+                    if (Array.isArray(item)) return item.length;
+                    if (typeof item == "string") return item.length;
+                    
+                    return Operation.Failed("Length - Unsupported argument type!");
+                    
                 }
             },
             help: "... NO HELP!"
@@ -186,7 +224,7 @@
                     var rep = ARGS[2];
                     if (item != null && BaseObject.is(item, "string")) {
                         if (ARGS[3] != null && ARGS[3]) {
-                            return $__ReplaceAll(item, patt, rep);
+                            return $__ReplaceAll(item, patt, rep); // TODO should not use regex
                         }
                         return item.replace(patt, rep);
                     } else {
