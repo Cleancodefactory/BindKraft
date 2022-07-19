@@ -86,7 +86,7 @@ ConvertDateTime.prototype.FromDate = {
 		return val.toISOString();
 	},
 	ISOLocal: function(val) {
-		var d = val;
+		var d = val, tMilliseconds = 0;
 		tMilliseconds = (d.getHours() - d.getUTCHours()) * 3600 * 1000;
 		tMilliseconds += (d.getMinutes() - d.getUTCMinutes()) * 60 * 1000;
 		var d = new Date(val.getTime() + tMilliseconds);
