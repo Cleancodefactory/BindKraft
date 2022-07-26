@@ -19,6 +19,7 @@
         }
         return bstr;
     }
+    var UTF8Encoding = Class("UTF8Encoding");
 
     var libs = Class("CLLibraries");
     libs.DefineLibrary("base", [{
@@ -67,7 +68,7 @@
                 if (ARGS.length > 0 && ARGS[0] != null) {
                     return Operation.Failed(ARGS[0]);
                 } else {
-                    return Operation.Failed("Exception raised intentionally from an CLLibrarie code!");
+                    return Operation.Failed("Exception raised intentionally from an CLLibrary code!");
                 }
             },
             help: "Causes an exception."
@@ -280,34 +281,10 @@
                 if (ARGS.length != 1) {
                     return Operation.Failed("EncodeBase64 requires 1 parameter!");
                 } else {
-                    if (BaseObject.is(ARGS[0], "string")) {
-                        var str = ARGS[0];
-                        var utf8 = [];
-                        for (var i=0; i < str.length; i++) {
-                            var charcode = str.charCodeAt(i);
-                            if (charcode < 0x80) {
-                                utf8.push(charcode);
-                            } else if (charcode < 0x800) {
-                                utf8.push(0xc0 | (charcode >> 6), 
-                                          0x80 | (charcode & 0x3f));
-                            } else if (charcode < 0xd800 || charcode >= 0xe000) {
-                                utf8.push(0xe0 | (charcode >> 12), 
-                                          0x80 | ((charcode>>6) & 0x3f), 
-                                          0x80 | (charcode & 0x3f));
-                            } else {
-                                i++;
-                                charcode = ((charcode&0x3ff)<<10)|(str.charCodeAt(i)&0x3ff)
-                                utf8.push(0xf0 | (charcode >>18), 
-                                          0x80 | ((charcode>>12) & 0x3f), 
-                                          0x80 | ((charcode>>6) & 0x3f), 
-                                          0x80 | (charcode & 0x3f));
-                            }
-                        }
-                        return btoa(utf8);
-                    }
+                    return btoa(UTF8Encoding.encodeToBinaryString(ARGS[0] + ""));
                 }
             },
-            help: "... NO HELP!"
+            help: "Encodes a string to Base64, transforms the string to UTF8 first. Compatible with most services not designed for Javascript."
         },
         {
             name: "DecodeBase64",
@@ -317,45 +294,10 @@
                 if (ARGS.length != 1) {
                     return Operation.Failed("DecodeBase64 requires 1 parameter!");
                 } else {
-                    if (BaseObject.is(ARGS[0], "Array")) {
-                        var array, out, len, i, c, char2, char3;
-                        array = ARGS[0];
-                        out = "";
-                        len = array.length;
-                        i = 0;
-                        while (i < len) {
-                            c = array[i];
-                            i += 1;
-                            switch (c >> 4)
-                            { 
-                                case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
-                                    // 0xxxxxxx
-                                    out += String.fromCharCode(c);
-                                    break;
-                                case 12: case 13:
-                                    // 110x xxxx   10xx xxxx
-                                    char2 = array[i];
-                                    i += 1;
-                                    out += String.fromCharCode(((c & 0x1F) << 6) | (char2 & 0x3F));
-                                    break;
-                                case 14:
-                                    // 1110 xxxx  10xx xxxx  10xx xxxx
-                                    char2 = array[i];
-                                    i += 1;
-                                    char3 = array[i];
-                                    i += 1;
-                                    out += String.fromCharCode(((c & 0x0F) << 12) |
-                                                ((char2 & 0x3F) << 6) |
-                                                ((char3 & 0x3F) << 0));
-                                break;
-                            }
-                        }
-                    
-                        return atob(out);
-                    }
+                    return atob(UTF8Encoding.decodeFromBinaryString(ARGS[0]));
                 }
             },
-            help: "... NO HELP!"
+            help: "Decodes a string from Base64, treats the string as UTF8. Compatible with most services not designed for Javascript."
         },
         //#region Array ops
         {
@@ -367,18 +309,16 @@
                     return Operation.Failed("ConsumeOne takes one argument - an array!");
                 } else {
                     var arr = ARGS[0];
-                    var el = null;
                     if (arr.length > 0) {
-                        el = arr[arr.length - 1];
-                        arr.splice(arr.length - 1, 1);
+                        return arr.splice(arr.length - 1,1);
                     }
-                    return el;
+                    return null;
                 }
             },
-            help: "... NO HELP!"
+            help: "Works with arrays only, removes and returns the last element of the array, null otherwise."
         },
         {
-            name: "Array",
+            name: "List",
             alias: null,
             regexp: null,
             action: function (ARGS, api) {
@@ -395,10 +335,10 @@
                 }
                 return arr;
             },
-            help: "... NO HELP!"
+            help: "Creates and optionally fills an array with the elements passed after the first argument. If any argument is an array, its elements will be added and not the array as a single element."
         },
         {
-            name: "IsArray",
+            name: "IsList",
             alias: null,
             regexp: null,
             action: function (ARGS, api) {
@@ -407,37 +347,36 @@
                 }
                 return BaseObject.is(ARGS[0], "Array");
             },
-            help: "... NO HELP!"
+            help: "Checks if the argument is an array."
         },
         {
-            name: "ArrayPush",
+            name: "ListAdd",
             alias: null,
             regexp: null,
             action: function (ARGS, api) {
                 if (ARGS.length < 1) {
-                    return Operation.Failed("ArrayPush requires atleast 1 argument!");
+                    return Operation.Failed("ArrayPush requires at least 1 argument!");
                 }
                 var arr = ARGS[0];
                 if (BaseObject.is(arr, "Array")) {
                     for (var i = 1; i < ARGS.length; i++) {
                         var el = ARGS[i];
-                        if (el != null) {
-                            if (BaseObject.is(el, "Array")) {
-                                arr = arr.concat(el);
-                            } else {
-                                arr.push(el);
-                            }
+                        if (BaseObject.is(el, "Array")) {
+                            arr = arr.concat(el);
+                        } else {
+                            arr.push(el);
                         }
+                        
                     }
                     return arr;
                 } else {
-                    return Operation.Failed("ArrayPush first argument must be an array!");
+                    return Operation.Failed("ListAdd first argument must be an array!");
                 }
             },
-            help: "... NO HELP!"
+            help: "Adds elements to the end of the array. Called with single argument (the array only), does nothing. Returns the array."
         },
         {
-            name: "ArrayGet",
+            name: "ListGet",
             alias: null,
             regexp: null,
             action: function (ARGS, api) {
@@ -460,10 +399,10 @@
                     return Operation.Failed("ArrayGet first argument must be an array!");
                 }
             },
-            help: "... NO HELP!"
+            help: "Returns the indexed element from the array."
         },
         {
-            name: "ArrayInsert",
+            name: "ListInsert",
             alias: null,
             regexp: null,
             action: function (ARGS, api) {
@@ -474,18 +413,19 @@
                 if (BaseObject.is(arr, "Array")) {
                     var index = ARGS[1];
                     if (BaseObject.is(index, "number")) { // TODO: Do we need to check if the index is inside array boundaries ?
-                        return arr.splice(index, 0, ARGS[2]); // TODO: Do we need to check if the argument is null ?
+                        arr.splice(index, 0, ARGS[2]); // TODO: Do we need to check if the argument is null ?
+                        return arr;
                     } else {
-                        return Operation.Failed("ArrayInsert second argument must be numeric!");
+                        return Operation.Failed("ListInsert second argument must be numeric!");
                     }
                 } else {
-                    return Operation.Failed("ArrayInsert first argument must be an array!");
+                    return Operation.Failed("ListInsert first argument must be an array!");
                 }
             },
-            help: "... NO HELP!"
+            help: "Inserts an element into an array ListInsert(array, index, element), returns the list."
         },
         {
-            name: "ArrayRemove",
+            name: "ListRemove",
             alias: null,
             regexp: null,
             action: function (ARGS, api) {
@@ -494,21 +434,22 @@
                 }
                 var arr = ARGS[0];
                 if (BaseObject.is(arr, "Array")) {
-                    for (var i = 0; i < ARGS.length; i++) {
-                        var index = ARGS[i];
+                    var indices = Array.createCopyOf(ARGS,1).sort(function(a,b) {if(a > b) return -1; if (a < b) return 1; return 0;});
+                    for (var i = 0; i < indices.length; i++) {
+                        var index = indices[i];
                         if (BaseObject.is(index, "number")) { // TODO: Do we need to throw an error if the index is not a number ?
                             arr.splice(index, 1); // TODO: Do we need to check if the index is inside array boundaries ?
                         }
                     }
                     return arr;
                 } else {
-                    return Operation.Failed("ArrayRemove first argument must be an array!");
+                    return Operation.Failed("ListRemove first argument must be an array!");
                 }
             },
-            help: "... NO HELP!"
+            help: "Removes 0 or more elements from an array."
         },
         {
-            name: "ArraySet",
+            name: "ListSet",
             alias: null,
             regexp: null,
             action: function (ARGS, api) {
@@ -523,19 +464,19 @@
                             arr[index] = ARGS[2]; // TODO: Do we need to check if the argument is null ?
                             return arr;
                         } else {
-                            return Operation.Failed("ArraySet - " + index + " is outside array boundaries!");
+                            return Operation.Failed("ListSet - " + index + " is outside array boundaries!");
                         }
                     } else {
-                        return Operation.Failed("ArraySet second argument must be numeric!");
+                        return Operation.Failed("ListSet second argument must be numeric!");
                     }
                 } else {
-                    return Operation.Failed("ArraySet first argument must be an array!");
+                    return Operation.Failed("ListSet first argument must be an array!");
                 }
             },
-            help: "... NO HELP!"
+            help: "Sets an element in the array."
         },
         {
-            name: "ArrayClear",
+            name: "ListClear",
             alias: null,
             regexp: null,
             action: function (ARGS, api) {
@@ -544,12 +485,13 @@
                 }
                 var arr = ARGS[0];
                 if (BaseObject.is(arr, "Array")) {
-                    return arr.splice(0, arr.length);
+                    arr.splice(0);
+                    return arr;
                 } else {
-                    return Operation.Failed("ArrayClear first argument must be an array!");
+                    return Operation.Failed("ListClear first argument must be an array!");
                 }
             },
-            help: "... NO HELP!"
+            help: "Clears all the elements of an array. Return the array itself."
         },
         {
             name: "AsArray",
