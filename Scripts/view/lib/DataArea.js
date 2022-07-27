@@ -259,6 +259,38 @@ DataArea.prototype.loadContent = function() { // No arguments - everything is co
         jbTrace.log("Error: The loadContent failed to prepare connector for fetching the data. Check your parameters, look for missed quotes and so on.");
     }
 };
+DataArea.prototype.peekContent = function(overrideParameters) { 
+    if (this.__obliterated) return;
+    this.set_lastError(null);
+    var op = new Operation("DataArea peekContent");
+    this.preloadevent.invoke(this, this.get_parameters());
+    if (this.$prepareConnector()) {
+        this.$isloading = true;
+        this.$callbackPeekContent.callArguments(op);
+        if (overrideParameters != null && typeof overrideParameters == "object") {
+            this.$contentConnector.set_parameters(overrideParameters);
+        }
+        this.$contentConnector.bind(this.$callbackPeekContent);
+    } else {
+        op.CompleteOperation(false, "Cannot initialize connector for fetching the data.")
+    }
+    return op;
+}
+DataArea.prototype.$callbackPeekContent = new InitializeMethodDelegate("Revive the newly loaded data and perform the necessary steps for the inner content", 
+    function (op,result, success, err_info) {
+        this.$isloading = false;
+        if (this.__obliterated) return;
+        if (success === false) {
+            this.LASTERROR(err_info);
+            op.CompleteOperation(false, err_info);
+        } else {
+            var resource = result;
+            if (this.get_packetmode() != null && this.get_packetmode() != "") {
+                resource = result[this.get_packetmode()];
+            }
+            op.CompleteOperation(true, resource);
+        }
+});
 DataArea.prototype.loadNewContent = function() {
     this.set_offset(DataArea.DefaultValueOf("$offset", this));
     this.loadContent();
