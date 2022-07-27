@@ -72,6 +72,7 @@ BaseWindow.Implement(IWindowTemplate);
 BaseWindow.Implement(ITemplateRoot);
 BaseWindow.Implement(Interface("IExposeCommandsEx"));
 BaseWindow.Implement(Interface("IServiceLocator"));
+BaseWindow.Implement(Interface("IElementsLocator"));
 BaseWindow.Implement(Interface("IWindowIdentification"));
 BaseWindow.Implement(IViewHostWindowImpl);
 BaseWindow.Implement(IStructuralQueryProcessorImpl);
@@ -1618,12 +1619,36 @@ BaseWindow.prototype.on_GetFocus = function (params) {
     }
     this.notifyParent(WindowEventEnum.GetFocus, { windowToFocus: this });
 };
+//#region Elements location
+/**
+ * There is no built-in element locator logic in windows, so we look for a behaviour.
+ */
+BaseWindow.prototype.locateElements = function(iface, condition) {
+    var type = Class.getTypeName(iface);
+    if (type == null) return [];
+    var behs = this.attachedBehaviors(function(beh) {
+        if (BaseObject.is(beh, "IElementsLocator")) return true;
+        return false;
+    });
+    if (behs.length > 0) {
+        return behs.FirstOrDefault(function(idx, beh) {
+            var els = beh.locateElements(type, condition);
+            if (els != null && els.length > 0) return els;
+            return null;
+        });
+    } else {
+        return [];
+    }
+}
+//#endregion
+
 //#region Service locating
 BaseWindow.prototype.locateService = function(iface, reason) {
     var type = Class.getTypeName(iface);
     switch (type) {
         case "IExposeCommandsEx":
         case "IExposeCommands":
+        case "IElementsLocator":
             return this;
         case "WindowLiveSettings":
             if (BaseObject.is(this.createParameters.liveSettings, "WindowLiveSettings")) return this.createParameters.liveSettings;
