@@ -1,14 +1,51 @@
 (function() {
+    var WindowBehaviorBase = Class("WindowBehaviorBase"),
+        MediaChangedMessage= Class("MediaChangedMessage");
 
-    function MediaqueryAdjustBehavior(queryName) {
+
+    /**
+     * Window behavior reacting to media query notifications sent through the Messenger. To use this one has to setup 
+     * in the workspace boot script MediaQueryNotificatorBroadcaster notificators under the names configured in the rules
+     * argument. See more information about the MediaQueries and notificators in their documentation.
+     * 
+     * @param {object} rules - Configures what to do when certain media query expression is on or off.
+     * rules scheme:
+     * {
+     *  "expressionname": {... actions see below ...} positive rules
+     *  "!expressionname": {... actions see below ...} negative rules
+     * }
+     * 
+     * Positive rules are applied when the expression matches and during windowing events and the expression is still in matched state.
+     * Negative rules are applied when the expression unmatches
+     * 
+     * actions:
+     * {
+     *      match:{
+     *          <instructions>
+     *          events: {
+     *              eventname: <instructions>
+     *          }
+     *      },
+     *      unmatch:{
+     *          <instructions>
+     *          events: {
+     *              eventname: <instructions>
+     *          }
+     *      }
+     * }
+     * instructions are uniform no matter where specified, however in certain scenarios, certain instructions will not make sense.
+     * 
+     * 
+     */
+    function MediaqueryAdjustBehavior(rules) {
         WindowBehaviorBase.apply(this, arguments);
-        if (typeof queryName != 'string' || /^\s*$/.test(queryName)) {
-            throw "MediaqueryAdjustBehavior must be created with a name of notification to listen for.";
+        if (typeof rules != "object") {
+            throw "MediaqueryAdjustBehavior must be created with rules object.";
         }
-        this.$queryName = queryName;
+        this.$rules = rules;
     }
     MediaqueryAdjustBehavior.Inherit(WindowBehaviorBase, "ResponsiveWindowBehavior");
-    MediaqueryAdjustBehavior.ImplementReadProperty("queryName", new InitializeStringParameter("The name of the query expression messaged through the Messenger. See mediamessenger command.",null));
+    MediaqueryAdjustBehavior.ImplementReadProperty("rules", new InitializeObject("object containing rules for reaction to queries."));
     MediaqueryAdjustBehavior.prototype.obliterate = function () {
         Class("Messenger").Instance().unsubscribe("MediaChangedMessage",this.$mediaQueryListener);
         WindowBehaviorBase.prototype.obliterate.apply(this, arguments);
@@ -21,7 +58,7 @@
                 if (msg.get_matched()) {
 
                 } else {
-                    
+
                 }
             }
         });
