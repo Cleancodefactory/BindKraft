@@ -1,8 +1,8 @@
 (function() {
 
     var SystemFormatterBase = Class("SystemFormatterBase");
-    var IArgumentListParserStdImpl = InterfaceImplementer("IArgumentListParserStdImpl"),
-        Localization = Class("Localization");
+    var IArgumentListParserStdImpl = InterfaceImplementer("IArgumentListParserStdImpl");
+        
 
     /**
      * Converts empty values to null in the both direction
@@ -16,6 +16,7 @@
     TranslateThrough.Implement(IArgumentListParserStdImpl,"trim");
 
     TranslateThrough.prototype.Read = function(val, bind, params) {
+        var Localization = Class("Localization");
         var translations = Localization.get_translation(params);
         if (translations != null) {
             return BaseObject.GetProperty(val, null);
