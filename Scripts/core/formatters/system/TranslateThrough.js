@@ -19,7 +19,7 @@
         var Localization = Class("Localization");
         var translations = Localization.get_translation(params);
         if (translations != null) {
-            return BaseObject.GetProperty(val, null);
+            return BaseObject.getProperty(translations,val, null);
         } else {
             this.LASTERROR("Translations for the class " + params + " was not found. Check if it is loaded.");
             return null;
