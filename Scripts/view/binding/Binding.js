@@ -284,8 +284,8 @@ Binding.$asStateSetTo = function(obj, state, recursive) {
 		if (recursive) {
 			Binding.entityState(obj, state);
 		} else {
-			obj[Binding.entityStatePropertyName] = state;
-		}
+        }
+        obj[Binding.entityStatePropertyName] = state;
 	}
 	return obj;
 }.Description("...")
@@ -294,12 +294,20 @@ Binding.$asStateSetTo = function(obj, state, recursive) {
  .Param("recursive","Indicates if the call is recursive")
  .Returns("object");
 
+
 Binding.asNew = function(obj,recursive) {
 	return Binding.$asStateSetTo(obj, DataStateEnum.New, recursive);
 }.Description("returns the obj with state set to new, recursively sets it in subobjects if recursive parameter is true")
  .Param("obj", "the object whos entity state will be set to new")
  .Param("recursive", "if true the change will be applied to any subobjects as well")
  .Returns("object");
+
+ Binding.isNew = function(obj) {
+    if (obj != null) {
+	    return obj[Binding.entityStatePropertyName] == DataStateEnum.New;
+    }
+    return false;
+}
 
 Binding.asChanged = function(obj,recursive) {
 	return Binding.$asStateSetTo(obj, DataStateEnum.Updated, recursive);
@@ -308,6 +316,13 @@ Binding.asChanged = function(obj,recursive) {
  .Param("recursive","...")
  .Returns("object");
 
+ Binding.isChanged = function(obj) {
+    if (obj != null) {
+	    return obj[Binding.entityStatePropertyName] == DataStateEnum.Updated;
+    }
+    return false;
+}
+
 Binding.asDeleted = function(obj,recursive) {
 	return Binding.$asStateSetTo(obj, DataStateEnum.Deleted, recursive);
 }.Description("returns the obj with state set to deleted, recursively sets it in subobjects if recursive parameter is true")
@@ -315,12 +330,37 @@ Binding.asDeleted = function(obj,recursive) {
  .Param("recursive","...")
  .Returns("...");
 
+ Binding.isDeleted = function(obj) {
+    if (obj != null) {
+	    return obj[Binding.entityStatePropertyName] == DataStateEnum.Deleted;
+    }
+    return false;
+}
+
 Binding.asUnchanged = function(obj,recursive) {
 	return Binding.$asStateSetTo(obj, DataStateEnum.Unchanged, recursive);
 }.Description("returns the obj with state set to unchanged, recursively sets it in subobjects if recursive parameter is true")
  .Param("obj","...")
  .Param("recursive","...")
  .Returns("...");
+
+ Binding.isUnchanged = function(obj) {
+    if (obj != null) {
+	    return obj[Binding.entityStatePropertyName] == DataStateEnum.Unchanged;
+    }
+    return false;
+}
+
+Binding.hasState = function(obj) {
+    if (obj != null) {
+        var state = obj[Binding.entityStatePropertyName];
+        return [DataStateEnum.Unchanged,DataStateEnum.New,DataStateEnum.Updated,DataStateEnum.Deleted].Any(function(idx, st) {return (st == state);});
+    }
+    return false;
+}
+Binding.isInStore = function(obj) {
+    return !(this.isNew(obj) || !this.hasState(obj));
+}
 
 Binding.bindingContainerOf = function (_el) {
     var el = $(_el);
