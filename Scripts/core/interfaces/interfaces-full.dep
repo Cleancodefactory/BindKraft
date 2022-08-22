@@ -49,6 +49,7 @@
 //#using "./IServiceLocator.js"
 //#using "./IElementsLocator.js"
 //#using "./IElementsLocatorRegister.js"
+//#using "./IEquality.js"
 
 //#using "./IOperation.js"
 //#using "./IOperationHandlingCallbacks.js"

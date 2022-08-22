@@ -2,10 +2,13 @@
 //#using "./MultiDict.js"
 //#using "./TypeChecker.js"
 //#using "./PatternChecker.js"
+//#using "./Predicate.js"
+//#using "./DoArray.js"
 //#using "./DictoList.js"
 //#using "./IconSpec.js"
 //#using "./KeyedTokenItem.js"
 //#using "./KeyedTokenStorage.js"
 //#using "./SimpleStopWatch.js"
 //#using "./ExternalScripts.js"
+
 
