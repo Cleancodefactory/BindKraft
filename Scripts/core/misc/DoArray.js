@@ -72,9 +72,24 @@
     DoArray.prototype.remove = function(v, predicate) {
         var comparer = this.$usePredicate(predicate);
         var i = this.indexOf(v,comparer);
-        if (i >= 0 && i < this.array.length) {
-            this.array.splice(i,1);
-        }
+        this.array.splice(i,1);
         return this;
     }
+    // DoArray.prototype.with = function(v, predicate, action) {
+    //     var comparer = this.$usePredicate(predicate);
+    //     var i = this.indexOf(v,comparer);
+    //     var me = this;
+    //     if (i >= 0) {
+    //         if (BaseObject.isCallback(action)) {
+    //             BaseObject.callCallback(action,
+    //                 function() {
+    //                     me.array.push(v);
+    //                 },
+    //                 function() {
+    //                     me.array.splice(i,1)
+    //                 }
+    //             );
+    //         }
+    //     }
+    // }
 })();
