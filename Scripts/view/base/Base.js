@@ -605,6 +605,15 @@ Base.prototype.get_incorrectvalidators = function (vgrp) {
     }
     return arr;
 };
+/**
+ * Emits an InfoMessageQuery
+ * 
+ * @param {string} message - The message to emit
+ * @param {InfoMessageTypeEnum} msgType - the type of message (default is info)
+ */
+Base.prototype.emitMessage = function (message, msgType) {
+    InfoMessageQuery.emit(this, arr[i].get_message(), InfoMessageTypeEnum.info);
+}
 Base.prototype.displayAllValidationErrors = function(bFailedOnly) {
 	var arr;
 	if (bFailedOnly) {
