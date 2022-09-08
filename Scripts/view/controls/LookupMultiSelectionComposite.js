@@ -14,7 +14,7 @@
     LookupMultiSelectionComposite.Inherit(Base, "LookupMultiSelectionComposite")
     .Implement(IUIControl)
     .Implement(IDisablable)
-    .Implement(ICustomParameterizationStdImpl, "identification", "description", "noselection")
+    .Implement(ICustomParameterizationStdImpl, "identification", "description", "noselection", "fixselection")
     .Implement(ITemplateSourceImpl, new Defaults("templateName"), "autofill")
     .Implement(IItemTemplateSourceImpl, true)
     .Defaults({
@@ -35,6 +35,7 @@
                 this.get_lookup().refreshChoices();
             }
         })
+        .ImplementProperty("fixselection", new InitializeBooleanParameter("Fix the selected items by removing the ones not available for choosing",false))
         .ImplementProperty("noselection", new InitializeStringParameter("Text shown in the lookup box before typing","(select to add)"))
         .ImplementProperty("clearselection", new InitializeStringParameter("Text for the clear selection button/icon","clear selection"))
         .ImplementActiveProperty("selectedobjects", new InitializeArray("Items for handling in the SelectedItemsControl. Must be the same type as the $selectedobject of the lookup box"),true,function(oval,nval){
@@ -53,6 +54,23 @@
             var d = this.get_description();
             var items =  this.get_items();
             var sels = this.get_selectedobjects();
+            
+            if (this.get_fixselection()) {
+                if (Array.isArray(sels) && sels.length > 0 && Array.isArray(items) && items.length > 0) {
+                    
+                    var result = [];
+                    for (var i = 0;i < items.length;i++) {
+                        result = sels.Aggregate(function(idx, sel, result) {
+                            if (!Array.isArray(result)) result = [];
+                            if (me.get_selectioncallback().identifyItem(sel) == me.get_selectioncallback().identifyItem(items[i])) {
+                                result.push(sel);
+                            }
+                        });
+                    }
+                    sels = result;
+                    this.set_selectedobjects(sels);
+                }
+            }
             if (Array.isArray(sels)) {
                 sels = sels.Select(function(i,o) {
                     return me.get_selectioncallback().identifyItem(o);
