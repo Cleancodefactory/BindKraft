@@ -31,7 +31,7 @@
         .ImplementProperty("identification", new InitializeStringParameter("The name of the id field"))
         .ImplementProperty("description", new InitializeStringParameter("The name of the display field"))
         .ImplementActiveProperty("items", new Initialize("Items for selection in the LookupBoxControl"),true, function(oval,nval) {
-            if (BaseObject.is(this.get_lookup(),"SelectedItemsControl")) {
+            if (BaseObject.is(this.get_lookup(),"LookupBoxControl")) {
                 this.get_lookup().refreshChoices();
             }
         })
@@ -56,28 +56,33 @@
             var sels = this.get_selectedobjects();
             
             if (this.get_fixselection()) {
-                if (Array.isArray(sels) && sels.length > 0 && Array.isArray(items) && items.length > 0) {
-                    
-                    var result = [];
-                    for (var i = 0;i < items.length;i++) {
-                        result = sels.Aggregate(function(idx, sel, result) {
-                            if (!Array.isArray(result)) result = [];
-                            if (me.get_selectioncallback().identifyItem(sel) == me.get_selectioncallback().identifyItem(items[i])) {
-                                result.push(sel);
+                // Remove from the selection array the items not available in the newly set items
+                if (Array.isArray(sels) && sels.length > 0 && Array.isArray(items)) {
+                    if (items.length > 0) {
+                        for (var i = sels.length - 1; i >= 0; i--) {
+                            var selItem = sels[i];
+                            var selIdent = me.get_selectioncallback().identifyItem(selItem)
+                            if (items.FirstOrDefault(function(idx, item) {
+                                if (me.get_selectioncallback().identifyItem(item) == selIdent) return item;
+                                return null;
+                            }) == null) {
+                                sels.splice(i, 1);
                             }
-                        });
+                        }
+                    } else {
+                        // Remove all the selected
+                        sels.splice(0);
                     }
-                    sels = result;
-                    this.set_selectedobjects(sels);
+                    this.get_selector().updateTargets();
                 }
             }
-            if (Array.isArray(sels)) {
-                sels = sels.Select(function(i,o) {
-                    return me.get_selectioncallback().identifyItem(o);
-                });
-            } else {
-                sels = [];
-            }
+            // if (Array.isArray(sels)) {
+            //     sels = sels.Select(function(i,o) {
+            //         return me.get_selectioncallback().identifyItem(o);
+            //     });
+            // } else {
+            //     sels = [];
+            // }
             //if (flt == null || flt.length == 0) return items;
             if (Array.isArray(items) && d != null) {
                 return items.Select(function(idx, item) {
