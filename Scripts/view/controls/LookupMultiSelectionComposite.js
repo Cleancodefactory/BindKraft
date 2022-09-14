@@ -14,7 +14,7 @@
     LookupMultiSelectionComposite.Inherit(Base, "LookupMultiSelectionComposite")
     .Implement(IUIControl)
     .Implement(IDisablable)
-    .Implement(ICustomParameterizationStdImpl, "identification", "description", "noselection")
+    .Implement(ICustomParameterizationStdImpl, "identification", "description", "noselection", "fixselection")
     .Implement(ITemplateSourceImpl, new Defaults("templateName"), "autofill")
     .Implement(IItemTemplateSourceImpl, true)
     .Defaults({
@@ -31,10 +31,11 @@
         .ImplementProperty("identification", new InitializeStringParameter("The name of the id field"))
         .ImplementProperty("description", new InitializeStringParameter("The name of the display field"))
         .ImplementActiveProperty("items", new Initialize("Items for selection in the LookupBoxControl"),true, function(oval,nval) {
-            if (BaseObject.is(this.get_lookup(),"SelectedItemsControl")) {
+            if (BaseObject.is(this.get_lookup(),"LookupBoxControl")) {
                 this.get_lookup().refreshChoices();
             }
         })
+        .ImplementProperty("fixselection", new InitializeBooleanParameter("Fix the selected items by removing the ones not available for choosing",false))
         .ImplementProperty("noselection", new InitializeStringParameter("Text shown in the lookup box before typing","(select to add)"))
         .ImplementProperty("clearselection", new InitializeStringParameter("Text for the clear selection button/icon","clear selection"))
         .ImplementActiveProperty("selectedobjects", new InitializeArray("Items for handling in the SelectedItemsControl. Must be the same type as the $selectedobject of the lookup box"),true,function(oval,nval){
@@ -53,13 +54,35 @@
             var d = this.get_description();
             var items =  this.get_items();
             var sels = this.get_selectedobjects();
-            if (Array.isArray(sels)) {
-                sels = sels.Select(function(i,o) {
-                    return me.get_selectioncallback().identifyItem(o);
-                });
-            } else {
-                sels = [];
+            
+            if (this.get_fixselection()) {
+                // Remove from the selection array the items not available in the newly set items
+                if (Array.isArray(sels) && sels.length > 0 && Array.isArray(items)) {
+                    if (items.length > 0) {
+                        for (var i = sels.length - 1; i >= 0; i--) {
+                            var selItem = sels[i];
+                            var selIdent = me.get_selectioncallback().identifyItem(selItem)
+                            if (items.FirstOrDefault(function(idx, item) {
+                                if (me.get_selectioncallback().identifyItem(item) == selIdent) return item;
+                                return null;
+                            }) == null) {
+                                sels.splice(i, 1);
+                            }
+                        }
+                    } else {
+                        // Remove all the selected
+                        sels.splice(0);
+                    }
+                    this.get_selector().updateTargets();
+                }
             }
+            // if (Array.isArray(sels)) {
+            //     sels = sels.Select(function(i,o) {
+            //         return me.get_selectioncallback().identifyItem(o);
+            //     });
+            // } else {
+            //     sels = [];
+            // }
             //if (flt == null || flt.length == 0) return items;
             if (Array.isArray(items) && d != null) {
                 return items.Select(function(idx, item) {

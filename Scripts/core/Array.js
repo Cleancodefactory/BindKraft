@@ -769,8 +769,8 @@ Array.prototype.Update = function (callback, bobjects) {
  .Returns("...")
  .Remarks("Could be chained");
 
-Array.prototype.Aggregate = function (callback) {
-    var result = null;
+Array.prototype.Aggregate = function (callback, _initialResult) {
+    var result = _initialResult || null;
     for (var i = this.length - 1; i >= 0; i--) {
         if (BaseObject.is(callback, "Delegate")) {
             result = callback.invoke(i, this[i], result);
