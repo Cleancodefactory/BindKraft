@@ -800,11 +800,11 @@ Binding.prototype.$parseExpression = function (expr) {
                     this.$path = null;
                     s = arr[2].trim();
                     if (s.length > 0 && Function.classes[s] != null) {
-                        this.$literalValue = new Function.classes[s];
+                        this.$literalValue = function() { return new Function.classes[s]; }
                     } else if (s.length == 0 || s.toLowerCase() == "object") {
-                        this.$literalValue = {};
+                        this.$literalValue = function() { return {}; }
                     } else if (s.length > 0 && s.toLowerCase() == "array") {
-                        this.$literalValue = [];
+                        this.$literalValue = function () {return [];}
                     } else {
                         this.$literalValue = null;
                         jbTrace.log("The class name not found in expression: " + this.$expression);
@@ -1924,7 +1924,11 @@ Binding.prototype.$get_sourceValue = function (bFormat) { // The source is consi
     try {
         this.$setupSource();
         if (this.$sourceType == "static") {
-            result = this.$literalValue;
+            if (typeof this.$literalValue == "function") {
+                result = this.$literalValue();
+            } else {
+                result = this.$literalValue;
+            }
         } else {
             if (this.$sourceAction != null && this.$sourceNode != null) {
                 result = this.$sourceAction.resolve(this.$sourceNode, this);
