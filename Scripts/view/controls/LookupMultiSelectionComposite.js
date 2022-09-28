@@ -2,6 +2,18 @@
 
     var ILookupBoxCallback = Interface("ILookupBoxCallback"),
         ISelectedItemsCallback = Interface("ISelectedItemsCallback");
+
+    /**
+     * This composite is using two controls - LookupBoxControl and SelectedItemsControl in a specific manner.
+     * It implements the callbacks required so that the user would need only to supply items to the $items and current selection to the
+     * $selectedobjects.
+     * 
+     * The selected objects are the same as in the items (no conversion is made, while in a custom use it is possible and sometimes used.)
+     * The impact on this is that ISelectedItemsCallback.identifyItem will work on both the $selectedobjects and the available $items.
+     * 
+     * Identification is performed over the value of the $identification parameter/property, while filtering is implemented over the property specified 
+     * in the $description parameter/property.
+     */
     function LookupMultiSelectionComposite() {
         Base.apply(this, arguments);
     }
@@ -84,12 +96,18 @@
             //     sels = [];
             // }
             //if (flt == null || flt.length == 0) return items;
+            // sels - contains the selected objects
+            // flt - the current filter supplied by the lookup
             if (Array.isArray(items) && d != null) {
                 return items.Select(function(idx, item) {
                     var it = item[d];
                     if (flt == null || flt.length == 0 || (typeof it == "string" && it.toLowerCase().indexOf(flt.toLowerCase()) >= 0)) {
-                        if (sels.indexOf(me.get_selectioncallback().identifyItem(item)) >= 0) return;
-                        return item;
+                        if (!sels.Any(function(idx,t){
+                            if (me.areEqualItems(t, item)) return true;
+                            return false;
+                        })) {
+                            return item;
+                        }
                     }
                 });
             }
@@ -114,6 +132,12 @@
             return null;
         }
     });
+    // Helper - comparer
+    LookupMultiSelectionComposite.prototype.areEqualItems = function(item1, item2) {
+        var id1 = this.get_selectioncallback().identifyItem(item1);
+        var id2 = this.get_selectioncallback().identifyItem(item2);
+        return id1 == id2;
+    }
     //#endregion
 
     LookupMultiSelectionComposite.prototype.init = function() {
