@@ -24,7 +24,11 @@ function DataStateFilter() {
 DataStateFilter.Inherit(SystemFormatterBase,"DataStateFilter");
 DataStateFilter.Implement(IArgumentListParserStdImpl,"spaced");
 
-DataStateFilter.prototype.Read = function(val, bind, params) {
+DataStateFilter.prototype.Read = function(val, bind, _params) {
+    var params = _params;
+    if (params.Any(function(idx, s) { return s == "nondeleted"})) {
+        params = ["unchanged", "new", "updated"]
+    }
     if (Array.isArray(val)) {
         return val.Select(function(idx, item) { 
             if (params.Any(function(idx, s) { return (statevalues[s] == item[statename]); })) return item;

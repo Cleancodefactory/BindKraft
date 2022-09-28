@@ -22,7 +22,11 @@ function DataStateIndicator() {
 DataStateIndicator.Inherit(SystemFormatterBase,"DataStateIndicator");
 DataStateIndicator.Implement(IArgumentListParserStdImpl,"spaced");
 
-DataStateIndicator.prototype.Read = function(val, bind, params) {
+DataStateIndicator.prototype.Read = function(val, bind, _params) {
+    var params = _params;
+    if (params.Any(function(idx, s) { return s == "nondeleted"})) {
+        params = ["unchanged", "new", "updated"]
+    }
     if (typeof val == "object") {
         return params.Any(function(idx, s) { return (statevalues[s] == val[statename]); });
     }

@@ -612,7 +612,7 @@ Base.prototype.get_incorrectvalidators = function (vgrp) {
  * @param {InfoMessageTypeEnum} msgType - the type of message (default is info)
  */
 Base.prototype.emitMessage = function (message, msgType) {
-    InfoMessageQuery.emit(this, arr[i].get_message(), InfoMessageTypeEnum.info);
+    InfoMessageQuery.emit(this, message, Enumeration("InfoMessageTypeEnum").info);
 }
 Base.prototype.displayAllValidationErrors = function(bFailedOnly) {
 	var arr;

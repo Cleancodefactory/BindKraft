@@ -30,6 +30,9 @@ ValidateValue.prototype.validateValue = function (validator, value, binding) {
     return ValidationResultEnum.correct;
 };
 ValidateValue.prototype.validationResult = function (result) {
+    if (typeof result == "boolean") {
+        result = result?ValidationResultEnum.correct:ValidationResultEnum.incorrect;
+    }
     if (this.fail && result > ValidationResultEnum.correct) return ValidationResultEnum.fail;
     return result;
 };
