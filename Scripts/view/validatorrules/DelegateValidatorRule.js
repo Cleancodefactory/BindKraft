@@ -15,7 +15,7 @@ DelegateValidatorRule.prototype.get_param2 = function () { return null; };
 DelegateValidatorRule.prototype.get_param3 = function () { return null; };
 DelegateValidatorRule.prototype.get_message = function (lastValue) {
 	var msg = this.get_text();
-	if (msg != null && msg.length > 0) msg = msg.sprintf(lastValue);
+	if (msg != null && msg.length > 0) msg = msg.sprintf(lastValue || "");
 	return msg;
 };
 

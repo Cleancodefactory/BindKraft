@@ -92,4 +92,77 @@
     //         }
     //     }
     // }
+    DoArray.prototype.DataState = new InitializeInterfaceBubble("Manipulations according to data state","IDataStateManipulator",{
+
+        Delete: function(item_index) { 
+            var index = item_index;
+            var item = item_index;
+            if (typeof item_index == "object") {
+                index = this.array.indexOf(item_index);
+            } else if (typeof item_index == "number") {
+                if (index >= 0 && index < this.array.length) {
+                    item = this.array[index];
+                    index = -1;
+                } else {
+                    item = null;
+                }
+            }
+            if (index >= 0) {
+                if (Binding.isInStore(item)) {
+                    Binding.asDeleted(item);
+                } else {
+                    this.array.splice(index, 1);
+                }
+            }
+            return item;
+        },
+        New: function(item_index) {
+            var item = item_index;
+            if (typeof item_index == "number") {
+                if (item_index >= 0 && item_index < this.array.length) {
+                    // Make the item new
+                    item = this.array[item_index];
+                    return Binding.asNew(item);
+                } else {
+                    this.LASTERROR("Index out of range", "New");
+                    return null;
+                }
+            } else if (typeof item_index == "object") {
+                this.array.push(Binding.asNew(item_index));
+                return item_index;
+            }
+            return null;
+        },
+        Update: function(item_index, item_changes) {
+            var item = item_index;
+            var index = -1;
+            if (typeof item_index == "number") {
+                if (item_index >= 0 && item_index < this.array.length) {
+                    item = this.array[item_index];
+                    index = item_index;
+                } else {
+                    item = null;
+                }
+            } else if (typeof item_index == "object") {
+                // Find it
+                index = indexOf(item_index);
+                if (index < 0) {
+                    // Not found - cannot update
+                    item = null;
+                } else {
+                    item = this.array[index];
+                }
+            }
+            if (item != null && index >= 0) {
+                if (item_changes != null && typeof item_changes == "object") {
+                    this.array[index] = Binding.asChanged(BaseObject.CombineObjects(item, item_changes));
+                } else {
+                    Binding.asChanged(item);
+                }
+                return item;
+            }
+            return null;
+        }
+        
+    });
 })();

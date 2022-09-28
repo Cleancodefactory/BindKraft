@@ -470,7 +470,7 @@ Array.prototype.Select = function (callback) {
         if (el != null) arr.push(el);
     };
     return arr;
-}.Description("Creates new array with elements returned by a callback function or ampty array")
+}.Description("Creates new array with elements returned by a callback function or empty array")
  .Param("callback", "Callback to be executed on every element of the current array")
  .Returns("array, may be empty");
  Array.prototype.Each = function(callback) {
