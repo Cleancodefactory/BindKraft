@@ -50,6 +50,7 @@
 //#using "./IElementsLocator.js"
 //#using "./IElementsLocatorRegister.js"
 //#using "./IEquality.js"
+//#using "./IComparison.js"
 //#using "./IDataStateManipulator.js"
 
 //#using "./IOperation.js"

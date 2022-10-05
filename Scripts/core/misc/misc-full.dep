@@ -3,6 +3,7 @@
 //#using "./TypeChecker.js"
 //#using "./PatternChecker.js"
 //#using "./Predicate.js"
+//#using "./Comparison.js"
 //#using "./DoArray.js"
 //#using "./DictoList.js"
 //#using "./IconSpec.js"
