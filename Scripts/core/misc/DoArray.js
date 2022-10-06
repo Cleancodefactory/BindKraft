@@ -25,11 +25,9 @@
         }
         if (BaseObject.is(sorter,"IComparison")) {
             this.comparison = sorter;    
-        } else if (BaseObject.isCallback(predicate)) {
+        } else if (BaseObject.isCallback(sorter)) {
             this.comparison = new Comparison(sorter);
         }
-
-        
     }
     DoArray.Inherit(BaseObject, "DoArray");
 
@@ -72,7 +70,7 @@
             if (BaseObject.is(compare,"IComparison")) {
                 comparer = compare;    
             } else if (BaseObject.isCallback(compare)) {
-                comparer = new Compariosn(compare);
+                comparer = new Comparison(compare);
             }
         }
         if (comparer == null) comparer = function(a,b) {return a - b;}

@@ -11,5 +11,8 @@
 //#using "./KeyedTokenStorage.js"
 //#using "./SimpleStopWatch.js"
 //#using "./ExternalScripts.js"
+//#using "./predicates/predicates.dep"
+//#using "./comparisons/comparisons.dep"
+
 
 
