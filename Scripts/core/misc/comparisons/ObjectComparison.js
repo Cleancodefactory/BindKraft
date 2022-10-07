@@ -1,6 +1,7 @@
 (function () {
 
-    var IComparison = Interface("IComparison");
+    var IComparison = Interface("IComparison"),
+    ObjectFieldComparison = Class("ObjectFieldComparison");
 
     /**
      * Sorter (Comparison) for objects by the values of some of their fields

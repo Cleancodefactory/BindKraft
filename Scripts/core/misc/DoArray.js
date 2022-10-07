@@ -110,7 +110,7 @@
     }
     DoArray.prototype.sort = function(compare) { 
         var comparer = this.$useComparison(compare);
-        this.array.sort(comparer);
+        this.array.sort(function(a,b) {return comparer.compare(a,b);});
         return this;
     }
     // DoArray.prototype.with = function(v, predicate, action) {
