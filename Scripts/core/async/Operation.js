@@ -239,3 +239,18 @@ Operation.AsPromise = function(op) {
 		op.onsuccess( r => resolve(r)).onfailure(e => reject(e));
 	});
 }
+/**
+ * This works only if promises are available
+ */
+Operation.FromPromise = function(p, description, timeout) { 
+	if (p.then && p.cancel) {
+		var op = new Operation(description, timeout);
+		p.then(function(r) {
+			op.CompleteOperation(true, r);
+		}).cancel(function(e) {
+			op.CompleteOperation(false, e + "");
+		});
+		return op;
+	}
+	return null;
+}
