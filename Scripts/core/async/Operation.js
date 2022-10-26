@@ -243,11 +243,11 @@ Operation.AsPromise = function(op) {
  * This works only if promises are available
  */
 Operation.FromPromise = function(p, description, timeout) { 
-	if (p.then && p.cancel) {
+	if (p.then && p.catch) {
 		var op = new Operation(description, timeout);
 		p.then(function(r) {
 			op.CompleteOperation(true, r);
-		}).cancel(function(e) {
+		}).catch(function(e) {
 			op.CompleteOperation(false, e + "");
 		});
 		return op;
