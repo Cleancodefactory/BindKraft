@@ -134,21 +134,22 @@
      */
     ViewUtil.adjustPopupInHost = function(view, el, shiftLeft, shiftTop, mode) {
         var p = this.calcPopupInHost.apply(this, arguments);
-            placementRect = p.placementRect.mapTo(p.containerRect);
-            DOMUtil.setStyle(p.panel,"z-index", "9999");
-            placementRect.toDOMElement(p.panel); // toDOMElementAsViewport(th);
+        var placementRect = p.placementRect.mapTo(p.containerRect);
+        DOMUtil.setStyle(p.panel,"z-index", "9999");
+        placementRect.toDOMElement(p.panel); // toDOMElementAsViewport(th);
     }
     ViewUtil.adjustPopupInHostLocally = function(view, el, shiftLeft, shiftTop, mode) {
         var p = this.calcPopupInHost.apply(this, arguments);
-            if (p.panel.offsetParent != null) {
-                placementRect = p.placementRect.mapFromToElements(null,p.panel.offsetParent);
-            } else {
-                placementRect = p.placementRect.mapTo(p.containerRect);
-            }
-            DOMUtil.setStyle(p.panel,"z-index", "9999");
-            var pt = new GPoint(placementRect);
-            pt.toDOMElement(p.panel); 
-            //placementRect.toDOMElement(p.panel); // toDOMElementAsViewport(th);
+        var placementRect;
+        if (p.panel.offsetParent != null) {
+            placementRect = p.placementRect.mapFromToElements(null,p.panel.offsetParent);
+        } else {
+            placementRect = p.placementRect.mapTo(p.containerRect);
+        }
+        DOMUtil.setStyle(p.panel,"z-index", "9999");
+        var pt = new GPoint(placementRect);
+        pt.toDOMElement(p.panel); 
+        //placementRect.toDOMElement(p.panel); // toDOMElementAsViewport(th);
     }
     ViewUtil.calcPopupInHost = function(view, el, shiftLeft, shiftTop, mode) {
         var th; // The popup element
