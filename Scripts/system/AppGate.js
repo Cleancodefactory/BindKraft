@@ -205,11 +205,17 @@ AppGate.prototype.bindAppByClassName = function(className) {
 }
 AppGate.prototype.launchOneAppByClassName = function(className) {
 	var app = this.$shell.getAppByClassName(className);
+	var me = this;
 	if (app != null) {
 		return Operation.From(this.bindAppByClassName(className));
 	} else {
 		var op = new Operation("Launching app");
-		this.$shell.launchOne(className, Array.createCopyOf(arguments,1)).complete(op, op.CompleteOperation(true, this.bindAppByClassName(className)));
+		this.$shell.launchOne(className, Array.createCopyOf(arguments,1)).onsuccess(function() {
+			op.CompleteOperation(true, me.bindAppByClassName(className));
+		}).onfailure(function(err) {
+			op.CompleteOperation(false, err);
+		});
+
 		return op;
 	}
 }
