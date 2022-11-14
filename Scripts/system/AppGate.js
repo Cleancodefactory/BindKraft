@@ -203,6 +203,16 @@ AppGate.prototype.bindAppByClassName = function(className) {
 	}
 	return null;
 }
+AppGate.prototype.launchOneAppByClassName = function(className) {
+	var app = this.$shell.getAppByClassName(className);
+	if (app != null) {
+		return Operation.From(this.bindAppByClassName(className));
+	} else {
+		var op = new Operation("Launching app");
+		this.$shell.launchOne(className, Array.createCopyOf(arguments,1)).complete(op, op.CompleteOperation(true, this.bindAppByClassName(className)));
+		return op;
+	}
+}
 AppGate.prototype.bindAppsByClassNames = function(className1, className2, className3) {
 	var classNames = Array.createCopyOf(arguments,1);
 	var apps = this.$shell.getAppsByFilter(function(app) {
@@ -230,4 +240,5 @@ AppGate.prototype.activateApp = function(appproxy) {
 	}
 	return false;
 }
+
 
