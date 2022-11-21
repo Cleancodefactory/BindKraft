@@ -1022,22 +1022,16 @@ BaseWindow.prototype.windowmaxminchanged = new InitializeEvent("Fired when minim
         case WindowEventEnum.ActivateWindow:
             // To do: Change the style  of the active window (more complicated than just reacting)
 			if (this.$activatedCssClass != null) {
-				w = this.get_windowelement();
-				if (w != null) {
-					$(w).addClass(this.$activatedCssClass);
-				}
+                this.addCssClass(this.$activatedCssClass);
 			}
             break;
 		case WindowEventEnum.DeactivateWindow:
 			if (this.$activatedCssClass != null) {
-				w = this.get_windowelement();
-				if (w != null) {
-					$(w).removeClass(this.$activatedCssClass);
-				}
+                this.removeCssClass(this.$activatedCssClass);
 			}
 			break;
         case WindowEventEnum.ActivateChild:
-			if (evnt.data != null && evnt.data.child != this) {
+			if (evnt.data != null && evnt.data.child != this && this.isChildWindow(evnt.data.child)) {
                 var cordered = this.children.sort(function (w1, w2) {
                     if (w1 == null) return -1;
                     if (w2 == null) return 1;
@@ -1070,7 +1064,8 @@ BaseWindow.prototype.windowmaxminchanged = new InitializeEvent("Fired when minim
 						}
                     }
                 }
-                WindowingMessage.fireOn(this, WindowEventEnum.ActivateWindow, {});
+                evnt.handled = true;
+                WindowingMessage.fireOn(this, WindowEventEnum.ActivateWindow, {}); // Necessary when the activate child is sent directly - ensures the child knows it is activated
             }
             
             break;
@@ -1095,7 +1090,7 @@ BaseWindow.prototype.windowmaxminchanged = new InitializeEvent("Fired when minim
             this.$destroyedWindow = true; // In case there are dead references left there must be a way to find out if this instance is usable
             break;
     }
-    if (BaseObject.is(evnt, "WindowingParentNotifyMessage") && evnt.target == this) {
+    if (BaseObject.is(evnt, "WindowingParentNotifyMessage") && evnt.target == this && !evnt.handled) {
         evnt.dispatchOn(this.get_windowparent());
     }
 	// TODO: There is something weird in the following code - why unqueue only the same tasks?
