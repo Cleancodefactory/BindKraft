@@ -376,6 +376,47 @@ Base.prototype.cascadeInstances = function(prot_or_class, stopType1, stopType2 /
 	recurseDescendants(this);
 	return results;
 }.Description("Goes through the bindingDescendants and collects all the data-classes that are of the specified prot_ot_class, stops searching deeper at any element that is any of the stop types");
+
+/**
+ * This behaves differently than the non-Ex variant. It depends on two sets of types passed in two arrays.
+ * The first one is much like the arguments of cascadeInstances, but the second one specifies negation types -
+ * which means if the type found is of the stop types it will be ignored if it is also another type.
+ */
+Base.prototype.cascadeInstancesEx = function(prot_or_class, arrStopTypes, arrPassTypes) {
+	var results = [];
+	var i, stopTypes = Array.createCopyOf(arrStopTypes);
+    var passTypes = Array.createCopyOf(arrPassTypes);
+	function checkStops(o) {
+        var i;
+		for (i = 0; i < stopTypes.length; i++) {
+			if (o.is(stopTypes[i])) {
+                for (var j = 0; j < passTypes.length; j++) {
+                    if (o.is(passTypes[j])) return false; // Forcibly passes the recursion through the barrier
+                }
+                return true;
+            }
+		}
+		return false;
+	}
+	
+	if (this.is(prot_or_class)) {
+		results.push(this);
+	}
+	function recurseDescendants(o) {
+		var i,x;
+		if (o.bindingDescendants != null && o.bindingDescendants.length > 0) {
+			for (i = 0; i < o.bindingDescendants.length;i++) {
+				x = o.bindingDescendants[i];
+				if (BaseObject.is(x, prot_or_class)) {
+					results.push(x);
+				}
+				if (!checkStops(x)) recurseDescendants(x);
+			}
+		}
+	}
+	recurseDescendants(this);
+	return results;
+}.Description("Goes through the bindingDescendants and collects all the data-classes that are of the specified prot_ot_class, stops searching deeper at any element that is any of the stop types");
 Base.prototype.isTemplateRoot = function () {
 	if (DOMUtil.attr(this.root, "data-template-root") != null) return true;
     if (this.is("ITemplateRoot")) return true;

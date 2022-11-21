@@ -25,6 +25,7 @@ CheckValidationRule.prototype.validateValue = function (validator, value, bindin
 			validator.reportResult(this, ValidationResultEnum.incorrect);
 		}
 	}));
+	// TODO this seems repetition of the above
 	if (value.isOperationComplete()) {
 		if (value.isOperationSuccessful()) {
 			return value.getOperationResult();
