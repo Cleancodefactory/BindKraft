@@ -191,7 +191,9 @@
             if (BaseObject.is(lastOp,"Operation")) {
                 if (!lastOp.isOperationSuccessful()) {
                     me.LASTERROR("CLNullLang runtime error:" + lastOp.getOperationErrorInfo(), "execute");
-                    execOp.CompleteOperation(false, lastOp.getOperationErrorInfo());
+                    if (!lastOp.isOperationComplete()) { // Emergency completion (should not happen actually)
+                        execOp.CompleteOperation(false, lastOp.getOperationErrorInfo());
+                    }
                     return;
                 } else {
                     // Push the last result
@@ -235,7 +237,7 @@
                 if (instruction.operation == Instructions.Call ||
                     instruction.operation == Instructions.CallRoot ||
                     instruction.operation == Instructions.CallParent) {
-                    var op = new Operation("CLNullLangRunner instruction execution", me.$instructionTimeout); // TODO instruction timeout
+                    var op = new Operation("CLNullLangRunner instruction execution " + _DumpInstruction(instruction), me.$instructionTimeout); // TODO instruction timeout
                     op.then(processInstruction);
                     me.callAsyncIf(me.$asyncRun, execAsyncInstruction, instruction, state.args, op);
                     // Exit the executor and wait the operation
@@ -357,7 +359,7 @@
                         }
                         // TODO: Invalid actions???
                     } else {
-                        execOp.CompleteOperation(false, "Call cannot find the command specified in the operand.");
+                        execOp.CompleteOperation(false, "Call cannot find the command specified in the operand: " + instruction.operand);
                     }
                 break;
             }
