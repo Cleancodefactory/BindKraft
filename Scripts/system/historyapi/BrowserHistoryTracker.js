@@ -183,7 +183,7 @@ BrowserHistoryTracker.prototype.handleHistoryStatus = function (state) {
                         // 0
                         // false
                         window.history.pushState(state, state.title, state.url);
-                        this.$lastPushedState = state.className + state.state
+                        this.$lastPushedState = state.className + state.state;
                     }
                     //console.log("HandleHistoryStatus- entryType: " + state.entryType + ' title: ' + state.title + ' url: ' + state.url + ' className: ' + state.className);
                     break;
