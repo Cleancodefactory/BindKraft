@@ -11,3 +11,8 @@ function PageEvent(evntType, etarget) {
 }
 PageEvent.Inherit(Message, "PageEvent");
 PageEvent.ImplementProperty("target", new Initialize("The target element to which the event travels", null));
+PageEvent.prototype.containsTarget = function(container) {
+    var t = this.get_target();
+    if (DOMUtil.findParent(t, container) != null) return true;
+    return false;
+}
