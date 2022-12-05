@@ -4,6 +4,7 @@
 //#using "./DefaultDateTimeAggregates.js"
 
 //#using "./FormatInteger.js"
+//#using "./FormatFloat.js"
 //#using "./BooleanConverter.js"
 //#using "./NullIfEmpty.js"
 //#using "./IfNullOrEmpty.js"
