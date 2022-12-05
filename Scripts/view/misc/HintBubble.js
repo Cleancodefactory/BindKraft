@@ -16,7 +16,9 @@ HintBubble.prototype.activeHeader = new InitializeStringParameter("parent[/child
 HintBubble.prototype.inactiveHeader = new InitializeStringParameter("parent[/child] key of the inactive header element", "./InactiveHeader");
 HintBubble.prototype.bodyElement = new InitializeStringParameter("parent[/child] key of the body element", "./Body");
 HintBubble.prototype.initialState = new InitializeStringParameter("Initial state of the expander, can be 'collapsed' (default) or 'expanded'", "collapsed");
+
 HintBubble.prototype.animation = new InitializeStringParameter("Body animation: slow, fast, none", "none");
+
 HintBubble.prototype.statechangedevent = new InitializeEvent("Fired when the expander opens or closes. The data is true/false meaning open/close");
 HintBubble.prototype.openedevent = new InitializeEvent("Fired when the expander opens or closes. The data is true/false meaning open/close");
 HintBubble.prototype.closedevent = new InitializeEvent("Fired when the expander opens or closes. The data is true/false meaning open/close");
@@ -47,7 +49,7 @@ HintBubble.prototype.init = function () {
     }
 };
 HintBubble.prototype.$showHideHeader = function (bExpanded) {
-    var b = ((this.$activeHeader.length == 0) ? 1 : 0) + ((this.$inactiveHeader.length == 0) ? 1 : 0);
+    var b = ((this.$activeHeader.length == 0) ? 0 : 1) + ((this.$inactiveHeader.length == 0) ? 0 : 1);
     if (b == 1) {
         this.$activeHeader.show();
         this.$inactiveHeader.show();
@@ -133,10 +135,11 @@ HintBubble.prototype.Show = function () {
     if (this.myTimeout != null) {
         clearTimeout(this.myTimeout);
     }
-    this.Dimentions_new();
+    
     this.$isopen = true;
     this.$showHideHeader(true);
     this.$bodyElement.show(this.$animation);
+    this.Dimentions_new();
     this.statechangedevent.invoke(this, true);
     this.openedevent.invoke(this, true);
     if (!IsNull(window.g_ie8)) {
