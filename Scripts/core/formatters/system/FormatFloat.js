@@ -65,9 +65,9 @@ FormatFloat.prototype.Write = function(val, bind, args) {
 	}
 	var g = this.$getGlobalizer(args,o);
 	if (o.pattern != null) {
-		return g.parseFloat(v + "", o.pattern);
+		return g.parseFloat(v + "", 10); // o.pattern);
 	} else {
-		return g.parseFloat(v + "");
+		return g.parseFloat(v + "", 10);
 	}
 	
 }
