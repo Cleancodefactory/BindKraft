@@ -9,6 +9,7 @@ Function.classes = new Object();
 Function.interfaces = new Object();
 Function.interfaceImplementers = new Object();
 Function.enumerations = new Object();
+Function.enumerationHelpers = new Object();
 function Class(class_name) {
 	if (typeof class_name == "string") {
 	 	if (typeof Function.classes[class_name] == "function") return Function.classes[class_name];
@@ -33,11 +34,16 @@ function InterfaceImplementer(if_name) {
 	}
 	return null;
 }
-function Enumeration(enm_name, once_enm_def) {
+function Enumeration(enm_name, once_enm_def, helpers) {
 	if (typeof enm_name != "string") throw "Enumeration requires enumerations name as first argument.";
-	if (once_enm_def != null && typeof once_enm_def == "object") { // declare
+	if (once_enm_def == Enumeration.helpers) {
+		return Function.enumerationHelpers[enm_name];
+	} else if (once_enm_def != null && typeof once_enm_def == "object") { // declare
 		if (Function.enumerations[enm_name] != null) throw "Enumeration: definition for "+ enm_name +" already exists.";
 		Function.enumerations[enm_name] = once_enm_def;
+		if (helpers != null) {
+			Function.enumerationHelpers[enm_name] = helpers;
+		}
 		return once_enm_def;
 	} else if (once_enm_def == null) { // read
 		if (Function.enumerations[enm_name] != null) return Function.enumerations[enm_name];
@@ -50,6 +56,7 @@ function Enumeration(enm_name, once_enm_def) {
 		throw "The second argument to Enumeration is of unexpected type."
 	}
 }
+Enumeration.helpers = { symbol: "Enumeration helpers"};
 
 
 (function(_) { 

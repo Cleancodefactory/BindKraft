@@ -140,14 +140,33 @@ Messenger.prototype.unregisterWindow = function (win) {
         if (this.$lastMessages[msgTypeName] != null) return this.$lastMessages[msgTypeName];
         return null;
     }
+    Messenger.prototype.clearLastMessage = function(type_inst) {
+        var typeName = null;
+        if (Class.is(type_inst, "BaseObject")) {
+            typeName = Class.getTypeName(type_inst);
+        } else if (BaseObject.is(type_inst, "BaseObject")) {
+            typeName = type_inst.classType();
+        }
+        if (typeName != null) {
+            this.$lastMessages[typeName] = null;
+        }
+    }
     Messenger.prototype.clearLastMessages = function() {
         this.$lastMessages = {};
     }
 //#endregion
+
+/**
+ * 
+ * @param {Type|string} eventType - The type or the type name to which to subscribe. No casting is performed, subscription works with exact type only
+ * @param {IInvokr|IMessageSink|function} handler - handler - can be function, delegate (any IInvoke actually) or the subscriber itself if it supports IMessageSink
+ * @param {bool} callOnce - unsubscribe the subscriber after the first message
+ * @param {bool} doNotAdvise - if true will not advise the subscriber with the last message broadcasted before it subscription.
+ */
 // Messaging
 // eventType: MessageClass, handler: delegate|function|IMessageSink, callOnce: true|false (default)
 // callOnce     - The subscription will be automatically removed after the first call to it
-Messenger.prototype.subscribe = function (eventType, handler, callOnce, adviseForLatest) {
+Messenger.prototype.subscribe = function (eventType, handler, callOnce, doNotAdvise) {
     var eventTypeName = Class.getTypeName(eventType);
     if (Class.getType(eventTypeName) == null) {
         throw "The type " + eventTypeName + " does not exist. Messenger.subscribe requires an existing class or interface.";
@@ -161,7 +180,7 @@ Messenger.prototype.subscribe = function (eventType, handler, callOnce, adviseFo
             handler.CMessenger_callOnce[eventTypeName] = true;
         }
         this.$registered[eventTypeName].push(handler);
-        if (adviseForLatest) {
+        if (!doNotAdvise) {
             var lastMsg = this.getLastMessage(eventTypeName);
             if (lastMsg != null) {
                 // Do this async to avoid any problems when subscription happens during construction (quite typical)
@@ -258,12 +277,15 @@ Messenger.prototype.$adviseHandler = function (handler, obj) {
 /**
  * @param {BaseObject} obj - the message to spread.
  * @param {bool} broadcastToOthers - Optional, broadcast to the other browser windows opened in the same group, if any.
- * @param {bool} doNotRecord - Optional, if true will not record the message as last one of its type and new subscribers will not receive it.
+ * @param {EMessengerOptions} recordOptions - Optional, null/missing - do not record or clean previous, see EMessengerOptions for more information.
  */
-Messenger.prototype.$publish = function (obj, broadcastToOthers, doNotRecord) {
+Messenger.prototype.$publish = function (obj, broadcastToOthers, recordOptions) {
     if (obj == null || !BaseObject.is(obj,"BaseObject")) return; // nothing to publish
+    var opthelper = Enumeration("EMessengerOptions", Enumeration.helpers);
+    var options = Enumeration("EMessengerOptions");
     var eventTypeName = obj.classType();
-    if (!doNotRecord) this.updateLastMessage(obj);
+    if (opthelper.clear(recordOptions)) { this.clearLastMessage(obj); };
+    if (opthelper.record(recordOptions)) { this.updateLastMessage(obj); };
     var arr = this.$registered[eventTypeName];
     var i;
     if (arr != null) {
@@ -358,10 +380,10 @@ Messenger.prototype.$publish_old = function (obj, broadcastToOthers) {
  * direct send 
  * @param {BaseObject} obj - the message to spread.
  * @param {bool} broadcastToOthers - Optional, broadcast to the other browser windows opened in the same group, if any.
- * @param {bool} doNotRecord - Optional, if true will not record the message as last one of its type and new subscribers will not receive it.
+ * @param {EMessengerOptions} recordOptions - Optional, null/missing - do not record or clean previous, see EMessengerOptions for more information.
  */
-Messenger.prototype.publish = function (obj, bBroadcast, doNotRecord) {
-    return this.$publish(obj, bBroadcast, doNotRecord);
+Messenger.prototype.publish = function (obj, bBroadcast, recordOptions) {
+    return this.$publish(obj, bBroadcast, recordOptions);
 };
 
 
@@ -375,12 +397,12 @@ Messenger.prototype.tick = function () {
         if (el != null) {
             if (el.is("IDelayedMessage")) {
                 if (el.isTimeToSend(timeout)) {
-                    this.$publish(el, false, el["$__doNotRecord"]);
+                    this.$publish(el, false, el["$__recordOptions"]);
                 } else {
-                    q.push(el);
+                    q.push(el, el["$__recordOptions"]);
                 }
             } else {
-                this.$publish(el, false, el["$__doNotRecord"]);
+                this.$publish(el, false, el["$__recordOptions"]);
             }
         }
     }
@@ -392,11 +414,11 @@ Messenger.prototype.tick = function () {
  * send async
  * @param {BaseObject} obj - the message to spread.
  * @param {bool} broadcastToOthers - Optional, broadcast to the other browser windows opened in the same group, if any.
- * @param {bool} doNotRecord - Optional, if true will not record the message as last one of its type and new subscribers will not receive it.
+ * @param {EMessengerOptions} recordOptions - Optional, null/missing - do not record or clean previous, see EMessengerOptions for more information.
  */
-Messenger.prototype.$post = function (obj, broadcastToOthers, doNotRecord) {
+Messenger.prototype.$post = function (obj, broadcastToOthers, recordOptions) {
     if (obj == null) return;
-    obj["$__doNotRecord"] = doNotRecord;
+    obj["$__recordOptions"] = recordOptions;
     this.queue.push(obj);
     Ticker.Default.add(this);
     Ticker.Default.start();
@@ -406,7 +428,7 @@ Messenger.prototype.$post = function (obj, broadcastToOthers, doNotRecord) {
            for (var i = 0; i < this.$windows.length; i++) {
                try {
                    if (!this.$windows[i].equals(this)) {
-                       this.$windows[i].$post(obj, false, doNotRecord);
+                       this.$windows[i].$post(obj, false, recordOptions);
                    }
                } catch (e) {
                    // swallow
@@ -419,10 +441,10 @@ Messenger.prototype.$post = function (obj, broadcastToOthers, doNotRecord) {
  * direct send 
  * @param {BaseObject} obj - the message to spread.
  * @param {bool} broadcastToOthers - Optional, broadcast to the other browser windows opened in the same group, if any.
- * @param {bool} doNotRecord - Optional, if true will not record the message as last one of its type and new subscribers will not receive it.
+ * @param {EMessengerOptions} recordOptions - Optional, null/missing - do not record or clean previous, see EMessengerOptions for more information.
  */
-Messenger.prototype.post = function (obj, bBroadcast, doNotRecord) {
-    this.$post(obj, bBroadcast, doNotRecord);
+Messenger.prototype.post = function (obj, bBroadcast, recordOptions) {
+    this.$post(obj, bBroadcast, recordOptions);
 };
 
 Messenger.Default = new Messenger(true);
