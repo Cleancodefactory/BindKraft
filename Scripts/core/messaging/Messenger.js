@@ -159,7 +159,7 @@ Messenger.prototype.unregisterWindow = function (win) {
 /**
  * 
  * @param {Type|string} eventType - The type or the type name to which to subscribe. No casting is performed, subscription works with exact type only
- * @param {IInvokr|IMessageSink|function} handler - handler - can be function, delegate (any IInvoke actually) or the subscriber itself if it supports IMessageSink
+ * @param {IInvoke|IMessageSink|function} handler - handler - can be function, delegate (any IInvoke actually) or the subscriber itself if it supports IMessageSink
  * @param {bool} callOnce - unsubscribe the subscriber after the first message
  * @param {bool} doNotAdvise - if true will not advise the subscriber with the last message broadcasted before it subscription.
  */
