@@ -37,7 +37,7 @@ IValidatableImpl.prototype.get_knownvalidity = function() { return this.$knownva
  *  MyClass.Implement(IValidatableImpl,function.call(this));
  * All the parameters can be mixed together.
  */
-IValidatableImpl.classInitialize = function(cls, _customValidation, _alwaysReset) {
+IValidatableImpl.classInitialize = function(cls, _customValidation, _alwaysReset, _grpName) {
 	var customValidation, grpName = null, alwaysReset = false;
 	for (var i = 1; i < arguments.length; i++) {
 		if (BaseObject.isCallback(arguments[i])) {
