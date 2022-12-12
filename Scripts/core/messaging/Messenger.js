@@ -8,6 +8,7 @@
 /*CLASS*/
 function Messenger(isDefault) {
     this.$registered = {};
+    this.$lastMessages = {};
     this.$windows = new Array();
     // this.opener = window.opener;
     this.isDefault = isDefault;
@@ -125,11 +126,48 @@ Messenger.prototype.unregisterWindow = function (win) {
     } catch (e) {
     }
 };
+
+//#region Last messages
+    // Last message sent of a given type sent through the messenger is recorded in order to advise new subscribers for it (if they are subscribed that way)
+    Messenger.prototype.updateLastMessage = function(msg) {
+        if (BaseObject.is(msg, "BaseObject")) {
+            var msgTypeName = Class.getTypeName(msg.classType());
+            this.$lastMessages[msgTypeName] = msg;
+        }
+    }
+    Messenger.prototype.getLastMessage = function(type) {
+        var msgTypeName = Class.getTypeName(type);
+        if (this.$lastMessages[msgTypeName] != null) return this.$lastMessages[msgTypeName];
+        return null;
+    }
+    Messenger.prototype.clearLastMessage = function(type_inst) {
+        var typeName = null;
+        if (Class.is(type_inst, "BaseObject")) {
+            typeName = Class.getTypeName(type_inst);
+        } else if (BaseObject.is(type_inst, "BaseObject")) {
+            typeName = type_inst.classType();
+        }
+        if (typeName != null) {
+            this.$lastMessages[typeName] = null;
+        }
+    }
+    Messenger.prototype.clearLastMessages = function() {
+        this.$lastMessages = {};
+    }
+//#endregion
+
+/**
+ * 
+ * @param {Type|string} eventType - The type or the type name to which to subscribe. No casting is performed, subscription works with exact type only
+ * @param {IInvoke|IMessageSink|function} handler - handler - can be function, delegate (any IInvoke actually) or the subscriber itself if it supports IMessageSink
+ * @param {bool} callOnce - unsubscribe the subscriber after the first message
+ * @param {bool} doNotAdvise - if true will not advise the subscriber with the last message broadcasted before it subscription.
+ */
 // Messaging
 // eventType: MessageClass, handler: delegate|function|IMessageSink, callOnce: true|false (default)
 // callOnce     - The subscription will be automatically removed after the first call to it
-Messenger.prototype.subscribe = function (eventType, handler, callOnce) {
-    var eventTypeName = BaseObject.is(eventType, "string") ? eventType : eventType.classType;
+Messenger.prototype.subscribe = function (eventType, handler, callOnce, doNotAdvise) {
+    var eventTypeName = Class.getTypeName(eventType);
     if (Class.getType(eventTypeName) == null) {
         throw "The type " + eventTypeName + " does not exist. Messenger.subscribe requires an existing class or interface.";
     }
@@ -142,6 +180,14 @@ Messenger.prototype.subscribe = function (eventType, handler, callOnce) {
             handler.CMessenger_callOnce[eventTypeName] = true;
         }
         this.$registered[eventTypeName].push(handler);
+        if (!doNotAdvise) {
+            var lastMsg = this.getLastMessage(eventTypeName);
+            if (lastMsg != null) {
+                // Do this async to avoid any problems when subscription happens during construction (quite typical)
+                this.callAsync(function() { this.$adviseHandler(handler,lastMsg); });
+            }
+            
+        }
     }
 };
 Messenger.prototype.$findHandler = function (eventType, handler) {
@@ -190,7 +236,82 @@ Messenger.prototype.unsubscribeAll = function (obj) {
         }
     }
 };
-Messenger.prototype.$publish = function (obj, broadcastToOthers) {
+Messenger.prototype.$adviseHandler = function (handler, obj) {
+    var o = handler;
+    if (BaseObject.is(obj,"ITargetedMessage")) {
+        if (obj.confirmTarget(o)) {
+            if (o != null) {
+                if (BaseObject.is(o, "IInvoke")) {
+                    o.invoke(obj);
+                } else if (BaseObject.is(o, "function")) {
+                    o(obj);
+                } else if (BaseObject.is(o, "IMessageSink")) {
+                    o.HandleMessage(obj);
+                } else {
+                    // Unsupported registration
+                }
+                if (o.CMessenger_callOnce != null && o.CMessenger_callOnce[eventTypeName]) {
+                    o.CMessenger_callOnce[eventTypeName] = null;
+                    this.unsubscribe(eventTypeName,o);
+                }
+            }
+        }
+    } else {
+        if (o != null) {
+            if (BaseObject.is(o, "IInvoke")) {
+                o.invoke(obj);
+            } else if (BaseObject.is(o, "function")) {
+                o(obj);
+            } else if (BaseObject.is(o, "IMessageSink")) {
+                o.HandleMessage(obj);
+            } else {
+                // Unsupported registration
+            }
+            if (o.CMessenger_callOnce != null && o.CMessenger_callOnce[eventTypeName]) {
+                o.CMessenger_callOnce[eventTypeName] = null;
+                this.unsubscribe(eventTypeName, o);
+            }
+        }
+    }
+}
+/**
+ * @param {BaseObject} obj - the message to spread.
+ * @param {bool} broadcastToOthers - Optional, broadcast to the other browser windows opened in the same group, if any.
+ * @param {EMessengerOptions} recordOptions - Optional, null/missing - do not record or clean previous, see EMessengerOptions for more information.
+ */
+Messenger.prototype.$publish = function (obj, broadcastToOthers, recordOptions) {
+    if (obj == null || !BaseObject.is(obj,"BaseObject")) return; // nothing to publish
+    var opthelper = Enumeration("EMessengerOptions", Enumeration.helpers);
+    var options = Enumeration("EMessengerOptions");
+    var eventTypeName = obj.classType();
+    if (opthelper.clear(recordOptions)) { this.clearLastMessage(obj); };
+    if (opthelper.record(recordOptions)) { this.updateLastMessage(obj); };
+    var arr = this.$registered[eventTypeName];
+    var i;
+    if (arr != null) {
+        var o;
+        for (i = 0; i < arr.length; i++) {
+            o = arr[i];
+            this.$adviseHandler(o, obj);
+        }
+    }
+    if (broadcastToOthers) {
+        //alert("other windows " + this.$windows.length);
+        if (this.$windows.length > 0) {
+            for (i = 0; i < this.$windows.length; i++) {
+                try {
+                    if (!this.$windows[i].equals(this)) {
+                        this.$windows[i].$publish(obj, false);
+                    }
+                } catch (e) {
+                    // swallow
+                    //alert("publish: " + e);
+                }
+            }
+        }
+    }
+};
+Messenger.prototype.$publish_old = function (obj, broadcastToOthers) {
     var eventTypeName = obj.classType();
     var arr = this.$registered[eventTypeName];
     var i;
@@ -254,9 +375,15 @@ Messenger.prototype.$publish = function (obj, broadcastToOthers) {
         }
     }
 };
-// direct send 
-Messenger.prototype.publish = function (obj, bBroadcast) {
-    return this.$publish(obj, bBroadcast);
+
+/**
+ * direct send 
+ * @param {BaseObject} obj - the message to spread.
+ * @param {bool} broadcastToOthers - Optional, broadcast to the other browser windows opened in the same group, if any.
+ * @param {EMessengerOptions} recordOptions - Optional, null/missing - do not record or clean previous, see EMessengerOptions for more information.
+ */
+Messenger.prototype.publish = function (obj, bBroadcast, recordOptions) {
+    return this.$publish(obj, bBroadcast, recordOptions);
 };
 
 
@@ -270,12 +397,12 @@ Messenger.prototype.tick = function () {
         if (el != null) {
             if (el.is("IDelayedMessage")) {
                 if (el.isTimeToSend(timeout)) {
-                    this.$publish(el);
+                    this.$publish(el, false, el["$__recordOptions"]);
                 } else {
-                    q.push(el);
+                    q.push(el, el["$__recordOptions"]);
                 }
             } else {
-                this.$publish(el);
+                this.$publish(el, false, el["$__recordOptions"]);
             }
         }
     }
@@ -283,8 +410,15 @@ Messenger.prototype.tick = function () {
     if (this.queue.length <= 0) Ticker.Default.remove(this);
 };
 // todo: Implement postserialized and use it.
-Messenger.prototype.$post = function (obj, broadcastToOthers) {
+/**
+ * send async
+ * @param {BaseObject} obj - the message to spread.
+ * @param {bool} broadcastToOthers - Optional, broadcast to the other browser windows opened in the same group, if any.
+ * @param {EMessengerOptions} recordOptions - Optional, null/missing - do not record or clean previous, see EMessengerOptions for more information.
+ */
+Messenger.prototype.$post = function (obj, broadcastToOthers, recordOptions) {
     if (obj == null) return;
+    obj["$__recordOptions"] = recordOptions;
     this.queue.push(obj);
     Ticker.Default.add(this);
     Ticker.Default.start();
@@ -294,7 +428,7 @@ Messenger.prototype.$post = function (obj, broadcastToOthers) {
            for (var i = 0; i < this.$windows.length; i++) {
                try {
                    if (!this.$windows[i].equals(this)) {
-                       this.$windows[i].$post(obj, false);
+                       this.$windows[i].$post(obj, false, recordOptions);
                    }
                } catch (e) {
                    // swallow
@@ -303,8 +437,14 @@ Messenger.prototype.$post = function (obj, broadcastToOthers) {
        }
    }
 };
-Messenger.prototype.post = function (obj, bBroadcast) {
-    this.$post(obj, bBroadcast);
+/**
+ * direct send 
+ * @param {BaseObject} obj - the message to spread.
+ * @param {bool} broadcastToOthers - Optional, broadcast to the other browser windows opened in the same group, if any.
+ * @param {EMessengerOptions} recordOptions - Optional, null/missing - do not record or clean previous, see EMessengerOptions for more information.
+ */
+Messenger.prototype.post = function (obj, bBroadcast, recordOptions) {
+    this.$post(obj, bBroadcast, recordOptions);
 };
 
 Messenger.Default = new Messenger(true);
