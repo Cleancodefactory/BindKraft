@@ -197,7 +197,7 @@ SysShell.prototype.getAppWindows = function(appinst) {
 SysShell.prototype.activateApp = function(appinst) {
 	if (!BaseObject.is(appinst, "IApp")) return false;
 	var bDone = false;
-	if (appinst != null) {
+	function _activateDefault() {
 		var wnds = this.getAppWindows(appinst);
 		if (BaseObject.is(wnds,"Array")) {
 			// Activate all windows one after another. Really enough if it is one top window, otherwise it may be better to
@@ -208,6 +208,21 @@ SysShell.prototype.activateApp = function(appinst) {
 				wnd.activateWindow();
 			});
 		}
+	}
+	if (appinst != null) {
+		if (BaseObject.is(appinst, "IAppActivation")) {
+			switch (appinst.howToActivateTheApp()) {
+				case "hidden":
+					return false;
+				case "custom":
+					return appinst.customAppActivation(true);
+				default:
+					_activateDefault(appinst);
+			}
+		} else {
+			_activateDefault(appinst);
+		}
+		
 	}
 	return bDone;
 }

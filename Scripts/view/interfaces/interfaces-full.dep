@@ -52,3 +52,4 @@
 //#using "./IValidateValue.js"
 //#using "./ICaptionedView.js"
 //#using "./IUIControlValidateFromParent.js"
+//#using "./IAppActivation.js"
