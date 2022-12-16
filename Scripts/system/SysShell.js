@@ -197,8 +197,9 @@ SysShell.prototype.getAppWindows = function(appinst) {
 SysShell.prototype.activateApp = function(appinst) {
 	if (!BaseObject.is(appinst, "IApp")) return false;
 	var bDone = false;
+	var me = this;
 	function _activateDefault() {
-		var wnds = this.getAppWindows(appinst);
+		var wnds = me.getAppWindows(appinst);
 		if (BaseObject.is(wnds,"Array")) {
 			// Activate all windows one after another. Really enough if it is one top window, otherwise it may be better to
 			// create special method in your app to do this smartly
