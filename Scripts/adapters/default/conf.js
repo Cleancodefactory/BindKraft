@@ -665,9 +665,18 @@ function jb_initFramework(globalProvider) { // The global provider is being aske
 				}
             }
             else if (o.status.httpStatus == 401) {
+                Class("AjaxGlobalHooks").Default().onHttpError(401, o).onsuccess(function(r) {
+                    if (r === false) {
+                        // Its done - nothing more to do.
+                    } else {
+                        window.location.href = mapPath('/account/signin') + '?returnUrl=' + encodeURIComponent(BKUrl.getInitialFullUrl());
+                        settings.AbortAllProcessing = true;
+                    }
+                })
+                //var local_apis = new LocalAPIClient();
+                //local_apis.getAPI()
                 //make a full request to the build in method in CoreKraft
-                window.location.href = mapPath('/account/signin') + '?returnUrl=' + encodeURIComponent(BKUrl.getInitialFullUrl());
-                settings.AbortAllProcessing = true;
+                
             }
         }
 		// if ((o != null && o.status != null && !o.status.issuccessful) && (o.status.httpStatus == 0)) {

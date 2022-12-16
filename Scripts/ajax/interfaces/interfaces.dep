@@ -25,3 +25,4 @@
 //#using "./IAjaxRequestSendingExtension.js"
 //#using "./IAjaxCoreKraft.js"
 //#using "./IAjaxConnected.js"
+//#using "./IAjaxHttpHook.js"
