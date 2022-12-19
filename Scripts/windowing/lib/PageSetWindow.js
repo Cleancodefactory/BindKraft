@@ -49,6 +49,38 @@ PageSetWindow.prototype.on_ActivateChild = function (msg) {
 PageSetWindow.prototype.on_EnableWindow = function (msg) {
     if (msg.data != null && msg.data.enable != null) {
         var enabledPage = msg.target;
+        var pages;
+        if (msg.data.enabled) { // Just enabled
+            if (this.$cachedChildren != null) this.$cachedChildren.clear();
+            pages = this.get_pages();
+            var idx = pages.findElement(enabledPage);
+            if (idx <= this.get_currentindex()) {
+                this.set_currentindex(this.get_currentindex() + 1);
+            }
+        } else if (msg.data.disabled) { // just disabled
+            var disabledRawIndex = this.children.indexOf(enabledPage);
+            var selectedRawIndex = this.children.indexOf(this.get_selectedpage());
+            if (this.$cachedChildren != null) this.$cachedChildren.clear();
+            if (disabledRawIndex < selectedRawIndex) { // One visible page less
+                if (this.get_currentindex() > 0) {
+                    this.set_currentindex(this.get_currentindex() - 1);
+                }
+            } else if (disabledRawIndex == selectedRawIndex) { // Selected page was disabled - choose another
+                pages = this.get_pages();
+                if (pages.length > disabledRawIndex) {
+                    this.set_currentindex(disabledRawIndex); // The next page
+                } else { // The 
+
+                }
+            }
+        } else { // Nothing changed from the window's point of view - we have to ensure everything is Ok.
+
+        }
+
+
+
+
+        var currentIndex = this.get_currentindex();
         if (!msg.data.enable) {
             if (this.$cachedChildren != null) this.$cachedChildren.clear();
             var currentIndex = this.get_currentindex();
@@ -63,8 +95,10 @@ PageSetWindow.prototype.on_EnableWindow = function (msg) {
                 this.set_currentindex(newIndex);
             }
         } else if (msg.data.enable) {
+            
             if (this.$cachedChildren != null) this.$cachedChildren.clear();
             var pages = this.get_pages();
+            
             var idx = pages.findElement(enabledPage);
             if (idx > 0 && idx < (pages.length - 1)) {
                 idx++;
@@ -195,7 +229,7 @@ PageSetWindow.prototype.on_removePage = function (msg) {
             var pages = this.get_pages();
             if (oldIndex == pages.length - 1) {
                 newIndex = (pages.length > 0) ? 0 : oldIndex; // We keep the same index if there are other enabled pages after this one
-            }
+            }get_page
         }
         this.removeChild(page);
         this.set_currentindex(newIndex);
@@ -281,7 +315,6 @@ PageSetWindow.prototype.$filterVisibleChildren = function () {
         return this.children.Select(function (idx, item) {
             if (item.get_enabledwindow != null && item.get_enabledwindow()) {
                 return item;
-            } else {
             }
         });
     }

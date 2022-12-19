@@ -242,11 +242,16 @@ BaseWindow.prototype.get_enabledwindow = function () {
     return this.$enabledwindow;
 };
 BaseWindow.prototype.set_enabledwindow = function (v) {
-    this.$enabledwindow = v;
-    this.notifyParent(WindowEventEnum.EnableWindow, { enable: (v?true:false) });
-    if (!v) {
-
+    var data = {enable: (v?true:false) };
+    if (!this.$enabledwindow) {
+        data.enabled = v?true:false;
+        data.disabled = false;
+    } else {
+        data.enabled = false;
+        data.disabled = v?false:true;
     }
+    this.$enabledwindow = v?true:false;
+    this.notifyParent(WindowEventEnum.EnableWindow, data);
 }.Description ( "Something is missing here !" );
 BaseWindow.prototype.$persistSetting = function(key,v) {
 	if (this.__obliterated) { return; }
