@@ -200,6 +200,8 @@
             standard: {
                 // name that identifies the type of calendar this is
                 name: "Gregorian_USEnglish",
+                dateOrder: ["d", "M", "y"],
+                timeOrder: ["h", "m", "s"],
                 // separator of parts of a date (e.g. "/" in 11/05/1955)
                 "/": "/",
                 // separator of parts of a time (e.g. ":" in 05:44 PM)
@@ -1335,6 +1337,19 @@
     Globalize.prototype.parseDate = function (value, formats) {
         return Globalize.parseDate.call(this, value, formats, this.culture());
     };
+    Globalize.prototype.is24Hour = function () {
+        var cult = this.culture();
+        return (cult.calendars.standard.AM == null);
+    }
+    Globalize.prototype.dateOrder = function () {
+        var cult = this.culture();
+        return cult.calendars.standard.dateOrder;
+    }
+    Globalize.prototype.timeOrder = function () {
+        var cult = this.culture();
+        return cult.calendars.standard.timeOrder;
+    }
+
     //
     // public singleton functions
     //

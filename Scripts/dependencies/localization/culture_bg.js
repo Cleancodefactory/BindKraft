@@ -22,6 +22,8 @@
         calendars: {
             standard: {
                 "/": ".",
+                dateOrder: ["d", "M", "y"],
+                timeOrder: ["h", "m", "s"],
                 firstDay: 1,
                 days: {
                     names: ["Неделя", "Понеделник", "Вторник", "Сряда", "Четвъртък", "Петък", "Събота"],

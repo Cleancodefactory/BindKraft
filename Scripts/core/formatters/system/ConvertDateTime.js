@@ -55,7 +55,7 @@ ConvertDateTime.prototype.ToDate = {
 		if (done) return new Date(val);
 		return null;
 	},
-	MS: function(val) {
+	MS: function(val) { // \/Date(###)\/
 		if (typeof val == "string") {
 			var matches = ConvertDateTime.$reMS.exec(val);	
 			if (matches != null) {
