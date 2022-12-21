@@ -94,6 +94,8 @@ PageSetWindow.prototype.handleWindowEvent = function (evnt, currentResult) { // 
 PageSetWindow.prototype.on_ChildAdded = function (msg) {
     if (msg.data != null && msg.data.child != null) {
         msg.data.child.setWindowStyles(WindowStyleFlags.fillparent, "set");
+        // This is not fatal, but for future changes sake we better remove this flag to avoid unexpected behavior
+        msg.data.child.setWindowStyles(WindowStyleFlags.topmost, "reset"); // make sure no topmost windows are used as pages
         this.notifyParent(PageSetEventEnum.notifyPageAdded, { page: msg.data.child });
         this.callAsync(this.updateTabs);
     }
@@ -114,19 +116,30 @@ PageSetWindow.prototype.on_ChildRemoved = function (msg) {
     this.callAsync(this.updateTabs);
 }
 /**
- * Performs the actual page addition
+ * Performs the actual page addition for pagesetwindows. It calls addChild but before and after that adjusts 
+ * the window to the pageset's needs. addChild is also overridden, but will not do anything else but reset 
+ * the cached collection. If the window is not enabled it will remain so.
  * 
- * @param {*} msg { active, noactive, index, page: page}
+ * @param {*} msg - msg.data: { active, noactive, index, page: page, enable: boolean, disable: boolean}
+ *  - index causes window to be moved to that index among the children (not the active ones - pages!)
  */
 PageSetWindow.prototype.on_addPage = function (msg) {
-    if (msg.data != null && msg.data.page != null) {
+    if (msg.data != null && BaseObject.is(msg.data.page, "BaseWindow")) {
+        var newpage = msg.data.page;
+        // Check what we have to do initially
+        var msgdata = msg.data;
+        if (msgdata.enable) {
+            newpage.set_enabledwindow(true, true);
+        } else if (msgdata.disable) {
+            newpage.set_enabledwindow(false, true);
+        }
         if (this.addChild(msg.data.page) === false) { //this clears the cache - no need again
             // Add refused - do nothing
         } else {
             // reorder children if necessary (the new page is already in the list)
-            if (msg.data.index != null) {
-                if (msg.index >= 0 && msg.index <= this.children.length) {
-                    this.reOrderChild(msg.data.page, index);
+            if (msg.data != null && msg.data.index != null) {
+                if (msg.data.index >= 0 && msg.data.index <= this.children.length) {
+                    this.reOrderChild(msg.data.page, index); // index is according to all children
                 }
             }
             if (!msg.data.noactive && ((!BaseObject.getProperty(this, "createParameters.data.dontActivateAddedPages") && msg.data.active) || BaseObject.getProperty(this, "createParameters.data.activateAddedPages"))) {
@@ -135,7 +148,9 @@ PageSetWindow.prototype.on_addPage = function (msg) {
             }
             var pages = this.get_pages();
             if (!msg.data.noactive && ((!BaseObject.getProperty(this, "createParameters.data.dontActivateAddedPages") && msg.data.active) || BaseObject.getProperty(this, "createParameters.data.activateAddedPages") || pages.length == 1)) {
-                WindowingMessage.postTo(this, PageSetEventEnum.selectPage, { page: msg.data.page });
+                if (msg.data.get_enabledwindow()) {
+                    WindowingMessage.postTo(this, PageSetEventEnum.selectPage, { page: msg.data.page });
+                }
             } else {
                 msg.data.page.setWindowStyles(WindowStyleFlags.visible, "reset"); // Just in case it is not hidden by default
             }
@@ -151,21 +166,12 @@ PageSetWindow.prototype.on_removePage = function (msg) {
         page = this.get_childwindow(msg.data.index);
     }
     if (page != null) {
-
-
-
-        var newIndex = 0, oldIndex = this.get_currentindex();
-
-        if (page == this.get_page(oldIndex)) {
-            // We are removing the active page and we need to select a suitable page to show.
-            var pages = this.get_pages();
-            if (oldIndex == pages.length - 1) {
-                newIndex = (pages.length > 0) ? 0 : oldIndex; // We keep the same index if there are other enabled pages after this one
-            }get_page
+        if (this.get_selectedpage() == page) {
+            // Have to fix the selection first.
+            this.selectAnother();
         }
         this.removeChild(page);
-        this.set_currentindex(newIndex);
-        //$(page.root).Empty();
+        this.$cachedChildren.clear();
     }
 };
 PageSetWindow.prototype.on_selectPage = function (msg) {
@@ -195,12 +201,22 @@ PageSetWindow.prototype.on_selectPage = function (msg) {
             this.notifyChild(_new, PageSetEventEnum.pageActivated, { page: _new });
             
             this.$selectedPage = _new;
+            this.$cachedChildren.clear(); // TODO: seems unneeded
             this.notifyParent(PageSetEventEnum.notifyPageSelected, { page: _new, oldpage: _old, index: this.get_currentindex() });
         } else {
             // TODO: maybe reapply
         }
     }
     ///////////
+}
+/**
+ * Selects next or previous page depending on whenRemovedSelectPage.
+ */
+PageSetWindow.prototype.selectAnother = function() {
+    var page = this.get_otherpage();
+    if (page != null) {
+        this.set_selectedpage(page);
+    }
 }
 
 // PageSetWindow.prototype.on_selectPage_old = function (msg) {
@@ -256,7 +272,6 @@ PageSetWindow.prototype.on_selectPage = function (msg) {
 PageSetWindow.prototype.addChild = function (wnd) {
     //debugger
     var result = PanelWindow.prototype.addChild.apply(this, arguments);
-    wnd.set_enabledwindow(true);
     this.$cachedChildren.clear(); // Reset active collection
     return result;
 }
@@ -264,9 +279,12 @@ PageSetWindow.prototype.addChild = function (wnd) {
 
 //#region PageSet API
 
-/*
-    @param {object|boolean} - null - nothing, true - activate, false noactive
-*/
+/**
+ *  A method for loading pages. The actual work is done by on_AddPage, but this method offers
+ *  more convenient invocation (a bit)
+ *  @param {object|boolean} - null - nothing, true - activate, false noactive ... see the 
+ *              on_AddPage for more details when it is an object
+ */
 PageSetWindow.prototype.addPage = function (page, options) {
     var msgdata = { page: page };
     if (typeof options == "boolean") {
@@ -287,8 +305,14 @@ PageSetWindow.prototype.removePage = function (page) {
     WindowingMessage.fireOn(this, PageSetEventEnum.removePage, { page: page });
     return this;
 };
-PageSetWindow.prototype.removeAllPages = function () {
-    var pages = this.get_pages();
+/**
+ * Removes all the pages one by one. By default it removes only the active pages, 
+ * with bAll set to true - all the child windows (pages).
+ * 
+ * @param {bool} bAll - If true removes all the children, otherwise only the active pages.
+ */
+PageSetWindow.prototype.removeAllPages = function (bAll) {
+    var pages = bAll?this.children:this.get_pages();
     if (pages != null) {
         pages = Array.createCopyOf(pages);
         for (var i = 0; i < pages.length; i++) {
