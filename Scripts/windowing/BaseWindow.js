@@ -241,7 +241,12 @@ BaseWindow.prototype.$enabledwindow = true;
 BaseWindow.prototype.get_enabledwindow = function () {
     return this.$enabledwindow;
 };
-BaseWindow.prototype.set_enabledwindow = function (v) {
+/**
+ * @param {bool} v - truthy/falsy - enable / nonenabled 
+ * @param {bool} doNotNotifyParent - optional, if truthy will not notify the parent. Useful for 
+ *          internal use when the window is moved to other parent and it is more convenient to prepare it for the new place.
+ */
+BaseWindow.prototype.set_enabledwindow = function (v, doNotNotifyParent) {
     var data = {enable: (v?true:false) };
     if (!this.$enabledwindow) {
         data.enabled = v?true:false;
@@ -251,8 +256,10 @@ BaseWindow.prototype.set_enabledwindow = function (v) {
         data.disabled = v?false:true;
     }
     this.$enabledwindow = v?true:false;
-    this.notifyParent(WindowEventEnum.EnableWindow, data);
-}.Description ( "Something is missing here !" );
+    if (!doNotNotifyParent) {
+        this.notifyParent(WindowEventEnum.EnableWindow, data);
+    }
+}.Description ( "Sets the enabled state of the window and notifies its parent about that." );
 BaseWindow.prototype.$persistSetting = function(key,v) {
 	if (this.__obliterated) { return; }
 	if (BaseObject.is(this.createParameters.persister,"ISettingsPersister")) {
