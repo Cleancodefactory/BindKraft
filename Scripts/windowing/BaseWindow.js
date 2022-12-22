@@ -835,6 +835,7 @@ BaseWindow.prototype.preprocessWindowEvent = function (evnt) {
                 return false;
             }
             break;
+            
         case WindowEventEnum.ActivateWindow:
             if (this.notifyParent(WindowEventEnum.ActivateChild, { child: this }) === false) { // The parent has the decisive role
                 evnt.handled = true;

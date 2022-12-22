@@ -325,6 +325,17 @@ PageSetWindow.prototype.removeAllPages = function (bAll) {
     return this;
 };
 
+PageSetWindow.prototype.selectPage = function (page) {
+    if (typeof page == 'string') {
+        page = this.findChildByName(page);
+    }
+    if (BaseObject.is(page, "BaseWindow")) {
+        WindowingMessage.fireOn(this, PageSetEventEnum.selectPage, { page: page });
+    } else {
+        this.LASTERROR("The page argument is not a BaseWindow or the window cannot be found.")
+    }
+};
+
 //#endregion
 
 
@@ -435,16 +446,7 @@ PageSetWindow.prototype.get_selectedpage = function () {
 PageSetWindow.prototype.set_selectedpage = function (page) {
     this.selectPage(page);
 }
-PageSetWindow.prototype.selectPage = function (page) {
-    if (typeof page == 'string') {
-        page = this.findChildByName(page);
-    }
-    if (BaseObject.is(page, "BaseWindow")) {
-        WindowingMessage.fireOn(this, PageSetEventEnum.selectPage, { page: page });
-    } else {
-        this.LASTERROR("The page argument is not a BaseWindow or the window cannot be found.")
-    }
-};
+
 
 PageSetWindow.prototype.deactivateCurrentTab = function (callback, syncSave) {
     this.notifyChild(this.get_selectedpage(), WindowEventEnum.Deactivating, { callback: callback, sync: syncSave });
