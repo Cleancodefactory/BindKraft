@@ -48,6 +48,7 @@ System.prototype.$onbeforeunload = function (e) {
     SettingsPersister.disablePersistence(true);
     this.windowunloadevent.invoke(this, e);
     if (this.rejectwindowunload === true) {
+        if (e.preventDefault) e.preventDefault();
         this.rejectwindowunload = false;
         var str = "";
         if (BaseObject.is(this.rejectwindowunloadmessages, "Array")) {
