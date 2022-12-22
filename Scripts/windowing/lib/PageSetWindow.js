@@ -148,7 +148,7 @@ PageSetWindow.prototype.on_addPage = function (msg) {
             }
             var pages = this.get_pages();
             if (!msg.data.noactive && ((!BaseObject.getProperty(this, "createParameters.data.dontActivateAddedPages") && msg.data.active) || BaseObject.getProperty(this, "createParameters.data.activateAddedPages") || pages.length == 1)) {
-                if (msg.data.get_enabledwindow()) {
+                if (msg.data.page.get_enabledwindow()) {
                     WindowingMessage.postTo(this, PageSetEventEnum.selectPage, { page: msg.data.page });
                 }
             } else {
@@ -209,6 +209,12 @@ PageSetWindow.prototype.on_selectPage = function (msg) {
     }
     ///////////
 }
+PageSetWindow.prototype.on_ActivateChild = function (msg) {
+    if (msg.target != this) { // Wrong message - we stop its processing
+        WindowingMessage.fireOn(this, PageSetEventEnum.selectPage, { page: page });
+        msg.handled = true;
+    }
+};
 /**
  * Selects next or previous page depending on whenRemovedSelectPage.
  */
@@ -324,7 +330,10 @@ PageSetWindow.prototype.removeAllPages = function (bAll) {
     }
     return this;
 };
-
+/**
+ * Invokes selectPage message with the given page window or with the page window by name.
+ * @param {string|BaseWindow} page - The page window to make selected.
+ */
 PageSetWindow.prototype.selectPage = function (page) {
     if (typeof page == 'string') {
         page = this.findChildByName(page);
@@ -332,22 +341,45 @@ PageSetWindow.prototype.selectPage = function (page) {
     if (BaseObject.is(page, "BaseWindow")) {
         WindowingMessage.fireOn(this, PageSetEventEnum.selectPage, { page: page });
     } else {
-        this.LASTERROR("The page argument is not a BaseWindow or the window cannot be found.")
+        this.LASTERROR("The page argument is not a BaseWindow or the window with the given name cannot be found.")
     }
 };
-
+/**
+ * Mostly for internal use. Updates the UI (in inheriting classes).
+ * 
+ */
+PageSetWindow.prototype.updateTabs = function () {
+    this.updateSources();
+    this.updateTargets();
+    return this;
+};
+PageSetWindow.prototype.get_pages = function () {
+    if (this.$cachedChildren != null) return this.$cachedChildren.get();
+    return null;
+};
+PageSetWindow.prototype.rearangePages = function (currentIndex, newIndex) {
+    //RearangeItems(this.children, currentIndex, newIndex);
+    //this.$cachedChildren.clear();
+};
 //#endregion
 
-
-
-
-PageSetWindow.prototype.on_ActivateChild = function (msg) {
-    if (msg.target != this) { // Wrong message - we stop its processing
-        msg.handled = true;
+//#region Internal mostly API
+PageSetWindow.prototype.deactivateCurrentTab = function (callback, syncSave) {
+    this.notifyChild(this.get_selectedpage(), WindowEventEnum.Deactivating, { callback: callback, sync: syncSave });
+};
+PageSetWindow.prototype.$filterVisibleChildren = function () {
+    if (!IsNull(this.children)) {
+        return this.children.Select(function (idx, item) {
+            if (item.get_enabledwindow != null && item.get_enabledwindow()) {
+                return item;
+            }
+        });
+    }
+    else {
+        return null;
     }
 };
-
-
+//#endregion
 
 
 
@@ -417,11 +449,7 @@ PageSetWindow.prototype.on_EnableWindow = function (msg) {
     this.callAsync(this.updateTabs);
     //this.updateTabs();
 };
-PageSetWindow.prototype.updateTabs = function () {
-    this.updateSources();
-    this.updateTargets();
-    return this;
-};
+
 
 
 
@@ -436,38 +464,8 @@ PageSetWindow.prototype.updateTabs = function () {
 
 
 
-// Only the visible pages
-// PageSetWindow.prototype.$currentIndex = -1;
-
-PageSetWindow.prototype.get_selectedpage = function () {
-    var i = this.get_currentindex();
-    return this.get_page(i);
-};
-PageSetWindow.prototype.set_selectedpage = function (page) {
-    this.selectPage(page);
-}
 
 
-PageSetWindow.prototype.deactivateCurrentTab = function (callback, syncSave) {
-    this.notifyChild(this.get_selectedpage(), WindowEventEnum.Deactivating, { callback: callback, sync: syncSave });
-};
-PageSetWindow.prototype.$filterVisibleChildren = function () {
-    if (!IsNull(this.children)) {
-        return this.children.Select(function (idx, item) {
-            if (item.get_enabledwindow != null && item.get_enabledwindow()) {
-                return item;
-            }
-        });
-    }
-    else {
-        return null;
-    }
-};
-PageSetWindow.prototype.get_pages = function () {
-    if (this.$cachedChildren != null) return this.$cachedChildren.get();
-    return null;
-};
-PageSetWindow.prototype.rearangePages = function (currentIndex, newIndex) {
-    RearangeItems(this.children, currentIndex, newIndex);
-    this.$cachedChildren.clear();
-};
+
+
+

@@ -1074,8 +1074,8 @@ BaseWindow.prototype.windowmaxminchanged = new InitializeEvent("Fired when minim
             break;
     }
     if (BaseObject.is(evnt, "WindowingParentNotifyMessage") && evnt.target == this && !evnt.handled) {
-        evnt.target = this.get_windowparent(); // retarget it.
-        evnt.dispatchOn(this.get_windowparent());
+        var msg = new WindowingMessage(evnt,null,this.get_windowparent());
+        msg.dispatchOn(this.get_windowparent());
     }
 	// TODO: There is something weird in the following code - why unqueue only the same tasks?
     if (this.createParameters != null && this.createParameters.taskDispenser != null) {

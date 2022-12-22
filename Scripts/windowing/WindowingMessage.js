@@ -9,10 +9,28 @@
 // sourceWindow may be used only in specific messages that describe events for which "target" sounds ambigous.
 function WindowingMessage(eventType, eventData, targetWindow, sourceWindow) {
     BaseObject.apply(this, arguments);
-    this.type = eventType;
-    this.data = eventData;
-    this.target = targetWindow;
-    this.source = sourceWindow;
+    if (BaseObject.is(eventType, "WindowingMessage")) {
+        // Copy from another
+        this.type = eventType.eventType;
+        this.data = eventType.eventData;
+        this.target = eventType.targetWindow;
+        this.source = eventType.sourceWindow;
+        if (eventData != null) {
+            this.data = eventData;
+        }
+        if (targetWindow != null) {
+            this.target = targetWindow;
+        }
+        if (sourceWindow != null) {
+            this.source = sourceWindow;
+        }
+    } else {
+        this.type = eventType;
+        this.data = eventData;
+        this.target = targetWindow;
+        this.source = sourceWindow;
+    }
+    
 }
 WindowingMessage.Inherit(BaseObject, "WindowingMessage");
 WindowingMessage.Implement(IDispatchable);
