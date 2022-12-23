@@ -210,8 +210,8 @@ PageSetWindow.prototype.on_selectPage = function (msg) {
     ///////////
 }
 PageSetWindow.prototype.on_ActivateChild = function (msg) {
-    if (msg.target != this) { // Wrong message - we stop its processing
-        WindowingMessage.fireOn(this, PageSetEventEnum.selectPage, { page: page });
+    if (msg.target != this && msg.data != null && msg.data.child != null) { // Wrong message - we stop its processing
+        WindowingMessage.fireOn(this, PageSetEventEnum.selectPage, { page: msg.data.child });
         msg.handled = true;
     }
 };
