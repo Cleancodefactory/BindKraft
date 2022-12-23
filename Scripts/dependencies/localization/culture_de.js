@@ -23,6 +23,8 @@ Globalize.addCultureInfo("de", "default", {
         },
         calendars: {
             standard: {
+                dateOrder: ["M","d", "y"],
+                timeOrder: ["h", "m", "s"],
                 "/": ".",
                 firstDay: 1,
                 days: {

@@ -14,6 +14,12 @@ FormatDateTime.ImplementProperty("pattern", new InitializeStringParameter("defau
 FormatDateTime.ImplementProperty("culture", new InitializeStringParameter("Culture name (must be loaded in order to use it), null means the system default - initialized with CL initculture", null));
 FormatDateTime.ImplementProperty("zonemode", new InitializeStringParameter("Zone mode - default, utc|none, local", "default"));
 
+/**
+ * The args can contain up to 3 components:
+ * culture: "[xx]" | "[xx-YY]"
+ * zonemode: "default" | "utc" | "none" | "local"
+ *	pattern: <anything else is treated as pattern>. Shorthands: d,D,t,T,f,F,M,n,N,Y,S,K,w,W
+ */
 FormatDateTime.prototype.$getGlobalizer = function(args,o) {
 	// defaults
 	var zonemode  = this.get_zonemode();

@@ -9,10 +9,28 @@
 // sourceWindow may be used only in specific messages that describe events for which "target" sounds ambigous.
 function WindowingMessage(eventType, eventData, targetWindow, sourceWindow) {
     BaseObject.apply(this, arguments);
-    this.type = eventType;
-    this.data = eventData;
-    this.target = targetWindow;
-    this.source = sourceWindow;
+    if (BaseObject.is(eventType, "WindowingMessage")) {
+        // Copy from another
+        this.type = eventType.type;
+        this.data = eventType.data;
+        this.target = eventType.target;
+        this.source = eventType.source;
+        if (eventData != null) {
+            this.data = eventData;
+        }
+        if (targetWindow != null) {
+            this.target = targetWindow;
+        }
+        if (sourceWindow != null) {
+            this.source = sourceWindow;
+        }
+    } else {
+        this.type = eventType;
+        this.data = eventData;
+        this.target = targetWindow;
+        this.source = sourceWindow;
+    }
+    
 }
 WindowingMessage.Inherit(BaseObject, "WindowingMessage");
 WindowingMessage.Implement(IDispatchable);
@@ -30,13 +48,22 @@ WindowingMessage.prototype.set_data = function (v) {
     this.data = v;
     // No notification for data context changed is deemed useful for messages. If this changes call this.OnDataContextChanged here.
 }
+/**
+ * 
+ * @returns The result of the message unlike sendTo which returns the message 
+ */
 WindowingMessage.fireOn = function (wnd, evntType, evntData) {
     if (wnd != null && BaseObject.is(wnd, "BaseWindow")) {
         var e = new WindowingMessage(evntType, evntData, wnd);
-        return wnd.$handleWindowEvent(e);
+        return e.dispatchOn(wnd);
+        //return wnd.$handleWindowEvent(e);
     }
     return null;
 };
+/**
+ * 
+ * @returns Like fireOn, but returns the message for potential result recorded there
+ */
 WindowingMessage.sendTo = function (wnd, evntType, evntData) {
     var msg = new WindowingMessage(evntType, evntData, wnd);
     msg.dispatchOn(wnd);

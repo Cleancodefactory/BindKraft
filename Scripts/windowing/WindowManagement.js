@@ -20,10 +20,12 @@ WindowManagement.prototype.$activewindow = null;
 WindowManagement.prototype.set_activewindow = function (w) {
     if (BaseObject.is(w, "BaseWindow") && this.$activewindow != w) {
 		if (this.$activewindow != null) WindowingMessage.fireOn(this.$activewindow, WindowEventEnum.DeactivateWindow, {});
+    
         this.$activewindow = w;
         WindowingMessage.fireOn(w, WindowEventEnum.ActivateWindow, {});
         this.activateevent.invoke(this, w);
     }
+    
 };
 WindowManagement.prototype.get_activewindow = function (w) {
     return this.$activewindow;

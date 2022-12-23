@@ -241,13 +241,25 @@ BaseWindow.prototype.$enabledwindow = true;
 BaseWindow.prototype.get_enabledwindow = function () {
     return this.$enabledwindow;
 };
-BaseWindow.prototype.set_enabledwindow = function (v) {
-    this.$enabledwindow = v;
-    this.notifyParent(WindowEventEnum.EnableWindow, { enable: (v?true:false) });
-    if (!v) {
-
+/**
+ * @param {bool} v - truthy/falsy - enable / nonenabled 
+ * @param {bool} doNotNotifyParent - optional, if truthy will not notify the parent. Useful for 
+ *          internal use when the window is moved to other parent and it is more convenient to prepare it for the new place.
+ */
+BaseWindow.prototype.set_enabledwindow = function (v, doNotNotifyParent) {
+    var data = {enable: (v?true:false) };
+    if (!this.$enabledwindow) {
+        data.enabled = v?true:false;
+        data.disabled = false;
+    } else {
+        data.enabled = false;
+        data.disabled = v?false:true;
     }
-}.Description ( "Something is missing here !" );
+    this.$enabledwindow = v?true:false;
+    if (!doNotNotifyParent) {
+        this.notifyParent(WindowEventEnum.EnableWindow, data);
+    }
+}.Description ( "Sets the enabled state of the window and notifies its parent about that." );
 BaseWindow.prototype.$persistSetting = function(key,v) {
 	if (this.__obliterated) { return; }
 	if (BaseObject.is(this.createParameters.persister,"ISettingsPersister")) {
@@ -776,7 +788,11 @@ BaseWindow.prototype.get_stackingelements = function (kind, clientSlot) { // cli
 BaseWindow.prototype.$windowVisibleStyle = "block";
 // Internal message initiators
 BaseWindow.prototype.$activateWindowFromDOMEvent = function (e) {
-    WindowManagement.Default().set_activewindow(this);
+    var me = this;
+    //this.callAsync(function() {
+        WindowManagement.Default().set_activewindow(me);
+    //});
+    
     if (e != null) e.stopPropagation();
 };
 // Message handling
@@ -823,6 +839,7 @@ BaseWindow.prototype.preprocessWindowEvent = function (evnt) {
                 return false;
             }
             break;
+            
         case WindowEventEnum.ActivateWindow:
             if (this.notifyParent(WindowEventEnum.ActivateChild, { child: this }) === false) { // The parent has the decisive role
                 evnt.handled = true;
@@ -896,7 +913,7 @@ BaseWindow.prototype.$trackEvents = null; // Can be set to a function that is ca
 			this.$trackEvents.call(null, this, evnt);
 		}
         var r = this.preprocessWindowEvent(evnt);
-        if (evnt.handled) return r;
+        if (evnt.handled) return r; // Discards handled events - should we move this up a little bit?
 		if (typeof this["on_" + evnt.type] == "function") {
             r = this["on_" + evnt.type].call(this, evnt);
         }
@@ -1032,40 +1049,10 @@ BaseWindow.prototype.windowmaxminchanged = new InitializeEvent("Fired when minim
 			break;
         case WindowEventEnum.ActivateChild:
 			if (evnt.data != null && evnt.data.child != this && this.isChildWindow(evnt.data.child)) {
-                var cordered = this.children.sort(function (w1, w2) {
-                    if (w1 == null) return -1;
-                    if (w2 == null) return 1;
-					if (w1.getWindowStyles() & WindowStyleFlags.topmost) {
-						if (w2.getWindowStyles() & WindowStyleFlags.topmost) {
-							// Both are topmost
-							if (evnt.data.child == w1) return 1; // If the first is being activated - it is bigger
-							if (evnt.data.child == w2) return -1; // If the second is being activated - it is bigger and w1 is smaller no matter what.
-							return (w1.get_zorder() - w2.get_zorder());
-						} else { // not topmost
-							return 1;
-						}
-					} else if (w2.getWindowStyles() & WindowStyleFlags.topmost) {
-						return -1; // never over the w2
-					}
-                    if (evnt.data.child == w1) return 1;
-                    if (evnt.data.child == w2) return -1;
-					
-                    var z1 = w1.get_zorder(), z2 = w2.get_zorder();
-                    return (z1 - z2);
-                });
-                this.children = cordered;
-				var zgap = 200;
-                for (var i = 0; i < this.children.length; i++) {
-                    if (BaseObject.is(this.children[i], "BaseWindow")) {
-						if (this.children[i].getWindowStyles() & WindowStyleFlags.topmost) {
-							this.children[i].set_zorder(i + zgap); // Leave the gap so we can hide/show a cover.
-						} else {
-							this.children[i].set_zorder(i);
-						}
-                    }
-                }
+                this.$bringChildToFront(evnt.data.child);
                 evnt.handled = true;
-                WindowingMessage.fireOn(this, WindowEventEnum.ActivateWindow, {}); // Necessary when the activate child is sent directly - ensures the child knows it is activated
+                // Previously we sent ActivateWindow here which barely avoided lockup
+                WindowingMessage.fireOn(this, WindowEventEnum.Activated, {}); // Necessary when the activate child is sent directly - ensures the child knows it is activated
             }
             
             break;
@@ -1091,7 +1078,8 @@ BaseWindow.prototype.windowmaxminchanged = new InitializeEvent("Fired when minim
             break;
     }
     if (BaseObject.is(evnt, "WindowingParentNotifyMessage") && evnt.target == this && !evnt.handled) {
-        evnt.dispatchOn(this.get_windowparent());
+        var msg = new WindowingMessage(evnt,null,this.get_windowparent());
+        msg.dispatchOn(this.get_windowparent());
     }
 	// TODO: There is something weird in the following code - why unqueue only the same tasks?
     if (this.createParameters != null && this.createParameters.taskDispenser != null) {
@@ -1317,6 +1305,10 @@ BaseWindow.prototype.$addChild = function (wnd, param) {
 		}
 	}
 };
+/**
+ * @param {string} param - Optional, if string instructs the window to use the same named client area for the added window (if supported, otherwise ignored)
+ * @param {BaseWindow} wnd - The window to add as child. It will be removed from its old parent.
+ */
 BaseWindow.prototype.addChild = function (wnd, param) {
     if (BaseObject.is(wnd, "BaseWindow")) {
         if (WindowingMessage.fireOn(this, WindowEventEnum.AddingChild, { child: wnd, reason: "addchild", childParam: param }) === false) return false;
@@ -1364,6 +1356,94 @@ BaseWindow.prototype.removeChild = function (wnd) {
     }
     // TODO: Deal with other ways to determine the child window to remove
 };
+BaseWindow.prototype.nextChild = function(w) {
+    var i = this.children.indexOf(w);
+    if (i >= 0) {
+        if (i < this.children.length - 1) return this.children[i+1];
+        return null;
+    }
+}
+BaseWindow.prototype.prevChild = function(w) {
+    var i = this.children.indexOf(w);
+    if (i >= 0) {
+        if (i > 0) return this.children[i-1];
+        return null;
+    }
+}
+BaseWindow.prototype.nextRoundChild = function(w,bLeft) {
+    var i = this.children.indexOf(w);
+    if (i >= 0) {
+        if (bLeft) {
+            var c = this.prevChild(w);
+            if (c != null) return c;
+            return this.children[this.children.length - 1];
+        } else {
+            var c = this.nextChild(w);
+            if (c != null) return c;
+            return this.children[0];
+        }
+        
+    }
+}
+BaseWindow.prototype.reOrderChild = function (wnd, where) {
+    var children_count = this.children.length;
+    var index = -1; // do nothing
+    if (typeof where == "number") {
+        index = where | 0;
+    } else if (where == "first") {
+        index = 0;
+    } else if (where == "last") {
+        index = children_count - 1;
+    }
+    if (index >= 0) {
+        var ci = this.children.indexOf(wnd);
+        if (ci >= 0) {
+            if (index != ci) {
+                var w = this.children[index];
+                this.children[index] = wnd;
+                this.children[ci] = w;
+            }
+        }
+    }
+
+}
+BaseWindow.prototype.$bringChildToFront = function(child) {
+    var cordered = this.children.sort(function (w1, w2) {
+        if (w1 == null) return -1;
+        if (w2 == null) return 1;
+        if (w1.getWindowStyles() & WindowStyleFlags.topmost) {
+            if (w2.getWindowStyles() & WindowStyleFlags.topmost) {
+                // Both are topmost
+                if (child == w1) return 1; // If the first is being activated - it is bigger
+                if (child == w2) return -1; // If the second is being activated - it is bigger and w1 is smaller no matter what.
+                return (w1.get_zorder() - w2.get_zorder());
+            } else { // not topmost
+                return 1;
+            }
+        } else if (w2.getWindowStyles() & WindowStyleFlags.topmost) {
+            return -1; // never over the w2
+        }
+        if (child == w1) return 1;
+        if (child == w2) return -1;
+        
+        var z1 = w1.get_zorder(), z2 = w2.get_zorder();
+        return (z1 - z2);
+    });
+    this.children = cordered;
+    var zgap = 200;
+    for (var i = 0; i < this.children.length; i++) {
+        if (BaseObject.is(this.children[i], "BaseWindow")) {
+            if (this.children[i].getWindowStyles() & WindowStyleFlags.topmost) {
+                this.children[i].set_zorder(i + zgap); // Leave the gap so we can hide/show a cover.
+            } else {
+                this.children[i].set_zorder(i);
+            }
+        }
+    }
+    
+}
+
+
 BaseWindow.prototype.get_childwindow = function (idx) {
     if (this.children != null && idx >= 0 && idx < this.children.length) {
         return this.children[idx];
