@@ -11,10 +11,10 @@ function WindowingMessage(eventType, eventData, targetWindow, sourceWindow) {
     BaseObject.apply(this, arguments);
     if (BaseObject.is(eventType, "WindowingMessage")) {
         // Copy from another
-        this.type = eventType.eventType;
-        this.data = eventType.eventData;
-        this.target = eventType.targetWindow;
-        this.source = eventType.sourceWindow;
+        this.type = eventType.type;
+        this.data = eventType.data;
+        this.target = eventType.target;
+        this.source = eventType.source;
         if (eventData != null) {
             this.data = eventData;
         }

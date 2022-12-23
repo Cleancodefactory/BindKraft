@@ -788,7 +788,11 @@ BaseWindow.prototype.get_stackingelements = function (kind, clientSlot) { // cli
 BaseWindow.prototype.$windowVisibleStyle = "block";
 // Internal message initiators
 BaseWindow.prototype.$activateWindowFromDOMEvent = function (e) {
-    WindowManagement.Default().set_activewindow(this);
+    var me = this;
+    //this.callAsync(function() {
+        WindowManagement.Default().set_activewindow(me);
+    //});
+    
     if (e != null) e.stopPropagation();
 };
 // Message handling
