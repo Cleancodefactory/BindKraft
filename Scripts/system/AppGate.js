@@ -203,16 +203,23 @@ AppGate.prototype.bindAppByClassName = function(className) {
 	}
 	return null;
 }
-AppGate.prototype.launchOneAppByClassName = function(className) {
+AppGate.prototype.bindAppByRef = function(app) {
+	if (BaseObject.is(app,"IApp")) {
+		return this.$container.register(this.$wrap(IManagedInterface, app));
+	}
+	return null;
+}
+AppGate.prototype.launchOneAppByClassName = function(className, doNotActivate) {
 	var app = this.$shell.getAppByClassName(className);
 	var me = this;
 	if (app != null) {
-		return Operation.From(this.bindAppByClassName(className));
+		if (!doNotActivate) this.$shell.activateApp(app);
+		return Operation.From(this.bindAppByRef(app));
 	} else {
 		var op = new Operation("Launching app");
 		this.$shell.launchOne(className, Array.createCopyOf(arguments,1)).onsuccess(function(app) {
-			this.$shell.activateApp(app)
-			op.CompleteOperation(true, me.bindAppByClassName(className));
+			if (!doNotActivate) this.$shell.activateApp(app)
+			op.CompleteOperation(true, me.bindAppByRef(app));
 		}).onfailure(function(err) {
 			op.CompleteOperation(false, err);
 		});
