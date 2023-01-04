@@ -10,17 +10,22 @@
     * 6.2. [Contextual ambiance interfaces for defaults](#contextual-ambiance-interfaces-for-defaults)
     * 6.3. [IAmbientDefaultsConsumerImpl](#iambientdefaultsconsumerimpl)
     * 6.4. [The AppBase provided app-level ambient defaults](#the-appbase-provided-app-level-ambient-defaults)
-* 7. [Conclusion](#conclusion)
+* 7. [Translations of default values](#translations-of-default-values)
+    * 7.1. [Specify directly a translation as the default value.](#specify-directly-a-translation-as-the-default-value.)
+    * 7.2. [Translate the value of the $defaults property.](#translate-the-value-of-the-$defaults-property.)
+    * 7.3. [Translations of default values - conclusion](#translations-of-default-values---conclusion)
+* 8. [Conclusion](#conclusion)
 
 <!-- vscode-markdown-toc-config
 	numbering=true
 	autoSave=true
 	/vscode-markdown-toc-config -->
 <!-- /vscode-markdown-toc -->
-
 # Using Defaults for object settings
 
 Many classes need flexible default values for their parameters and static default values in their source code are not enough for them. 
+
+
 
 **As an illustrative example**: take the default templates for UI controls. In most cases these templates are not specified on every use, but a module may want to change them for the whole system instance (workspace) where it is included. Beyond that an app in that workspace may want certain controls in its UI to use by default templates specific for the app.
 
@@ -266,7 +271,68 @@ BkInit.AppData("-- appclass --", function (data) {
 
 As you probably already guessed the object given to the `ambientDefaults` method consists of sub-objects each named after the class name of the class for which defaults are configured. Then inside the sub-object the values you want to override for the app context are listed. Any omitted value will cause the global default to be used for it.
 
-##  7. <a name='conclusion'></a>Conclusion
+##  7. <a name='translations-of-default-values'></a>Translations of default values
+
+The `Defaults` class supports two ways to fetch a value from the translations instead of a raw default value specified in the $defaults object of a class definition. They can be applied together or separately to fit the desired behavior.
+
+###  7.1. <a name='specify-directly-a-translation-as-the-default-value.'></a>Specify directly a translation as the default value.
+
+This enables to point out where to take the translated value from:
+
+example:
+
+```Javascript
+new Defaults("#defname$AnchorClass.path.to.translated_value")
+
+// Used in the context of initializer:
+
+MyClass.ImplementProperty("myprop", new InitializeStringParameter("...", new Defaults("#defname$AnchorClass.path.to.translated_value")))
+```
+
+This syntax requires you to specify not just the name of the default value in the $defaults, but also the path to the translation:
+
+    # name $ anchorclass . path
+
+- The name part is the name of the property in the $defaults object
+- The anchorclass part is the name of the class to which the translation you need is registered
+- The path part is the path to the translated value.
+
+This causes the value to be searched using the path in the translation for the current locale registered to the specified anchor class (see localization for more information).
+
+When used this syntax will cause search for the specified translated value and only if it is missing the normal behavior of `Defaults` will apply - i.e. the name part will be used as usual (as if only the name was specified in the constructor).
+
+###  7.2. <a name='translate-the-value-of-the-$defaults-property.'></a>Translate the value of the $defaults property.
+
+This always works no matter if the value is fetched from the class $defaults object ot from ambient defaults. If the default value configured has the following form an attempt to find its translation will be made:
+
+`"#$AnchorClass.path.to.translated_value"`
+
+The parts of the syntax have the same meaning as in the previous section, just the name of the default value is omitted, because the value is translated instead of redirecting the `Defaults` helper.
+
+example:
+
+```Javascript
+new Defaults("defname")
+
+// Used in the context of initializer:
+
+MyClass.ImplementProperty("myprop", new InitializeStringParameter("...", new Defaults("defname")))
+MyClass.Defaults({
+    defname: "#$AnchorClass.path.to.translated_value"
+});
+```
+
+###  7.3. <a name='translations-of-default-values---conclusion'></a>Translations of default values - conclusion
+
+To summarize the `Defaults` helper class enables you to:
+
+> override its behavior directing it explicitly to a specific translation.
+
+> or specify your default values as strings following the syntax above in order to signal the Defaults helper class to look for their translations.
+
+Depending on the scenario both can be useful, together or used alone. It is advised to use only one of the methods unless there is a specific reason to combine them both.
+
+##  8. <a name='conclusion'></a>Conclusion
 
 Using defaults one can configure the default characteristics of instances created from a given class. This is possible on global and in most cases on contextual level.
 
