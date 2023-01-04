@@ -1,18 +1,16 @@
-# Using Defaults for object settings
-
 <!-- vscode-markdown-toc -->
-* 1. [Defaults](#Defaults)
-	* 1.1. [Resolving the Defaults value](#ResolvingtheDefaultsvalue)
-* 2. [Where Defaults can be specified and where they can be used further](#WhereDefaultscanbespecifiedandwheretheycanbeusedfurther)
-* 3. [Managing the `$defaults`](#Managingthedefaults)
-* 4. [When to change and when not to change the defaults](#Whentochangeandwhennottochangethedefaults)
-* 5. [Conventions](#Conventions)
-* 6. [Ambient defaults](#Ambientdefaults)
-	* 6.1. [Ambiance](#Ambiance)
-	* 6.2. [Contextual ambiance interfaces for defaults](#Contextualambianceinterfacesfordefaults)
-	* 6.3. [IAmbientDefaultsConsumerImpl](#IAmbientDefaultsConsumerImpl)
-	* 6.4. [The AppBase provided app-level ambient defaults](#TheAppBaseprovidedapp-levelambientdefaults)
-* 7. [Conclusion](#Conclusion)
+* 1. [Defaults](#defaults)
+    * 1.1. [Resolving the Defaults value](#resolving-the-defaults-value)
+* 2. [Where Defaults can be specified and where they can be used further](#where-defaults-can-be-specified-and-where-they-can-be-used-further)
+* 3. [Managing the `$defaults`](#managing-the-`$defaults`)
+* 4. [When to change and when not to change the defaults](#when-to-change-and-when-not-to-change-the-defaults)
+* 5. [Conventions](#conventions)
+* 6. [Ambient defaults](#ambient-defaults)
+    * 6.1. [Ambiance](#ambiance)
+    * 6.2. [Contextual ambiance interfaces for defaults](#contextual-ambiance-interfaces-for-defaults)
+    * 6.3. [IAmbientDefaultsConsumerImpl](#iambientdefaultsconsumerimpl)
+    * 6.4. [The AppBase provided app-level ambient defaults](#the-appbase-provided-app-level-ambient-defaults)
+* 7. [Conclusion](#conclusion)
 
 <!-- vscode-markdown-toc-config
 	numbering=true
@@ -20,13 +18,15 @@
 	/vscode-markdown-toc-config -->
 <!-- /vscode-markdown-toc -->
 
+# Using Defaults for object settings
+
 Many classes need flexible default values for their parameters and static default values in their source code are not enough for them. 
 
 **As an illustrative example**: take the default templates for UI controls. In most cases these templates are not specified on every use, but a module may want to change them for the whole system instance (workspace) where it is included. Beyond that an app in that workspace may want certain controls in its UI to use by default templates specific for the app.
 
 `Obviously a constant in the source code would not be a solution to this. This is where the Defaults come to help. They provide a convention, some helpers and support by **initializers** to enable the developer to specify set of default values that can be easily used in parameters initialization, but also can be changed from outside.`
 
-##  1. <a name='Defaults'></a>Defaults
+##  1. <a name='defaults'></a>Defaults
 
 The defaults are an object attached to the class definition:
 
@@ -70,7 +70,7 @@ The `Default` constructor takes two arguments:
 - `name` of the value in the `$defaults` object
 - `Ultimate default` value if the name from the first argument is not found in the `$defaults` - this is an ultimate fallback if all else is not possible, but can be omitted and often is.
 
-###  1.1. <a name='ResolvingtheDefaultsvalue'></a>Resolving the Defaults value
+###  1.1. <a name='resolving-the-defaults-value'></a>Resolving the Defaults value
 
 As shown the __initializers__ support `Defaults` objects and will resolve the value from the class `$defaults`. If one needs to resolve the value programmatically without the help of initializers, this can be done this way:
 
@@ -91,7 +91,7 @@ MyClass.prototype.MyMethod = function(defval) {
 
 > The `Defaults.getValue` will check if the value passed as second argument is a `Defaults` instance and will resolve it (take the value from `$defaults` or return the ultimate hard default - whichever is available). If it is not, the value will be returned without changes. Here we are not defining where this value comes from - just assume it comes from somewhere and can be a `Defaults` instance.
 
-##  2. <a name='WhereDefaultscanbespecifiedandwheretheycanbeusedfurther'></a>Where Defaults can be specified and where they can be used further
+##  2. <a name='where-defaults-can-be-specified-and-where-they-can-be-used-further'></a>Where Defaults can be specified and where they can be used further
 
 As mentioned above the initializer classes support them and they can be used as a default value of any initializer (except those that define methods).
 
@@ -141,7 +141,7 @@ This makes the templateName a default value and it can be changed without changi
 
 _To see how this fits in the construction a workspace by combining modules you will have to get familiar with BKInit and usage of init.js files._
 
-##  3. <a name='Managingthedefaults'></a>Managing the `$defaults`
+##  3. <a name='managing-the-`$defaults`'></a>Managing the `$defaults`
 
 It is possible to manage them directly:
 
@@ -174,7 +174,7 @@ As it was shown above you do not need to create the `DefaultsMgr` so directly, `
 
 `Class.defaultsOf(YesNoControl).set({ templateName: "xmodule/yes-no-control" });`
 
-##  4. <a name='Whentochangeandwhennottochangethedefaults'></a>When to change and when not to change the defaults
+##  4. <a name='when-to-change-and-when-not-to-change-the-defaults'></a>When to change and when not to change the defaults
 
 It is important to remember that changing a default for a class has global effect. It applies to every instance that will rely on it.
 
@@ -186,7 +186,7 @@ Thus the CoreKraft/BindKraft workspaces are typically build with a `top module` 
 
 Still, have in mind that this dependency and init.js initialization gives much more opportunities and they are widely used in workspace constructs. Basically if one is presented with a workspace for which he knows nothing from before it is a matter of determining the dependencies and then reviewing the init.js files in order to determine how and what is configured in it. To illustrate: above we mentioned theming modules - such modules carry CSS, but also carry HTML templates for controls and windows designed to use that CSS. So, it is convenient to include in the init.js of such a module management of the defaults concerning the templates used by those classes. In such a case changes of the `templateName` defaults will probably not be present in the top module, because the workspace will rely on those set by the theming module, still one or two exceptions could be set up there for some specific reason - it is easy to find out by following the dependency chain (defined in Dependency.json) and checking the contents of the init.js files in the modules.
 
-##  5. <a name='Conventions'></a>Conventions
+##  5. <a name='conventions'></a>Conventions
 
 These are mandatory, but are recommended!
 
@@ -194,13 +194,13 @@ These are mandatory, but are recommended!
 2. The defaults are plain values and not a tree of objects.
 3. The name of each default value should be based on the name of the parameter for which it is intended (e.g. templateName for the property parameter `get_templateName`/`set_templateName`) unless there is no such parameter - then the name MUST be descriptive and the documentation must describe its purpose and effect.
 
-##  6. <a name='Ambientdefaults'></a>Ambient defaults
+##  6. <a name='ambient-defaults'></a>Ambient defaults
 
 If you read everything above you probably wonder if it is possible to have different defaults in different parts of a workspace.
 
 This is obviously not an easy problem, the Defaults are default values for classes after all and it is hard to expect that creating a new instance of a class in different places of the code will use different defaults.
 
-###  6.1. <a name='Ambiance'></a>Ambiance
+###  6.1. <a name='ambiance'></a>Ambiance
 
 The unlikely expectation above is still possible - not in every possible scenario, but in many it is quite possible and supported. It is even possible to extend its coverage in some custom scenarios. Currently BindKraft provides convenient ways to have specific defaults on App level, but the same technique can be applied in more granular fashion as well.
 
@@ -210,7 +210,7 @@ In most cases the instances of the classes we create live in certain contexts de
 
 This notion of ambiance has a number of usages, but in this document we consider only the Defaults.
 
-###  6.2. <a name='Contextualambianceinterfacesfordefaults'></a>Contextual ambiance interfaces for defaults
+###  6.2. <a name='contextual-ambiance-interfaces-for-defaults'></a>Contextual ambiance interfaces for defaults
 
 The defaults are a rather specific case and unlike any other feature we may want to consider as ambient, the defaults are used only during initialization/creation of instances of classes and not throughout their entire lifetimes. To achieve that BindKraft defines only two interfaces:
 
@@ -220,7 +220,7 @@ The defaults are a rather specific case and unlike any other feature we may want
 
 So, theoretically the `IAmbientDefaultsConsumer` is the actual mandatory interface, while `IAmbientDefaults` may or may not be used depending on the implementation of `IAmbientDefaultsConsumer`. To keep things in order we define both and the implementations (existing, future and custom ones) should get hold onto some `IAmbientDefaults` and query it.
 
-###  6.3. <a name='IAmbientDefaultsConsumerImpl'></a>IAmbientDefaultsConsumerImpl
+###  6.3. <a name='iambientdefaultsconsumerimpl'></a>IAmbientDefaultsConsumerImpl
 
 ```Javascript
 ComponentClass.Implement(IAmbientDefaultsConsumerImpl);
@@ -232,7 +232,7 @@ This means that any control/component or class that supports at least `IStructur
 
 A short clarification: The requirement for `IStructuralQueryEmiter` comes from the low level service location mechanism - it relies on two things: a) ability to follow the hierarchy (provided by `IStructuralQueryEmiter`) and querying the `IServiceLocator` of the elements of the hierarchy.
 
-###  6.4. <a name='TheAppBaseprovidedapp-levelambientdefaults'></a>The AppBase provided app-level ambient defaults
+###  6.4. <a name='the-appbase-provided-app-level-ambient-defaults'></a>The AppBase provided app-level ambient defaults
 
 Internally this is implemented in the `AppAmbientDefaults` class, but one does not need to be concerned by that. The important thing here is that each app will try and load if they exist, ambient defaults from its app data. When available and loaded the values configured there will take effect on any component/class in the app internal hierarchy as long as it supports `IAmbientDefaultsConsumerImpl`. The global defaults will take effect if the value is not defined in the ambient defaults.
 
@@ -266,7 +266,7 @@ BkInit.AppData("-- appclass --", function (data) {
 
 As you probably already guessed the object given to the `ambientDefaults` method consists of sub-objects each named after the class name of the class for which defaults are configured. Then inside the sub-object the values you want to override for the app context are listed. Any omitted value will cause the global default to be used for it.
 
-##  7. <a name='Conclusion'></a>Conclusion
+##  7. <a name='conclusion'></a>Conclusion
 
 Using defaults one can configure the default characteristics of instances created from a given class. This is possible on global and in most cases on contextual level.
 
