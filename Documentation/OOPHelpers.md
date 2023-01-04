@@ -1,8 +1,31 @@
+<!-- vscode-markdown-toc -->
+* 1. [Common parameters used](#common-parameters-used)
+    * 1.1. [changeCallback - used by some helpers below](#changecallback---used-by-some-helpers-below)
+    * 1.2. [changeCallbackInPlace](#changecallbackinplace)
+    * 1.3. [idxChangeCallback](#idxchangecallback)
+* 2. [Helpers list](#helpers-list)
+    * 2.1. [ImplementProperty](#implementproperty)
+    * 2.2. [ImplementActiveProperty](#implementactiveproperty)
+    * 2.3. [ImplementReadProperty](#implementreadproperty)
+    * 2.4. [ImplementWriteProperty](#implementwriteproperty)
+    * 2.5. [ImplementIndexedProperty](#implementindexedproperty)
+    * 2.6. [ImplementActiveIndexedProperty](#implementactiveindexedproperty)
+    * 2.7. [ImplementIndexedReadProperty](#implementindexedreadproperty)
+    * 2.8. [ImplementIndexedWriteProperty](#implementindexedwriteproperty)
+    * 2.9. [ImplementCollectorProperty](#implementcollectorproperty)
+    * 2.10. [ImplementSmartProperty](#implementsmartproperty)
+    * 2.11. [ImplementChainSetters](#implementchainsetters)
+
+<!-- vscode-markdown-toc-config
+	numbering=true
+	autoSave=true
+	/vscode-markdown-toc-config -->
+<!-- /vscode-markdown-toc -->
 # OOP Helpers
 
 These helpers are used in the normal `class` and `implementer` declarations. They add automatically generated implementations of some common features.
 
-## Common parameters used
+##  1. <a name='common-parameters-used'></a>Common parameters used
 
 Most helpers have some common parameters. Among them is the `changeCallback` which can be specified in two ways:
 
@@ -11,7 +34,7 @@ Most helpers have some common parameters. Among them is the `changeCallback` whi
 
 Another common parameter is [changeCallbackInPlace](#changeCallbackInPlace) which is again a callback, but specified for indexed properties.
 
-### changeCallback - used by some helpers below
+###  1.1. <a name='changecallback---used-by-some-helpers-below'></a>changeCallback - used by some helpers below
 
 This one is specified as a string containing the name of the method to call whenever the property changes.
 
@@ -30,7 +53,7 @@ MyClass.prototype.MyCallback = function(propname, oldval, newval) {
 
 _Notice the force optional arguments that can configure a property to call its callback every time it is set, no matter if its value actually changes._
 
-### changeCallbackInPlace
+###  1.2. <a name='changecallbackinplace'></a>changeCallbackInPlace
 
 When the change callback is specified as in-place written function like here for instance:
 
@@ -48,7 +71,7 @@ function(oldval, newval) {
 ```
 
 
-### idxChangeCallback
+###  1.3. <a name='idxchangecallback'></a>idxChangeCallback
 
 ```Javascript
 function(value, index, store) { ... }
@@ -65,9 +88,9 @@ Notes: The property can be called with a single argument in which case the value
 
 
 
-## Helpers list
+##  2. <a name='helpers-list'></a>Helpers list
 
-### ImplementProperty
+###  2.1. <a name='implementproperty'></a>ImplementProperty
 
 ```Javascript
 MyClass.ImplementProperty("someprop", Initialize, pstore_or_force, changeCallback, force);
@@ -96,7 +119,7 @@ Regardless of which arguments are used which are left out, this method defines t
 It is quite normal during the development process to start with a property implemented this way and later identify the need to implement it explicitly by removing the ImplementProperty and defining explicitly the get_xxxx and set_xxxx methods. Still the majority of the properties a class needs, especially visual components, are usually simple holders of bindable parameters and ImplementProperty is good enough way to save some coding. By using the callback custom logic can be added without the need to re-implement everything explicitly. The callback cannot stop the assignment operation and should not bypass it by setting a different value to the backing field. This is not conventional and will not be expected by other developers.
 
 
-### ImplementActiveProperty
+###  2.2. <a name='implementactiveproperty'></a>ImplementActiveProperty
 
 ```Javascript
 
@@ -109,55 +132,55 @@ For the most part ImplementActiveProperty acts just like ImplementProperty, but 
 
 These properties 
 
-### ImplementReadProperty
+###  2.3. <a name='implementreadproperty'></a>ImplementReadProperty
 
 ```Javascript
 MyClass.ImplementReadProperty(pname, Initialize, pstore);
 ```
 
-### ImplementWriteProperty
+###  2.4. <a name='implementwriteproperty'></a>ImplementWriteProperty
 
 ```Javascript
 MyClass.ImplementWriteProperty(pname, Initialize, pstore);
 ```
 
-### ImplementIndexedProperty
+###  2.5. <a name='implementindexedproperty'></a>ImplementIndexedProperty
 
 ```Javascript
 MyClass.ImplementIndexedProperty(pname, Initialize, pstore, idxChangeCallback);
 ```
 
-### ImplementActiveIndexedProperty
+###  2.6. <a name='implementactiveindexedproperty'></a>ImplementActiveIndexedProperty
 
 ```Javascript
 MyClass.ImplementActiveIndexedProperty(pname, Initialize, pstore, idxChangeCallback);
 ```
 
-### ImplementIndexedReadProperty
+###  2.7. <a name='implementindexedreadproperty'></a>ImplementIndexedReadProperty
 
 ```Javascript
 MyClass.ImplementIndexedReadProperty(pname, Initialize, pstore);
 ```
 
-### ImplementIndexedWriteProperty
+###  2.8. <a name='implementindexedwriteproperty'></a>ImplementIndexedWriteProperty
 
 ```Javascript
 MyClass.ImplementIndexedWriteProperty(pname, Initialize, pstore);
 ```
 
-### ImplementCollectorProperty
+###  2.9. <a name='implementcollectorproperty'></a>ImplementCollectorProperty
 
 ```Javascript
 MyClass.ImplementCollectorProperty(pname, pstore, changeCallback);
 ```
 
-### ImplementSmartProperty
+###  2.10. <a name='implementsmartproperty'></a>ImplementSmartProperty
 
 ```Javascript
 MyClass.ImplementSmartProperty(pname, smartPropClass, ...propClassArgs);
 ```
 
-### ImplementChainSetters
+###  2.11. <a name='implementchainsetters'></a>ImplementChainSetters
 
 ```Javascript
 MyClass.ImplementChainSetters();
