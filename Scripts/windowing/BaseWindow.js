@@ -1219,7 +1219,7 @@ BaseWindow.prototype.unregisterExternalHandler = function (msgType, handler) {
 };
 // Default event handlers
 BaseWindow.prototype.on_ChildAdded = function (evnt) {
-
+    this.$bringChildToFront(BaseObject.getProperty(evnt,"data.child"));  
 };
 BaseWindow.prototype.$isAttachedToDom = function () {
     var w = this.get_windowelement();
