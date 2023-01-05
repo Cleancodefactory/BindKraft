@@ -218,7 +218,7 @@ AppGate.prototype.launchOneAppByClassName = function(className, doNotActivate) {
 	} else {
 		var op = new Operation("Launching app");
 		this.$shell.launchOne(className, Array.createCopyOf(arguments,1)).onsuccess(function(app) {
-			if (!doNotActivate) this.$shell.activateApp(app)
+			if (!doNotActivate) me.$shell.activateApp(app)
 			op.CompleteOperation(true, me.bindAppByRef(app));
 		}).onfailure(function(err) {
 			op.CompleteOperation(false, err);
