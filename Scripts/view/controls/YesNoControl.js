@@ -86,7 +86,7 @@ YesNoControl.prototype.updateControlUI = function () {
  * that is why the method is used for setting both values
 */
 YesNoControl.prototype.onSwitch = function (e,dc,b) {
-    if (this.get_value() !== this.get_yesvalue()) {
+    if (this.get_value() != this.get_yesvalue()) {
         this.set_value(this.get_yesvalue());
 	    this.activatedevent.invoke(this, this.get_yesvalue());
     } else {
