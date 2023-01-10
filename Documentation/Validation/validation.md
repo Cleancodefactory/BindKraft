@@ -1,17 +1,69 @@
-# Validation (of user input etc.)
+<!-- vscode-markdown-toc -->
+* 1. [Basics](#basics)
+    * 1.1. [The validation procedure performed by the Validator](#the-validation-procedure-performed-by-the-validator)
+    * 1.2. [Validator templates](#validator-templates)
+    * 1.3. [Validation rules - usually more than one per validator](#validation-rules---usually-more-than-one-per-validator)
+        * 1.3.1. [Inline](#inline)
+        * 1.3.2. [Referred from the code](#referred-from-the-code)
+        * 1.3.3. [Rules conclusion](#rules-conclusion)
+* 2. [Built-in validation rules](#built-in-validation-rules)
+    * 2.1. [Base rule and common parameters](#base-rule-and-common-parameters)
+    * 2.2. [async (AsyncValidatorRule)](#async-(asyncvalidatorrule))
+    * 2.3. [validation (CheckValidationRule)](#validation-(checkvalidationrule))
+    * 2.4. [comparedates (CompareDatesValidatorRule)](#comparedates-(comparedatesvalidatorrule))
+* 3. [Goals of the validation](#goals-of-the-validation)
 
-**Validation** is set of classes and techniques that enable the programmer to validate user input and state of certain UI or part(s) of UI. Typically this is associated with forms filled by the user, but it usually goes further and covers more than just the user input. In any modern application the user input can be part of a variety of interactions with the software and they are certainly not limited to filling a number of fields and clicking "submit" in the end. This is why it is better to think about validation of the state of the UI and not just the user input.
+<!-- vscode-markdown-toc-config
+	numbering=true
+	autoSave=true
+	/vscode-markdown-toc-config -->
+<!-- /vscode-markdown-toc --># Validation (of user input etc.)
 
-## Basics
+**Validation** is set of classes and techniques that enable the programmer to validate user input and state of certain UI or part(s) of UI. Typically this is associated with forms filled by the user, but in our case it can goe further and covers more than just the user input. In any modern application the user input can be part of a variety of interactions with the software and they are certainly not limited to filling a number of fields and clicking "submit" in the end. This is why it is better to think about validation of the state of the UI and not just the user input, e.g. sometimes is practical to validate indirect results of the user actions and not only simple input consisting of textual input, checking options etc.
+
+There are variety of possible approaches to validation in scenarios equivalent or similar to BindKraft's UI. One of the important general topics is the choice between validating the data, the state of UI element, or (for example) - validate the data, but double buffer it to avoid making the main data dirty. In BindKraft there are enough abstract ways to access the data placed in the UI - so, this made te choice straightforward - validation of the state of the UI. The benefits are - no need to think of double buffering, validation naturally follows the concepts of the application's UI and is easier to plan and implement.
+
+##  1. <a name='basics'></a>Basics
 
 The validation uses mostly two kinds of classes: 
 
 - `Validator` - the only class of its kind - a container for rules, display templates and functionality driving the rules.
 - **Rules** - A number of classes that can be found in `scripts/view/validatorrules`. All these classes register rule aliases (see `registerValidator` in their sources) which can be used instead of their class names when the rule is specified (both inline and in the code).
 
-The `Validator` container class:
+`Validator` class is the active part of the validation process. It is a fairly typical UI component subclassing the `Base` class. This means it is placed in templates the usual way e.g.
 
-### Supports templates like most components.
+```HTML
+<div data-class="Validator ... parameters..."
+    ... bindings and rules specified inline ...
+></div>
+```
+
+Being a component the `Validator` can use templates configured explicitly, implicitly or inline. The specifics of `Validator` are somewhat similar to the TemplateSwitcher and similar classes - the Validator seeks in its template parts corresponding to its state and shows these pieces instead of the entire template. Details about this and how to use this feature - later in this article.
+
+There is an internal support for validators that links them to specific binding or bindings. This is the most important part of the validation structure - links the validator with the value(s) and binding(s) binding property(ies) to UI components/elements. This way the `Validator` can feed to its rules the value(s) to inspect and if necessary give them direct access to the binding(s) if they need more than just the value(s). While the latter is rarely needed and is and should be avoided, there are complex cases in which it could be necessary.
+
+The validation process in a nutshell:
+
+> A component, most often control or view:
+
+1) finds all the `Validator` components inside itself and 
+
+2) executes them one by one.
+
+3) Each validator considers the most incorrect result returned by its rules as validation result.
+
+4) Most incorrect result from all `Validator`-s is considered as result of the validation of the entire area controlled by the component initiating the validation.
+
+_Simple and kind of obvious feature exists - each validator has a parameter `groupname` which can be set to some string. Through that a validation of individual groups of `Validator`-s can be invoked instead of all the validators. Such a feature is usually available in any library implementing something similar, so it should be at least familiar._
+
+###  1.1. <a name='the-validation-procedure-performed-by-the-validator'></a>The validation procedure performed by the Validator
+
+The validation procedure performed by each `Validator` component consists of optional waiting for ready condition of the component in which binding links the validator and then execution of all the rules configured in the component.
+
+The **control readiness** is a topic for another article. In a couple of words it enables waiting a component to get into a state in which its properties contain meaningful values. This is a problem when the component has to perform some asynchronous operations in response to changes before it can produce the values. This can be invoked by user actions and code completely separate from the code that needs the validation (and in some other cases too), so there is an interface the component must implement in order to indicate what is its state and provide means to be waited to get ready.
+
+TODO: Continue the section
+###  1.2. <a name='validator-templates'></a>Validator templates
 
 The template for the Validator, unlike the template for a simple component consists of up to 5 parts with data-keys matching the names of the states in which the Validator can be:
 
@@ -37,7 +89,7 @@ When no template is specified the default (as configured for the workspace) is u
 <div data-class="Validator templateName='mymodule/validator-template'">...</div>
 ```
 
-### Supports rules - usually more than one per validator
+###  1.3. <a name='validation-rules---usually-more-than-one-per-validator'></a>Validation rules - usually more than one per validator
 
 The rules can be specified inline (in the HTML template/view where validators are used, see [here](InlineSyntax.md)) or in the code and referred using a parameter, example:
 
@@ -47,7 +99,7 @@ The rules can be specified inline (in the HTML template/view where validators ar
 
 In the example `$pathtoruledefs` should fetch an array of strings, each containing a rule with its parameters. The syntax of the strings is the same inline and when referred from the code, but here is how this usually looks differently, because of a little syntactic sugar supported by the framework:
 
-#### **Inline**
+####  1.3.1. <a name='inline'></a>Inline
 How they are usually specified:
 
 ```HTML
@@ -77,7 +129,7 @@ And how they can be specified in a hard to read, but very explicit way:
 
 all the 3 different forms do the same thing, however the first one is the best from readability perspective. What actually happens is that the aliases for the validation rule classes can be used as part of `data-validate-*` attributes and will be picked from there if the 3-d part of the attribute name matches an alias. However one can specify a random text (we used 1, 2, but anything that do not repeats will do) as attribute name and place the alias as first token in its value. And finally instead of aliases one can use the actual class names of the rules and they can be quite long and hard to read in the HTML.
 
-#### Referred from the code
+####  1.3.2. <a name='referred-from-the-code'></a>Referred from the code
 
 When the rules are referred using a parameter like this:
 
@@ -111,7 +163,7 @@ The strings are interpreted the same way the attribute values are interpreted wh
 
 `Translation` bindings are not a problem, of course and are even easier to use than the `service` bindings in these cases.
 
-#### Rules conclusion
+####  1.3.3. <a name='rules-conclusion'></a>Rules conclusion
 
 Most projects will certainly prefer rules specified in code and referred by the validators that use them. Most apps reuse same fields with same rules and this gives you the opportunity to not repeat their configuration. However some exceptions always exist and also small apps do not need such a serious planning. In those cases the rules can be specified inline. 
 
@@ -131,8 +183,24 @@ Specifying rules inline in the HTML is also more convenient when the Validator i
 
 We assume that `SomeControl` implements `IUIControl` and the validation of the containing template (view or another control) will not invoke its validators because of the `IUIControl` interface (it marks a semi-transparent border that allows the control to work internally with no regard for the external conditions). We also assume that `SomeControl` implements `IValidatable` interface (in most cases this is done using the implementor: `IValidatableImpl`) which is exposing the `get_checkvalidation` property. When read this property invokes the internal validation in SomeControl - `IValidatableImpl` just runs its validators which is what we want in 99% of the cases. Therefore in the example above the external validation will trigger the internal validation in SomeControl through `validator1` and this validator can use a template that focuses the user's attention to the instance of `SomeControl` when there is a validation problem in it (imagine a red border around the control for example, inside it any failed validators will still display their correct templates, but a little more focusing is not necessarily a bad UIX approach).
 
+##  2. <a name='built-in-validation-rules'></a>Built-in validation rules
 
-## Goals of the validation
+In the list below the rules are listed with their aliases and the class name implementing them in ( brackets )
+
+TODO: List all rules
+
+###  2.1. <a name='base-rule-and-common-parameters'></a>Base rule and common parameters
+
+###  2.2. <a name='async-(asyncvalidatorrule)'></a>async (AsyncValidatorRule)
+
+###  2.3. <a name='validation-(checkvalidationrule)'></a>validation (CheckValidationRule)
+
+###  2.4. <a name='comparedates-(comparedatesvalidatorrule)'></a>comparedates (CompareDatesValidatorRule)
+
+TODO - list them all
+
+
+##  3. <a name='goals-of-the-validation'></a>Goals of the validation
 
 The validation infrastructure provides:
 
