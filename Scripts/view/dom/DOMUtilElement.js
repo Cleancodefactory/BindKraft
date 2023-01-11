@@ -179,15 +179,31 @@ DOMUtilElement.prototype.countClass = function(cls) {
 	return 0;
 }
 // Primitive
+/**
+ * Gets/sets attribute of the element. When called with val of null - removes the attribute.
+ * 
+ * @param {String} attrname - the name of the attribute
+ * @param {String} val - the value of the attribute. If omitted only returns the attribute's value.
+ */
 DOMUtilElement.prototype.attr = function(attrname, val) {
 	if (this.$element instanceof HTMLElement) {
-		if (argumens.length > 1) {
+		if (arguments.length > 1) {
 			return DOMUtil.attr(this.$element,attrname,val);
 		} else {
 			return DOMUtil.attr(this.$element,attrname);
 		}
 	}
 }
+/**
+ * Gets an object with properties the names of the attributes of the element, containing their values.
+ * If pattern (as regular expression) is specified only the matching attributes are included. See pattern 
+ * for more details
+ * 
+ * @param {string|Regexp} pattern - optional parameter, If passed it is converted to a regular expression and only the attributes
+ * 							matching it are included. The regular expression can contain a single capturing group, If it does - the
+ * 							properties of the resulting object are the values captured and not the whole attribute names.
+ * @returns {object} an object containing the attributes of the element with their values. See also pattern.
+ */
 DOMUtilElement.prototype.getAttributes = function(pattern) {
 	if (this.$element instanceof HTMLElement) {
 		return DOMUtil.getAttributes(this.$element, pattern);
@@ -198,6 +214,12 @@ DOMUtilElement.prototype.getAttributes = function(pattern) {
 DOMUtilElement.prototype.clone = function() {
 	if (this.$element != null) {
 		return new DOMUtilElement(this.$element.cloneNode(true));
+	}
+	return new DOMUtilElement();
+}
+DOMUtilElement.prototype.shallowClone = function() {
+	if (this.$element != null) {
+		return new DOMUtilElement(this.$element.cloneNode(false));
 	}
 	return new DOMUtilElement();
 }

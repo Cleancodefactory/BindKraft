@@ -4,18 +4,20 @@ function YesNoControl() {
 
 YesNoControl.Inherit(Base, "YesNoControl");
 YesNoControl.Implement(IUIControl);
-YesNoControl.Implement(InterfaceImplementer("IAmbientDefaultsConsumerImpl"));
-YesNoControl.Implement(ITemplateSourceImpl, new Defaults("templateName", "bindkraft/control-yesno"));
-YesNoControl.$defaults = {
-	templateName: "bindkraft/control-yesno"
-};
+YesNoControl.Implement(InterfaceImplementer("IAmbientDefaultsConsumerImpl"))
+    .Implement(ICustomParameterizationStdImpl, "selectedCssClass", "disabledCssClass", "yestitle", "notitle","yesvalue", "novalue", "yeskey", "nokey", "tooltip", "yestooltip","notooltip")
+    .Implement(ITemplateSourceImpl, new Defaults("templateName", "bindkraft/control-yesno"))
+    .Implement(IDisablable)
+    .Defaults({
+        templateName: "bindkraft/control-yesno"
+    });
 
 YesNoControl.prototype.obliterate = function () {
     this.yesElement = null;
     this.noElement = null;
     Base.prototype.obliterate.call(this);
 };
-
+YesNoControl.ImplementProperty("disabledCssClass", new InitializeStringParameter("CSS class for the disabled state - applied to the whole control", "disabled"));
 YesNoControl.ImplementProperty("selectedCssClass", new InitializeStringParameter("CSS class for the selected state", "selected"));
 YesNoControl.ImplementProperty("yestitle", new InitializeStringParameter("The display name of the yes value", "Yes"));
 YesNoControl.ImplementProperty("notitle", new InitializeStringParameter("The display name of the no value", "No"));
@@ -23,6 +25,25 @@ YesNoControl.ImplementProperty("yesvalue", new InitializeParameter("The value fo
 YesNoControl.ImplementProperty("novalue", new InitializeParameter("The value for the no state", false));
 YesNoControl.ImplementProperty("yeskey", new InitializeStringParameter("The data-key of the yes element in the template", "yes_key"));
 YesNoControl.ImplementProperty("nokey", new InitializeStringParameter("The data-key of the no element in the template", "no_key"));
+YesNoControl.ImplementProperty("tooltip", new InitializeStringParameter("The alt text for the whole thing", null));
+YesNoControl.ImplementProperty("yestooltip", new InitializeStringParameter("The alt text for the yes part", null));
+YesNoControl.ImplementProperty("notooltip", new InitializeStringParameter("The alt text for the no part", null));
+
+//#region IDisablable
+
+YesNoControl.prototype.get_disabled = function () {
+    return this.$disabledUI;
+};
+YesNoControl.prototype.set_disabled = function (v) {
+    var me = this;
+    this.$disabledUI = v;
+    this.ExecAfterFinalInit(function() {
+        me.updateControlUI();
+    })
+};
+
+//#endregion
+
 
 YesNoControl.prototype.$value = false;  //The control has false default value
 
@@ -30,12 +51,25 @@ YesNoControl.prototype.changedevent = new InitializeEvent("Fired when the value 
 YesNoControl.prototype.activatedevent = new InitializeEvent("Fired when the value changes");
 
 YesNoControl.prototype.init = function () {
+    var me = this;
     ITemplateSourceImpl.InstantiateTemplate(this);
     
 
     this.yesElement = this.child(this.get_yeskey());
     this.noElement = this.child(this.get_nokey());
-    this.updateControlUI();
+    this.on("keydown", function(e) {
+       if (e != null) {
+        if (e.key == " " || e.key == "Enter" || e.key == "Spacebar") {
+            if (!e.metaKey && !e.ctrlKey && !e.altKey) {
+                this.onSwitch();
+            }
+        }
+       } 
+    });
+    this.ExecAfterFinalInit(function() {
+        me.updateControlUI();
+    })
+    
 };
 
 YesNoControl.prototype.get_value = function () {
@@ -58,17 +92,36 @@ YesNoControl.prototype.$translateValue = function (inputValue) {
 };
 
 YesNoControl.prototype.onSetNo = function (e, dc, b) {
+    if (this.get_disabled()) return;
     this.set_value(this.get_novalue());
 	this.activatedevent.invoke(this, this.get_novalue());
 };
 
 YesNoControl.prototype.onSetYes = function (e, dc, b) {
+    if (this.get_disabled()) return;
     this.set_value(this.get_yesvalue());
 	this.activatedevent.invoke(this, this.get_yesvalue());
 };
 
 YesNoControl.prototype.updateControlUI = function () {
-   if (!this.yesElement || !this.noElement) return; //return return devachke Kalino
+    var disabledCss = this.get_disabledCssClass();
+    if (typeof disabledCss == 'string' && /^\s*$/.test(disabledCss)) { disabledCss = null; }
+
+    if (this.get_disabled()) {
+        if (this.disabledCss != null) {
+            this.$().addClass(disabledCss);
+        } else {
+            this.$().attr("disabled","true");
+        }
+    } else {
+        if (this.disabledCss != null) {
+            this.$().removeClass(disabledCss);
+        } else {
+            this.$().attr("disabled",null);
+        }
+
+    }
+    if (!this.yesElement || !this.noElement) return; //return return devachke Kalino
 
     this.yesElement.removeClass(this.get_selectedCssClass());
     this.noElement.removeClass(this.get_selectedCssClass());
@@ -86,6 +139,7 @@ YesNoControl.prototype.updateControlUI = function () {
  * that is why the method is used for setting both values
 */
 YesNoControl.prototype.onSwitch = function (e,dc,b) {
+    if (this.get_disabled()) return;
     if (this.get_value() != this.get_yesvalue()) {
         this.set_value(this.get_yesvalue());
 	    this.activatedevent.invoke(this, this.get_yesvalue());
@@ -93,4 +147,5 @@ YesNoControl.prototype.onSwitch = function (e,dc,b) {
         this.set_value(this.get_novalue());
 	    this.activatedevent.invoke(this, this.get_novalue());
     }
+    this.updateControlUI();
  };
