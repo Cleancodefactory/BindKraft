@@ -29,6 +29,7 @@ YesNoControl.ImplementProperty("tooltip", new InitializeStringParameter("The alt
 YesNoControl.ImplementProperty("yestooltip", new InitializeStringParameter("The alt text for the yes part", null));
 YesNoControl.ImplementProperty("notooltip", new InitializeStringParameter("The alt text for the no part", null));
 
+
 //#region IDisablable
 
 YesNoControl.prototype.get_disabled = function () {
@@ -108,16 +109,24 @@ YesNoControl.prototype.updateControlUI = function () {
     if (typeof disabledCss == 'string' && /^\s*$/.test(disabledCss)) { disabledCss = null; }
 
     if (this.get_disabled()) {
-        if (this.disabledCss != null) {
-            this.$().addClass(disabledCss);
+        if (disabledCss != null) {
+            this.$().children().Each(function(i,e){
+                e.addClass(disabledCss);
+            });
         } else {
-            this.$().attr("disabled","true");
+            this.$().children().Each(function(i,e){
+                e.attr("disabled","true");
+            });
         }
     } else {
-        if (this.disabledCss != null) {
-            this.$().removeClass(disabledCss);
+        if (disabledCss != null) {
+            this.$().children().Each(function(i,e){
+                e.removeClass(disabledCss);
+            });
         } else {
-            this.$().attr("disabled",null);
+            this.$().children().Each(function(i,e){
+                e.attr("disabled",null); // remove the attribute
+            });
         }
 
     }

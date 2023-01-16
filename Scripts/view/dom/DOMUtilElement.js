@@ -270,7 +270,21 @@ DOMUtilElement.prototype.prepend = function(content) {
 DOMUtilElement.prototype.detach = function() {
 	DOMUtil.detach(this.$element);
 }
-// Query selector
+// Query selector based
+/**
+ * 
+ * @param {string} selector Optional selector the children must match, * should work like omitting it entirely
+ * @returns {Array<HTMLElement>} The children possibly filtered by the selector (if specified)
+ */
+DOMUtilElement.prototype.children = function(selector) {
+	var ch = this.get_children();
+	if (ch.length > 0) {
+		if (typeof selector === "string" && !/^\s*$/.test(selector)) {
+			ch = DOMUtil.filterElements(ch,selector);
+		}
+	}
+	return ch;
+}
 // 	 Low level - return packed elements or null
 DOMUtilElement.prototype.findElements = function(selector, callback) {
 	var arr = DOMUtil.findElements(this.$element,selector,callback);

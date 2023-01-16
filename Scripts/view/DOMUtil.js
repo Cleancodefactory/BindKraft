@@ -910,12 +910,34 @@ DOMUtil.BorderIndicator = {
 };
 
 // DOMUtil.findElements callbacks
-/* UNDER CONSTRUCTION
+/* Extended from time to time
 	They return 
 	undefined - no opinion
 	false - stop without processing the node
 	true  - process this node and stop
 */
+/**
+ * Produces a callback with parameters used by them as memory/aggregate
+ * The parameters could be extended, but the order will be kept.
+ * @param {integer} depth Maximum depth
+ */
+DOMUtil.DynamicCallbacks = function(name, depth) {
+	var $parameters = {
+		depth: depth
+	};
+	switch (name) {
+		case "depth":
+			// We do not check - we "believe" - too many checking has its dark sides too.
+			return function(node, inroot) {
+				if ($parameters.depth <= 0) return false;
+				$parameters.depth--;
+			}
+		break;
+		default:
+			throw "Unknown callback";
+	}
+
+}
 DOMUtil.BorderCallbacks = {
 	// This one is a bit questionable
 	WindowSlotsIn: function(node, inroot) { // window template from root, do not enter template borders and IUIControl-s

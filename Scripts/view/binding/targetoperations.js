@@ -440,7 +440,7 @@ Binding.TargetOperations = {
 				return this.title;
 			},
 			write: function (v) {
-				this.title = v;
+				this.title = (v == null)?"":v;
 			}
 		},
 		textalign:{
