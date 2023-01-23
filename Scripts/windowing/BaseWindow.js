@@ -1049,7 +1049,8 @@ BaseWindow.prototype.windowmaxminchanged = new InitializeEvent("Fired when minim
 			break;
         case WindowEventEnum.ActivateChild:
 			if (evnt.data != null && evnt.data.child != this && this.isChildWindow(evnt.data.child)) {
-                this.$bringChildToFront(evnt.data.child);
+                this.$setChildrenZOrder(evnt.data.child);
+                //this.$bringChildToFront(evnt.data.child);
                 evnt.handled = true;
                 // Previously we sent ActivateWindow here which barely avoided lockup
                 WindowingMessage.fireOn(this, WindowEventEnum.Activated, {}); // Necessary when the activate child is sent directly - ensures the child knows it is activated
@@ -1219,7 +1220,8 @@ BaseWindow.prototype.unregisterExternalHandler = function (msgType, handler) {
 };
 // Default event handlers
 BaseWindow.prototype.on_ChildAdded = function (evnt) {
-    this.$bringChildToFront(BaseObject.getProperty(evnt,"data.child"));  
+    this.$setChildrenZOrder(BaseObject.getProperty(evnt,"data.child"));
+    //this.$bringChildToFront(BaseObject.getProperty(evnt,"data.child"));  
 };
 BaseWindow.prototype.$isAttachedToDom = function () {
     var w = this.get_windowelement();
@@ -1406,6 +1408,60 @@ BaseWindow.prototype.reOrderChild = function (wnd, where) {
         }
     }
 
+}
+/**
+ * Orders windows by their current z-order, bringing one of them (if specified) to front
+ * @param {BaseWindow} child - A window to bring to front (as much as possible)
+ * @returns {Array<BaseWindow>} ordered array of the child windows
+ */
+BaseWindow.prototype.$orderedChildren = function(child) {
+    var children = Array.createCopyOf(this.children);
+    return children.sort(function (w1, w2) {
+        if (w1 == null) return -1;
+        if (w2 == null) return 1;
+        if (w1.getWindowStyles() & WindowStyleFlags.topmost) {
+            if (w2.getWindowStyles() & WindowStyleFlags.topmost) {
+                // Both are topmost
+                if (child == w1) return 1; // If the first is being activated - it is bigger
+                if (child == w2) return -1; // If the second is being activated - it is bigger and w1 is smaller no matter what.
+                return (w1.get_zorder() - w2.get_zorder());
+            } else { // not topmost
+                return 1;
+            }
+        } else if (w2.getWindowStyles() & WindowStyleFlags.topmost) {
+            return -1; // never over the w2
+        }
+        if (child == w1) return 1;
+        if (child == w2) return -1;
+        
+        var z1 = w1.get_zorder(), z2 = w2.get_zorder();
+        return (z1 - z2);
+    });
+}
+/**
+ * 
+ * @param {BaseWindow} child - optional child to bring to front
+ */
+BaseWindow.prototype.$setChildrenZOrder = function (child) {
+    var j=0,t=0;
+    var zgap = 200;
+    for (var i=0; i<this.children.length; i++) {
+        var w = this.children[i];
+        if (BaseObject.is(w, 'BaseWindow')) {
+            if ((w.getWindowStyles() & WindowStyleFlags.topmost)) {
+                w.set_zorder(zgap + t++);
+            } else {
+                w.set_zorder(j++);
+            }
+        }
+    }
+    if (this.children.indexOf(child) >= 0) {
+        if ((child.getWindowStyles() & WindowStyleFlags.topmost)) {
+            child.set_zorder(zgap + t++);
+        } else {
+            child.set_zorder(j++);
+        }
+    }
 }
 BaseWindow.prototype.$bringChildToFront = function(child) {
     var cordered = this.children.sort(function (w1, w2) {
