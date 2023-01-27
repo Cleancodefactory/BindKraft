@@ -1445,8 +1445,9 @@ BaseWindow.prototype.$orderedChildren = function(child) {
 BaseWindow.prototype.$setChildrenZOrder = function (child) {
     var j=0,t=0;
     var zgap = 200;
-    for (var i=0; i<this.children.length; i++) {
-        var w = this.children[i];
+    var ordered_children = this.$orderedChildren(child);
+    for (var i=0; i<ordered_children.length; i++) {
+        var w = ordered_children[i];
         if (BaseObject.is(w, 'BaseWindow')) {
             if ((w.getWindowStyles() & WindowStyleFlags.topmost)) {
                 w.set_zorder(zgap + t++);
@@ -1455,13 +1456,14 @@ BaseWindow.prototype.$setChildrenZOrder = function (child) {
             }
         }
     }
-    if (this.children.indexOf(child) >= 0) {
-        if ((child.getWindowStyles() & WindowStyleFlags.topmost)) {
-            child.set_zorder(zgap + t++);
-        } else {
-            child.set_zorder(j++);
-        }
-    }
+
+    // if (this.children.indexOf(child) >= 0) {
+    //     if ((child.getWindowStyles() & WindowStyleFlags.topmost)) {
+    //         child.set_zorder(zgap + t++);
+    //     } else {
+    //         child.set_zorder(j++);
+    //     }
+    // }
 }
 BaseWindow.prototype.$bringChildToFront = function(child) {
     var cordered = this.children.sort(function (w1, w2) {
