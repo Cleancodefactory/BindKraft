@@ -14,7 +14,7 @@
 //#using "./EventAggregator.js"
 //#using "./EventConnector.js"
 //#using "./SugaryDispatcher.js"
-//#using "./SugaryChunkDispatcher.js"
+//#using "./SugaryChunksDispatcher.js"
 //#using "./EventDispatchLeasing.js"
 //#using "./ServiceFetcher.js"
 

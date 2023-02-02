@@ -326,6 +326,14 @@ Function.prototype.Obliterator = function(Obliterator) {
  .Param("Obliterator","...")
  .Returns("this - can be chained");
  
+ /**
+  * Specifies the type requirements for an interface (or interface implementor).
+  * @params {string} requirements+ One or more requirements - each argument can specify one or more comma separated type names. At least one argument must be satisfied.
+  * 				Basically the comma separated types in an argument are all required to satisfy the argument. The arguments, on the other hand form an OR group.
+  * See also ForbiddenTypes for the reverse option. Using both an interface can be allowed for only partial segments of the inheritance tree. It is recommended to carefully
+  * determine what the requirements of an interface are and specify them. This is not too important for app specific interfaces, but is always a serious advantage for any 
+  * interface or implementor intended for usage in more general manner by various apps accessing/exposing features through it.
+  */
  Function.prototype.RequiredTypes = function () {
     if (arguments.length > 0) {
 		if (this.requiredTypesList == null) {
@@ -342,6 +350,15 @@ Function.prototype.Obliterator = function(Obliterator) {
 }.Description("Use in Interface declaration only. Adds objects to the required types, via the arguments. Specify as strings the types that need to be inherited/implemented by the class in order to Implement this Interface.")
  .Param("any","One or more type names (class or interface names), separated with commas, without spaces.")
  .Returns("this - can be chained.");
+
+ /**
+  * Specify unacceptable types with which the interface or interface implementors cannot coexist.
+  * @params {string} typename+	On or more arguments specifying incompatible types. Unlike Required types only one type per argument can be specified.
+  * 	An error will be reported if the interface or implementor is implemented on a class that supports any of the specified types whatever they are - classes or interfaces.
+  * Together with Required types an interface or interface implementor are limited for implementation only in the pieces of the inheritance tree where they are supposed tp work 
+  * and disallowed elsewhere.
+  * See also RequiredTypes.
+  */
  Function.prototype.ForbiddenTypes = function () {
     if (arguments.length > 0) {
 		if (this.forbiddenTypesList == null) {
