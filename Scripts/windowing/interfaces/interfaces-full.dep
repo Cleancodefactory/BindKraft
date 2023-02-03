@@ -4,6 +4,7 @@
 //#using "./IWindowTemplate.js"
 //#using "./IWorkspaceWindow.js"
 //#using "./IDIalogView.js"
+//#using "./IDIalogShow.js"
 //#using "./IAttachedWindowBehaviors.js"
 //#using "./IWindowBehavior.js"
 //#using "./IWindowIdentification.js"
