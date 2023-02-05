@@ -1,3 +1,5 @@
 //#using "./PopDialog.js"
 //#using "./PopDialogManager.js"
 //#using "./ToolTipWindow.js"
+//#using "./ConfirmDialog.js"
+//#using "./DialogViewBase.js"

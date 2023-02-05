@@ -4,5 +4,4 @@
 //#using "./IViewHostWindowImpl.js"
 //#using "./IAttachedWindowBehaviorsImpl.js"
 //#using "./IInfoDisplayPanelImpl.js"
-// //#using "./IDialogViewImpl.js
-"
+//#using "./IDialogViewImpl.js"
