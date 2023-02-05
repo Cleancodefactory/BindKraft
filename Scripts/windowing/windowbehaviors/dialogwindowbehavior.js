@@ -76,18 +76,17 @@
         for (var i = 0; i < this.$dialogs.length; i++) {
             var dialog = this.$dialogs[i];
             if (dialog.instanceid == iid) {
-                this.$dialog.splice(i, 1);
+                this.$dialogs.splice(i, 1);
                 return;
             }
         }
     }
     DialogWindowBehavior.prototype.$dialogs = new InitializeArray("All current dialog windows");
     DialogWindowBehavior.prototype.$calcPosition = function() {
-        return null;
+        return new Rect(100,100,300,300);
     }
     DialogWindowBehavior.prototype.openDialog = function (workdata, _view, placement) {
         var op = new ChunkedOperation();
-        var wparams = [];
         var wdata = {};
         var me = this;
         
@@ -113,10 +112,6 @@
                     } else {
                         op.ReportOperationChunk(data.result, data.resultData);
                     }
-                }
-                op.ReportOperationChunk(msg.data.result, msg.data.resultData);
-                if (msg.data.close) {
-                    op.CompleteOperation(true, this);
                 }
             }
         }
