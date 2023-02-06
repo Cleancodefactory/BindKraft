@@ -104,9 +104,9 @@
                 r = grect.centeredRectangle(this.get_width(), this.get_height(), "center", this.get_padding());
             } else {
                 var posa = "center";
-                var _placement = placement && 0x6F8;
+                var _placement = placement & 0x6F8;
                 for (var k in PopUpsPositionEnum) {
-                    if (PopUpsPositionEnum[k] == placement) {
+                    if (PopUpsPositionEnum[k] == _placement) {
                         posa = k;
                         break;
                     }
@@ -189,7 +189,7 @@
         this.$regWindow(op, dialog);
         if (placement & PopUpsPositionEnum.auto) {
             // TODO At lest provide as configuration or use better behaviors
-            dialog.attachBehavior(new ResponsiveWindowBehavior(500));
+            dialog.attachBehavior(new ResponsiveWindowBehavior(600));
             dialog.attachBehavior(new HeightWindowBehavior(500));
         }
 
