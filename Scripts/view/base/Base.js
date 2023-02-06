@@ -120,7 +120,13 @@ Base.prototype.$ = function(selector) {
 	}
 	return new DOMUtilElement();
 }
-Base.prototype.$$ = function(keys) {
+/**
+ * 
+ * @param {string} key - data-key of the element we search
+ * @param {number} idx - Optional, if present returns the n-the element with that key
+ * @returns 
+ */
+Base.prototype.$$ = function(key /*, idx*/) {
     var cur = new DOMUtilElement(this.root);
     for (var i = 0; i < arguments.length; i++) {
         var k = arguments[i];
@@ -578,6 +584,14 @@ Base.prototype.childElement = function (key, preSelector) {
     var el = root.find('[data-key="' + key + '"]');
     if (el.length > 0) return $(el.get(0));
     return $();
+};
+Base.prototype.childDOMElement = function (key, preSelector) {
+    var root = this.$();
+    if (!IsNull(preSelector)) {
+        root = root.queryOneByDataKey(preSelector);
+    }
+    var el = root.queryOneByDataKey(key);
+    return el;
 };
 Base.prototype.childByKeyAndIdTogether = function (key, id) {
     return $(this.root).find('[data-key="' + key + '"][id="' + id + '"]');
