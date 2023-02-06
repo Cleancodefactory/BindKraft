@@ -39,7 +39,7 @@ function Rect(x, y, w, h) {
     }
 };
 Rect.Inherit(Point, "Rect");
-Rect.interfaces = { PRect: true };
+Rect.interfaces = { IGRect: true };
 Rect.Implement(IObjectifiable);
 Rect.prototype.objectifyInstance = function() {
 	var o = {

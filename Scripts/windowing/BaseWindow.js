@@ -118,6 +118,9 @@ BaseWindow.findArgs = function (args, kind) {
 		} else if (BaseObject.is(arg, "SizeLimits")) {
             result.sizelimits = arg;
             continue;
+        } else if (BaseObject.is(arg, "GRect")) {
+            result.rect = new Rect(arg);
+            continue;
         } else if (BaseObject.is(arg, "Rect")) {
             result.rect = arg;
             continue;
@@ -159,6 +162,12 @@ BaseWindow.getElementPositionRect = function (domEl) {
     result.h = el.height();
     return result;
 }.Description ( "Returns the {h,w} position of element domEl ( string ) " );
+BaseWindow.getElementClientRect = function (domEl) {
+    var el = DOMUtil.toDOMElement(domEl);
+    var GRect = Class("GRect");
+    var grect = GRect.fromDOMElementClient(el);
+    return grect;
+}
 
 BaseWindow.setElementPositionRect = function (domEl, rect) {
     var el = DOMUtil.toDOMElement(domEl);
@@ -1637,7 +1646,7 @@ BaseWindow.prototype.get_isvisible = function() {
 
 BaseWindow.prototype.get_clientrect = function (param) {
     var cel = this.get_clientcontainer(param);
-    return BaseWindow.getElementPositionRect(cel);
+    return BaseWindow.getElementClientRect(cel);
 };
 BaseWindow.prototype.get_destroyedwindow = function () {
     return this.$destroyedWindow;

@@ -19,7 +19,7 @@ function Point(x, y) {
 	}
 };
 Point.Inherit(BaseObject, "Point");
-Point.interfaces = { PPoint: true };
+Point.interfaces = { IGPoint: true }; // For compatibility with GPoint
 Point.Implement(IObjectifiable);
 
 Point.prototype.objectifyInstance = function() {

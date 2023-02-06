@@ -434,6 +434,47 @@
 		}
 	};
 
+	GRect.prototype.centeredRectangle = function (pW, pH, posa, padd) {
+		var padding = padd || 0;
+		var nw = this.w * pW / 100;
+		var nh = this.h * pH / 100;
+		var nx = this.x + (this.w - nw) / 2;
+		var ny = this.y + (this.h - nh) / 2;
+		r = new GRect(nx, ny, nw, nh);
+		switch (posa) {
+			case "left":
+				r.x = this.x + padding;
+				break;
+			case "right":
+				r.x = this.x + this.w - padding - r.w;
+				break;
+			case "top":
+				r.y = this.y + padding;
+				break;
+			case "bottom":
+				r.y = this.y + this.h - padding - r.h;
+				break;
+			case "topleft":
+				r.x = this.x + padding;
+				r.y = this.y + padding;
+				break;
+			case "topright":
+				r.x = this.x + this.w - padding - r.w;
+				r.y = this.y + padding;
+				break;
+			case "bottomleft":
+				r.x = this.x + padding;
+				r.y = this.y + this.h - padding - r.h;
+				break;
+			case "bottomright":
+				r.x = this.x + this.w - padding - r.w;
+				r.y = this.y + this.h - padding - r.h;
+				break;
+
+		}
+		return r;
+
+	}
 	/**
 	 * 
 	 */

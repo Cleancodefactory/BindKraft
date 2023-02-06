@@ -9,6 +9,20 @@
         .Implement(IServiceLocator)
         .Implement(IDialogShow);
 
+    DialogWindowBehavior.ImplementProperty("padding", new InitializeNumericParameter("padding for sized dialogs", new Defaults("padding")))
+        .ImplementProperty("templateName", new InitializeStringParameter("Default template (can be null by default)", new Defaults("templateName")))
+        .ImplementProperty("width", new InitializeStringParameter("horizontal percentage", new Defaults("width")))
+        .ImplementProperty("height", new InitializeStringParameter("vertical percentage", new Defaults("height")))
+        .ImplementProperty("closeondeactivate", new InitializeBooleanParameter("close on deactivate", new Defaults("closeOnDeactivate")));
+
+    DialogWindowBehavior.Defaults({
+        templateName: null, // Default template for the dialog windows.
+        padding: 50, // Default padding for dialog placement (when non-filling)
+        width: 90, // percentage
+        height: 90, // percentage
+        closeOnDeactivate: true
+    });
+
     //#region IServiceLocator
     DialogWindowBehavior.prototype.locateService = function(_type, reason) {
         var type = Class.getTypeName(_type);
@@ -82,11 +96,29 @@
         }
     }
     DialogWindowBehavior.prototype.$dialogs = new InitializeArray("All current dialog windows");
-    DialogWindowBehavior.prototype.$calcPosition = function() {
+    DialogWindowBehavior.prototype.$calcPosition = function(placement) {
+        var grect = this.$window.get_clientrect();
+        var r = null;
+        if (BaseObject.is(grect, "GRect")) {
+            if (placement == PopUpsPositionEnum.center) {
+                r = grect.centeredRectangle(this.get_width(), this.get_height(), "center", this.get_padding());
+            } else {
+                var posa = "center";
+                var _placement = placement && 0x6F8;
+                for (var k in PopUpsPositionEnum) {
+                    if (PopUpsPositionEnum[k] == placement) {
+                        posa = k;
+                        break;
+                    }
+                }
+                r = grect.centeredRectangle(this.get_width(), this.get_height(), posa, this.get_padding());
+            }
+            return r || grect;
+        }
         return new Rect(100,100,300,300);
     }
     DialogWindowBehavior.prototype.openDialog = function (workdata, _view, placement) {
-        var op = new ChunkedOperation();
+        var op = new ChunkedOperation("openDialog");
         var wdata = {};
         var me = this;
         
@@ -132,13 +164,23 @@
         wdata.on_Destroy = function (msg) {
             me.$unregWindow(op);
             if (!op.isOperationComplete()) {
-                op.CompleteOperation(false, "Dialog destroyed for unknown reason");
+                op.CompleteOperation(false, null);
+            }
+        }
+        wdata.on_DeactivateWindow = function (msg) {
+            if (me.get_closeondeactivate()) {
+                msg.target.closeWindow();
             }
         }
 
-    
+        var tml = this.get_windowtemplate();
+        if (tml == null) {
+            if (this.get_templateName() != null) {
+                tml = new TemplateConnector(this.get_templateName());
+            }
+        }
         var dialog = new SimpleViewWindow(
-            this.get_windowtemplate(),
+            tml,
             WindowStyleFlags.visible | WindowStyleFlags.draggable | WindowStyleFlags.topmost | WindowStyleFlags.adjustclient,
             this.$calcPosition(placement),
             this.get_hostwindow(), // Parent
