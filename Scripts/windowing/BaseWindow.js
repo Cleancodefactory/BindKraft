@@ -1687,9 +1687,7 @@ BaseWindow.prototype.$autoCalcClientHeight = function () {
 */
 /*protected*/BaseWindow.prototype.$adjustClient = function (name) {
     var c = this.get_clientcontainer(name); // The default behaviour deals with single client area only
-	if (BaseObject.isJQuery(c)) {
-		if (c.length > 0) { c = c.get(0); } else { c = null; }
-	}
+    c = DOMUtil.toDOMElement(c);
     if (c != null) {
 		if (this.root == c) return true;
         // var clnt = $(c);
