@@ -35,9 +35,10 @@ HeightWindowBehavior.prototype.on_ChildAdded = function(){
  * @param {*} window - window to set size
  */
 HeightWindowBehavior.prototype.$setWindowHeight = function(wnd){
+    var GRect = Class("GRect");
     if(wnd.get_windowparent() != null){
-        var windowRect = wnd.get_windowrect();
-        var parentWindowRect = wnd.get_windowparent().get_clientrect();
+        var windowRect = new GRect(wnd.get_windowrect());
+        var parentWindowRect = new GRect(wnd.get_windowparent().get_clientrect());
 
         if(windowRect.h > parentWindowRect.h && !Math.bitsTest(wnd.getWindowStyles(), WindowStyleFlags.fillparent))
         {

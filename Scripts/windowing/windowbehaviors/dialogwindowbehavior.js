@@ -34,6 +34,7 @@
 
     //#endregion IServiceLocator
 
+
     //#region  IDialogShow
 
     DialogWindowBehavior.prototype.get_hostwindow = function() { return this.$window; }

@@ -255,6 +255,7 @@
                     this.$paneWindows[name] = wnd;
                     wnd.setWindowStyles(WindowStyleFlags.visible, "reset");
                     wnd.setWindowStyles(WindowStyleFlags.topmost, "set");
+                    wnd.setWindowStyles(WindowStyleFlags.fillparent, "reset"); // make sure this is not set by mistake
 
                 }
                 this.positionPanes();

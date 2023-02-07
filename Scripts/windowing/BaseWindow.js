@@ -1579,6 +1579,16 @@ BaseWindow.prototype.get_windowelement = function () {
 BaseWindow.prototype.get_windowrect = function () {
     return BaseWindow.getElementPositionRect(this.root);
 };
+/**
+ * Returns the remembered window rect if it exists, otherwise null. Remembered rectangle exists when fillparent is set.
+ * @returns {GRect|null}
+ */
+BaseWindow.prototype.get_rememberedwindowrect = function () {
+    if (Math.bitsTest(this.getWindowStyles(), WindowStyleFlags.fillparent)) {
+        return new GRect(this.$oldWindowRect);
+    }
+    return null;
+}
 BaseWindow.prototype.set_windowrect = function (rect) {
     BaseWindow.setElementPositionRect(this.root, rect);
     if (BaseObject.is(rect, "Point")) {
