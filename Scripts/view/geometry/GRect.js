@@ -440,7 +440,7 @@
 		var nh = this.h * pH / 100;
 		var nx = this.x + (this.w - nw) / 2;
 		var ny = this.y + (this.h - nh) / 2;
-		r = new GRect(nx, ny, nw, nh);
+		var r = new GRect(nx, ny, nw, nh);
 		switch (posa) {
 			case "left":
 				r.x = this.x + padding;
