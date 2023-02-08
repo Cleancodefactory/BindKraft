@@ -1,6 +1,7 @@
 (function() {
 
-    var IDialogShow = Interface("IDialogShow");
+    var IDialogShow = Interface("IDialogShow"),
+        KeepPositionInParentBehavior = Class("KeepPositionInParentBehavior");
 
     function DialogWindowBehavior() {
         WindowBehaviorBase.call(this, true); // No multiuse - one dialog opener should be enough by anchor window
@@ -190,8 +191,9 @@
         this.$regWindow(op, dialog);
         if (placement & PopUpsPositionEnum.auto) {
             // TODO At lest provide as configuration or use better behaviors
-            dialog.attachBehavior(new ResponsiveWindowBehavior(600));
-            dialog.attachBehavior(new HeightWindowBehavior(500));
+            //dialog.attachBehavior(new ResponsiveWindowBehavior(600));
+            //dialog.attachBehavior(new HeightWindowBehavior(500));
+            dialog.attachBehavior(new KeepPositionInParentBehavior(500,500));
         }
 
         return op;

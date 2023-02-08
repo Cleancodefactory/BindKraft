@@ -156,6 +156,12 @@ BaseWindow.findArgs = function (args, kind) {
 
 // Misc utilities as static methods
 BaseWindow.getElementPositionRect = function (domEl) {
+    var el = DOMUtil.toDOMElement(domEl);
+    var GRect = Class("GRect");
+    return GRect.fromDOMElementOffset(el);
+
+
+
     var el = $(domEl);
     var result = new Rect(el.position());
     result.w = el.width();
@@ -1584,6 +1590,7 @@ BaseWindow.prototype.get_windowrect = function () {
  * @returns {GRect|null}
  */
 BaseWindow.prototype.get_rememberedwindowrect = function () {
+    var GRect = Class("GRect");
     if (Math.bitsTest(this.getWindowStyles(), WindowStyleFlags.fillparent)) {
         return new GRect(this.$oldWindowRect);
     }
