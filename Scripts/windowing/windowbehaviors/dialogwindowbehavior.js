@@ -181,9 +181,14 @@
                 tml = new TemplateConnector(this.get_templateName());
             }
         }
+        var wnd_styles = WindowStyleFlags.visible | WindowStyleFlags.draggable | WindowStyleFlags.topmost | WindowStyleFlags.adjustclient;
+        if (Math.bitsTest(placement, PopUpsPositionEnum.fill)) {
+            wnd_styles = WindowStyleFlags.visible | WindowStyleFlags.fillparent | WindowStyleFlags.topmost | WindowStyleFlags.adjustclient;
+            placement = Math.bitsOff(placement,PopUpsPositionEnum.auto); // Auto can force fillparent to be removed, this is why it has to be removed.
+        }
         var dialog = new SimpleViewWindow(
             tml,
-            WindowStyleFlags.visible | WindowStyleFlags.draggable | WindowStyleFlags.topmost | WindowStyleFlags.adjustclient,
+            wnd_styles,
             this.$calcPosition(placement),
             this.get_hostwindow(), // Parent
             wdata
