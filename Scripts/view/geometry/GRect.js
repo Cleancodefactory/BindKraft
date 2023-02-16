@@ -3,7 +3,8 @@
 
 	var GPoint = Class("GPoint"),
 		IGRect = Interface("IGRect"),
-		IGSize = Interface("IGSize");
+		IGSize = Interface("IGSize"),
+		GSize = Class("GSize");
 
 	function GRect(x, y, w, h) {
 		GPoint.apply(this, arguments);
@@ -187,6 +188,16 @@
 	GRect.prototype.zeroSize = function () {
 		this.w = this.h = 0;
 	};
+	GRect.prototype.get_size = function() {
+		return new GSize(this.w,this.h);
+	}
+	GRect.prototype.set_size = function(v) {
+		var s = new GSize(v);
+		if (s.get_isvalid()) {
+			this.w = s.w;
+			this.h = s.h;
+		}
+	}
 
 	GRect.prototype.get_left = function() { return this.x; }
 	GRect.prototype.set_left = function(v) { this.x = v; }
