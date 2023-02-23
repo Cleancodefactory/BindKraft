@@ -8,6 +8,13 @@ CommandReg.prototype.$commands = new InitializeArray("Commands register");
 CommandReg.prototype.$regexps = new InitializeArray("Array of the commands that have regexps ");
 
 //#region ICommandRegister
+CommandReg.prototype.$thisInstance = null;
+CommandReg.prototype.set_instance = function(instance) {
+	this.$thisInstance = instance;
+}
+CommandReg.prototype.get_instance = function() {
+	return this.$thisInstance;
+}
 CommandReg.prototype.ownerString = function() {
 	if (typeof this.owner == "string") return this.owner;
 	if (BaseObject.is(owner, "BaseObject")) return owner.fullClassType();
@@ -19,30 +26,38 @@ CommandReg.prototype.exists = function(cmd_or_name) {
 }
 CommandReg.prototype.get = function(cmdname) {
 	var cmd = this.$get(cmdname);
-	if (cmd != null) return cmd;
+	if (cmd != null) {
+		if (cmd.is ("CommandDescriptorInst")) {
+			cmd.set_instance(this.$thisInstance);
+		}
+		return cmd;
+	}
 	for (var i = this.$libraries.length - 1; i >= 0; i--) {
 		cmd = this.$libraries[i].get(cmdname);
-		if (cmd!= null) return cmd;
+		if (cmd != null) return cmd;
 	}
+	return null;
 }
 CommandReg.prototype.$get = function(cmdname) {
 	if (typeof cmdname == "string") {
 		return this.$commands.FirstOrDefault(function(idx, item) {
-			if (item.get_name() == cmdname || item.get_alias() == cmdname) return item;
+			if (item.get_name() == cmdname || item.get_alias() == cmdname) {
+				return item;
+			}
 			return null;
 		});
 	} else if (BaseObject.is(cmdname, "CommandDescriptor")) {
 		var cmd = cmdname;
-		return this.$commands.FirstOrDefault(function(idx,item) {
+		var r = this.$commands.FirstOrDefault(function(idx,item) {
 			if (
 				item.get_name() == cmd.get_name() ||
 				item.get_name() == cmd.get_alias() ||
 				(item.get_alias() != null && item.get_alias() == cmd.get_name()) ||
 				(item.get_alias() != null && item.get_alias() == cmd.get_alias())
 			) return item;
-
 			return null;
 		});
+		return r;
 	} else {
 		return null;
 	}
@@ -52,11 +67,17 @@ CommandReg.prototype.$get = function(cmdname) {
 */
 CommandReg.prototype.find = function(token,meta) {
 	var cmd = this.$find(token,meta);
-	if (cmd != null) return cmd;
+	if (cmd != null) {
+		if (cmd.is("CommandDescriptorInst")) cmd.set_instance(this.$thisInstance);
+		return cmd;
+	}
 	for (var i = this.$libraries.length - 1; i >= 0; i--) {
 		cmd = this.$libraries[i].find(token, meta);
-		if (cmd!= null) return cmd;
+		if (cmd != null) {
+			return cmd;
+		} 
 	}
+	return null;
 }
 CommandReg.prototype.$find = function(token,meta) {
 	var cmd = null; // The result - found command

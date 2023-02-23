@@ -54,7 +54,8 @@ ISupportsCommandContextImpl.classInitialize = function(cls, mode,/*optional*/get
 		}
 	} else {
 		cls.prototype.get_commandcontext = function() {
-			return createcontext.call(this);
+			var ctx = createcontext.call(this);
+			return ctx;
 		}
 	}
 }

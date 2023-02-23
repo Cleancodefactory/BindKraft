@@ -32,4 +32,10 @@
     ICommandRegister.prototype.find = function(token, meta) {throw "not implemented";}
     ICommandRegister.prototype.register = function(command, alias, regexp, action, help, bOverride) {throw "not implemented";}
     ICommandRegister.prototype.unregister = function(command) {throw "not implemented";}
+
+    /**
+     * Sets "this" instance to the register. This is passed to the command descriptors
+     */
+    ICommandRegister.prototype.set_instance = function(instance) {throw "not implemented";}
+    ICommandRegister.prototype.get_instance = function(instance) { throw "not implemented";}
 })();

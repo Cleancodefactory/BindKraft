@@ -1,10 +1,15 @@
 function ISupportsCommandRegisterExDefImpl() {
 }
 ISupportsCommandRegisterExDefImpl.InterfaceImpl(ISupportsCommandRegister, "ISupportsCommandRegisterExDefImpl");
+ISupportsCommandRegisterExDefImpl.RequiredTypes("IApp");
 // Static register by default
 ISupportsCommandRegisterExDefImpl.prototype.$commandregister = null; //new CommandReg("Standard static app command register");
 ISupportsCommandRegisterExDefImpl.prototype.get_commandregister = function() { 
-	return this.$commandregister;
+	var cr = this.$commandregister;
+	if (cr != null) {
+		cr.set_instance(this);
+	}
+	return cr;
 }
 // wrapper
 ISupportsCommandRegisterExDefImpl.$wrapcommandaction = function(action) {
@@ -30,20 +35,41 @@ ISupportsCommandRegisterExDefImpl.$wrapcommandaction = function(action) {
 	{ .... }
 	]);
 */
-ISupportsCommandRegisterExDefImpl.classInitialize = function(cls,commands) {
+ISupportsCommandRegisterExDefImpl.classInitialize = function(cls,options_and_commands) {
+	var CommandDescriptorInst = Class("CommandDescriptorInst");
 	cls.prototype.$commandregister = new CommandReg("Standard static app command register");
-	if (BaseObject.is(commands,"Array")) {
-		var register = cls.prototype.$commandregister;
-		for (var i = 0; i < commands.length; i++) {
-			var cmd = commands[i];
-			if (cmd != null) {
-				register.register(
-					cmd.name, 
-					cmd.alias, 
-					cmd.regexp, 
-					ISupportsCommandRegisterExDefImpl.$wrapcommandaction(cmd.action),
-					cmd.help);
+	var nonwrapped = false;
+	var i;
+	for (var j = 1; j < arguments.length; j++) {
+		var arg = arguments[j];
+		if (BaseObject.is(arg,"Array")) {
+			var commands = arg;
+			var register = cls.prototype.$commandregister;
+			if (!nonwrapped) {
+				for (i = 0; i < commands.length; i++) {
+					var cmd = commands[i];
+					if (cmd != null) {
+						register.register(
+							cmd.name, 
+							cmd.alias, 
+							cmd.regexp, 
+							ISupportsCommandRegisterExDefImpl.$wrapcommandaction(cmd.action),
+							cmd.help);
+					}
+				}
+			} else {
+				for (i = 0; i < commands.length; i++) {
+					var cmd = commands[i];
+					if (cmd != null) {
+						register.register(
+							new CommandDescriptorInst(cmd.name, cmd.alias,cmd.regexp,cmd.action,cmd.help)
+							);
+					}
+				}
 			}
+		} else if (arg === true) {
+			nonwrapped = true;
 		}
 	}
+	
 }

@@ -1,6 +1,7 @@
 //#using "./CommandProcessor.js"
 
 //#using "./commanddescriptor.js"
+//#using "./commanddescriptorinst.js"
 //#using "./commandreg.js"
 //#using "./commandline.js"
 //#using "./commandcontext.js"
