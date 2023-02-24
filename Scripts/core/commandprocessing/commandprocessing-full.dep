@@ -13,6 +13,7 @@
 //#using "./commander.js"
 //#using "./commandexecutorinterface.js"
 
+//#using "./IAppCommandLibraryImpl.js"
 //#using "./ISupportsEnvironmentContextImpl.js"
 //#using "./ISupportsCommandRegisterImpl.js"
 //#using "./ISupportsCommandRegisterExDefImpl.js"

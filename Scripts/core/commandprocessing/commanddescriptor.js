@@ -16,6 +16,7 @@ function CommandDescriptor(obj_or_name, alias,regexp,action,help) {
 	}
 }
 CommandDescriptor.Inherit(BaseObject,"CommandDescriptor");
+CommandDescriptor.Implement(ICloneObject);
 CommandDescriptor.ImplementReadProperty("name",new InitializeStringParameter("The name of the command", null));
 CommandDescriptor.ImplementReadProperty("alias", new InitializeStringParameter("Optional alias for the command", null));
 CommandDescriptor.ImplementReadProperty("regexp", new InitializeParameter("Optional regular expression parameter - it has to match and also can be used to parse the commands token", null));
@@ -27,3 +28,7 @@ CommandDescriptor.prototype.equals = function (obj)  { // Note that the regexp i
 	if (!BaseObject.compareObjectProperties(this, obj, ["$name","$alias","$action","$help"])) return false;
     return true;
 };
+
+CommandDescriptor.prototype.cloneObject = function (instance) {
+	return new CommandDescriptor(this.$name, this.$alias, this.regexp,this.$action,this.$help);
+}

@@ -1,6 +1,8 @@
 
 
 //#using "Base.js"
+//#using "Control.js"
+//#using "BaseForm.js"
 //#using "ElementBehaviorBase.js"
 //#using "CardStyle.js"
 //#using "DefaultBase.js"

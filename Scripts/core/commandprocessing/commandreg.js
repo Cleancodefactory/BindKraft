@@ -4,13 +4,34 @@ function CommandReg(owner) {
 }
 CommandReg.Inherit(BaseObject,"CommandReg");
 CommandReg.Implement(Interface("ICommandRegisterLibrary"));
+CommandReg.Implement(Interface("ICloneObject"));
 CommandReg.prototype.$commands = new InitializeArray("Commands register");
 CommandReg.prototype.$regexps = new InitializeArray("Array of the commands that have regexps ");
+
+//#region ICloneObject
+CommandReg.prototype.cloneObject = function() {
+	var creg = new CommandReg(this.owner);
+	creg.$commands = ICloneObject.recursiveCloneObject(this.$commands);
+	creg.$regexps = ICloneObject.recursiveCloneObject(this.$regexps);
+	creg.$thisInstance = this.$thisInstance;
+	creg.$libraries = ICloneObject.recursiveCloneObject(this.$libraries);
+	return creg;
+	
+}
+//#endregion
 
 //#region ICommandRegister
 CommandReg.prototype.$thisInstance = null;
 CommandReg.prototype.set_instance = function(instance) {
 	this.$thisInstance = instance;
+	if (Array.isArray(this.$commands)) {
+		for (var i = 0;i < this.$commands.length;i++) {
+			var cmd = this.$commands[i];
+			if (BaseObject.is(cmd,"CommandDescriptorInst")) {
+				cmd.set_instance(instance);
+			}
+		}
+	}
 }
 CommandReg.prototype.get_instance = function() {
 	return this.$thisInstance;
@@ -27,9 +48,6 @@ CommandReg.prototype.exists = function(cmd_or_name) {
 CommandReg.prototype.get = function(cmdname) {
 	var cmd = this.$get(cmdname);
 	if (cmd != null) {
-		if (cmd.is ("CommandDescriptorInst")) {
-			cmd.set_instance(this.$thisInstance);
-		}
 		return cmd;
 	}
 	for (var i = this.$libraries.length - 1; i >= 0; i--) {
@@ -68,7 +86,6 @@ CommandReg.prototype.$get = function(cmdname) {
 CommandReg.prototype.find = function(token,meta) {
 	var cmd = this.$find(token,meta);
 	if (cmd != null) {
-		if (cmd.is("CommandDescriptorInst")) cmd.set_instance(this.$thisInstance);
 		return cmd;
 	}
 	for (var i = this.$libraries.length - 1; i >= 0; i--) {

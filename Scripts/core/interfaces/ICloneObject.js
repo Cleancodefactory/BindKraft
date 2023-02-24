@@ -19,3 +19,28 @@ ICloneObject.Interface("ICloneObject");
  * 
  */
 ICloneObject.prototype.cloneObject = function(/*optional parameters*/) { throw "not implemented."; }
+
+
+//#region Static helpers
+ICloneObject.recursiveCloneObject = function(x) {
+    if (BaseObject.is(x, "ICloneObject")) {
+        return x.cloneObject();
+    } else if (Array.isArray(x)) {
+        var arr = [];
+        for (var i = 0; i < x.length;i++) {
+            arr.push(this.recursiveCloneObject(x[i]));
+        }
+        return arr;
+    } else if (BaseObject.is(x, "object")) {
+        var obj = {};
+        for (var k in x) {
+            if (x.hasOwnProperty(k)) {
+                obj[k] = this.recursiveCloneObject(x[k]);
+            }
+        }
+        return obj;
+    } else {
+        return x;
+    }
+}
+//#endregion

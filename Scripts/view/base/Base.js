@@ -617,7 +617,7 @@ Base.prototype.findParent = function (key) {
 Base.prototype.get_validators = function (vgrp_in, bReturnDisabled) {
 // +V:2.20.1 - retiring the old code in favor of faster andmore precise one
 	var vgrp = ((typeof vgrp_in == "string" && vgrp_in.length > 0) ? vgrp_in:null);
-    var arr = this.cascadeInstancesEx("IValidator",[IUIControl,IValidator],[Interface("IUIControlValidateFromParent")])
+    var arr = this.cascadeInstancesEx("IValidator",[IUIControl,IValidator,IValidationContainer],[Interface("IUIControlValidateFromParent")])
 	//var arr = this.cascadeInstances("IValidator",IUIControl,IValidator); // Validators in sub-components are not included - their components should deal with them
 	var v, results = [];
     for (var i = 0; i < arr.length; i++) {
