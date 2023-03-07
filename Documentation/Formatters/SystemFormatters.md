@@ -1,9 +1,36 @@
 # System Formatters, Converters etc.
 
 The formatters/converters/indicators listed here are provided by BindKraft on a system level and are always available. No additional effort is needed in order to make them available in your view or component.
+
 ## Number formatting
 
+### FormatFloat
+
+### FormatInteger
+
+
+
 ## Date and time formatting/conversion
+
+Date/Time formatting typically involves usage of 2 formatters unless the value is bound to a property requiring Date value. The related formatters can be roughly considered in two categories - `ConvertDateTime` and all others.
+
+### ConvertDateTime
+
+Converts between string date/time representations and Date. Usually present between data loaded from services and UI components or with an formatter between data and text representations/fields.
+
+**parameter** - The format expected in the data. Supported formats are 
+
+* ISO - ISO8601 UTC date time e.g. 2016-01-02T10:25:34Z. The recommended format if the data is transferred through JSON at some point. The date/time in data is assumed UTC and converted to time zone corrected Date and reverse.
+
+* ISOLocal - ISO like without time zone e.g. 2016-01-02T10:25:34 or 2016-01-02 10:25:34. The date/time in data is assumed local and converted to/from Date. This one should be used only when the transport layer and the receiving end (usually server) works that way.
+
+* MS - Microsoft Date(###) format. A format which was widely used in .NET framework in the past. Contains milliseconds from January 1 1970 (Similar to unix epoch) in side escaped string expression e.g. `Date(0123456789)`. This format, while rarely used today is safe and sometimes preferred when developers can choose how to transfer date/time values.
+
+* TICKS - Like MS but just number or number as text. Not recommended for typical JSON based services, but sometimes used by custom communications.
+
+If the parameter is not specified the convertor will use the system setting from 
+`System.Default().settings.DefaultTransferDateEncoding`, which is by default `ISO`.
+
 ## Miscellaneous
 
 ### BooleanConverter
@@ -109,3 +136,46 @@ The `special keywords are`:
 
 - `value` - the value passing through the formatter
 - `parameter` - the parameter specified in the binding
+
+### AppendFormatter
+
+```HTML
+<div ... data-bind-text="{bind path=something format=AppendFormatter(kg)}">
+```
+
+Appends a suffix to a string value.
+
+parameter - string, trimmed which is appended to the non-empty, non-null strings passing to target and removed when updated into sources.
+
+### DataStateFilter
+
+### DataStateIndicator
+
+### DefaultDateTimeFormat aggregate
+
+### DefaultDateFormat aggregate
+
+### DefaultTimeFormat aggregate
+
+### FormatDateTime
+
+### FormatShortDate
+
+### FormatLongDate
+
+### FormatShortTime
+
+### FormatLongTime
+
+### FormatShortDateTime
+
+### FormatLongDateTime
+
+### IfNullOrEmpty
+
+### NormalizeConverter
+
+### TimeElapsedSince
+
+### TranslateThrough
+

@@ -64,9 +64,9 @@ Not yet included in this documentation.
     * [Bindings](Bindings.md) - overview and usage discussion
     * [Target expressions](Bindings.md#target-operation)
 * [Markers](BindingSyntax/Markers.md) - data-context-border="true", data-template-root="true" etc.
-* [Using formatters](UsingFormatters.md)
-* [Formatters - creating](Formatters.md)
-* [System formatters](CoreClasses/SystemFormatters.md) - list of the built-in system formatters.
+* [Using formatters](Formatters/UsingFormatters.md)
+* [Formatters - creating](Formatters/Formatters.md)
+* [System formatters](Formatters/SystemFormatters.md) - list of the built-in system formatters.
 * [Validation](Validation/validation.md)
 
 ### [Windowing classes and interfaces reference](WindowingClasses.md) - The classes forming the windowing subsystem.
