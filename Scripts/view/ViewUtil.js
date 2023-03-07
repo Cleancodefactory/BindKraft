@@ -215,9 +215,9 @@
             // Still in viewport coordinates
             var placementRect = containerRect.adjustPopUp(controlRect, balloonRect, (typeof mode == "string"?mode:"aboveunder"));
             return {
-                placementRect: placementRect,
-                containerRect: containerRect,
-                controlRect: controlRect,
+                placementRect: placementRect, // in screen (vieport) coordinates
+                containerRect: containerRect, // in screen (vieport) coordinates
+                controlRect: controlRect, // in screen (vieport) coordinates
                 container: viewcontainer,
                 panel: th
             };
