@@ -571,6 +571,9 @@ BaseObject.DeepClone = function (o, callback) {
         } else if (o.constructor == Date) {
 			if (!_callback(o,"Date")) return null;
             v = new Date(o);
+        } else if (o.constructor == RegExp) {
+            if (!_callback(o,"RegExp")) return null;
+            v = new RegExp(o.source, o.flags);
         } else if (typeof (o) == "boolean") {
 			if (!_callback(o,"boolean")) return null;
             v = Boolean(o);
