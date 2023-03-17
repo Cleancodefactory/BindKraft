@@ -122,9 +122,10 @@ It is quite normal during the development process to start with a property imple
 ###  2.2. <a name='implementactiveproperty'></a>ImplementActiveProperty
 
 ```Javascript
-
+//when pstore is not Boolean
 MyClass.ImplementActiveProperty(pname, Initialize, pstore, force,changeCallback);
-MyClass.ImplementActiveProperty(pname, Initialize, pstore, pstore, force, changeCallback);
+//when pstore is Boolean
+MyClass.ImplementActiveProperty(pname, Initialize, force, changeCallback);
 
 ```
 
