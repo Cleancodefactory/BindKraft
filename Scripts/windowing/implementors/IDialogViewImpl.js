@@ -21,7 +21,7 @@ IDialogViewImpl.prototype.$completeDialog = function (success, data, doclose) {
     if (BaseObject.is(container, "BaseWindow")) {
         WindowingMessage.fireOn(container, WindowEventEnum.ReportResult, {
             result: (success ? true : false),
-            resultData: data || this.get_data(),
+            resultData: ((data === undefined)?this.get_data():data),
 			close: doclose
         });
 		/*
