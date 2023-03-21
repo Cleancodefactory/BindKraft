@@ -53,5 +53,5 @@ IDialogViewImpl.prototype.$completeDialog = function (success, data, doclose) {
     .Param("success", "Boolean denoting success")
     .Param("data", "The data to include in the close event or/and callback");
 IDialogViewImpl.prototype.InitWorkData = function(data) {
-	alert("You have to implement InitWorkData in your dialog view.");
+	alert("You have to implement InitWorkData in your dialog view. A typical solution will be this.set_data(data), but one can be more specific or use only part of the data etc.");
 }
