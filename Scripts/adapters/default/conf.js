@@ -693,26 +693,37 @@ function jb_initFramework(globalProvider) { // The global provider is being aske
     
 
     function core_nextgenAjaxErrorHandler(xmlHttpReq, textStatus, errDescription, setttings) {
-        if (BaseObject.is(this, "IStructuralQueryEmiter")) {
-            this.throwStructuralQuery(new InfoMessageQuery("AJAX Error: " +
-                                                "HTTP status: " + xmlHttpReq.status +
-                                                "\nstatus text: " + textStatus +
-                                                "\ndescription: " + errDescription +
-                                                ((setttings.url != null) ? ("\nurl: " + setttings.url) : ""), 0x8001, "error"));
+        if (this.LASTERROR) {
+            this.LASTERROR("AJAX Error: " +
+            "HTTP status: " + xmlHttpReq.status +
+            "\nstatus text: " + textStatus +
+            "\ndescription: " + errDescription +
+            ((setttings.url != null) ? ("\nurl: " + setttings.url) : ""));
+        };
+        if (window.JBCoreConstants.JDebug) {
+            if (BaseObject.is(this, "IStructuralQueryEmiter")) {
+                
+                
+                this.throwStructuralQuery(new InfoMessageQuery("AJAX Error: " +
+                                                    "HTTP status: " + xmlHttpReq.status +
+                                                    "\nstatus text: " + textStatus +
+                                                    "\ndescription: " + errDescription +
+                                                    ((setttings.url != null) ? ("\nurl: " + setttings.url) : ""), 0x8001, "error"));
 
-        } else {
-            Messenger.Default.post(new WorkspaceNotificationMessage("AJAX Error", "AJAX Error",
-                                                "HTTP status: " + xmlHttpReq.status +
-                                                "\nstatus text: " + textStatus +
-                                                "\ndescription: " + errDescription +
-                                                ((setttings.url != null) ? ("\nurl: " + setttings.url) : "") +
-                                                "\n------\n" + xmlHttpReq.responseText, true));
+            } else {
+                Messenger.Default.post(new WorkspaceNotificationMessage("AJAX Error", "AJAX Error",
+                                                    "HTTP status: " + xmlHttpReq.status +
+                                                    "\nstatus text: " + textStatus +
+                                                    "\ndescription: " + errDescription +
+                                                    ((setttings.url != null) ? ("\nurl: " + setttings.url) : "") +
+                                                    "\n------\n" + xmlHttpReq.responseText, true));
+            }
+            jbTrace.log("AJAX ERROR: HTTP status: " + xmlHttpReq.status +
+                        "\nstatus text: " + textStatus +
+                        "\ndescription: " + errDescription +
+                        ((setttings.url != null) ? ("\nurl: " + setttings.url) : "") +
+                        "\n------\n" + xmlHttpReq.responseText);
         }
-        jbTrace.log("AJAX ERROR: HTTP status: " + xmlHttpReq.status +
-                    "\nstatus text: " + textStatus +
-                    "\ndescription: " + errDescription +
-                    ((setttings.url != null) ? ("\nurl: " + setttings.url) : "") +
-                    "\n------\n" + xmlHttpReq.responseText);
         var loc;
         if (xmlHttpReq.status == 302) {
             var loc = xmlHttpReq.getResponseHeader("Location");
