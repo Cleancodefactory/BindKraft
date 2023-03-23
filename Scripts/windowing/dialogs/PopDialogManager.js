@@ -1,3 +1,5 @@
+// DEPRECATED - will be removed in couple of years from now (03.2023)
+
 function PopDialogManager() {
     BaseObject.apply(this, arguments);
 	this.$popups = {};

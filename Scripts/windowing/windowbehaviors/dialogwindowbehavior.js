@@ -1,7 +1,8 @@
 (function() {
 
     var IDialogShow = Interface("IDialogShow"),
-        KeepPositionInParentBehavior = Class("KeepPositionInParentBehavior");
+        KeepPositionInParentBehavior = Class("KeepPositionInParentBehavior"),
+        PopUpsPositionEnum = Enumeration("PopUpsPositionEnum");
 
     function DialogWindowBehavior() {
         WindowBehaviorBase.call(this, true); // No multiuse - one dialog opener should be enough by anchor window
@@ -14,14 +15,16 @@
         .ImplementProperty("templateName", new InitializeStringParameter("Default template (can be null by default)", new Defaults("templateName")))
         .ImplementProperty("width", new InitializeStringParameter("horizontal percentage", new Defaults("width")))
         .ImplementProperty("height", new InitializeStringParameter("vertical percentage", new Defaults("height")))
-        .ImplementProperty("closeondeactivate", new InitializeBooleanParameter("close on deactivate", new Defaults("closeOnDeactivate")));
+        .ImplementProperty("closeondeactivate", new InitializeBooleanParameter("close on deactivate", new Defaults("closeOnDeactivate")))
+        .ImplementProperty("confirmview", new InitializeStringParameter("The view template used as confirm dialog, can be changed", new Defaults("confirmView")));;
 
     DialogWindowBehavior.Defaults({
         templateName: null, // Default template for the dialog windows.
         padding: 50, // Default padding for dialog placement (when non-filling)
         width: 90, // percentage
         height: 90, // percentage
-        closeOnDeactivate: true
+        closeOnDeactivate: true,
+        confirmView: "bindkraft/dialog-confirm"
     });
 
     //#region IServiceLocator
@@ -237,4 +240,10 @@
         if (w != null) return true;
     }
     //#endregion IDialogShow
+
+    //#region Default dialogs
+    DialogWindowBehavior.prototype.confirm = function(text) {
+        return this.openDialog(text, ITemplateSourceImpl.GetGlobalTemplate(this.get_confirmview()),PopUpsPositionEnum.center | PopUpsPositionEnum.auto);
+    }
+    //#endregion Default dialogs
 })();

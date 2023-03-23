@@ -1,3 +1,4 @@
+// DEPRECATED - will be removed in couple of years from now (03.2023)
 function PopDialog(parentapp, conf) {
     BaseObject.apply(this, arguments);
     for (var i = 0; i < arguments.length; i++) {

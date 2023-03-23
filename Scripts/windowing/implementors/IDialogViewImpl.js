@@ -7,6 +7,7 @@ IDialogViewImpl.RequiredTypes("Base");
 IDialogViewImpl.prototype.hideDialog = function () {
     this.throwStructuralQuery(new HostCallQuery(HostCallCommandFlags.hide));
 }
+// TODO: REmove this method when legacy usages are eliminated.
 IDialogViewImpl.prototype.showDialog = function () {
     this.throwStructuralQuery(new HostCallQuery(HostCallCommandFlags.show | HostCallCommandFlags.activate));
 }

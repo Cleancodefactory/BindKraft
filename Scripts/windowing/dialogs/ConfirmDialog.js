@@ -1,17 +1,19 @@
 (function() {
+    var DialogViewBase = Class("DialogViewBase");
     function ConfirmDialog() {
-        GenericViewBaseEx.apply(this, arguments);
+        DialogViewBase.apply(this, arguments);
     }
-    ConfirmDialog.Inherit(GenericViewBaseEx, "ConfirmDialog")
-    .Implement(IDialogViewImpl);
+    ConfirmDialog.Inherit(DialogViewBase, "ConfirmDialog");    
 
     ConfirmDialog.prototype.onOk = function() {
-        this.completeDialog(true, { confirm: true});
+        this.completeDialog(true, true);
     }
     ConfirmDialog.prototype.onCancel = function() {
-        this.completeDialog(false, { confirm: false});
+        this.completeDialog(false, null);
     }
     ConfirmDialog.prototype.InitWorkData = function(workData) {
-
+        if (typeof workData == "string") {
+            this.set_data(workData);
+        }
     }
 })();
