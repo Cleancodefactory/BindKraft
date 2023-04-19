@@ -372,7 +372,7 @@
     };
     LookupBoxControl.prototype.onFocusFilter = function(e,dc, bind) {
         if (this.get_selectinputonfocus()) {
-            this.get_filterbox().select();
+            //this.get_filterbox().select();
         }
         this.Open();
     };
