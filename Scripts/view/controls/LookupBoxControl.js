@@ -69,6 +69,7 @@
         .ImplementProperty("droplist") // The drop list - selectable repeater
         .ImplementProperty("droppanel") // The DOM element of the drop panel
         .ImplementProperty("display") // Selection display HTML Element (readonly textbox)
+        .ImplementProperty("selectinputonfocus", new  InitializeBooleanParameter("select all when theinput is focused",false))
         .ImplementProperty("dropwidth", new InitializeNumericParameter("",null))
         .ImplementProperty("dropheight", new InitializeNumericParameter("",null))
         .ImplementActiveProperty("choices", new InitializeArray("Choices for selection"),true) // The drop list - selectable repeater
@@ -370,6 +371,9 @@
         this.Close();
     };
     LookupBoxControl.prototype.onFocusFilter = function(e,dc, bind) {
+        if (this.get_selectinputonfocus()) {
+            this.get_filterbox().select();
+        }
         this.Open();
     };
     //#endregion focusing
