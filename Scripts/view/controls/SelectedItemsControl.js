@@ -53,6 +53,7 @@
             this.$cachedItems.splice(0);
         })
         .ImplementProperty("clear", new InitializeStringParameter("the text for the clear button", "clear"))
+        .ImplementActiveProperty("showclear", new InitializeBooleanParameter("Show the clear button",true))
         .ImplementProperty("interface", new Initialize("Bubble interface implementation of ISelectedItemsCallback"))
         .ImplementProperty("identification", new InitializeStringParameter("Property by which the items can be uniquely identified.", null), true, function(oval, nval) {
             this.ExecBeforeFinalInit(null, function() {
