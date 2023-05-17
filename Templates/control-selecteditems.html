@@ -3,4 +3,4 @@
     data-on-$activatedevent="{bind source=__control path=onSelectItem}"
     data-bind-$items="{read source=__control path=$items format=__control:TranslateItems readdata=$items_changed options=operation}"
 ></div>
-<button data-on-click="{bind source=__control path=onClearAll}" data-bind-text="{read source=__control path=$clear}" data-bind-elementvisivle="{read source=__control path=$showclear readdata=$showclear_changed}"></button>
+<button data-on-click="{bind source=__control path=onClearAll}" data-bind-text="{read source=__control path=$clear}" data-bind-elementvisible="{read source=__control path=$showclear format=CalcConverter(value & hasitems) ref[hasitems]=__control@hasitems readdata=$selchangedevent,$showclear_changed}"></button>

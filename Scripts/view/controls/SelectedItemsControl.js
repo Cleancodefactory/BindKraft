@@ -67,7 +67,13 @@
         })
         .ImplementProperty("itemlist");
 
-
+    SelectedItemsControl.prototype.get_hasitems = function() {
+        var items = this.get_items();
+        if (items != null && items.length > 0) {
+            return true;
+        }
+        return false;    
+    }
     //#region Construction and initialization
     SelectedItemsControl.prototype.finalinit = function () {
         if (this.get_identification() != null) {
