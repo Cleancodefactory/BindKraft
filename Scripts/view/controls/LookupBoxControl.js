@@ -56,7 +56,7 @@
         .Implement(IUIControl)
         .Implement(IDisablable)
         .Implement(IKeyboardProcessorImpl)
-        .Implement(ICustomParameterizationStdImpl, "sourcedata", "identification", "filterbyfield","dropwidth", "dropheight", "interface", "noselection", "showclear")
+        .Implement(ICustomParameterizationStdImpl, "sourcedata", "identification", "filterbyfield","dropwidth", "dropheight", "interface", "noselection", "showclear","selectinputonfocus")
         .Implement(IItemTemplateConsumerImpl)
         .Implement(ITemplateSourceImpl, new Defaults("templateName"),"autofill")
         .Implement(IItemTemplateSourceImpl, true, "single")
