@@ -226,7 +226,12 @@ Base.prototype.get_disabled = function () {
 		// Being template only dedicated this new hook can be implemented by implementers that automate the template loading/choosing.
 	};
 	// -VERSION 2.7.1
-	Base.prototype.init = function () {
+    // + VERSION 2.30.0
+	Base.prototype.instantiateTemplate = function(){
+        // Todo: Hook to enable separation between inspecting and instantiating template. Enables cleaner template techniques
+    };
+    // -VERSION 2.30.0
+    Base.prototype.init = function () {
 		// todo: Initialization before bindings and before materialization of the sub-tree (data-class of any children are not yet created.
 		// 	At this point it is possible to replace/modify the contained DOM without the need to do anything more - after leaving init() the materialization
 		//	of the sub-tree will begin. It will work with whatever DOM exists after leaving the method.
@@ -313,6 +318,7 @@ Base.prototype.ExecAfterFinalInit = function(args, action) {
 //
 Base.prototype.$init = function () {
 	this.inspectTemplate();
+    this.instantiateTemplate();
     this.init();
     this.initializedevent.invoke(this, null);
     // this.rebind(); // Default behaviour, items controls should override this
