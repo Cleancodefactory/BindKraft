@@ -58,8 +58,8 @@
         .Implement(IKeyboardProcessorImpl)
         .Implement(ICustomParameterizationStdImpl, "sourcedata", "identification", "filterbyfield","dropwidth", "dropheight", "interface", "noselection", "showclear","selectinputonfocus")
         .Implement(IItemTemplateConsumerImpl)
-        .Implement(ITemplateSourceImpl, new Defaults("templateName"),"autofill")
         .Implement(IItemTemplateSourceImpl, true, "single")
+        .Implement(ITemplateSourceImpl, new Defaults("templateName"),"autofill")
         .Defaults({
             templateName: "bindkraft/control-lookupbox"
         });
