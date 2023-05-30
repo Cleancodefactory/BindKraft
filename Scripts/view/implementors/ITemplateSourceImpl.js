@@ -28,7 +28,7 @@ ITemplateSourceImpl.ForbiddenTypes("BaseWindow");
 ITemplateSourceImpl.classInitialize = function(cls, defaultTemplateSelector, options) {
 	var autofill = (options === true || options === "autofill");
 	if (autofill) {
-		cls.ExtendMethod("inspectTemplate", function() {
+		cls.ExtendMethod("instantiateTemplate", function() {
 			ITemplateSourceImpl.InstantiateTemplate(this);
 		});
 	}
