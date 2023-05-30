@@ -3,15 +3,9 @@ function HintBubbleEx() {
     Panel.apply(this, arguments);
     this.$isopen = false;
 };
-HintBubbleEx.Inherit(Panel, "HintBubbleEx");
-HintBubbleEx.$rootParameters = ["activeHeader", "inactiveHeader", "bodyElement", "initialState", "animation", "shiftTop", "shiftLeft", "delay"];
-HintBubbleEx.prototype.setObjectParameter = function (name, value) {
-    if (name.inSet(HintBubbleEx.$rootParameters)) {
-        this[name] = value;
-    } else {
-        this.$parameters[name] = value;
-    }
-};
+HintBubbleEx.Inherit(Base, "HintBubbleEx");
+//HintBubbleEx.Implement(ITemplateSourceImpl,)
+
 HintBubbleEx.prototype.activeHeader = new InitializeStringParameter("parent[/child] key of the active header element", "./ActiveHeader");
 HintBubbleEx.prototype.inactiveHeader = new InitializeStringParameter("parent[/child] key of the inactive header element", "./InactiveHeader");
 HintBubbleEx.prototype.bodyElement = new InitializeStringParameter("parent[/child] key of the body element", "./Body");
