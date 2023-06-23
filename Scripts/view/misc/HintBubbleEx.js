@@ -1,22 +1,22 @@
+(function() {
 /*CLASS*/
 function HintBubbleEx() {
     Panel.apply(this, arguments);
     this.$isopen = false;
 };
-HintBubbleEx.Inherit(Base, "HintBubbleEx");
-//HintBubbleEx.Implement(ITemplateSourceImpl,)
-
-HintBubbleEx.prototype.activeHeader = new InitializeStringParameter("parent[/child] key of the active header element", "./ActiveHeader");
-HintBubbleEx.prototype.inactiveHeader = new InitializeStringParameter("parent[/child] key of the inactive header element", "./InactiveHeader");
-HintBubbleEx.prototype.bodyElement = new InitializeStringParameter("parent[/child] key of the body element", "./Body");
-HintBubbleEx.prototype.initialState = new InitializeStringParameter("Initial state of the expander, can be 'collapsed' (default) or 'expanded'", "collapsed");
-
-HintBubbleEx.prototype.animation = new InitializeStringParameter("Body animation: slow, fast, none", "none");
+HintBubbleEx.Inherit(Base, "HintBubbleEx")
+    .Implement(ITemplateSourceImpl,Defaults("templateName"),"autofill")
+    .Implement(IItemTemplateSourceImpl,true)
+.Defaults({
+    templateName: "bindkraft/hint-bubble-ex"
+})
 
 HintBubbleEx.prototype.statechangedevent = new InitializeEvent("Fired when the expander opens or closes. The data is true/false meaning open/close");
 HintBubbleEx.prototype.openedevent = new InitializeEvent("Fired when the expander opens or closes. The data is true/false meaning open/close");
 HintBubbleEx.prototype.closedevent = new InitializeEvent("Fired when the expander opens or closes. The data is true/false meaning open/close");
+
 HintBubbleEx.prototype.init = function () {
+
     this.shiftLeft = parseFloat(this.shiftLeft);
     if (IsNull(this.delay)) {
         this.delay = 1000;
@@ -42,6 +42,11 @@ HintBubbleEx.prototype.init = function () {
         this.$bodyElement.css("position", "absolute");
     }
 };
+HintBubbleEx.prototype.finalInit = function() {
+    var t;
+    //if (String.isNullOrWhiteSpace(this.get_itemTemplate("normal-header")) ||
+    //String.isNullOrWhiteSpace(this.get_itemTemplate("hint")) )
+}
 HintBubbleEx.prototype.$showHideHeader = function (bExpanded) {
     var b = ((this.$activeHeader.length == 0) ? 0 : 1) + ((this.$inactiveHeader.length == 0) ? 0 : 1);
     if (b == 1) {
@@ -164,3 +169,4 @@ HintBubbleEx.prototype.set_expanded = function (v) {
 HintBubbleEx.prototype.get_collapsed = function () { return !this.$isopen; };
 HintBubbleEx.prototype.set_collapsed = function (v) { if (v) { this.Collapse(); } else { this.Expand(); } };
 
+})()

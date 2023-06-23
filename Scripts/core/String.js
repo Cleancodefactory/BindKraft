@@ -50,6 +50,15 @@ String.prototype.formatLength = function (n, al,lchar,rchar) {
     }
     return str;
 };
+String.IsNullOrWhiteSpace = function(v) {
+    if (v == null) return true;
+    v = v.toString();
+    if (typeof v == 'string') {
+        if (/^\s*$/.test(v)) return true;
+        return false;
+    }
+    return true;
+}
 // ============== CODE BEGIN ==================
 // sprintf like realization
 // Samples:

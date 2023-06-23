@@ -16,5 +16,5 @@
 //#using "ValidateValue.js"
 //#using "ValidateValues.js"
 //#using "BindingResultsContainer.js"
-
+//#using "BaseSlot.js"
 
