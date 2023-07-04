@@ -8,7 +8,16 @@ Scrollable.ImplementProperty("carefor", new InitializeStringParameter("child ele
 
 Scrollable.prototype.changedevent = new InitializeEvent("Firest every time the position changes");
 Scrollable.ImplementProperty("scrollablecontainer", new Initialize("use plugelement to fill it in", null));
-
+Scrollable.prototype.getScrollableContainer = function() {
+	var sc = this.get_scrollablecontainer();
+	if (typeof sc == "string") {
+		var arr = Class("ViewUtil").getRelatedElements(this.root,sc);
+		if (arr.length > 0) return arr[0];
+		return null;
+	} else if (sc instanceof HTMLElement) {
+		return sc;
+	}
+}
 
 Scrollable.prototype.finalinit = function() {
 	//
@@ -28,9 +37,9 @@ Scrollable.prototype.get_booldirection = function() { // H is true, V is false
 Scrollable.prototype.$elementsToCareFor = function() {
 	var els = null;
 	if (this.get_carefor() != null) {
-		els = $(this.get_scrollablecontainer()).children(); // We have to filter them, but how? Needs decision.
+		els = $(this.getScrollableContainer()).children(); // We have to filter them, but how? Needs decision.
 	} else {
-		els = $(this.get_scrollablecontainer()).children();
+		els = $(this.getScrollableContainer()).children();
 	}
 	return els;
 }
@@ -43,8 +52,8 @@ Scrollable.prototype.onMouseOut = function(e) {
 }
 Scrollable.prototype.isRectVisible = function(rect) {
 	if (this.get_booldirection()) { // Horizontal
-		var curScroll = this.get_scrollablecontainer().scrollLeft;
-		var width = $(this.get_scrollablecontainer()).width();
+		var curScroll = this.getScrollableContainer().scrollLeft;
+		var width = $(this.getScrollableContainer()).width();
 		if (rect.x - curScroll >= 0) {
 			if ((rect.x + rect.w - curScroll) <= width) {
 				return true;
@@ -67,7 +76,7 @@ Scrollable.prototype.$onMouseWheel = function(e) {
 }
 Scrollable.prototype.movePrev = function(e, dc, bind) {
 	if (this.get_booldirection()) { // Horizontal
-		var curScroll = this.get_scrollablecontainer().scrollLeft;
+		var curScroll = this.getScrollableContainer().scrollLeft;
 		var itemEls = this.$elementsToCareFor();
 		var arrRects = [];
 		var rect;
@@ -87,7 +96,7 @@ Scrollable.prototype.movePrev = function(e, dc, bind) {
 		}
 		if (i > 0) {
 			rect = arrRects[i-1];
-			this.get_scrollablecontainer().scrollLeft -= (this.get_scrollablecontainer().scrollLeft - rect.x);
+			this.getScrollableContainer().scrollLeft -= (this.getScrollableContainer().scrollLeft - rect.x);
 		}
 	} else { // Vertical not impl.
 	
@@ -96,9 +105,9 @@ Scrollable.prototype.movePrev = function(e, dc, bind) {
 }
 Scrollable.prototype.moveNext = function(e, dc, bind) {
 	if (this.get_booldirection()) { // Horizontal
-		var curScroll = this.get_scrollablecontainer().scrollLeft;
+		var curScroll = this.getScrollableContainer().scrollLeft;
 		var itemEls = this.$elementsToCareFor();
-		var width = $(this.get_scrollablecontainer()).width();
+		var width = $(this.getScrollableContainer()).width();
 		var arrRects = [];
 		var rect;
 		for (var i = 0; i < itemEls.length; i++) {
@@ -117,7 +126,7 @@ Scrollable.prototype.moveNext = function(e, dc, bind) {
 		}
 		if (i < arrRects.length - 1) {
 			rect = arrRects[i + 1];
-			this.get_scrollablecontainer().scrollLeft += ((rect.x + rect.w) - (this.get_scrollablecontainer().scrollLeft + width));
+			this.getScrollableContainer().scrollLeft += ((rect.x + rect.w) - (this.getScrollableContainer().scrollLeft + width));
 		}
 	} else { // Vertical not impl
 	}
