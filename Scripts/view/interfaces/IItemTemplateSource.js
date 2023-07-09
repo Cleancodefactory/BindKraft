@@ -29,12 +29,14 @@ IItemTemplateSource.prototype.set_itemtemplate = function() { return this.set_it
 IItemTemplateSource.prototype.get_singletemplateconsumerkey = function() { throw "not impl";}
 IItemTemplateSource.prototype.set_singletemplateconsumerkey = function(v) { throw "not impl";}
 
-IItemTemplateSource.collectItemTemplatesFromDom = function(dom) {
+IItemTemplateSource.collectItemTemplatesFromDom = function(dom,arrTemplates) {
 	dom = DOMUtil.toDOMElement(dom);
 	if (dom instanceof HTMLElement) {
 		var b = false;
 		var result = {};
 		var containers = [];
+		var arrRequiredTemplates = [];
+		if (Array.isArray(arrTemplates) ) { arrRequiredTemplates = arrTemplates;}
 		for (var i = 0; i < dom.children.length; i++) {
 			var el = dom.children[i];
 			if (el instanceof HTMLElement) {
@@ -46,7 +48,9 @@ IItemTemplateSource.collectItemTemplatesFromDom = function(dom) {
 		if (containers.length > 0) {
 			for (var i = 0; i < containers.length; i++) {
 				b = true;
-				result[containers[i].tagName.toLowerCase()] = containers[i].innerHTML;
+				if (arrRequiredTemplates.length == 0 || arrRequiredTemplates.indexOf(containers[i].tagName.toLowerCase()) >= 0 ) {
+					result[containers[i].tagName.toLowerCase()] = containers[i].innerHTML;
+				}
 			}
 			if (b) return result;
 		} else {
@@ -55,9 +59,11 @@ IItemTemplateSource.collectItemTemplatesFromDom = function(dom) {
 				var el = dom.children[i];
 				if (el instanceof HTMLElement) {
 					key = el.getAttribute("data-key");
-					if (key != null && key.length > 0) {
-						b = true;
-						result[key] = el.outerHTML;
+					if (arrRequiredTemplates.length == 0 || arrRequiredTemplates.indexOf(key) >= 0 ) {
+						if (key != null && key.length > 0) {
+							b = true;
+							result[key] = el.outerHTML;
+						}
 					}
 				}
 			}

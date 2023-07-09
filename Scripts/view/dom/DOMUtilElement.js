@@ -154,6 +154,26 @@ DOMUtilElement.prototype.getStyle = function(style, bComputed) {
 	}
 	return null;
 }
+DOMUtilElement.prototype.get_hidden = function() {
+	if (this.$element instanceof HTMLElement) {
+		if (DOMUtil.getStyle(this.$element,"display") == "none") {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	return null;
+}
+DOMUtilElement.prototype.set_hidden = function(v) {
+	if (this.$element instanceof HTMLElement) {
+		if (v) {
+			DOMUtil.hideElement(this.$element);
+		} else {
+			DOMUtil.unHideElement(this.$element);
+		}
+		
+	}
+}
 DOMUtilElement.prototype.addClass = function(cls) {
 	if (this.$element instanceof HTMLElement) {
 		return DOMUtil.addClass(this.$element, cls);

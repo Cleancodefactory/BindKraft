@@ -11,9 +11,11 @@ HintBubbleEx.Inherit(Base, "HintBubbleEx")
     templateName: "bindkraft/hint-bubble-ex"
 })
 
+HintBubbleEx.ImplementProperty("headerslot", new Initialize("holds ref to header slot."))
+        .ImplementProperty("bodyslot", new Initialize("holds ref to body slot."))
 HintBubbleEx.prototype.statechangedevent = new InitializeEvent("Fired when the expander opens or closes. The data is true/false meaning open/close");
-HintBubbleEx.prototype.openedevent = new InitializeEvent("Fired when the expander opens or closes. The data is true/false meaning open/close");
-HintBubbleEx.prototype.closedevent = new InitializeEvent("Fired when the expander opens or closes. The data is true/false meaning open/close");
+HintBubbleEx.prototype.openedevent = new InitializeEvent("Fired when the hint body show/pops up.");
+HintBubbleEx.prototype.closedevent = new InitializeEvent("Fired when the hint bidy hides/closes.");
 
 HintBubbleEx.prototype.init = function () {
 
