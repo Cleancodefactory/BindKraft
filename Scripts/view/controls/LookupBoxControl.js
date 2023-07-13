@@ -35,7 +35,7 @@
      * 
      * @returns {string|null} - text to display as selection to the user
      * 
-     * Never called with null for the @selection
+     * Never called with null for the @selection. It is actually called with the object returned before that by interface.makeSelection()
      */
     ILookupBoxCallback.prototype.translateSelection = function(selection, forDisplay) { throw "not implemented"; }
     /**
@@ -184,6 +184,11 @@
      */
     LookupBoxControl.prototype.refreshChoices = function() {
         this.$choicesRefresh.windup();
+    }
+    LookupBoxControl.prototype.refreshChoicesIfOpen = function() {
+        if (this.get_bodyVisible()) {
+            this.refreshChoices();
+        }
     }
     LookupBoxControl.prototype.$choicesRefresh = new InitializeMethodTrigger("Initiates new search", function () { 
         var flt = this.get_filter();
