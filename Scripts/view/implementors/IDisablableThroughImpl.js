@@ -1,6 +1,6 @@
 (function(){
     function IDisablableThroughImpl() {}
-    IDisablableThroughImpl.interfaceImpl(IDisablable,"IDisablableThroughImpl");
+    IDisablableThroughImpl.InterfaceImpl(IDisablable,"IDisablableThroughImpl");
     IDisablableThroughImpl.RequiredTypes("Base");
     IDisablableThroughImpl.ForbiddenTypes("BaseWindow");
     IDisablableThroughImpl.classInitialize = function(cls,childprops){
