@@ -5,6 +5,8 @@
     LookupDropDownControl.Inherit(Control,"LookupDropDownControl")
     .Implement(ITemplateSourceImpl, new Defaults("templateName"),"autofill")
     .Implement(IDisablableThroughImpl,"lookup")
+    .Implement(IItemTemplateSourceImpl, true)
+    .Implement(IItemTemplateConsumerImpl)
     .ImplementProperty("lookup", new Initialize("must be bound using pluginto to LookupBoxControl",null))
     .ImplementProperty("description", new InitializeStringParameter("Specifies the name of the displayable property","description"))
     // .ImplementProperty("identification", new InitializeStringParameter("The name of the field to use as id on the items.",null),true,function(ov,nv){
