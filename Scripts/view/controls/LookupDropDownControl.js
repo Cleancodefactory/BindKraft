@@ -1,4 +1,9 @@
 (function(){
+    var Control = Class("Control"),
+        IDisablableThroughImpl = InterfaceImplementer("IDisablableThrough"),
+        ITemplateSourceImpl = InterfaceImplementer("ITemplateSourceImpl"),
+        IItemTemplateSourceImpl = InterfaceImplementer("IItemTemplateSourceImpl");
+
     function LookupDropDownControl() {
         Control.apply(this,arguments);
     }
