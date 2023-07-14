@@ -132,6 +132,7 @@
     LookupBoxControl.prototype.set_identification = function(v) {
         if (this.get_droplist() != null) {
             this.get_droplist().identification = v;
+            this.refreshChoicesIfOpen();
         } else if (!this.isFullyInitialized()) {
             this.ExecBeforeFinalInit([v],function(val) {
                 if (this.get_droplist() != null) {
@@ -186,7 +187,7 @@
         this.$choicesRefresh.windup();
     }
     LookupBoxControl.prototype.refreshChoicesIfOpen = function() {
-        if (this.get_bodyVisible()) {
+        if (this.get_bodyVisible() && this.isFullyInitialized()) {
             this.refreshChoices();
         }
     }

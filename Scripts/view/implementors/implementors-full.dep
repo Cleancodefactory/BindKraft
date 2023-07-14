@@ -20,4 +20,5 @@
 //#using "./IUIControlReadinessImpl.js"
 //#using "./IKeyboardProcessorImpl.js"
 //#using "./IItemTemplateSourceImpl.js"
+//#using "./IDisablableThroughImpl.js"
 

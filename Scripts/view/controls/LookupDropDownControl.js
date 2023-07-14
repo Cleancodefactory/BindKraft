@@ -4,12 +4,20 @@
     }
     LookupDropDownControl.Inherit(Control,"LookupDropDownControl")
     .Implement(ITemplateSourceImpl, new Defaults("templateName"),"autofill")
+    .Implement(IDisablableThroughImpl,"lookup")
     .ImplementProperty("lookup", new Initialize("must be bound using pluginto to LookupBoxControl",null))
     .ImplementProperty("description", new InitializeStringParameter("Specifies the name of the displayable property","description"))
-    .ImplementProperty("identification", new InitializeStringParameter("The name of the field to use as id on the items.",null))
+    // .ImplementProperty("identification", new InitializeStringParameter("The name of the field to use as id on the items.",null),true,function(ov,nv){
+    //     if (this.get_lookup() != null) {
+    //         this.set_lookup().refreshChoicesIfOpen();
+    //     }
+    // })
     .Defaults({
-        templateName: "bindkraft/control_lookupdropdown"
+        templateName: "bindkraft/control-lookupdropdown"
     });
+    //#region events
+    LookupDropDownControl.prototype.activatedevent = new InitializeEvent("Fired when new selection is made by the user")
+    //#endregion events
     LookupDropDownControl.ImplementInterfaceBubble("lookupcallback", ILookupBoxCallback,{
         getChoices: function(flt, offset, limit) {
             var d = this.get_description();
