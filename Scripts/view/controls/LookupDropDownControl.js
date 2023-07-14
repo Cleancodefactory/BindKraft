@@ -1,6 +1,6 @@
 (function(){
     var Control = Class("Control"),
-        IDisablableThroughImpl = InterfaceImplementer("IDisablableThrough"),
+        IDisablableThroughImpl = InterfaceImplementer("IDisablableThroughImpl"),
         ITemplateSourceImpl = InterfaceImplementer("ITemplateSourceImpl"),
         IItemTemplateSourceImpl = InterfaceImplementer("IItemTemplateSourceImpl");
 
