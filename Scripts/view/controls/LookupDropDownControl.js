@@ -24,7 +24,7 @@
         templateName: "bindkraft/control-lookupdropdown"
     });
     //#region events
-    LookupDropDownControl.prototype.activatedevent = new InitializeEvent("Fired when new selection is made by the user")
+    LookupDropDownControl.prototype.activatedevent = new InitializeEvent("Fired when new selection is made by the user");
     //#endregion events
     LookupDropDownControl.ImplementInterfaceBubble("lookupcallback", ILookupBoxCallback,{
         getChoices: function(flt, offset, limit) {
@@ -89,7 +89,7 @@
                 if (me.$getItemIdentification(item) == me.$value) return item;
                 return null;
             });
-            this.get_lookup().set_selectedobject(item);
+            this.get_lookup().set_selectedobject(selitm);
         }
     }
     LookupDropDownControl.prototype.$updateValueFromSelection = function() {
@@ -99,6 +99,10 @@
         } else {
             this.$value = null;
         }
+    }
+    LookupDropDownControl.prototype.onLookupActivated = function() {
+        this.$updateValueFromSelection();
+        this.activatedevent.invoke(this,this.get_value())
     }
     LookupDropDownControl.prototype.$value = null;
     /**
