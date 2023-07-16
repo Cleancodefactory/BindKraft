@@ -1,6 +1,7 @@
 <div data-class="LookupBoxControl @itemTemplateSource={bind source=__control} singletemplateconsumerkey='list-item'"
     data-on-pluginto="{bind source=__control path=$lookup}"
     data-on-$activatedevent="{bind source=__control path=onLookupActivated}"
+    data-on-$clearselectionevent="{bind source=__control path=onLookupActivated}"
     data-bind-$interface="{read source=__control path=$lookupcallback}"
 >
 
