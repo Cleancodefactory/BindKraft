@@ -126,7 +126,7 @@
     }
     LookupDropDownControl.prototype.set_selecteditem = function(item) {
         this.get_lookup().set_selectedobject(item);
-        this.updateValueFromSelection();
+        this.$updateValueFromSelection();
     }
     LookupDropDownControl.prototype.get_selecteditem = function() {
         return this.get_lookup().get_selectedobject();
