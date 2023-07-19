@@ -6,6 +6,7 @@
         data-on-click="{bind source=__control path=onFocusFilter}"
         data-on-blur="{bind source=__control path=onBlurFilter}"
         data-on-keydown="{bind source=__control path=onKeyInput}"
+        data-bind-elementdisabled="{read source=__control path=$disabled}"
         data-on-plugelement="{bind source=__control path=$filterbox}"/>
     <input type="text"
         style="display:none;"
