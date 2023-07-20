@@ -1,4 +1,4 @@
-<div data-class="LookupBoxControl @itemTemplateSource={bind source=__control} singletemplateconsumerkey='list-item'"
+<div data-class="LookupBoxControl @itemTemplateSource={bind source=__control} singletemplateconsumerkey='list-item' @selectinputonfocus={read source=__control path=$selectinputonfocus}"
     data-on-pluginto="{bind source=__control path=$lookup}"
     data-on-$activatedevent="{bind source=__control path=onLookupActivated}"
     data-on-$clearselectionevent="{bind source=__control path=onLookupActivated}"

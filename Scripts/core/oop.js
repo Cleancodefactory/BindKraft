@@ -860,7 +860,30 @@ Function.prototype.ImplementProperty = function (pname, initialize, pstore_or_fo
  .Param("pstore","Optional location of the storage for the property, default is this.$<pname>")
  .Param("changeCallback","Optional callback name invoked on change ot the property. The callback must be a method of the class/Interface and has the following prototype function(propertyname,old_Value,new_Value).")
  .Returns("this - can be chained");
+Function.prototype.ImplementPassthroughProperty = function (pname, objprop, targetprop, changeCallback) {
+	if (targetprop == null) targetprop = pname;
+	this["get_" + pname] = function () {
+		var obj = BaseObject.getProperty(this,objprop);
+		if (BaseObject.is(obj,"BaseObject")) {
+			return obj["get_" + targetprop]();
+		}
+		return null;
+	}
+	this["set_" + pname] = function (v) {
+		var obj = BaseObject.getProperty(this,objprop);
+		if (BaseObject.is(obj,"BaseObject")) {
+			var oldval = BaseObject.getProperty(obj,targetprop);
+			obj["set_" + targetprop](v);
+			if (typeof changeCallback == "function") {
+				changeCallback.call(this, oldval, v);
+			} else if (typeof changeCallback == "string") {
+				this[changeCallback](pname, oldval, v);
+			}
+		}
+	}
+	return this;
 
+}
 Function.prototype.ImplementActiveProperty = function (pname, initialize, pstore_or_force,force_in,changeCallback) {
 	var pstore = null, force = false, oldval = null;;
 	initialize = initialize || new Initialize("no description", null);

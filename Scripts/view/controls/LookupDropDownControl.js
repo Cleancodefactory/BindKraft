@@ -15,6 +15,7 @@
     .Implement(IItemTemplateConsumerImpl)
     .ImplementProperty("lookup", new Initialize("must be bound using pluginto to LookupBoxControl",null))
     .ImplementProperty("description", new InitializeStringParameter("Specifies the name of the displayable property","description"))
+    .ImplementProperty("selectinputonfocus", new InitializeBooleanParameter("Should be bound to same named parameter of the lookp box in the template",true))
     // .ImplementProperty("identification", new InitializeStringParameter("The name of the field to use as id on the items.",null),true,function(ov,nv){
     //     if (this.get_lookup() != null) {
     //         this.set_lookup().refreshChoicesIfOpen();
