@@ -1,3 +1,4 @@
+(function() {
 function IMessageWriteStreamSender() {}
 IMessageWriteStreamSender.Interface("IMessageWriteStreamSender");
 IMessageWriteStreamSender.prototype.sendMessage = function(msg) {
@@ -7,3 +8,4 @@ IMessageWriteStreamSender.prototype.sendResponse = function(response, msg) {
 	throw Class.notImplemented(this, "sendResponse");
 }.Description("Direct responses (if any) of the target to this method and implement behavior effects if desired.")
 	.Param("msg","Optional - the message for which");
+})();

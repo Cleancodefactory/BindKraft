@@ -1,3 +1,4 @@
+(function() {
 /*
 	Streams usually have one side and the other is a question of internal implementation. Here we suggest something else -
 	an interface for actual implementation:
@@ -21,3 +22,4 @@ IMessageReadStreamReceiver.prototype.receiveMessage = function(msg) {
 IMessageReadStreamReceiver.prototype.receiveRespond = function(msg) {
 	// By default does nothing
 }.Description("Should be implemented if there is a need for response after receiving a message. Depending on limitations and nature this can tell the other side to wait before sneding more messages.");
+})();
