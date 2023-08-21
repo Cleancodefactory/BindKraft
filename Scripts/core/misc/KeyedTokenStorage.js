@@ -37,7 +37,7 @@ KeyedTokenStorage.prototype.registerToken = function( /*KeyedTokenItem|string|Re
 KeyedTokenStorage.prototype.unregisterToken = function(key_item) {
     var kti = null;
     if (typeof key_item == "string") {
-        kti = this.getItem(key);
+        kti = this.getItem(key_item);
     }
     if (BaseObject.is(key_item,"KeyedTokenItem")) {
         kti = key_item;
