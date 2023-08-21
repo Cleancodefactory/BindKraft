@@ -25,7 +25,7 @@ System.CommandLibs.TokenStorage = (function() {
         var k = o.key;
 		var t = o.token;
 		var sn = o.servicename;
-        
+        SystemTokenStorage.Default().storage.unregisterToken(k);
         if (SystemTokenStorage.Default().storage.registerToken(k,t, (sn?sn:null))) {
             return true;
         } else {
