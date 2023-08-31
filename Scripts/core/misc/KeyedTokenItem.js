@@ -36,8 +36,39 @@ KeyedTokenItem.prototype.get_keystring = function() {
 KeyedTokenItem.ImplementProperty("token", new Initialize("The token for the strings matching key", null));
 KeyedTokenItem.ImplementProperty("serviceName", new Initialize("Optional service name", null));
 
-
 KeyedTokenItem.prototype.checkKey = function(key) { // : boolean
+    var bkKey/*BKUrl*/ = null;
+    if (BaseObject.is(key, "BKUrl")) {
+        bkKey = key;
+    } else if (typeof key == "string") {
+        bkKey = new BKUrl(key);
+        // TODO validation
+    }
+    if (bkKey == null) return false;
+    if (this.$bkKey == null) return false;
+
+    var $part, part;
+
+    if (!this.$bkKey.get_scheme().get_isempty()) {
+        if (!this.$bkKey.get_scheme().equals(bkKey.get_scheme())) return false;
+    }
+
+    if (!this.$bkKey.get_authority().get_isempty()) {
+        if (!this.$bkKey.get_authority().equals(bkKey.get_authority())) return false;
+    }
+    if (!this.$bkKey.get_path().get_isempty()) {
+        if (!this.$bkKey.get_path().equals(bkKey.get_path())) return false;
+    }
+    if (!this.$bkKey.get_query().get_isempty()) {
+        if (!this.$bkKey.get_query().equals(bkKey.get_query())) return false;
+    }
+    
+    // } else if (this.$key instanceof RegExp) {
+    //     return this.$key.test(key);
+    // }
+    return true;
+}
+KeyedTokenItem.prototype.checkKey_old = function(key) { // : boolean
     var bkKey = null;
     if (BaseObject.is(key, "BKUrl")) {
         bkKey = key;
@@ -102,19 +133,8 @@ KeyedTokenItem.prototype.checkServiceName = function(sn) {
 }
 KeyedTokenItem.prototype.equals = function(obj) {
     if (!BaseObject.is(obj, this.classDefinition())) return false;
-    if (typeof this.$key == "string") {
-        if (typeof obj.$key == "string") {
-            if (obj.$key == this.$key) return true;
-        } else if (BaseObject.is(obj.$key,"BKUrl")) {
-            if (this.$key == obj.$key.toString()) return true;
-        }
-    } else if (BaseObject.is(this.$key, "BKUrl")) {
-        if (typeof obj.$key == "string") {
-            if (obj.$key == this.$key.toString()) return true;
-        } else if (BaseObject.is(obj.$key,"BKUrl")) {
-            // TODO Comparison should be implemented in BKUrl classes
-            if (this.$key.toString() == obj.$key.toString()) return true;
-        }
-    }
-    return false;
+    if (!BaseObject.is(this.$bkKey,"BKUrl")) return false;
+    if (!BaseObject.is(obj.$bkKey,"BKUrl")) return false;
+
+    return this.$bkKey.equals(obj.$bkKey);
 }
