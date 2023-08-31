@@ -793,7 +793,15 @@ Function.prototype.ExtendMethod = function(method, withMethod, bRunFirst, bRetur
  .Returns("this - can be chained");
 
 //// INTERFACE PROXY IMPLEMENTATION ///////////////////////////////////////
-
+/**
+ * Implements interface bubble - an interface implementation defined in a plain object, each method is then invoked with the this of
+ * the class's instance and the whole implementation is obrained from a getter property with the specified name.
+ * @param {string} pname - Property name - a get_[name] member will be generated. 
+ * @param {*} iface 
+ * @param {*} impl 
+ * @param {*} beStrict 
+ * @returns 
+ */
 Function.prototype.ImplementInterfaceBubble = function(pname, iface, impl, beStrict) {
 	var pstoreprop = "$_iface_" + pname;
 	this.prototype["get_" + pname] = function () { return this[pstoreprop]; };

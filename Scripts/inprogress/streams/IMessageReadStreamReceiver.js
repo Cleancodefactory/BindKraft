@@ -1,5 +1,7 @@
 (function() {
 /*
+	
+	
 	Streams usually have one side and the other is a question of internal implementation. Here we suggest something else -
 	an interface for actual implementation:
 	
@@ -19,6 +21,9 @@ IMessageReadStreamReceiver.Interface("IMessageReadStreamReceiver");
 IMessageReadStreamReceiver.prototype.receiveMessage = function(msg) {
 	throw Class.notImplemented(this, "receiveMessage");
 }.Description("Must put the message in the queue, call the respond, call the OnIncoming and fire incomingevent if OnIncoming does not return === false.");
+/**
+ * Can be empty or implement sending response (acknowledgment for instance) if it implements specific connection
+ */
 IMessageReadStreamReceiver.prototype.receiveRespond = function(msg) {
 	// By default does nothing
 }.Description("Should be implemented if there is a need for response after receiving a message. Depending on limitations and nature this can tell the other side to wait before sneding more messages.");
