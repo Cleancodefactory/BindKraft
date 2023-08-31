@@ -127,6 +127,13 @@ BKUrlObjectBase.prototype.clear = function() { throw "not implemented"; }
 BKUrlObjectBase.prototype.toString = function() {
 	return this.composeAsString() || "";
 }
+BKUrlObjectBase.prototype.equals = function(other) { 
+	if (BaseObject.is(other,this.classType())) {
+		return (this.toString().toLowerCase() == other.toString().toLowerCase());
+	} else {
+		return false;
+	}
+}
 BKUrlObjectBase.prototype.nullIfEmpty = function(v) {
 	if (v == null) return null;
 	if (typeof v == "string") {
