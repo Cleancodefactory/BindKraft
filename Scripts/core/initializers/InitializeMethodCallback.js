@@ -16,7 +16,9 @@
  *  var result = method(val_for_a,val_for_b);
  * 
  * The method will have proper this pointing to the current instance of the class. Without this initializer the above example code
- * will cause the method to be executed without a this and if it is needed it will fail.
+ * will cause the method to be executed without a this and if it is needed it will fail. Analogous result can be achieved with function.bind, but it will
+ * generate a new function each time it is used and the resulting reference will be different from the previous one which is a problem when removing event
+ * listeners for example. So keeping the reference will be necessary and it will involve similar code to initializeMethodCallback.
  * 
  * Primary purpose of method callbacks is to pass them to API-s that take functions as event handlers or callbacks. The callback created 
  * like this remains the same for the entire life of the instance and can be easily used to subscribe and unsubscribe for events and any other

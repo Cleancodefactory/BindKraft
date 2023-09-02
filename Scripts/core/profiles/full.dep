@@ -52,6 +52,7 @@
 
 //#using "../formatters/formatters-full.dep"
 //#using "../treestates/treestates-full.dep"
+//#using "../buffstreams/buffstreams.dep"
 //#using "../interfaces/interfaces-full-post.dep"
 
 
