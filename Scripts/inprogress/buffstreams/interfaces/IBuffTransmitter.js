@@ -8,17 +8,17 @@
      * Gets reference to the buffer unloader of the write stream
      * @param {IBuffLoader} loader 
      */
-    IBuffReceiver.prototype.set_unloader = function(loader) {
+    IBuffTransmitter.prototype.set_unloader = function(loader) {
         throw "Not implemented";
     }
-    IBuffReceiver.prototype.get_unloader = function() {
+    IBuffTransmitter.prototype.get_unloader = function() {
         throw "Not implemented";
     }
     /**
      * Tells the transmitter that there is data to be transferred, it should call IBuffUnload to obtain object(s) for transmission
      * @param {Integer | null} nobjects - optionally the approximate number of objects waiting for transmission, null if not provided
      * 
-     * Transmitters can ignore nobjects or use it to optimize their work if possible.
+     * Transmitters can ignore nobjects or use it to optimize their work if possible. Value of -1 means flush all objects available.
      */
     IBuffTransmitter.prototype.RequestTransmit = function(nobjects){}; 
     /**

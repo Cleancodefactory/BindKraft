@@ -215,7 +215,7 @@ Operation.From = function(x) {
 	}
 }
 Operation.Failed = function(desc) {
-	var op = new Operation();
+	var op = new Operation("Explicit failed operation");
 	op.CompleteOperation(false, desc);
 	return op;
 }
