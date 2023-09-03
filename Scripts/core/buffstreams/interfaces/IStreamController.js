@@ -22,4 +22,5 @@
      */
     IStreamController.prototype.get_closed = function() { throw "not implemented"; }
     IStreamController.prototype.closeevent = new InitializeEvent("Fires wheen stream closes - on Close call");
+    
 })();

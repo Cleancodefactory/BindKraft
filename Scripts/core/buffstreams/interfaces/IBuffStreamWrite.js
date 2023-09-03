@@ -15,4 +15,6 @@
      * Rises the event that tells the transmitter that there is data to send and fulshevent - see IBuffUnload
      */
     IBuffStreamWrite.prototype.Flush = function() { throw new Error("Not implemented"); }
+    // TODO: Not fired for now - hoe deep this must go?
+    IBuffStreamWrite.prototype.canwriteevent = new InitializeEvent("Fired when canwrite becomes true");
 })();

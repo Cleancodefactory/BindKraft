@@ -33,6 +33,7 @@
 //#using "../localization/localization.dep"
 //#using "../shellcustomizers/shellcustomizers.dep"
 //#using "../AppAmbientDefaults.js"
+//#using "../postmessages/postmessages.dep"
 
 //#using "../globalcommands/globalcommands.dep"
 //#using "../globalcommands.js"

@@ -37,6 +37,7 @@
     BufferStream.prototype.$allowwrite = true;
     BufferStream.prototype.$automode = false;
     BufferStream.prototype.$readbufferwaiting = new InitializeArray("ReadAsync requests waiting for the read part");
+    
     BufferStream.prototype.$setupforread = function() {
         if (this.$closed) return false;
         if (this.$automode) {
@@ -108,7 +109,7 @@
     //#region IBuffStreamRead
     BufferStream.prototype.Read = function() { 
         if (this.$setupforread() && this.$readbuffer.length > 0) {
-            return this.$readbuffer.unshift();
+            return this.$readbuffer.shift();
         }
         return null;
     }
@@ -156,10 +157,12 @@
         if (!this.$setupforread()) {
             return false;
         } else {
+            var _canread = this.get_canread();
             this.$readbuffer.push(o);
+            if (!_canread) this.canreadevent.invoke(this.null);
             if (this.$readbufferwaiting.length > 0) {
                 var op = this.$readbufferwaiting.shift();
-                if (BaseObject.is(op, "Operations")) {
+                if (BaseObject.is(op, "Operation")) {
                     op.CompleteOperation(true,this.Read());
                 }
             }

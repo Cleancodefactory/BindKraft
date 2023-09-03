@@ -10,5 +10,5 @@
      * Returns an Operation that completes when there is something read or completes unsuccessfully if the stream is closed.
      */
     IBuffStreamRead.prototype.ReadAsync = function() { throw "not implemented"; }
-    
+    IBuffStreamRead.prototype.canreadevent = new InitializeEvent("Fired when canread becomes true");
 })();
