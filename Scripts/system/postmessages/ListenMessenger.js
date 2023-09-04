@@ -3,11 +3,21 @@
         MessageListenerRT = Class("MessageListenerRT");
 
     /**
+     * Postmessages listener, both parameters must be not null for two directional work
      * Preferably use this as single global listener
+     * @param {Window|Worker|ServiceWorker|MessagePort|BroadcastChannel} webcontext - webcontext to listen on
+     * @param {Window|Worker|ServiceWorker|MessagePort|BroadcastChannel} postcontext - webcontext to post messages to
      */
-    function ListenMessenger(webcontext) {
+    function ListenMessenger(webcontext,postcontext) {
         BaseObject.apply(this, arguments);
+        if (webcontext == null || typeof(webcontext.postMessage) != "function" ) {
+            throw "webcontext to listen on is null or des not seem to support post messages";
+        }
+        if (postcontext == null || typeof postcontext.postMessage != "function") {
+            throw "Target postwebcontext is null or does not support posting messages";
+        }
         this.$webcontext = webcontext;
+        this.$webcontexttarget = postcontext;
         this.$webcontext.addEventListener("message", this.onMessage);
     }
     ListenMessenger.Inherit(BaseObject, "ListenMessenger");
@@ -36,8 +46,8 @@
      * @param {*} message - message to send
      */
     ListenMessenger.prototype.PostMessage = function(lrt, message) {
-        if (this.$webcontext != null) {
-            this.$webcontext.postMessage(message, lrt.get_origin());
+        if (this.$webcontexttarget != null) {
+            this.$webcontexttarget.postMessage(message, lrt.get_origin());
         }
     }
     ListenMessenger.prototype.UnlistenMessages = function(buffstream) {
