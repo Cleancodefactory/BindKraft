@@ -22,7 +22,9 @@
     PortRT.prototype.$buffstream = null;
     PortRT.ImplementReadProperty("origin");
     PortRT.ImplementReadProperty("buffstream");
-    PortRT.prototype.init = function(msglistener,bread,bwrite) {
+    PortRT.ImplementReadProperty("port");
+    PortRT.prototype.portMessenger = null;
+    PortRT.prototype.init = function(portmessenfer,bread,bwrite) {
         this.msglistener = msglistener;
         var bs = new BufferStream();
         if (bread == null || bread) bs.set_receiver(this);
@@ -40,10 +42,32 @@
     //#endregion
     //#region  IBuffTransmitter
     PortRT.ImplementProperty("unloader");
+    PortRT.prototype.$port = null;
+
+    PortRT.prototype.$scheduleTransmit = function() {
+        this.callAsync(this.doTransmitAndSchedule);
+    }
+    PortRT.prototype.$doTransmit = function() {
+        if (this.$buffstream.get_canpull()) {
+            var o = this.$buffstream.PullObject();
+            if (this.$port != null) {
+                this.$port.postMessage(o);
+                return true;
+            }
+       }
+       return false;
+    }
+    PortRT.prototype.$doTransmitAndSchedule = function() {
+        if (this.$doTransmit()) {
+            this.$this.$scheduleTransmit();
+        }
+    }
     PortRT.prototype.RequestTransmit = function(nobjects) {
        if (this.$buffstream.get_canpull()) {
             var o = this.$buffstream.PullObject();
-            this.msglistener.PostMessage(this,o);
+            if (this.$port != null) {
+                this.$port.postMessage(o);
+            }
        }
     }; 
     //#endregion
@@ -55,14 +79,18 @@
     }
     //#endregion
     /**
-     * In this case the message carries a  port
+     * In this case the message carries a  port and further comunitcation os through the port
      * @param {} messageEvent 
      * @returns 
      */
     PortRT.prototype.onMessage = function(messageEvent) {
-        if (this.$buffstream.get_closed()) return; //
+        if (this.$buffstream.get_closed()) return false; //
         if (BaseObject.isCallback(this.$checker) && BaseObject.callCallback(this.$checker, messageEvent)) {
-            if (messageEvent.ports)
+            //this port is for us to use
+            if (messageEvent.ports != null & messageEvent.ports.length > 0) {
+                this.$port = messageEvent.ports[0];
+            }
+            }
             if (this.$buffstream.get_canpush()) {
                 this.$buffstream.PushObject(messageEvent.data);
             } else {
