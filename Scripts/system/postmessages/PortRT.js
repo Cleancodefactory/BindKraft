@@ -24,11 +24,13 @@
     PortRT.ImplementReadProperty("buffstream");
     PortRT.ImplementReadProperty("port");
     PortRT.prototype.portMessenger = null;
-    PortRT.prototype.init = function(portmessenfer,bread,bwrite) {
-        this.msglistener = msglistener;
+    PortRT.prototype.init = function(messenger,bread,bwrite) {
+        this.portMessenger = messenger;
+        bread = bread || true;
+        bwrite = bwrite || true;
         var bs = new BufferStream();
-        if (bread == null || bread) bs.set_receiver(this);
-        if (bwrite == null || bwrite) bs.set_transmitter(this);
+        if (bread) bs.set_receiver(this);
+        if (bwrite) bs.set_transmitter(this);
         this.set_loader(bs);
         this.set_unloader(bs);
         this.$buffstream = bs;
