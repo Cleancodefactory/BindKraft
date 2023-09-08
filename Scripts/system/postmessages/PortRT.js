@@ -109,7 +109,6 @@
             if (messageEvent.ports != null & messageEvent.ports.length > 0) {
                 this.$port = messageEvent.ports[0];
             }
-            }
             if (this.$buffstream.get_canpush()) {
                 this.$buffstream.PushObject(messageEvent.data);
             } else {
