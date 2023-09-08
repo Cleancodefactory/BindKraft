@@ -15,45 +15,9 @@
         this.$checker = checker;
         
     }
-    PortRT.Inherit(BaseRT,"PortRT")
+    PortRT.Inherit(BaseObject,"PortRT")
         .Implement(IBuffReceiver)
         .Implement(IBuffTransmitter);
-
-
-    BaseRT.prototype.init = function(messenger, bread, bweite) {
-        this.$messenger = messenger;
-        bread = bread || true;
-        bwrite = bwrite || true;
-        var bs = new BufferStream();
-        if (bread) bs.set_receiver(this);
-        if (bwrite) bs.set_transmitter(this);
-        this.set_loader(bs);
-        this.set_unloader(bs);
-        this.$buffstream = bs;
-        return bs;
-    }
-    BaseRT.prototype.onMessage = function (emessage) {
-        if (BaseObject.isCallback(this.$checker)) {
-            if (BaseObject.callCallback(emessage.data)) {
-                if (emessage.ports != null && emessage.ports.length > 0) {
-                    this.$port = emessage.ports[0];
-                    this.$port.onmessage = this.$onPortMessage;
-                    return true;
-                }
-            }
-        }
-    }
-    BaseRT.prototype.$onPortMessage = new InitializeMethodCallback("Receiver for the port", function(e) {
-        var data = e.data;
-        var loader = this.get_loader();
-        if (loader != null && looader.get_canpush()) {
-            loader.PushObject(data);
-        }
-    });
-    BaseRT.prototype.Transmit = function(o) {
-        // Implement as needed for the specific case - it may involve calling the messenger, doing it directly and so on 
-        throw "must be implemented in the class derived from BaseRT"
-    }
     //PortRT.prototype.msglistener = null;
     PortRT.prototype.$buffstream = null;
     PortRT.ImplementReadProperty("origin");
@@ -80,7 +44,26 @@
     //#endregion
     //#region  IBuffTransmitter
     PortRT.ImplementProperty("unloader");
-       
+    PortRT.prototype.$port = null;
+
+    PortRT.prototype.$scheduleTransmit = function() {
+        this.callAsync(this.doTransmitAndSchedule);
+    }
+    PortRT.prototype.$doTransmit = function() {
+        if (this.$buffstream.get_canpull()) {
+            var o = this.$buffstream.PullObject();
+            if (this.$port != null) {
+                this.$port.postMessage(o);
+                return true;
+            }
+       }
+       return false;
+    }
+    PortRT.prototype.$doTransmitAndSchedule = function() {
+        if (this.$doTransmit()) {
+            this.$this.$scheduleTransmit();
+        }
+    }
     PortRT.prototype.RequestTransmit = function(nobjects) {
        if (this.$buffstream.get_canpull()) {
             var o = this.$buffstream.PullObject();
