@@ -8,6 +8,11 @@
      * Converts empty values to null in the both direction
      * By default treats the value as string or uses its toString form to determine if it is empty.
      * Parameters number or bool can be passed to do this for numbers or booleans.
+     * Example binding:
+     * {read source=mysource path=prop1.prop2 format=TranslateThrough(MyAppClass)}
+     * will get from the translations bount to MyAppClass the translation addressed by the source value of the
+     * binding e.g. "mainview.caption"
+     * 
      */
     function TranslateThrough() {
         SystemFormatterBase.apply(this,arguments);
