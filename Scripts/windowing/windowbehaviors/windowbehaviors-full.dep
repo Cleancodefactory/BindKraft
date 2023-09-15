@@ -6,3 +6,4 @@
 //#using "./dockerslotsbehavior.js"
 //#using "./childrenlocatorbehavior.js"
 //#using "./dialogwindowbehavior.js"
+//#using "./coverwindowbehavior.js"
