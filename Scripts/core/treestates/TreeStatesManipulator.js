@@ -36,6 +36,11 @@
             BaseObject.is(this.$states, "TreeStates")) return true;
         return false;
     }
+    /**
+     * Array of TSE name
+     * @param {*} namedState 
+     * @returns 
+     */
     TreeStatesManipulator.prototype.isNamedState = function(namedState) {
         return TreeStates.isNamedState(namedState);
     }
@@ -112,7 +117,7 @@
      * @return {object} -
      * {
      *  base: {Array<object>} The part where the both states are equal
-     *  nav: {Array<object>} The part from s2 that is different
+     *  nav: {Array<object>} The part from targetState that is different
      *  clean: {Array<object>} The part to deconstruct, reversed,ready to use in a forward cycle
      * }
      */

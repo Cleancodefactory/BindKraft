@@ -68,7 +68,16 @@
 		var cond = function(name,args) {
 			return tsapi.Condition.apply(tsapi, arguments);
 		}
-		
+		/**
+		 * Definition of an TS Unit
+		 * The unit describes a single named value
+		 * @param {string} name 
+		 * @param {Array<string>} types - typenames array,available types are (num|string|bool|null)
+		 * @param {*} conditions 
+		 * @returns 
+		 * e.g.
+		 * f("id",["num","string"],cond("range",1,10),cond("regex",/^abc\w+&),...)
+		 */
 		var tseu = function(name,types,conditions) {
 			var arrTypes = tsapi.TSEUTypesValid(types);
 			if (tsapi.isError(arrTypes)) throw "One or more of the types in TSEU definition are not recognized. Types specified:" + types;
@@ -86,6 +95,18 @@
 			arr.$tskind = _tskinds.tseu;
 			return arr;
 		}
+		/**
+		 * 
+		 * @param {string} name 
+		 * @param {tseu+} tseuN - 1 or more tseu definitions
+		 * @param {object?} meta - mta data embedded in the definition
+		 * @returns 
+		 * 
+		 * internal representation:
+		 * []
+		 * 		.$tsname = "..."
+		 * 		.$tskind = "tse"
+		 */
 		var tse = function(name, tseuN, meta) {
 			var arr = [];
 			if (typeof name == "string" && name.length > 0) {
