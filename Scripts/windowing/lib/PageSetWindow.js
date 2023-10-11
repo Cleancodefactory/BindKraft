@@ -30,6 +30,7 @@ PageSetWindow.prototype.get_currentindex = function () {
 PageSetWindow.prototype.set_currentindex = function (v) {
     WindowingMessage.fireOn(this, PageSetEventEnum.selectPage, { index: v });
 };
+PageSetWindow.ImplementProperty("whenRemovedSelectPage", new InitializeStringParameter("Sets to which page to switch if current page is removed (next|prev)","next"),"whenRemovedSelectPage");
 PageSetWindow.prototype.whenRemovedSelectPage = "next"; // next/prev
 /**
  * Returns appropriate other page to switch to by default 
@@ -384,6 +385,7 @@ PageSetWindow.prototype.$filterVisibleChildren = function () {
 
 
 //////////////////////////////////////////
+// TODO Review!!!!
 PageSetWindow.prototype.on_EnableWindow = function (msg) {
     if (msg.data != null && msg.data.enable != null) {
         var enabledPage = msg.target;
@@ -407,7 +409,7 @@ PageSetWindow.prototype.on_EnableWindow = function (msg) {
                 pages = this.get_pages();
                 if (pages.length > disabledRawIndex) {
                     this.set_currentindex(disabledRawIndex); // The next page
-                } else { // The 
+                } else { // TODO Disabled page is probably last what to do here?
 
                 }
             }
