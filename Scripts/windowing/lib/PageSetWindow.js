@@ -407,7 +407,7 @@ PageSetWindow.prototype.$enablePages = function (enableDisable, pages) {
 PageSetWindow.prototype.enablePages = function () {
     return this.$enablePages.apply(this, [true].concat(Array.createCopyOf(arguments)));
 }
-PageSetWindow.prototype.enablePages = function () {
+PageSetWindow.prototype.disablePages = function () {
     return this.$enablePages.apply(this, [false].concat(Array.createCopyOf(arguments)));
 }
 //////////////////////////////////////////
