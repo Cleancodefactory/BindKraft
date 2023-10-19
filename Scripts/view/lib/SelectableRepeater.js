@@ -36,6 +36,7 @@ SelectableRepeater.prototype.orderchangedevent = new InitializeEvent("Fires when
 SelectableRepeater.prototype.identification = new InitializeStringParameter("How to compare/identify items. The default (internal) comparer supports only a porperty name and compares items by the value of that property.", null);
 SelectableRepeater.prototype.nowrap = new InitializeBooleanParameter("Do not cycle through the items, instead pass the key event down the DOM if the selection is at the end", false);
 SelectableRepeater.prototype.retainindex = new InitializeBooleanParameter("Attempts to retain the selected index after the items have been changed.", false);
+SelectableRepeater.ImplementProperty("scrollintoview", new InitializeBooleanParameter("Try to scroll into view current item", true));
 
 //SelectableRepeater.prototype.advancedfeatures = new InitializeBooleanParameter("Activates advanced potentially havier features.");
 // identification cues for the items. The internal impl uses this as name of the id property
@@ -453,6 +454,11 @@ SelectableRepeater.prototype.$applySelection = function () {
             var s = c.get(this.$selectedIndex - this.$offset);
             var t = $(s);
             t.addClass(this.selectedCssClass);
+            if (this.get_scrollintoview()) {
+                if (s != null) {
+                    s.scrollIntoView(false);
+                }
+            }
 			if (!this.nofocus) {
 				anc = t.filter("a");
 				if (anc.length > 0) {
