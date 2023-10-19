@@ -79,7 +79,7 @@ Binding.$regExpLiteral = /(text|number|object)\=\'(.*?)\'/i;
 Binding.$regExpLiteralObject = /(object)\=(\S+)/i;
 Binding.$regExpThrowQuery = /(throw)\=(\S+)/i;
 Binding.$regExpValidator = /(validator)\=(?:(?:\'(.*?)\')|(\S+))/i;
-Binding.$regExpContent = /\{(bind|read|probe)(?:\((\d+)\))?\s*(.*)\}/i;
+Binding.$regExpContent = /\{(bind|read|probe|write)(?:\((\d+)\))?\s*(.*)\}/i;
 Binding.$regExpFormatter = /(inverseformat|inversecustomformat|format|customformat)=((?:(?:[^\(\s]+)|(?:\((?:[^\)]|\)\))*\)))+)/i;
 Binding.$regExpSingleFormatter = /([^\(]+)(?:\(((?:[^\)]|\)\))*)\))?/i;
 Binding.$regExpFlags = /(flags)=(\S+)/i;
@@ -578,6 +578,7 @@ Binding.prototype.$allowTransfer = function (bToSource) {
     if (this.$type == "probe") return false;
     if (this.$type == "bind") return true;
     if (this.$type == "read" && !bToSource) return true;
+    if (this.$type == "write" && bToSource) return true;
     return false;
 }.Description("...")
  .Param("bToSource","...")
