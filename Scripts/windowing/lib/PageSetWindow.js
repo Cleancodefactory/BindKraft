@@ -13,10 +13,10 @@ PageSetWindow.Defaults({
     templateName: new StringConnector("<div class=\"f_windowframe\" style=\"position:absolute\" data-key=\"_window\" data-wintype=\"PageSet based\"></div>")
 });
 PageSetWindow.prototype.$selectedPage = null;
-PageSetWindow.prototype.get_selectedpage = function() {
+PageSetWindow.prototype.get_selectedpage = function () {
     return this.$selectedPage;
 }
-PageSetWindow.prototype.set_selectedpage = function(wnd) {
+PageSetWindow.prototype.set_selectedpage = function (wnd) {
     //TODO:
 }
 PageSetWindow.prototype.get_currentindex = function () {
@@ -30,16 +30,16 @@ PageSetWindow.prototype.get_currentindex = function () {
 PageSetWindow.prototype.set_currentindex = function (v) {
     WindowingMessage.fireOn(this, PageSetEventEnum.selectPage, { index: v });
 };
-PageSetWindow.ImplementProperty("whenRemovedSelectPage", new InitializeStringParameter("Sets to which page to switch if current page is removed (next|prev)","next"),"whenRemovedSelectPage");
+PageSetWindow.ImplementProperty("whenRemovedSelectPage", new InitializeStringParameter("Sets to which page to switch if current page is removed (next|prev)", "next"), "whenRemovedSelectPage");
 PageSetWindow.prototype.whenRemovedSelectPage = "next"; // next/prev
 /**
  * Returns appropriate other page to switch to by default 
  * nav or when selected is going to be removed
  */
-PageSetWindow.prototype.get_otherpage = function() {
+PageSetWindow.prototype.get_otherpage = function () {
     var pages = this.get_pages();
     var idx = pages.indexOf(this.$selectedPage);
-    if (pages.length <=1) return null; // Must be another
+    if (pages.length <= 1) return null; // Must be another
     if (idx >= 0) {
         if (this.whenRemovedSelectPage === "next") {
             if (idx < pages.length - 1) {
@@ -200,7 +200,7 @@ PageSetWindow.prototype.on_selectPage = function (msg) {
             }
             _new.setWindowStyles(WindowStyleFlags.visible | WindowStyleFlags.fillparent, "set");
             this.notifyChild(_new, PageSetEventEnum.pageActivated, { page: _new });
-            
+
             this.$selectedPage = _new;
             this.$cachedChildren.clear(); // TODO: seems unneeded
             this.notifyParent(PageSetEventEnum.notifyPageSelected, { page: _new, oldpage: _old, index: this.get_currentindex() });
@@ -219,7 +219,7 @@ PageSetWindow.prototype.on_ActivateChild = function (msg) {
 /**
  * Selects next or previous page depending on whenRemovedSelectPage.
  */
-PageSetWindow.prototype.selectAnother = function() {
+PageSetWindow.prototype.selectAnother = function () {
     var page = this.get_otherpage();
     if (page != null) {
         this.set_selectedpage(page);
@@ -319,7 +319,7 @@ PageSetWindow.prototype.removePage = function (page) {
  * @param {bool} bAll - If true removes all the children, otherwise only the active pages.
  */
 PageSetWindow.prototype.removeAllPages = function (bAll) {
-    var pages = bAll?this.children:this.get_pages();
+    var pages = bAll ? this.children : this.get_pages();
     if (pages != null) {
         pages = Array.createCopyOf(pages);
         for (var i = 0; i < pages.length; i++) {
@@ -382,8 +382,34 @@ PageSetWindow.prototype.$filterVisibleChildren = function () {
 };
 //#endregion
 
-
-
+/**
+ * called with the namesof the windows
+ */
+PageSetWindow.prototype.$enablePages = function (enableDisable, pages) {
+    var wName, wnd, args = arguments;
+    if (Array.isArray(pages)) {
+        args = pages;
+    }
+    for (var i = 1; i < args.length; i++) {
+        wName = args[i];
+        if (typeof wName == "string") {
+            wnd = this.findChildByName(wName);
+            if (wnd != null) {
+                wnd.set_enabledwindow(enableDisable);
+            }
+        } else if (BaseObject.is(wName, "BaseWindow")) {
+            wName.set_enabledwindow(enableDisable);
+        } else {
+            throw "Pages can be passed as window names or window references";
+        }
+    }
+}
+PageSetWindow.prototype.enablePages = function () {
+    return this.$enablePages.apply(this, [true].concat(Array.createCopyOf(arguments)));
+}
+PageSetWindow.prototype.disablePages = function () {
+    return this.$enablePages.apply(this, [false].concat(Array.createCopyOf(arguments)));
+}
 //////////////////////////////////////////
 // TODO Review!!!!
 PageSetWindow.prototype.on_EnableWindow = function (msg) {
@@ -435,10 +461,10 @@ PageSetWindow.prototype.on_EnableWindow = function (msg) {
                 this.set_currentindex(newIndex);
             }
         } else if (msg.data.enable) {
-            
+
             if (this.$cachedChildren != null) this.$cachedChildren.clear();
             var pages = this.get_pages();
-            
+
             var idx = pages.findElement(enabledPage);
             if (idx > 0 && idx < (pages.length - 1)) {
                 idx++;
