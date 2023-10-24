@@ -4,7 +4,8 @@ function PhonenumberValidatorRule(v) {
 }
 PhonenumberValidatorRule.Inherit(ValidateValue, "PhonenumberValidatorRule");
 PhonenumberValidatorRule.registerValidator("phonenumber");
-PhonenumberValidatorRule.expresion = /^((\d[-. ]?)?((\(\d{3}\))|\d{3}))?[-. ]?\d{3}[-. ]?\d{4}$/;
+// PhonenumberValidatorRule.expresion = /^((\d[-. ]?)?((\(\d{3}\))|\d{3}))?[-. ]?\d{3}[-. ]?\d{4}$/;
+PhonenumberValidatorRule.expresion = /^\+?(\d|\s){7,20}$/;
 PhonenumberValidatorRule.prototype.get_message = function (lastValue) {
 	var msg = this.get_text();
 	/* if (msg == null || msg.length == 0) {
