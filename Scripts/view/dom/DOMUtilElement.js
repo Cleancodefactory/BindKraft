@@ -186,6 +186,12 @@ DOMUtilElement.prototype.removeClass = function(cls) {
 	}
 	return null;
 }
+DOMUtilElement.prototype.removeClassRegEx = function(clsRegEx) {
+	if (this.$element instanceof HTMLElement) {
+		return DOMUtil.removeClassRegEx(this.$element, clsRegEx);
+	}
+	return null;
+}
 DOMUtilElement.prototype.toggleClass = function(cls) {
 	if (this.$element instanceof HTMLElement) {
 		return DOMUtil.toggleClass(this.$element, cls);

@@ -86,6 +86,30 @@ DOMUtil.removeToken = function (str, tkn, retkn, delim) {
     return this.trim(result);
 }
 /**
+ * 
+ * @param {*} str 
+ * @param {RegExp} tkn 
+ * @param {*} retkn 
+ * @param {*} delim 
+ * @returns 
+ */
+DOMUtil.removeTokenRegEx = function (str, tkn, retkn, delim) {
+    retkn = retkn || /\S+/g;
+    delim = delim || " ";
+    var str_tokens = (str || "").match(retkn) || [];
+    var tkn_token = tkn;
+	if (tkn_token instanceof RegExp) {
+		var result = "";
+		for (var i = 0; i < str_tokens.length; i++) {
+			
+			if (str_tokens[i] == tkn_token) continue;
+			
+			if (j >= tkn_tokens.length) result += delim + str_tokens[i];
+		}
+		return this.trim(result);
+	}
+}
+/**
 	tokenCount - counts the tokens that occur in the passed string
 	@see addToken
 	
@@ -159,6 +183,12 @@ DOMUtil.addClass = function(el,cls) {
 DOMUtil.removeClass = function(el,cls) {
 	if (el != null) {
 		el.className = DOMUtil.removeToken(el.className,cls);
+		return el.className;
+	}
+}
+DOMUtil.removeClassRegEx = function(el, clsRegEx) {
+	if (el != null) {
+		el.className = DOMUtil.removeClassRegEx(el.className.clsRegEx);
 		return el.className;
 	}
 }
