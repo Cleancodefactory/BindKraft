@@ -18,11 +18,15 @@ WindowManagement.Default = function () {
 };
 WindowManagement.prototype.$activewindow = null;
 WindowManagement.prototype.set_activewindow = function (w) {
+    var oldW = null;
     if (BaseObject.is(w, "BaseWindow") && this.$activewindow != w) {
-		if (this.$activewindow != null) WindowingMessage.fireOn(this.$activewindow, WindowEventEnum.DeactivateWindow, {});
+		if (this.$activewindow != null) {
+            WindowingMessage.fireOn(this.$activewindow, WindowEventEnum.DeactivateWindow, { activating: w});  
+            oldW = this.$activewindow;
+        } 
     
         this.$activewindow = w;
-        WindowingMessage.fireOn(w, WindowEventEnum.ActivateWindow, {});
+        WindowingMessage.fireOn(w, WindowEventEnum.ActivateWindow, {deactivated:oldW});
         this.activateevent.invoke(this, w);
     }
     
