@@ -13,4 +13,5 @@
 //#using "./BKInit_Translation.js"
 //#using "./BKinit_WorkspaceWindow.js"
 //#using "./BkInit_RunFromUrl.js"
+//#using "./BkInit_RouteApps.js"
 //#using "./ajax/ajax.dep"
