@@ -72,6 +72,7 @@ VirtualDropDownControl.ImplementProperty("multiselectdisplay", new InitializeStr
 VirtualDropDownControl.ImplementProperty("noselection", new InitializeStringParameter("What to show when nothing is selected", "(please select)"));
 VirtualDropDownControl.ImplementProperty("itemsselectedtext", new InitializeStringParameter("N items selected", " selected"));
 VirtualDropDownControl.ImplementProperty("showclear", new InitializeBooleanParameter("Show clear button (if available in the template)", false));
+VirtualDropDownControl.ImplementActiveProperty("cleartext", new InitializeStringParameter("Text (usually tooltip) of the clear selection button", "clear selection"));
 VirtualDropDownControl.ImplementProperty("scrollintoview", new InitializeBooleanParameter("Try to scroll into view when opened. null - do nothing, true - position at the top, false - position at the bottom.", null));
 
 VirtualDropDownControl.prototype.itemdisabledCssClass = new InitializeStringParameter("CSS class used to display the disabled items", "disable");
