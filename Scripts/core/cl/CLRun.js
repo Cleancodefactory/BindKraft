@@ -37,6 +37,21 @@
         };
         this.$Langs.push(o);
     }
+    /**
+     * Convenient script execution - must be called after the system part loads
+     * @param {string} script - the script to execute
+     * @param {object|null} parameters - object with some parameters available to it
+     * @returns 
+     */
+    CLRun.RunGlobal = function(script,parameters) {
+        var clrun = new CLRun(script);
+        if (clrun.get_recognized()) {
+            return clrun.run(parameters);
+        } else {
+            BaseObject.LASTERROR("Unrecognised script");
+            return Operation.Failed("Unrecognised script");
+        }
+    }
     CLRun.prototype.$recognized = false;
     CLRun.prototype.get_recognized = function() {
         return this.$recognized;

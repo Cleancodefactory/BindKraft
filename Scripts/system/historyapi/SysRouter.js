@@ -1,5 +1,6 @@
 (function() {
-    var MemFSTools = Class("MemFSTools");
+    var MemFSTools = Class("MemFSTools"),
+            CLRun = Class("CLRun");
 
     function SysRouter() {
         BaseObject.apply(this, arguments);
@@ -85,51 +86,36 @@
         }
         return null;
     }
+    /** /nav/appalias
+     * 
+     * @param {*} rt 
+     * @returns 
+     */
     SysRouter.prototype.applyRoute = function(rt) {
         var appcfg = null;
         var appcls = null;
         var route = null; // in app route string
         if (typeof rt == "string") {
             var arr = rt.split("/");
-            if (arr != null && arr.length > 1) {
-                if (arr[0] == this.$root) {
-                    appcfg = this.findByAlias(arr[1]);
-                    if (appcfg != null) {
-                        appcls = appcfg["class"];
-                        if (typeof appcls != "string") {
-                            this.LASTERROR("class is not given to the app alias" + arr[0]);
-                            return; 
-                        }
-                        appcls = Class.getClassDef(appcls);
-                        if (appcls == null || !Class.is("IAppRouter")) {
-                            this.LASTERROR("App class is not found or not IAppRoter for alias " + arr[0]);
-                            return; 
-                        }
-                        if (arr.length > 2) {
-                            route = Array.createCopyOf(arr,2).join("/");
-                        }
-                        
-                    }
-                }
-            }
+            return this.applyRoute(arr);
         } else if (Array.isArray(rt)) {
             if (rt.length > 0) {
                 if (rt[0] == this.$root) {
                     rt.shift();
                 }
                 if (rt.length > 0) {
-                    appcfg = this.findByAlias(rt[0]);
+                    appcfg = this.getByAlias(rt[0]);
                     if (appcfg != null) {
-                        route = Array.createCopyOf(arr,1).join("/");
+                        route = Array.createCopyOf(rt,1).join("/");
                         appcls = appcfg["class"];
                         if (typeof appcls != "string") {
-                            this.LASTERROR("class is not given to the app alias" + arr[0]);
-                            return; 
+                            this.LASTERROR("class is not given to the app alias" + rt[0]);
+                            return Operation.Failed(this.LASTERROR.text); 
                         }
                         appcls = Class.getClassDef(appcls);
-                        if (appcls == null || !Class.is("IAppRouter")) {
-                            this.LASTERROR("App class is not found or not IAppRoter for alias " + arr[0]);
-                            return; 
+                        if (appcls == null || !Class.is(appcls,"IAppRouter")) {
+                            this.LASTERROR("App class is not found or not IAppRoter for alias " + rt[0]);
+                            return Operation.Failed(this.LASTERROR.text); 
                         }
                     }
                 }
@@ -142,35 +128,45 @@
             return this.applyRoute(segments);
         }
         if (appcfg != null && appcls != null) { // Something to do
-            if (route == null || route.length == 0) { // no route - start or focus the app
-                if (typeof appcfg.noroute == "string" && appcfg.noroute.length > 0) {
-                    var run = new CLRun(appcfg.noroute);
-                    return run.run();
-                } else if (appcfg.noroute) {
-                    Shell.launchOne(appcls);
-                }
-            } else {
                 // There is route
-                var linear = this.$seralizer.parseToLinear(route);
-                if (linear && linear.length > 0) {
-                    var objset = appcfg.__treeStates.delinearize(linear);
+            var linear = this.$seralizer.parseToLinear(route);
+            if (linear && linear.length > 0) {
+                var objset = appcfg.__treeStates.delinearize(linear);
+                if (typeof appcfg.script == "string") {
+                    var runner = new CLRun(appcfg.script);
+                    return runner.run({appclass: appcls,routeObjects: objset, route: route});
+                } else if (appcfg.default) {
                     var app = Shell.getAppByClassName(appcls);
                     if (app != null) {// running
                         if (app.canOpenTreeState(objset)) {
                             app.routeTreeState(objset);
-                            return Operation.From(true);
+                            return Operation.From(true); // TODO check    
                         } else {
-                            // Launch script or raw
+                            var op = new Operation("Routing");
+                            Shell.launch(appcls)
+                                .onsuccess(function(a) {
+                                    a.routeTreeState(objset);
+                                    op.CompleteOperation(true);
+                                });
+                            return op;
                         }
+                    } else {
+                        var op1 = new Operation("Routing");
+                        Shell.launchOne(appcls)
+                            .onsuccess(function(a) {
+                                a.routeTreeState(objset);
+                                op1.CompleteOperation(true);
+                            });
+                        return op1;
                     }
-
                 } else {
-                    this.LASTERROR("parsing the route failed for " + appcls);
+                    this.LASTERROR("Routing configuration does not define script or default for " + appcls);    
                 }
-
+            } else {
+                this.LASTERROR("parsing the route failed for " + appcls);
             }
-
         }
+        return Operation.From(null);
     }
 
     //#region  Singleton
