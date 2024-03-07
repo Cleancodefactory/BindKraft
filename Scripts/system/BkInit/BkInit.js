@@ -107,5 +107,8 @@ var BkInit = {
 	},
 	Workspace: function(fn) {
 		fn(new (Class("BKinit_WorkspaceWindow"))());
+	},
+	Routing: function(fn) {
+		fn(new (Class("BkInit_RouteApps"))());
 	}
 };

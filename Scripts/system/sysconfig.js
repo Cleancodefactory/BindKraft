@@ -89,7 +89,18 @@
 		// appfs:/system/urlmmands2/scripts
 		dir.mkdir("scripts"); // All the runnable scripts, each must be also registered in the commands prop file in order to be executable by url
 		
-
+		// appfs:system/routes
+		dir = system.mkdir("routes");
+		f = new PropertySetMemoryFile();
+		// appfs:system/routes/settings - prop file for global route settings
+		// settings:
+		// root - string the prefix part of the route
+		// apps - Array of strings, list of the registered app aliases - names of prop files in the apps directory
+		f.setProp("root","route"); // Sys default
+		dir.register("settings",f);
+		// appfs:system/routes/apps - directory with one prop file per app registration with the data about that app
+		dir.mkdir("apps"); 
+		
 
 	// appfs: <app>\localization - subdirectory for localization files. Each file is named after the locale it represents.
 	//			API supporting this exists

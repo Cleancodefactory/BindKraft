@@ -4,6 +4,7 @@
 
     /**
      * init.js tool for second version of URL commands - commands executed from URL query parameters.
+     * Old version should be avoided for new projects (this includes: BKInit_Command* classes and their methods in BKInit)
      * 
      * BASICS
      * 
@@ -21,6 +22,19 @@
      * Their values will be extracted from query string parameters named name.parameter where the name is the name
      * of the script and parameter is one of the registered parameter names. Any missing parameters will be null.
      * Each script will start in the global context.
+     * 
+     * Example:
+     * BJInit.urlCommands(function(c) {
+     *  c.clearAllScripts(); // removes all registration - should be used only globally to make sure all registrations are done i the same file (if that is the desired setup)
+     *  c.addRunScript("script1",["param1","param2"],"#clnull\n ..some commands using param1 and param2..");
+     *  c.setRunName("rrr") - again has global effect - changes the name of the parameter that specifies the registered scripts to run
+     * });
+     * 
+     * An example URL will be something like:
+     * http://myserver.com/?run=srcipt1,script2&script1.param1=123&script2.var=something
+     * All the URL run commands are in the query string and the run parameter (name can be changed with setRunName) lists the registered scripts to run
+     * then there are the arguments for the scripts - each with in teh form scriptname.paramname=value. The paramname part is the variable name that can be used 
+     * in the script code.
      */
     function BkInit_RunFromUrl() {
         BaseObject.apply(this, arguments);

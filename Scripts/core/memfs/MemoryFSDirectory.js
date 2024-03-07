@@ -260,7 +260,7 @@ MemoryFSDirectory.prototype.$contentsstrip = function(idx, item) {
 }
 MemoryFSDirectory.prototype.contents = function(filter) {
 	return this.filterItems(filter);
-}.Returns(" returns array of { key: filenam, value: file_or_dir }");
+}.Returns(" returns array of { key: filename, value: file_or_dir }");
 /**
  * Returns all the sub- directories (not recursively) in {key: value: } form
  */
