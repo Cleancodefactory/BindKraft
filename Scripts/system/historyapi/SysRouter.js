@@ -1,6 +1,13 @@
 (function() {
     var MemFSTools = Class("MemFSTools"),
             CLRun = Class("CLRun");
+    function derootpath(path) {
+        if (typeof path != "string" || path.length == 0) return path;
+        if (path.charAt(0) == "/") {
+            return path.slice(1);
+        }
+        return path;
+    }
 
     function SysRouter() {
         BaseObject.apply(this, arguments);
@@ -86,6 +93,18 @@
         }
         return null;
     }
+    SysRouter.prototype.getRouteFromURL = function(url) {
+        var bkurl = null;
+        if (BaseObject.is(url,"string")) {
+            bkurl = new BKUrl(url);
+        } else if (BaseObject.is(url,"BKUrl")) {
+            bkurl = url;
+        }
+        if (bkurl != null && !bkurl.get_isempty()) {
+            return derootpath(bkurl.get_path().composeAsString());
+        }
+        return null;
+    }
     /** /nav/appalias
      * 
      * @param {*} rt 
@@ -140,13 +159,13 @@
                     if (app != null) {// running
                         if (app.canOpenTreeState(objset)) {
                             app.routeTreeState(objset);
-                            return Operation.From(true); // TODO check    
+                            return Operation.From(true,route); // TODO check    
                         } else {
                             var op = new Operation("Routing");
                             Shell.launch(appcls)
                                 .onsuccess(function(a) {
                                     a.routeTreeState(objset);
-                                    op.CompleteOperation(true);
+                                    op.CompleteOperation(true,route);
                                 });
                             return op;
                         }
@@ -155,7 +174,7 @@
                         Shell.launchOne(appcls)
                             .onsuccess(function(a) {
                                 a.routeTreeState(objset);
-                                op1.CompleteOperation(true);
+                                op1.CompleteOperation(true,route);
                             });
                         return op1;
                     }

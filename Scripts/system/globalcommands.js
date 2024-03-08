@@ -217,6 +217,9 @@ System.DefaultCommands = {
 	"inithistory": function(ctx, api) {
 		BrowserHistoryTracker.Default();
 	},
+	"inithistory2": function(ctx, api) {
+		BrowserHistoryTracker2.Default();
+	},
 	"urlcommands": function(args, api) {
 		var UrlActionsService2 = Class("UrlActionsService2");
 		var svc = UrlActionsService2.Default();
