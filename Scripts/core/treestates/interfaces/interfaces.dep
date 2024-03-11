@@ -1,3 +1,5 @@
 
+/// The interfaces are moved to core/interfaces, this file is no longer used
+
 //#using "./IAppRouter.js"
 //#using "./ITreeStatesSerializer.js"

@@ -218,7 +218,7 @@ System.DefaultCommands = {
 		BrowserHistoryTracker.Default();
 	},
 	"inithistory2": function(ctx, api) {
-		BrowserHistoryTracker2.Default();
+		Class("BrowserHistoryTracker2").Default(true);
 	},
 	"urlcommands": function(args, api) {
 		var UrlActionsService2 = Class("UrlActionsService2");
@@ -358,6 +358,8 @@ System.DefaultCommands = {
 					defs.stopapp, "Finds the first app of the given class and stops it. If the app does not currently run, does nothing.");					
 	gc.register("inithistory", "historystart", null,
 					defs.inithistory, "Starts the history tracking");
+	gc.register("inithistory2", "historystart2", null,
+					defs.inithistory2, "Starts the history tracking (new version)");
 	gc.register("alert", "msgbox", null,
 							defs.msgbox, "Shows an alert.");
 

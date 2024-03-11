@@ -35,6 +35,22 @@
         pf.setProp("root", name);
         return this;
     }
+    BkInit_RouteApps.prototype.registerHome = function(script) {
+        var pf = this.tools.openFile("appfs:/system/routes/settings");
+        pf.setProp("homescript", script);
+        return this;
+    }
+    /**
+     * /nav/<appalias>/<...app_state_route...> 
+     * @param {string} appalias 
+     * @param {string} appclass - name of the app class
+     * @param {object} settings - an object with various settings one per property
+     * Supported settings:
+     * script - string, a script which is called each time the app needs to be started/focused, parameters:
+     *      appclass - class name,routeObjects- array<object> object set to route to,route - as string with the system serializer
+     * default - boolean, if true the default routing behavior is applied (script should be mmissing)
+     * @returns 
+     */
     BkInit_RouteApps.prototype.register = function(appalias, appclass,settings) {
         var pf = this.tools.openFile("appfs:/system/routes/settings");
         var dir = this.tools.openDir("appfs:/system/routes/apps/");

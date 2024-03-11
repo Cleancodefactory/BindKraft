@@ -700,6 +700,12 @@
 				if (v != b) return false;
 				return true;
 			}
+		},
+		anytext: {
+			type: "string",
+			proc: function(v) {
+				return true;
+			}
 		}
 	};
 	//#endregion Conditions and typing

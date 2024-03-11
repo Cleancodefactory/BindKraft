@@ -1,6 +1,7 @@
 (function() {
     var MemFSTools = Class("MemFSTools"),
-            CLRun = Class("CLRun");
+            CLRun = Class("CLRun"),
+            AppStdArgs = Enumeration("AppStdArgs");
     function derootpath(path) {
         if (typeof path != "string" || path.length == 0) return path;
         if (path.charAt(0) == "/") {
@@ -105,6 +106,20 @@
         }
         return null;
     }
+    SysRouter.prototype.execRootScript = function() {
+        var fs = new MemFSTools();
+        var pf = fs.openFile("appfs:/system/routes/settings");
+        var scr = pf.getProp("homescript");
+        if (typeof scr == "string") {
+            if (Class.is(scr,"IApp")) {
+                return Shell.launchOne(scr,AppStdArgs.skipInitialRoute);
+            } else {
+                return CLRun.RunGlobal(scr);
+            }
+        }
+        this.LASTERROR("Check yout registerHome in BKInit.Routing, homescript is not a script or app class.")
+        return Operation.Failed("homescript is not a string");
+    }
     /** /nav/appalias
      * 
      * @param {*} rt 
@@ -114,6 +129,7 @@
         var appcfg = null;
         var appcls = null;
         var route = null; // in app route string
+        var runHome = false;
         if (typeof rt == "string") {
             var arr = rt.split("/");
             return this.applyRoute(arr);
@@ -121,6 +137,7 @@
             if (rt.length > 0) {
                 if (rt[0] == this.$root) {
                     rt.shift();
+                    if (rt.length == 0) runHome = true;
                 }
                 if (rt.length > 0) {
                     appcfg = this.getByAlias(rt[0]);
@@ -138,6 +155,8 @@
                         }
                     }
                 }
+            } else {
+                runHome = true;
             }
         } else if (BaseObject.is(rt,"BKUrl")) {
             var bkpath = rt.get_path();
@@ -149,7 +168,7 @@
         if (appcfg != null && appcls != null) { // Something to do
                 // There is route
             var linear = this.$seralizer.parseToLinear(route);
-            if (linear && linear.length > 0) {
+            if (linear) {
                 var objset = appcfg.__treeStates.delinearize(linear);
                 if (typeof appcfg.script == "string") {
                     var runner = new CLRun(appcfg.script);
@@ -159,10 +178,11 @@
                     if (app != null) {// running
                         if (app.canOpenTreeState(objset)) {
                             app.routeTreeState(objset);
+                            Shell.activateApp(app);
                             return Operation.From(true,route); // TODO check    
                         } else {
                             var op = new Operation("Routing");
-                            Shell.launch(appcls)
+                            Shell.launch(appcls,AppStdArgs.skipInitialRoute)
                                 .onsuccess(function(a) {
                                     a.routeTreeState(objset);
                                     op.CompleteOperation(true,route);
@@ -171,7 +191,7 @@
                         }
                     } else {
                         var op1 = new Operation("Routing");
-                        Shell.launchOne(appcls)
+                        Shell.launchOne(appcls,AppStdArgs.skipInitialRoute)
                             .onsuccess(function(a) {
                                 a.routeTreeState(objset);
                                 op1.CompleteOperation(true,route);
@@ -184,6 +204,8 @@
             } else {
                 this.LASTERROR("parsing the route failed for " + appcls);
             }
+        } else if (runHome) {
+            return this.execRootScript();
         }
         return Operation.From(null);
     }
