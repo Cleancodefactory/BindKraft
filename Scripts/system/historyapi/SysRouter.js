@@ -170,6 +170,7 @@
             var linear = this.$seralizer.parseToLinear(route);
             if (linear) {
                 var objset = appcfg.__treeStates.delinearize(linear);
+                if (objset == null && linear.length > 0) return Operation.Failed("route not found");
                 if (typeof appcfg.script == "string") {
                     var runner = new CLRun(appcfg.script);
                     return runner.run({appclass: appcls,routeObjects: objset, route: route});

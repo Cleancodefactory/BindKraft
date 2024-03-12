@@ -18,9 +18,10 @@
         if (route == this.$lastRoute) return;
         this.$lastRoute = route;
         console.log("routechanged:" + route);
+        // This title is picked as caption for the prev entry when the new one (pushState is create)
         //document.title = route;//app.get_caption();
-        window.history.pushState({type: "approute", title: app.get_caption()}, null,route);
-        document.title = route;//app.get_caption();
+        window.history.pushState({type: "approute"}, null,route);
+        document.title = System.Default().get_workspaceName() + " - " + route;//app.get_caption();
 
     }
     // TODO review me
@@ -59,11 +60,11 @@
                     instance = new BrowserHistoryTracker2();
                     window.onpopstate = Delegate.createWrapper(instance, instance.onPopstateHandler);
                     var history_state = {
-                        type: "guard_entry",
-                        title: "guard_entry"
+                        type: "guard_entry"
                         //title: System.Default().get_workspaceName(),
                     }
-                    //history.replaceState(history_state,null,"/"); // TODO normalize url
+                    document.title = System.Default().get_workspaceName();
+                    history.replaceState(history_state,null,"/"); // TODO normalize url
                     //history.pushState({type: "approute"},null,"nav"); // TODO normalize url
                 }
                 return instance;
