@@ -22,7 +22,7 @@
 
     SysRouter.prototype.$loadRoutingData = function() {
         var register = {};
-        fs = new MemFSTools();
+        var fs = new MemFSTools();
         var pf = fs.openFile("appfs:/system/routes/settings");
         this.$root = pf.getProp("root");
         var serClassName = pf.getProp("serializer");
