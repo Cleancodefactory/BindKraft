@@ -15,7 +15,8 @@
             app = _app.Dereference(); // Get the non-proxied ref
         }
         var route = SysRouter.Default().getAppRoute(app);
-        if (route == this.$lastRoute) return;
+        if (route == null || route == this.$lastRoute) return;
+        // TODO see the situatuion with empty and null routes 
         this.$lastRoute = route;
         console.log("routechanged:" + route);
         // This title is picked as caption for the prev entry when the new one (pushState is create)
@@ -49,6 +50,15 @@
             }    
         });
     }
+    //#region Window activation tracking
+    BrowserHistoryTracker2.prototype.onWindowActivated = function (sender, wnd) {
+        var app = Shell.getAppFromWindow(wnd);
+        console.log(app);
+        if (BaseObject.is(app,"IAppRouter")) {
+            this.routeStateChanged(app);
+        }
+    };
+    //#endregion
 
     //#region Singleton
     BrowserHistoryTracker2.Default = (function() {
@@ -67,12 +77,14 @@
                     history.replaceState(history_state,null,"/"); // TODO normalize url
                     //history.pushState({type: "approute"},null,"nav"); // TODO normalize url
                 }
+                WindowManagement.Default().activateevent.add(new Delegate(instance, instance.onWindowActivated));
                 return instance;
             } else {
                 return {
                     routeStateChanged: function() {}
                 }
             }
+            
         } 
     })();
     //#endregion

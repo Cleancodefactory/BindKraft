@@ -137,6 +137,37 @@ SysShell.prototype.getAppsByInstanceName = function(name) {
 	}
 	return null;
 };
+/**
+ * Gets the app owning the window or null if the window is not owned by an app or app is a ghost (when bRunning is true)
+ * @param {BaseWindow} wnd -the window to inspect
+ * @param {boolean} bRunning - optional
+ */
+SysShell.prototype.getAppFromWindow = function(wnd,bRunning) {
+	var t,currentWindow = wnd;
+    do {
+        if (BaseObject.is(currentWindow.get_approot(), 'IApp')) {
+            break;
+        } else {
+			
+            t = currentWindow.get_windowparent();
+			if (t == currentWindow) {// Cycling - should not happen but just in case
+				this.LASTERROR("A window that is parent of itself found");
+				break;
+			}
+
+			currentWindow = t;
+        }
+    } while (currentWindow !== null);
+	if (BaseObject.is(currentWindow,"BaseWindow") && BaseObject.is(currentWindow.get_approot(), 'IApp')) {
+		var app = currentWindow.get_approot();
+		if (bRunning) {
+			var ra = this.get_runningapps();
+			if (Array.isArray(ra) && ra.indexOf(app) < 0) return null;
+		}
+		return app;
+	}
+    return null;
+}
 // Candidates for the interface
 SysShell.prototype.getAppsByFilter = function(/* null | f(app) -> bool */callback) {
 	var apps = this.get_runningapps();
