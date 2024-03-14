@@ -28,7 +28,7 @@ PopTemplate.prototype.bodyTemplate = new InitializeStringParameter("bodyTemplate
 PopTemplate.prototype.connectorType = new InitializeStringParameter("connectorType - the type of connector to use", "DOMConnector");
 PopTemplate.prototype.animation = new InitializeStringParameter("Body animation: slow, fast, none", "none");
 
-PopTemplate.ImplementProperty("bindhost", new Initialize("Binding host for the connector. If null the DataArea will set itself as host.", null));
+PopTemplate.ImplementProperty("bindhost", new Initialize("Binding host for the connector. ", null));
 PopTemplate.ImplementProperty("explicit", new InitializeBooleanParameter("Lazy open close - by click only", false))
 
 PopTemplate.prototype.statechangedevent = new InitializeEvent("Fired when the expander opens or closes. The data is true/false meaning open/close");
