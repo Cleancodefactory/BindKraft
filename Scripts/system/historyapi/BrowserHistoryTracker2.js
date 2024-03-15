@@ -9,7 +9,9 @@
     BrowserHistoryTracker2.Implement(IHistoryTracker2);
     BrowserHistoryTracker2.prototype.$locked = false;
     BrowserHistoryTracker2.prototype.$lastRoute = null;
+    BrowserHistoryTracker2.prototype.$noactivate = false; // When true forbids reaction to activate window
     BrowserHistoryTracker2.prototype.routeStateChanged = function(_app) {
+        if (this.$noactivate) return;
         var app = _app;
         if (DummyInterfaceProxyBuilder.isProxy(_app)) {
             app = _app.Dereference(); // Get the non-proxied ref
@@ -33,7 +35,9 @@
         //this.$lastRoute 
         var route = SysRouter.Default().getRouteFromURL(bkurl);
         this.$lastRoute = route;
+        this.$noactivate = true;
         SysRouter.Default().applyRoute(bkurl).then( function() {
+            this.$noactivate = false;
             return;
             if (state != null) {
                 if (state.type == "guard_entry") {
@@ -52,6 +56,7 @@
     }
     //#region Window activation tracking
     BrowserHistoryTracker2.prototype.onWindowActivated = function (sender, wnd) {
+        if (this.$noactivate) return;
         var app = Shell.getAppFromWindow(wnd);
         console.log(app);
         if (BaseObject.is(app,"IAppRouter")) {
