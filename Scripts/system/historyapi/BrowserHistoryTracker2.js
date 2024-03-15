@@ -7,9 +7,9 @@
     }
     BrowserHistoryTracker2.Inherit(BaseObject, "BrowserHistoryTracker2");
     BrowserHistoryTracker2.Implement(IHistoryTracker2);
-    BrowserHistoryTracker2.prototype.$locked = false;
     BrowserHistoryTracker2.prototype.$lastRoute = null;
     BrowserHistoryTracker2.prototype.$noactivate = false; // When true forbids reaction to activate window
+    BrowserHistoryTracker2.prototype.$launching = true;
     BrowserHistoryTracker2.prototype.routeStateChanged = function(_app) {
         if (this.$noactivate) return;
         var app = _app;
@@ -23,7 +23,13 @@
         console.log("routechanged:" + route);
         // This title is picked as caption for the prev entry when the new one (pushState is create)
         //document.title = route;//app.get_caption();
-        window.history.pushState({type: "approute"}, null,route);
+        if (this.$launching) {
+            this.$launching = false;
+            window.history.replaceState({type: "approute"}, null,route);
+        } else {
+            window.history.pushState({type: "approute"}, null,route);
+        }
+        
         document.title = System.Default().get_workspaceName() + " - " + route;//app.get_caption();
 
     }
@@ -37,7 +43,7 @@
         this.$lastRoute = route;
         this.$noactivate = true;
         SysRouter.Default().applyRoute(bkurl).then( function() {
-            this.$noactivate = false;
+            me.$noactivate = false;
             return;
             if (state != null) {
                 if (state.type == "guard_entry") {
@@ -56,6 +62,7 @@
     }
     //#region Window activation tracking
     BrowserHistoryTracker2.prototype.onWindowActivated = function (sender, wnd) {
+        return;
         if (this.$noactivate) return;
         var app = Shell.getAppFromWindow(wnd);
         console.log(app);
@@ -78,8 +85,8 @@
                         type: "guard_entry"
                         //title: System.Default().get_workspaceName(),
                     }
-                    document.title = System.Default().get_workspaceName();
-                    history.replaceState(history_state,null,"/"); // TODO normalize url
+                    //document.title = System.Default().get_workspaceName();
+                    //history.replaceState(history_state,null,"/"); // TODO normalize url
                     //history.pushState({type: "approute"},null,"nav"); // TODO normalize url
                 }
                 WindowManagement.Default().activateevent.add(new Delegate(instance, instance.onWindowActivated));

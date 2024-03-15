@@ -178,15 +178,18 @@
                     var app = Shell.getAppByClassName(appcls);
                     if (app != null) {// running
                         if (app.canOpenTreeState(objset)) {
-                            app.routeTreeState(objset);
-                            Shell.activateApp(app);
-                            return Operation.From(true,route); // TODO check    
+                            var xop = new Operation("applyRoute canopen");
+                            Operation.FromPromiseEx(app.routeTreeState(objset)).then(function() {
+                                Shell.activateApp(app);
+                            }).complete(xop,route);
+                            
+                            return xop;// Operation.From(true,route); // TODO check    
                         } else {
                             var op = new Operation("Routing");
                             Shell.launch(appcls,AppStdArgs.skipInitialRoute)
                                 .onsuccess(function(a) {
-                                    a.routeTreeState(objset);
-                                    op.CompleteOperation(true,route);
+                                    Operation.FromPromiseEx(a.routeTreeState(objset)).complete(op,route);
+                                    //op.CompleteOperation(true,route);
                                 });
                             return op;
                         }
@@ -194,8 +197,8 @@
                         var op1 = new Operation("Routing");
                         Shell.launchOne(appcls,AppStdArgs.skipInitialRoute)
                             .onsuccess(function(a) {
-                                a.routeTreeState(objset);
-                                op1.CompleteOperation(true,route);
+                                Operation.FromPromiseEx(a.routeTreeState(objset)).complete(op1,route);
+                                //op1.CompleteOperation(true,route);
                             });
                         return op1;
                     }

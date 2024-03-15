@@ -254,3 +254,15 @@ Operation.FromPromise = function(p, description, timeout) {
 	}
 	return null;
 }
+Operation.FromPromiseEx = function(p, description, timeout) { 
+	if (p && p.then && p.catch) {
+		var op = new Operation(description, timeout);
+		p.then(function(r) {
+			op.CompleteOperation(true, r);
+		}).catch(function(e) {
+			op.CompleteOperation(false, e + "");
+		});
+		return op;
+	}
+	return Operation.From(p);
+}
