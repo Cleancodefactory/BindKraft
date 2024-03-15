@@ -4,3 +4,4 @@
 //#using "./IUsingLocalAPIImpl.js"
 //#using "./IImplementsLocalAPIImpl.js"
 //#using "./IAppHistorySupportImpl.js"
+//#using "./IAppRouterTrivialImpl.js"

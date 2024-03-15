@@ -21,6 +21,7 @@
 //#using "./IImplementsLocalAPI.js"
 //#using "./IAppHistorySupport.js"
 //#using "./IHistoryTracker.js"
+//#using "./IHistoryTracker2.js"
 //#using "./IApplicationState.js"
 //#using "./IApplicationState2.js"
 //#using "./ILocalAPIImports.js"

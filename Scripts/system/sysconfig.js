@@ -96,7 +96,8 @@
 		// settings:
 		// root - string the prefix part of the route
 		// apps - Array of strings, list of the registered app aliases - names of prop files in the apps directory
-		f.setProp("root","route"); // Sys default
+		f.setProp("root","nav"); // Sys default
+		f.setProp("serializer","TreeStatesStringSerializer"); // default serializer
 		dir.register("settings",f);
 		// appfs:system/routes/apps - directory with one prop file per app registration with the data about that app
 		dir.mkdir("apps"); 

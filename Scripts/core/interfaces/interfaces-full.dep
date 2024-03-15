@@ -115,3 +115,5 @@
 //#using "./IEnumerateExposedCommands.js"
 
 //#using "./IAttachedInfo.js"
+//#using "./IAppRouter.js"
+//#using "./ITreeStatesSerializer.js"

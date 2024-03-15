@@ -60,6 +60,53 @@ System.DefaultCommands = {
 	"enterapp": function(ctx, api) {
 		// TODO: Resolve the app management mess at least to some degree and do this
 	},
+	//#region Routing
+	"isrunning": function (args, api) {
+		var appclassname = api.pullNextToken();
+		var app = Shell.getAppByClassName(appclassname);
+		return app != null;
+	},
+	"getrunning":function (args, api) {
+		var appclassname = api.pullNextToken();
+		var app = Shell.getAppByClassName(appclassname);
+		return app;
+	}, 
+	"canOpenTreeState": function(args, api) {
+		var app = api.pullNextToken();
+		if (BaseObject.is(app,"IAppRouter")) {
+			var routeObjects = api.pullNextToken();
+			return app.canOpenTreeState(routeObjects);
+		}
+	},
+	"routeTreeState": function(args, api) {
+		var app = api.pullNextToken();
+		if (BaseObject.is(app,"IAppRouter")) {
+			var routeObjects = api.pullNextToken();
+			var p = app.routeTreeState(routeObjects);
+			if (window.Promise && p instanceof Promise) {
+				return Operation.FromPromise(p);
+			} else if (BaseObject.is(p,"Operation")) {
+				return p;
+			} else {
+				return Operation.From(true);
+			}
+		}
+	},
+	"applyRoute": function(args, api) {
+		var strRoute = api.pullNextToken();
+		return Class("SysRouter").Default().applyRoute(strRoute);
+	},
+	"bootRoute": function(args, api) {
+		var url = BKUrl.getInitialFullUrl();
+		return Class("SysRouter").Default().applyRoute(url);
+	},
+	"getAppRoute": function(args,api) {
+		var app = api.pullNextToken();
+		if (app != null) {
+			return Class("SysRouter").Default().getAppRoute(app);
+		}
+	},
+	//#endregion
 	"endcontext": function(ctx, api) {
 		var ctx = api.pullContext();
 		return api.completedOperation(true, ctx); // May be we should return something else?
@@ -170,6 +217,9 @@ System.DefaultCommands = {
 	"inithistory": function(ctx, api) {
 		BrowserHistoryTracker.Default();
 	},
+	"inithistory2": function(ctx, api) {
+		Class("BrowserHistoryTracker2").Default(true);
+	},
 	"urlcommands": function(args, api) {
 		var UrlActionsService2 = Class("UrlActionsService2");
 		var svc = UrlActionsService2.Default();
@@ -278,6 +328,14 @@ System.DefaultCommands = {
 	"externalscript": function(ctx, api) {
 		var url = api.pullNextToken();
 		return Class("ExternalScripts").Default().loadScript(url);
+	},
+	"echo": function(ctx, api) {
+		var x;
+		x = api.pullNextToken();
+		while (x != null) {
+			console.log("ECHO:" + x);
+			x = api.pullNextToken();
+		}
 	}
 };
 
@@ -300,6 +358,8 @@ System.DefaultCommands = {
 					defs.stopapp, "Finds the first app of the given class and stops it. If the app does not currently run, does nothing.");					
 	gc.register("inithistory", "historystart", null,
 					defs.inithistory, "Starts the history tracking");
+	gc.register("inithistory2", "historystart2", null,
+					defs.inithistory2, "Starts the history tracking (new version)");
 	gc.register("alert", "msgbox", null,
 							defs.msgbox, "Shows an alert.");
 
@@ -352,4 +412,12 @@ System.DefaultCommands = {
 	// -V 2.24.0
 
 	gc.register("urlcommands", "runurlcommands2", null, defs["urlcommands"], "Runs the registered commands from the initial URL");
+	gc.register("isrunning", null, null,defs["isrunning"], "Checks if an instance of given app class is running and returns true/false");
+	gc.register("getrunning", null, null,defs["getrunning"], "Returns the instance of the first found running app of the given app class or null if none is running");
+	gc.register("canOpenTreeState", null, null,defs["canOpenTreeState"], "canOpenTreeState(app,routeObjects) asks the given app if it can safely route to the given state, returns true/false");
+	gc.register("routeTreeState", null, null,defs["routeTreeState"], "routeTreeState(app,routeObjects) cals the app to route to the given state");
+	gc.register("applyRoute", null, null,defs["applyRoute"], "applyRoute(stringRoute) Calls SysRouter to try to apply route");
+	gc.register("bootRoute", null, null,defs["bootRoute"], "bootRoute() Calls SysRouter to try to apply the route from the initial URL, should be used in the boot script only");
+	gc.register("getAppRoute", null, null,defs["getAppRoute"], "getAppRoute(app) Returns the route of the given app as string for the URL");
+	gc.register("echo", null, null,defs["echo"], "echo(...) cnsle logs arguments");
 })();

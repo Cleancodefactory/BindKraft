@@ -188,6 +188,7 @@
 			return null; // Kind of error - no state
 		}
 	}
+	TreeStates.CutFromState = TreeStates.cutFromState;
 	TreeStates.namedPathFromState = function(state) {
 		if (Array.isArray(state)) {
 			var result = [];
@@ -698,6 +699,12 @@
 			type: "bool",
 			proc: function(v,b) {
 				if (v != b) return false;
+				return true;
+			}
+		},
+		anytext: {
+			type: "string",
+			proc: function(v) {
 				return true;
 			}
 		}

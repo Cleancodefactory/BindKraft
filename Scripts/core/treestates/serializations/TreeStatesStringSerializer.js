@@ -77,6 +77,7 @@
     TreeStatesStringSerializer.prototype.parseToLinear = function(input, options) { 
         var me = this;
         if (typeof input === "string") {
+            if (input.length == 0 ) return [];
             var linear = [], line;
             var parts = input.split("/");
             parts = parts.Select(function(i,p) {
@@ -104,7 +105,7 @@
     }
     TreeStatesStringSerializer.prototype.encodeFromLinear = function(base, linear) {
         var result = base || "";
-        for (var i = 0; i < linear.length; i++) {
+        for (var i = 0; linear != null && i < linear.length; i++) {
             var line = linear[i];
             if (Array.isArray(line)) {
                 result += "/";
