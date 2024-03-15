@@ -56,7 +56,7 @@
         .Implement(IUIControl)
         .Implement(IDisablable)
         .Implement(IKeyboardProcessorImpl)
-        .Implement(ICustomParameterizationStdImpl, "sourcedata", "identification", "filterbyfield","dropwidth", "dropheight", "interface", "noselection", "showclear","selectinputonfocus")
+        .Implement(ICustomParameterizationStdImpl, "sourcedata", "identification", "filterbyfield","dropwidth", "dropheight", "interface", "noselection", "showclear","selectinputonfocus","cleartext")
         .Implement(IItemTemplateConsumerImpl)
         .Implement(IItemTemplateSourceImpl, true, "single")
         .Implement(ITemplateSourceImpl, new Defaults("templateName"),"autofill")
@@ -69,11 +69,12 @@
         .ImplementProperty("droplist") // The drop list - selectable repeater
         .ImplementProperty("droppanel") // The DOM element of the drop panel
         .ImplementProperty("display") // Selection display HTML Element (readonly textbox)
-        .ImplementProperty("selectinputonfocus", new  InitializeBooleanParameter("select all when theinput is focused",false))
+        .ImplementProperty("selectinputonfocus", new  InitializeBooleanParameter("select all when the input is focused",false))
         .ImplementProperty("dropwidth", new InitializeNumericParameter("",null))
         .ImplementProperty("dropheight", new InitializeNumericParameter("",null))
         .ImplementActiveProperty("choices", new InitializeArray("Choices for selection"),true) // The drop list - selectable repeater
         .ImplementProperty("noselection", new InitializeStringParameter("text for no selection", "(please select)"))
+        .ImplementProperty("cleartext", new InitializeStringParameter("Display text for clear button - for use in templates", "clear selection"))
         .ImplementProperty("showclear", new InitializeBooleanParameter("text for no selection", true))
         .ImplementActiveProperty("selectedobject", new Initialize("the current selection"), null, true, function(oval, nval) {
             if (nval != oval) {

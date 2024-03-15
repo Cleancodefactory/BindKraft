@@ -13,11 +13,13 @@
         .Implement(IDisablableThroughImpl, "lookup")
         .Implement(IItemTemplateSourceImpl, true)
         .Implement(IItemTemplateConsumerImpl)
-        .Implement(ICustomParameterizationStdImpl, "description", "identification", "noselection", "showclear", "selectinputonfocus")
+        .Implement(ICustomParameterizationStdImpl, "description", "identification", "noselection", "showclear", "selectinputonfocus","cleartext","iteminactivate")
         .ImplementProperty("lookup", new Initialize("must be bound using pluginto to LookupBoxControl", null))
         .ImplementProperty("description", new InitializeStringParameter("Specifies the name of the displayable property", "description"))
         .ImplementProperty("selectinputonfocus", new InitializeBooleanParameter("Should be bound to same named parameter of the lookp box in the template", true))
         .ImplementProperty("showclear", new InitializeBooleanParameter("Show clear button in the lookup box", true))
+        .ImplementProperty("cleartext", new InitializeStringParameter("Display text for clear button - for use in templates", "clear selection"))
+        .ImplementProperty("iteminactivate", new InitializeBooleanParameter("Use item instead of identification in activated event", false))
         .ImplementProperty("noselection", new InitializeStringParameter("text for no selection", "(please select)"))
         // .ImplementProperty("identification", new InitializeStringParameter("The name of the field to use as id on the items.",null),true,function(ov,nv){
         //     if (this.get_lookup() != null) {
@@ -29,6 +31,7 @@
         });
     //#region events
     LookupDropDownControl.prototype.activatedevent = new InitializeEvent("Fired when new selection is made by the user");
+    LookupDropDownControl.prototype.selchangedevent = new InitializeEvent("Fired every time the selection changes");
     //#endregion events
     LookupDropDownControl.ImplementInterfaceBubble("lookupcallback", ILookupBoxCallback, {
         getChoices: function (flt, offset, limit) {
@@ -104,9 +107,17 @@
             this.$value = null;
         }
     }
+    LookupDropDownControl.prototype.$activatedDCArgument = function() {
+        if (this.get_iteminactivate()) {
+            return this.get_selecteditem();
+        } else {
+            return this.get_value();
+        }
+    }
     LookupDropDownControl.prototype.onLookupActivated = function () {
         this.$updateValueFromSelection();
-        this.activatedevent.invoke(this, this.get_value())
+        this.selchangedevent.invoke(this,this.get_selecteditem());
+        this.activatedevent.invoke(this, this.$activatedDCArgument())
     }
     LookupDropDownControl.prototype.$value = null;
     /**
@@ -116,7 +127,7 @@
     LookupDropDownControl.prototype.set_value = function (value) {
         this.$value = value;
         this.$updateSelectionFromValue();
-
+        this.selchangedevent.invoke(this,this.get_selecteditem());
     }
     LookupDropDownControl.prototype.get_value = function () {
         return this.$value;
@@ -131,6 +142,7 @@
     LookupDropDownControl.prototype.set_selecteditem = function (item) {
         this.get_lookup().set_selectedobject(item);
         this.$updateValueFromSelection();
+        this.selchangedevent.invoke(this,this.get_lookup().get_selectedobject());
     }
     LookupDropDownControl.prototype.get_selecteditem = function () {
         return this.get_lookup().get_selectedobject();
