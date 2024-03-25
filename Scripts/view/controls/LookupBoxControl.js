@@ -2,7 +2,8 @@
     var ViewUtil = Class("ViewUtil"),
         IKeyboardProcessorImpl = InterfaceImplementer("IKeyboardProcessorImpl"),
         ICustomParameterizationStdImpl = InterfaceImplementer("ICustomParameterizationStdImpl"),
-        ITemplateSourceImpl = InterfaceImplementer("ITemplateSourceImpl");
+        ITemplateSourceImpl = InterfaceImplementer("ITemplateSourceImpl"),
+        IDisablableActiveImpl = InterfaceImplementer("IDisablableActiveImpl");
 
     /**
      * LookupBoxControl
@@ -54,7 +55,7 @@
     }
     LookupBoxControl.Inherit(Base, "LookupBoxControl")
         .Implement(IUIControl)
-        .Implement(IDisablable)
+        .Implement(IDisablableActiveImpl)
         .Implement(IKeyboardProcessorImpl)
         .Implement(ICustomParameterizationStdImpl, "sourcedata", "identification", "filterbyfield","dropwidth", "dropheight", "interface", "noselection", "showclear","selectinputonfocus","cleartext")
         .Implement(IItemTemplateConsumerImpl)
