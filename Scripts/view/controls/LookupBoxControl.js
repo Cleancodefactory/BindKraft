@@ -145,6 +145,9 @@
             });
         }
     };
+    LookupBoxControl.prototype.get_hasselection = function() {
+        return (this.get_selectedobject() != null);
+    }
 
     // LookupBoxControl.prototype.$itemTemplate = null;
     
