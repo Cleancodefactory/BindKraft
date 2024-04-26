@@ -1,7 +1,7 @@
-(function() {
+(function () {
     var MemFSTools = Class("MemFSTools"),
-            CLRun = Class("CLRun"),
-            AppStdArgs = Enumeration("AppStdArgs");
+        CLRun = Class("CLRun"),
+        AppStdArgs = Enumeration("AppStdArgs");
     function derootpath(path) {
         if (typeof path != "string" || path.length == 0) return path;
         if (path.charAt(0) == "/") {
@@ -14,36 +14,36 @@
         BaseObject.apply(this, arguments);
         this.$loadRoutingData();
     }
-    SysRouter.Inherit(BaseObject,"SysRouter");
+    SysRouter.Inherit(BaseObject, "SysRouter");
 
     SysRouter.prototype.$root = null; // loaded from the settings (default in sysconfig.js)
     SysRouter.prototype.$apps = null; // loaded from the appfs:system/routes/apps directory (default in sysconfig.js)
     SysRouter.prototype.$seralizer = null; // Serializer instance
 
-    SysRouter.prototype.$loadRoutingData = function() {
+    SysRouter.prototype.$loadRoutingData = function () {
         var register = {};
         var fs = new MemFSTools();
         var pf = fs.openFile("appfs:/system/routes/settings");
         this.$root = pf.getProp("root");
         var serClassName = pf.getProp("serializer");
         var serCls = Class.getClassDef(serClassName);
-        if (!Class.is(serCls,"ITreeStatesSerializer")) {
+        if (!Class.is(serCls, "ITreeStatesSerializer")) {
             throw "System route serializer is misconfigured or the specified class is not available/not ITreeStatesSerializer:" + serClassName;
         }
         this.$seralizer = new serCls();
         var dir = fs.openDir("appfs:/system/routes/apps/");
         var _routes = dir.get_contents();
         var o, cls;
-        for (var i = 0; i< _routes.length; i ++) {
+        for (var i = 0; i < _routes.length; i++) {
             var routepf = _routes[i];
             if (BaseObject.is(routepf.value, "PropertySetMemoryFile")) {
-                var pf = routepf.value; 
+                var pf = routepf.value;
                 o = pf.getProps();
                 if (typeof o.alias != "string") {
                     this.LASTERROR("Routing registration (" + routepf.key + ") has no alias entry");
                     continue;
                 }
-                if (typeof o["class"] != "string" || !Class.is(o["class"],"IAppRouter")) {
+                if (typeof o["class"] != "string" || !Class.is(o["class"], "IAppRouter")) {
                     this.LASTERROR("Routing registration (" + routepf.key + ") has no app class or it is not implementing IAppRouter");
                     continue;
                 }
@@ -57,19 +57,19 @@
         }
         this.$apps = register;
     }
-    SysRouter.prototype.getByAlias = function(alias) {
+    SysRouter.prototype.getByAlias = function (alias) {
         return this.$apps[alias];
     }
-    SysRouter.prototype.findByAppInstance = function(inst) {
-        if (BaseObject.is(inst,"IApp")) {
+    SysRouter.prototype.findByAppInstance = function (inst) {
+        if (BaseObject.is(inst, "IApp")) {
             var def = inst.classDefinition(inst);
             return this.findByApp(def);
         }
-        return null;        
+        return null;
     }
-    SysRouter.prototype.findByApp = function(appClass) {
+    SysRouter.prototype.findByApp = function (appClass) {
         var clsName = Class.getClassName(appClass);
-        for( var k in this.$apps) {
+        for (var k in this.$apps) {
             var o = this.$apps[k];
             if (o["class"] == clsName) {
                 return o;
@@ -82,8 +82,8 @@
      * @param {*} app 
      * //TODO We will deal with proxies later or avoid it
      */
-    SysRouter.prototype.getAppRoute = function(app) {
-        if (BaseObject.is(app,"IApp") && BaseObject.is(app,"IAppRouter")) {
+    SysRouter.prototype.getAppRoute = function (app) {
+        if (BaseObject.is(app, "IApp") && BaseObject.is(app, "IAppRouter")) {
             var appCfg = this.findByAppInstance(app);
             if (appCfg != null) {
                 var ts = appCfg.__treeStates;
@@ -94,11 +94,11 @@
         }
         return null;
     }
-    SysRouter.prototype.getRouteFromURL = function(url) {
+    SysRouter.prototype.getRouteFromURL = function (url) {
         var bkurl = null;
-        if (BaseObject.is(url,"string")) {
+        if (BaseObject.is(url, "string")) {
             bkurl = new BKUrl(url);
-        } else if (BaseObject.is(url,"BKUrl")) {
+        } else if (BaseObject.is(url, "BKUrl")) {
             bkurl = url;
         }
         if (bkurl != null && !bkurl.get_isempty()) {
@@ -106,17 +106,17 @@
         }
         return null;
     }
-    SysRouter.prototype.execRootScript = function() {
+    SysRouter.prototype.execRootScript = function () {
         var fs = new MemFSTools();
         var pf = fs.openFile("appfs:/system/routes/settings");
         var scr = pf.getProp("homescript");
         if (typeof scr == "string") {
-            if (Class.is(scr,"IApp")) {
-                return Shell.launchOne(scr,AppStdArgs.skipInitialRoute);
+            if (Class.is(scr, "IApp")) {
+                return Shell.launchOne(scr, AppStdArgs.skipInitialRoute);
             } else {
                 return CLRun.RunGlobal(scr);
             }
-        }
+        } else if (scr == null) return;
         this.LASTERROR("Check yout registerHome in BKInit.Routing, homescript is not a script or app class.")
         return Operation.Failed("homescript is not a string");
     }
@@ -125,7 +125,7 @@
      * @param {*} rt 
      * @returns 
      */
-    SysRouter.prototype.applyRoute = function(rt) {
+    SysRouter.prototype.applyRoute = function (rt) {
         var appcfg = null;
         var appcls = null;
         var route = null; // in app route string
@@ -142,23 +142,23 @@
                 if (rt.length > 0) {
                     appcfg = this.getByAlias(rt[0]);
                     if (appcfg != null) {
-                        route = Array.createCopyOf(rt,1).join("/");
+                        route = Array.createCopyOf(rt, 1).join("/");
                         appcls = appcfg["class"];
                         if (typeof appcls != "string") {
                             this.LASTERROR("class is not given to the app alias" + rt[0]);
-                            return Operation.Failed(this.LASTERROR.text); 
+                            return Operation.Failed(this.LASTERROR.text);
                         }
                         appcls = Class.getClassDef(appcls);
-                        if (appcls == null || !Class.is(appcls,"IAppRouter")) {
+                        if (appcls == null || !Class.is(appcls, "IAppRouter")) {
                             this.LASTERROR("App class is not found or not IAppRoter for alias " + rt[0]);
-                            return Operation.Failed(this.LASTERROR.text); 
+                            return Operation.Failed(this.LASTERROR.text);
                         }
                     }
                 }
             } else {
                 runHome = true;
             }
-        } else if (BaseObject.is(rt,"BKUrl")) {
+        } else if (BaseObject.is(rt, "BKUrl")) {
             var bkpath = rt.get_path();
             return this.applyRoute(bkpath);
         } else if (BaseObject.is(rt, "BKUrlPath")) {
@@ -166,44 +166,44 @@
             return this.applyRoute(segments);
         }
         if (appcfg != null && appcls != null) { // Something to do
-                // There is route
+            // There is route
             var linear = this.$seralizer.parseToLinear(route);
             if (linear) {
                 var objset = appcfg.__treeStates.delinearize(linear);
                 if (objset == null && linear.length > 0) return Operation.Failed("route not found");
                 if (typeof appcfg.script == "string") {
                     var runner = new CLRun(appcfg.script);
-                    return runner.run({appclass: appcls,routeObjects: objset, route: route});
+                    return runner.run({ appclass: appcls, routeObjects: objset, route: route });
                 } else if (appcfg.default) {
                     var app = Shell.getAppByClassName(appcls);
                     if (app != null) {// running
                         if (app.canOpenTreeState(objset)) {
                             var xop = new Operation("applyRoute canopen");
-                            Operation.FromPromiseEx(app.routeTreeState(objset)).then(function() {
+                            Operation.FromPromiseEx(app.routeTreeState(objset)).then(function () {
                                 Shell.activateApp(app);
-                            }).complete(xop,route);
-                            
+                            }).complete(xop, route);
+
                             return xop;// Operation.From(true,route); // TODO check    
                         } else {
                             var op = new Operation("Routing");
-                            Shell.launch(appcls,AppStdArgs.skipInitialRoute)
-                                .onsuccess(function(a) {
-                                    Operation.FromPromiseEx(a.routeTreeState(objset)).complete(op,route);
+                            Shell.launch(appcls, AppStdArgs.skipInitialRoute)
+                                .onsuccess(function (a) {
+                                    Operation.FromPromiseEx(a.routeTreeState(objset)).complete(op, route);
                                     //op.CompleteOperation(true,route);
                                 });
                             return op;
                         }
                     } else {
                         var op1 = new Operation("Routing");
-                        Shell.launchOne(appcls,AppStdArgs.skipInitialRoute)
-                            .onsuccess(function(a) {
-                                Operation.FromPromiseEx(a.routeTreeState(objset)).complete(op1,route);
+                        Shell.launchOne(appcls, AppStdArgs.skipInitialRoute)
+                            .onsuccess(function (a) {
+                                Operation.FromPromiseEx(a.routeTreeState(objset)).complete(op1, route);
                                 //op1.CompleteOperation(true,route);
                             });
                         return op1;
                     }
                 } else {
-                    this.LASTERROR("Routing configuration does not define script or default for " + appcls);    
+                    this.LASTERROR("Routing configuration does not define script or default for " + appcls);
                 }
             } else {
                 this.LASTERROR("parsing the route failed for " + appcls);
@@ -215,9 +215,9 @@
     }
 
     //#region  Singleton
-    SysRouter.Default = (function() {
+    SysRouter.Default = (function () {
         var rtr = null;
-        return function() {
+        return function () {
             if (rtr == null) {
                 rtr = new SysRouter();
             }
