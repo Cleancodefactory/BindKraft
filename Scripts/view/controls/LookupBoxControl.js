@@ -57,7 +57,7 @@
         .Implement(IUIControl)
         .Implement(IDisablableActiveImpl)
         .Implement(IKeyboardProcessorImpl)
-        .Implement(ICustomParameterizationStdImpl, "sourcedata", "identification", "filterbyfield","dropwidth", "dropheight", "interface", "noselection", "showclear","selectinputonfocus","cleartext")
+        .Implement(ICustomParameterizationStdImpl, "sourcedata", "identification", "filterbyfield","dropwidth", "dropheight", "interface", "noselection", "showclear","selectinputonfocus","cleartext","showclearfilter","clearfiltertext")
         .Implement(IItemTemplateConsumerImpl)
         .Implement(IItemTemplateSourceImpl, true, "single")
         .Implement(ITemplateSourceImpl, new Defaults("templateName"),"autofill")
@@ -76,7 +76,9 @@
         .ImplementActiveProperty("choices", new InitializeArray("Choices for selection"),true) // The drop list - selectable repeater
         .ImplementProperty("noselection", new InitializeStringParameter("text for no selection", "(please select)"))
         .ImplementProperty("cleartext", new InitializeStringParameter("Display text for clear button - for use in templates", "clear selection"))
-        .ImplementProperty("showclear", new InitializeBooleanParameter("text for no selection", true))
+        .ImplementProperty("showclear", new InitializeBooleanParameter("Show the clear selection button (templates should honour this)", true))
+        .ImplementProperty("showclearfilter", new InitializeBooleanParameter("Show clear filter button (should call onClearFilter) (templates should honor this)", false))
+        .ImplementProperty("clearfiltertext", new InitializeStringParameter("Display text for clear filter button - for use in templates", "clear filter"))
         .ImplementActiveProperty("selectedobject", new Initialize("the current selection"), null, true, function(oval, nval) {
             if (nval != oval) {
                 this.callAsync(function() {
@@ -391,6 +393,13 @@
     //#endregion focusing
 
     //#region Selector
+    LookupBoxControl.prototype.onClearFilter = function() {
+        var fb = this.get_filterbox();
+        if (fb != null) {
+            fb.value = "";
+            fb.focus();
+        }
+    }
     LookupBoxControl.prototype.onClearSelection = function() {
         if (this.get_selectedobject() == null) return;
         this.set_selectedobject(null);
