@@ -623,6 +623,20 @@ Binding.TargetOperations = {
 				}
 			}
 		},
+		elementprop: {
+			indexed: true,
+			read: function(idx, bind) {
+				if (typeof idx == "string" && idx.length > 0) {
+					return this[idx];
+				}
+				return null;
+			},
+			write: function(idx, v, bind) { 
+				if (typeof idx == "string" && idx.length > 0) {
+					this[idx] = v;
+				}
+			}
+		},
 		placeholder: {
 			read: function(bind) {
 				return DOMUtil.attr(this, "placeholder");
