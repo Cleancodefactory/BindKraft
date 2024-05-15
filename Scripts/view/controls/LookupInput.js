@@ -64,7 +64,7 @@
         .ImplementProperty("noselection", new InitializeStringParameter("text for no selection", "(please select)"))
         .ImplementProperty("cleartext", new InitializeStringParameter("Display text for clear button - for use in templates", "clear selection"))
         .ImplementProperty("showclear", new InitializeBooleanParameter("Show the clear selection button (templates should honour this)", true))
-        .ImplementProperty("interface", new Initialize("Callback interface (alternative to callbacks) see ILookupBoxCallback.", null))
+        .ImplementProperty("interface", new Initialize("Callback interface (alternative to callbacks) see ILookupInputCallback.", null))
         .ImplementProperty("filter", new InitializeStringParameter("Bound to the text (filter) box, change invokes refresh of choices", null),null, function(oval, nval){
             if (nval != oval) {
                 this.$choicesRefresh.windup();
@@ -268,7 +268,7 @@
     LookupInput.prototype.onMakeSelection = function(sender, dc) {
         var me = this;
         this.$makeSelection(dc).onsuccess(function(sel) {
-            me.set_selectedobject(sel);
+            me.set_value(sel);
             me.activatedevent.invoke(me, sel);
             me.Close(true);
         }).onfailure(function(e) {
@@ -277,11 +277,11 @@
     }
     LookupInput.prototype.$makeSelection = function(obj) {
             var result = obj;
-            if (BaseObject.is(this.get_interface(), "ILookupBoxCallback")) {
+            if (BaseObject.is(this.get_interface(), "ILookupInputCallback")) {
                 var r = this.get_interface().makeSelection(obj);
                 if (r != null) result = r;
             } else {
-                return obj;
+                return Operation.From(obj);
             }
             if (BaseObject.is(result, "Operation")) return result;
             return Operation.From(result);

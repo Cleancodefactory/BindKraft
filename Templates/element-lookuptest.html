@@ -1,5 +1,5 @@
 <div>
-    <div data-class="LookupInput">
-        <div data-bind-text="{read}"></div>
+    <div data-class="LookupInput @interface={read source=__control path=$lookupcallback} identification='val'">
+        <div data-bind-text="{read path=desc}"></div>
     </div>
 </div>
