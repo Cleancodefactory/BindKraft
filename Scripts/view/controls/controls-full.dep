@@ -17,3 +17,5 @@
 //#using "LookupMultiSelectionComposite.js"
 //#using "UITimerControl.js"
 //#using "LookupDropDownControl.js"
+//#using "LookupInput.js"
+//#using "LookupTest.js"

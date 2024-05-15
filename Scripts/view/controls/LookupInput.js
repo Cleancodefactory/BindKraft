@@ -179,7 +179,7 @@
     LookupInput.prototype.get_bodyVisible = function () { return this.$bodyVisible; };
     LookupInput.prototype.set_bodyVisible = function (v) {
         var prevstate = this.get_bodyVisible();
-        if (this.get_disabled()) {
+        if (this.get_disabled() || this.get_interface() == null) {
             this.$bodyVisible = false;
         } else {
             this.$bodyVisible = v;
@@ -280,13 +280,8 @@
             if (BaseObject.is(this.get_interface(), "ILookupBoxCallback")) {
                 var r = this.get_interface().makeSelection(obj);
                 if (r != null) result = r;
-            } else if (this.get_makeselection() != null) {
-                var d = this.get_makeselection();
-                if (BaseObject.is(d, "Delegate")) {
-                    result = d.invoke(this, obj);
-                } else if (typeof d == "function") {
-                    result = d.call(this, this, obj);
-                }
+            } else {
+                return obj;
             }
             if (BaseObject.is(result, "Operation")) return result;
             return Operation.From(result);
