@@ -398,7 +398,7 @@
         if (fb != null) {
             fb.value = "";
             fb.focus();
-            // this.set_filter("");
+            this.set_filter("");
         }
     }
     LookupBoxControl.prototype.onClearSelection = function () {
