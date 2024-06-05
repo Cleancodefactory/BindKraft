@@ -1,4 +1,4 @@
-(function(){
+(function () {
     var ViewUtil = Class("ViewUtil"),
         IKeyboardProcessorImpl = InterfaceImplementer("IKeyboardProcessorImpl"),
         ICustomParameterizationStdImpl = InterfaceImplementer("ICustomParameterizationStdImpl"),
@@ -18,7 +18,7 @@
      * 
      * 
      */
-    function ILookupBoxCallback() {}
+    function ILookupBoxCallback() { }
     ILookupBoxCallback.Interface("ILookupBoxCallback");
     /**
      * 
@@ -28,7 +28,7 @@
      * 
      * @returns {Opration<Array<object>>|Array<object>|null} - choices to display to the user
      */
-    ILookupBoxCallback.prototype.getChoices = function(flt, offset, limit) { throw "not implemented"; }
+    ILookupBoxCallback.prototype.getChoices = function (flt, offset, limit) { throw "not implemented"; }
     /**
      * 
      * @param {object} selection - selected object from the $selectedobject property
@@ -38,7 +38,7 @@
      * 
      * Never called with null for the @selection. It is actually called with the object returned before that by interface.makeSelection()
      */
-    ILookupBoxCallback.prototype.translateSelection = function(selection, forDisplay) { throw "not implemented"; }
+    ILookupBoxCallback.prototype.translateSelection = function (selection, forDisplay) { throw "not implemented"; }
     /**
      * 
      * @param {object|null} choice - an object from choices just chosen by the user in the drop list.
@@ -47,20 +47,20 @@
      * @returns {Operation<object>|object|null} - The same or morphed/translated form of the object from choices being selected. It may be desired to
      * consume different/transformed objects from the selection, thus the lookup box has the option to do this here.
      */
-    ILookupBoxCallback.prototype.makeSelection = function(choice, forDisplay) { throw "not implemented"; }
-    
+    ILookupBoxCallback.prototype.makeSelection = function (choice, forDisplay) { throw "not implemented"; }
+
 
     function LookupBoxControl() {
-        Base.apply(this,arguments);
+        Base.apply(this, arguments);
     }
     LookupBoxControl.Inherit(Base, "LookupBoxControl")
         .Implement(IUIControl)
         .Implement(IDisablableActiveImpl)
         .Implement(IKeyboardProcessorImpl)
-        .Implement(ICustomParameterizationStdImpl, "sourcedata", "identification", "filterbyfield","dropwidth", "dropheight", "interface", "noselection", "showclear","selectinputonfocus","cleartext","showclearfilter","clearfiltertext")
+        .Implement(ICustomParameterizationStdImpl, "sourcedata", "identification", "filterbyfield", "dropwidth", "dropheight", "interface", "noselection", "showclear", "selectinputonfocus", "cleartext", "showclearfilter", "clearfiltertext")
         .Implement(IItemTemplateConsumerImpl)
         .Implement(IItemTemplateSourceImpl, true, "single")
-        .Implement(ITemplateSourceImpl, new Defaults("templateName"),"autofill")
+        .Implement(ITemplateSourceImpl, new Defaults("templateName"), "autofill")
         .Defaults({
             templateName: "bindkraft/control-lookupbox"
         });
@@ -70,18 +70,18 @@
         .ImplementProperty("droplist") // The drop list - selectable repeater
         .ImplementProperty("droppanel") // The DOM element of the drop panel
         .ImplementProperty("display") // Selection display HTML Element (readonly textbox)
-        .ImplementProperty("selectinputonfocus", new  InitializeBooleanParameter("select all when the input is focused",false))
-        .ImplementProperty("dropwidth", new InitializeNumericParameter("",null))
-        .ImplementProperty("dropheight", new InitializeNumericParameter("",null))
-        .ImplementActiveProperty("choices", new InitializeArray("Choices for selection"),true) // The drop list - selectable repeater
+        .ImplementProperty("selectinputonfocus", new InitializeBooleanParameter("select all when the input is focused", false))
+        .ImplementProperty("dropwidth", new InitializeNumericParameter("", null))
+        .ImplementProperty("dropheight", new InitializeNumericParameter("", null))
+        .ImplementActiveProperty("choices", new InitializeArray("Choices for selection"), true) // The drop list - selectable repeater
         .ImplementProperty("noselection", new InitializeStringParameter("text for no selection", "(please select)"))
         .ImplementProperty("cleartext", new InitializeStringParameter("Display text for clear button - for use in templates", "clear selection"))
         .ImplementProperty("showclear", new InitializeBooleanParameter("Show the clear selection button (templates should honour this)", true))
         .ImplementProperty("showclearfilter", new InitializeBooleanParameter("Show clear filter button (should call onClearFilter) (templates should honor this)", false))
         .ImplementProperty("clearfiltertext", new InitializeStringParameter("Display text for clear filter button - for use in templates", "clear filter"))
-        .ImplementActiveProperty("selectedobject", new Initialize("the current selection"), null, true, function(oval, nval) {
+        .ImplementActiveProperty("selectedobject", new Initialize("the current selection"), null, true, function (oval, nval) {
             if (nval != oval) {
-                this.callAsync(function() {
+                this.callAsync(function () {
                     this.$filter = this.$translateSelection();
                     this.updateTargets("filterbox");
                 });
@@ -112,12 +112,12 @@
         .ImplementProperty("interface", new Initialize("Callback interface (alternative to callbacks) see ILookupBoxCallback.", null))
 
         //#region  Mostly for the internal callback and translate - can be used by custom ones if convenient.
-        .ImplementProperty("sourcedata", new Initialize("Optional, for use by the callback, the default internal callback expects array with identification property holding strings."), true, function(oval,nval){
+        .ImplementProperty("sourcedata", new Initialize("Optional, for use by the callback, the default internal callback expects array with identification property holding strings."), true, function (oval, nval) {
             this.$choicesRefresh.windup();
         })
         .ImplementProperty("filterbyfield", new InitializeStringParameter("field by which to filter the items, used by the internal callback and optionally by the user callback", null))
         //#endregion
-        .ImplementProperty("filter", new InitializeStringParameter("Bound to the text (filter) box, change invokes refresh of choices", null),null, function(oval, nval){
+        .ImplementProperty("filter", new InitializeStringParameter("Bound to the text (filter) box, change invokes refresh of choices", null), null, function (oval, nval) {
             if (nval != oval) {
                 this.$choicesRefresh.windup();
             }
@@ -128,17 +128,17 @@
     LookupBoxControl.prototype.clearselectionevent = new InitializeEvent("Fired when the selection is cleared by the user.");
     //#endregion
 
-    LookupBoxControl.prototype.get_identification = function() {
+    LookupBoxControl.prototype.get_identification = function () {
         if (this.get_droplist() != null) {
             return this.get_droplist().identification;
         }
     };
-    LookupBoxControl.prototype.set_identification = function(v) {
+    LookupBoxControl.prototype.set_identification = function (v) {
         if (this.get_droplist() != null) {
             this.get_droplist().identification = v;
             this.refreshChoicesIfOpen();
         } else if (!this.isFullyInitialized()) {
-            this.ExecBeforeFinalInit([v],function(val) {
+            this.ExecBeforeFinalInit([v], function (val) {
                 if (this.get_droplist() != null) {
                     this.get_droplist().identification = val;
                 } else {
@@ -147,12 +147,12 @@
             });
         }
     };
-    LookupBoxControl.prototype.get_hasselection = function() {
+    LookupBoxControl.prototype.get_hasselection = function () {
         return (this.get_selectedobject() != null);
     }
 
     // LookupBoxControl.prototype.$itemTemplate = null;
-    
+
     LookupBoxControl.prototype.init = function () {
         //this.$itemTemplate = this.root.innerHTML;
         //ITemplateSourceImpl.InstantiateTemplate(this);
@@ -179,7 +179,7 @@
             // Anything?
         }
         if (this.get_droppanel() != null) {
-            this.on(this.get_droppanel(),"mousedown", this.Open);
+            this.on(this.get_droppanel(), "mousedown", this.Open);
         }
         // Initial state
         // this.set_bodyVisible(false);
@@ -190,23 +190,23 @@
      * For external (and internal sometimes) choices refresh invocation. Works the same as when the user writes, but can be called in all the cases 
      * when change of the choices may occur because of the data to make sure user see what's appropriate. Refresh will happen
      */
-    LookupBoxControl.prototype.refreshChoices = function() {
+    LookupBoxControl.prototype.refreshChoices = function () {
         this.$choicesRefresh.windup();
     }
-    LookupBoxControl.prototype.refreshChoicesIfOpen = function() {
+    LookupBoxControl.prototype.refreshChoicesIfOpen = function () {
         if (this.get_bodyVisible() && this.isFullyInitialized()) {
             this.refreshChoices();
         }
     }
-    LookupBoxControl.prototype.$choicesRefresh = new InitializeMethodTrigger("Initiates new search", function () { 
+    LookupBoxControl.prototype.$choicesRefresh = new InitializeMethodTrigger("Initiates new search", function () {
         var flt = this.get_filter();
         var op = null;
-        var  me = this;
-        if (BaseObject.is(this.get_interface(), ILookupBoxCallback )) {
+        var me = this;
+        if (BaseObject.is(this.get_interface(), ILookupBoxCallback)) {
             var iface = this.get_interface();
             op = iface.getChoices(flt);
             if (BaseObject.is(op, "Operation")) {
-                op.onsuccess(function(ch) {
+                op.onsuccess(function (ch) {
                     me.set_choices(ch);
                 });
             } else {
@@ -222,7 +222,7 @@
                 this.LASTERROR("Cannot call the callback, it is nor delegate, nor function");
             }
             if (BaseObject.is(op, "Operation")) {
-                op.onsuccess(function(ch) {
+                op.onsuccess(function (ch) {
                     me.set_choices(ch);
                 });
             } else {
@@ -233,7 +233,7 @@
             this.$internalCallback(flt);
         }
     }, 300);
-    LookupBoxControl.prototype.$internalCallback = function(flt) {
+    LookupBoxControl.prototype.$internalCallback = function (flt) {
         if (Array.isArray(this.get_sourcedata())) {
 
             var ind = this.get_filterbyfield();
@@ -243,26 +243,26 @@
                 if (flt == null || flt.length == 0) {
                     this.set_choices(me.get_sourcedata());
                 } else {
-                    this.callAsync(function() {
+                    this.callAsync(function () {
                         var items = me.get_sourcedata();
-                        var ch = items.Select(function(idx, item) {
+                        var ch = items.Select(function (idx, item) {
                             if (item[ind] != null && item[ind].toString().indexOf(flt) >= 0) return item;
                         });
                         this.set_choices(ch);
                     });
                 }
             } else {
-                this.set_choices(null);    
+                this.set_choices(null);
             }
         } else {
             this.set_choices(null);
         }
     };
-    LookupBoxControl.prototype.$translateSelection = function() {
+    LookupBoxControl.prototype.$translateSelection = function () {
         var sel = this.get_selectedobject();
         var result;
         if (sel != null) {
-            if (BaseObject.is(this.get_interface(), ILookupBoxCallback )) {
+            if (BaseObject.is(this.get_interface(), ILookupBoxCallback)) {
                 result = this.get_interface().translateSelection(sel);
             } else {
                 var cb = this.get_translate();
@@ -291,13 +291,13 @@
         } else {
             this.$bodyVisible = v;
         }
-        
+
         if (this.$bodyVisible) {
             if (this.get_disabled()) {
                 // Impossible case, but ...
                 DOMUtil.hideElement(this.get_droppanel());
             } else {
-                
+
                 DOMUtil.unHideElement(this.get_droppanel());
                 if (this.get_dropwidth() == null) {
                     //this.get_droppanel().style.removeProperty("width");
@@ -310,7 +310,7 @@
                     this.get_droppanel().style.height = this.get_dropheight() + "px";
                 }
                 var pos = ViewUtil.adjustPopupInHostLocally(this, this.get_droppanel());
-                
+
                 // TODO: May be update the drop => Yes!
                 if (!prevstate) this.refreshChoices();
             }
@@ -319,7 +319,7 @@
         }
     };
     LookupBoxControl.prototype.$pendingOpenClose = null; // odd open/even close, priority rises with the number.
-    LookupBoxControl.prototype.$pendingOpenCloseTrigger = new InitializeMethodTrigger("Operates open close", function(){
+    LookupBoxControl.prototype.$pendingOpenCloseTrigger = new InitializeMethodTrigger("Operates open close", function () {
         if (this.$pendingOpenClose != null) {
             if (this.$pendingOpenClose % 2 == 0) {
                 this.goClose();
@@ -329,23 +329,23 @@
             this.$pendingOpenClose = null;
         }
     }, 50);
-    LookupBoxControl.prototype.goOpen = function() {
+    LookupBoxControl.prototype.goOpen = function () {
         this.set_filterVisible(true);
         this.set_bodyVisible(true);
         this.get_filterbox().focus();
     }
-    LookupBoxControl.prototype.goClose = function() {
+    LookupBoxControl.prototype.goClose = function () {
         this.set_filterVisible(false);
         this.set_bodyVisible(false);
     }
-    LookupBoxControl.prototype.Open = function() {
+    LookupBoxControl.prototype.Open = function () {
         if (this.$pendingOpenClose == null || this.$pendingOpenClose < 1) {
             this.$pendingOpenClose = 1;
             this.$pendingOpenCloseTrigger.windup();
         }
     }
-    LookupBoxControl.prototype.Close = function(force) {
-        var act = force?2:0;
+    LookupBoxControl.prototype.Close = function (force) {
+        var act = force ? 2 : 0;
         if (this.$pendingOpenClose == null || this.$pendingOpenClose < act) {
             this.$pendingOpenClose = act;
             this.$pendingOpenCloseTrigger.windup();
@@ -354,7 +354,7 @@
     //#endregion
 
     //#region box visual management
-    LookupBoxControl.prototype.get_passivetext = function() {
+    LookupBoxControl.prototype.get_passivetext = function () {
         if (this.get_selectedobject() == null) {
             return this.get_noselection();
         } else {
@@ -362,11 +362,11 @@
         }
     }
     LookupBoxControl.prototype.$filterVisible = false;
-    LookupBoxControl.prototype.get_filterVisible = function() {
+    LookupBoxControl.prototype.get_filterVisible = function () {
         return this.$filterVisible;
     }
-    LookupBoxControl.prototype.set_filterVisible = function(v) {
-        var v = v?true:false;
+    LookupBoxControl.prototype.set_filterVisible = function (v) {
+        var v = v ? true : false;
         var f = this.get_filterbox(), d = this.get_display();
         if (v) {
             DOMUtil.hideElement(d);
@@ -375,15 +375,15 @@
             DOMUtil.hideElement(f);
             DOMUtil.unHideElement(d);
         }
-        this.$filterVisible = v; 
+        this.$filterVisible = v;
     };
     //#endregion box visual management
 
     //#region focusing
-    LookupBoxControl.prototype.onBlurFilter = function(e,dc, bind) {
+    LookupBoxControl.prototype.onBlurFilter = function (e, dc, bind) {
         this.Close();
     };
-    LookupBoxControl.prototype.onFocusFilter = function(e,dc, bind) {
+    LookupBoxControl.prototype.onFocusFilter = function (e, dc, bind) {
         if (this.get_disabled()) return;
         if (this.get_selectinputonfocus()) {
             this.get_filterbox().select();
@@ -393,55 +393,56 @@
     //#endregion focusing
 
     //#region Selector
-    LookupBoxControl.prototype.onClearFilter = function() {
+    LookupBoxControl.prototype.onClearFilter = function () {
         var fb = this.get_filterbox();
         if (fb != null) {
             fb.value = "";
             fb.focus();
+            // this.set_filter("");
         }
     }
-    LookupBoxControl.prototype.onClearSelection = function() {
+    LookupBoxControl.prototype.onClearSelection = function () {
         if (this.get_selectedobject() == null) return;
         this.set_selectedobject(null);
         this.clearselectionevent.invoke(this, null);
         this.Close(true);
     }
-    LookupBoxControl.prototype.onMakeSelection = function(sender, dc) {
+    LookupBoxControl.prototype.onMakeSelection = function (sender, dc) {
         var me = this;
-        this.$makeSelection(dc).onsuccess(function(sel) {
+        this.$makeSelection(dc).onsuccess(function (sel) {
             me.set_selectedobject(sel);
             me.activatedevent.invoke(me, sel);
             me.Close(true);
-        }).onfailure(function(e) {
+        }).onfailure(function (e) {
             me.LASTERROR("Error resolving the selected item:" + e, "onMakeSelection");
         });
     }
-    LookupBoxControl.prototype.$makeSelection = function(obj) {
-            var result = obj;
-            if (BaseObject.is(this.get_interface(), "ILookupBoxCallback")) {
-                var r = this.get_interface().makeSelection(obj);
-                if (r != null) result = r;
-            } else if (this.get_makeselection() != null) {
-                var d = this.get_makeselection();
-                if (BaseObject.is(d, "Delegate")) {
-                    result = d.invoke(this, obj);
-                } else if (typeof d == "function") {
-                    result = d.call(this, this, obj);
-                }
+    LookupBoxControl.prototype.$makeSelection = function (obj) {
+        var result = obj;
+        if (BaseObject.is(this.get_interface(), "ILookupBoxCallback")) {
+            var r = this.get_interface().makeSelection(obj);
+            if (r != null) result = r;
+        } else if (this.get_makeselection() != null) {
+            var d = this.get_makeselection();
+            if (BaseObject.is(d, "Delegate")) {
+                result = d.invoke(this, obj);
+            } else if (typeof d == "function") {
+                result = d.call(this, this, obj);
             }
-            if (BaseObject.is(result, "Operation")) return result;
-            return Operation.From(result);
+        }
+        if (BaseObject.is(result, "Operation")) return result;
+        return Operation.From(result);
     };
 
     //#endregion
 
 
     //#region IKeyboardProcessor
-    LookupBoxControl.prototype.$keysToPass = ["ArrowDown","ArrowUp","PageDown","PageUp","Enter","Escape"];
+    LookupBoxControl.prototype.$keysToPass = ["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Enter", "Escape"];
     /**
      * In this case receives everything from the textbox and
      */
-    LookupBoxControl.prototype.processKeyObject = function(keyData) {
+    LookupBoxControl.prototype.processKeyObject = function (keyData) {
         if (this.$keysToPass.some(k => k == keyData.key)) {
             return false; // let these go
         }
