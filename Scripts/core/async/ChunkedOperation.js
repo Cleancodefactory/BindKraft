@@ -40,17 +40,19 @@ ChunkedOperation.prototype.OperationClear = function() {
  */
 ChunkedOperation.prototype.dispatchchunks = function() {
 	var old = this.get_chunkroutine();
-	if (BaseObject.is(old,"SugaryChunkDispatcher")) {
+	if (BaseObject.is(old,"SugaryChunksDispatcher")) {
 			// Already dispatched
+			this.$invokeChunkHandling(); // Eat everything from the queue.
+			return old;
 	} else {
-		var wrapper = new SugaryChunkDispatcher(this);
+		var wrapper = new SugaryChunksDispatcher(this);
 		this.set_chunkroutine(wrapper);
 		if (BaseObject.isCallback(old)) {
 			wrapper.onchunk(old);
 		}
+		this.$invokeChunkHandling(); // Eat everything from the queue.
+		return wrapper;
 	}
-	this.$invokeChunkHandling(); // Eat everything from the queue.
-	return this;
 }
 /**
  * @param {Function|IInvoke|IInvokeWithArrayArgs} callback - if second argument is not specified
@@ -61,10 +63,10 @@ ChunkedOperation.prototype.dispatchchunks = function() {
 ChunkedOperation.prototype.onchunk = function(callback, failcallback) {
 	if (BaseObject.isCallback(callback)) {
 		var old = this.get_chunkroutine();
-		if (BaseObject.is(old,"SugaryChunkDispatcher")) {
+		if (BaseObject.is(old,"SugaryChunksDispatcher")) {
 			old.onchunk(callback, failcallback);
 		} else if (BaseObject.isCallback(old)) {
-			var wrapper = new SugaryChunkDispatcher(this);
+			var wrapper = new SugaryChunksDispatcher(this);
 			this.set_chunkroutine(wrapper);
 			wrapper.onchunk(old);
 			wrapper.onchunk(callback, failcallback);
@@ -99,7 +101,7 @@ ChunkedOperation.prototype.anychunk = function(callback) {
 ChunkedOperation.prototype.onokchunk = function(callback) {
 	return this.dispatchchunks().onokchunk(callback);
 }
-ChunkedOperation.prototype.onokchunk = function(callback) {
+ChunkedOperation.prototype.okchunk = function(callback) {
 	return this.dispatchchunks().okchunk(callback);
 }
 ChunkedOperation.prototype.failchunk = function(callback) {
