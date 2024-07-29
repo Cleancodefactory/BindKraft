@@ -351,7 +351,7 @@
 		var v = obj[name];
 		var vtype = TreeStates.ValueType(v);
 		if (arrTypes.findElement(vtype) < 0) {
-			return this.Error("Property " + name + " contains value of type not specified in the TSEU", true);
+			return this.Error("Property " + name + " contains value of type not specified in the TSEU " + "(" + tseu[1] + ")", true);
 		}
 		return v;
 	}
