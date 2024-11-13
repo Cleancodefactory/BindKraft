@@ -1349,7 +1349,9 @@
         var cult = this.culture();
         return cult.calendars.standard.timeOrder;
     }
-
+    Globalize.prototype.currentCulture = function() {
+        return this.culture(this.cultureSelector);
+    }
     //
     // public singleton functions
     //
