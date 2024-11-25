@@ -1,31 +1,4 @@
-<!-- vscode-markdown-toc -->
-* 1. [BKInit - shortcuts](#bkinit---shortcuts)
-    * 1.1. [BKInit.StartMenu](#bkinit.startmenu)
-    * 1.2. [BKinit.SystemMenu](#bkinit.systemmenu)
-    * 1.3. [BKInit.DevMenu](#bkinit.devmenu)
-    * 1.4. [BKInit.PrivateMenu](#bkinit.privatemenu)
-    * 1.5. [BKinit.AppMenu](#bkinit.appmenu)
-    * 1.6. [BKInit.KeylaunchMenu](#bkinit.keylaunchmenu)
-    * 1.7. [BKInit.RecentMenu](#bkinit.recentmenu)
-* 2. [CL scripts (non-shortcut)](#cl-scripts-(non-shortcut))
-    * 2.1. [BKInit.MasterBoot - the most important setting](#bkinit.masterboot---the-most-important-setting)
-    * 2.2. [BKInit.ModuleScript](#bkinit.modulescript)
-    * 2.3. [BKInit.commands](#bkinit.commands)
-    * 2.4. [BKInit.urlCommands](#bkinit.urlcommands)
-    * 2.5. [(deprecated) BKInit.commandUrlAliases](#(deprecated)-bkinit.commandurlaliases)
-    * 2.6. [(deprecated) BKInit.commandUrlAlias](#(deprecated)-bkinit.commandurlalias)
-    * 2.7. [(deprecated) BKInit.commandUrlGlobal](#(deprecated)-bkinit.commandurlglobal)
-    * 2.8. [BKInit.AppData](#bkinit.appdata)
-    * 2.9. [BKInit.AppInfo](#bkinit.appinfo)
-    * 2.10. [BKInit.WorkspaceName](#bkinit.workspacename)
-    * 2.11. [BKInit.WorkspaceName](#bkinit.workspacename-1)
-    * 2.12. [BKInit.Translation](#bkinit.translation)
-
-<!-- vscode-markdown-toc-config
-	numbering=true
-	autoSave=true
-	/vscode-markdown-toc-config -->
-<!-- /vscode-markdown-toc --># BkInit - initialization helpers
+# BkInit - initialization helpers
 
 These helpers are intended to be used in the `init.js` files of modules.
 
@@ -37,9 +10,9 @@ Project construction and configuration guide (_TODO: put a link here when the ar
 
 Last update for version: 2.17.5
 
-##  1. <a name='bkinit---shortcuts'></a>BKInit - shortcuts
+## BKInit - shortcuts
 
-###  1.1. <a name='bkinit.startmenu'></a>BKInit.StartMenu
+### BKInit.StartMenu
 
 Manages shortcuts in `shellfs:startmenu`. The shortcuts in this directory are usually shown by the system's shell UI (NotchShell being an example shell) and other apps that want to display the official start menu. Almost the same syntax is also used for other directories containing shortcuts (except the BKInit's method everything else is the same). 
 
@@ -93,17 +66,17 @@ BKInit.StartMenu(function (menu) {
 };
 ```
 
-###  1.2. <a name='bkinit.systemmenu'></a>BKinit.SystemMenu
+### BKinit.SystemMenu
 
 (TODO: write this section)
 
-###  1.3. <a name='bkinit.devmenu'></a>BKInit.DevMenu
+### BKInit.DevMenu
 
-###  1.4. <a name='bkinit.privatemenu'></a>BKInit.PrivateMenu
+### BKInit.PrivateMenu
 
-###  1.5. <a name='bkinit.appmenu'></a>BKinit.AppMenu
+### BKinit.AppMenu
 
-###  1.6. <a name='bkinit.keylaunchmenu'></a>BKInit.KeylaunchMenu
+### BKInit.KeylaunchMenu
 
 Syntax:
 ```Javascript
@@ -114,11 +87,11 @@ Syntax:
 
 Enables you to add shortcuts to `shellfs:/keylaunch` directory. This directory is internally used by the system and executes shortcuts in response to `Ctrl+Alt+{letter}` keyboard combination. Keep in mind that `letter` cannot be everything - some are reserved by the browser (may differ between browsers - test it first). These shortcuts are supported for developer's convenience - when there is no place for a launching UI or running support apps. It is recommended to not overuse this in production as it can scare the end users.
 
-###  1.7. <a name='bkinit.recentmenu'></a>BKInit.RecentMenu
+### BKInit.RecentMenu
 
-##  2. <a name='cl-scripts-(non-shortcut)'></a>CL scripts (non-shortcut)
+## CL scripts (non-shortcut)
 
-###  2.1. <a name='bkinit.masterboot---the-most-important-setting'></a>BKInit.MasterBoot - the most important setting
+### BKInit.MasterBoot - the most important setting
 
 Lets you specify the boot CL script. This script is executed immediately after all the specified Javascript code is loaded (see the notes a bit later).
 
@@ -142,7 +115,7 @@ This BkInit setting is usually found only in the startup modules (colloquially c
 This allows (as with all the other BkInit settings) the script to be rewritten by the different modules and the last one to remain the actual file that will be executed. BkInit is intended for use during the loading phase and before initializing the system. BkInit contains handy means to write settings into the memory - mostly in the memory FS, but in some other places as well. The BK modules load in their dependency order, which guarantees that the startup module will be loaded last and its version of the boot script will take effect instead of any others. This enables a very simple technique - each module can specify such a script - designed for the scenario where it will run alone, with its dependencies only. This is convenient for development time where running all the apps from all the modules is not always useful or even desired.
 
 
-###  2.2. <a name='bkinit.modulescript'></a>BKInit.ModuleScript
+### BKInit.ModuleScript
 
 Syntax:
 ```Javascript
@@ -173,19 +146,15 @@ So, this can be viewed as ready to use scripts for various configurations/scenar
 
 This can go much further in more complex web sites - e.g. the directories can be enumerated and scripts with certain names executed if present. This will effectively implement a very simplified imitation of a classic unix boot process - a simple way to configure the environment for different behavior without the need to dig too deep into app documentation for arguments, supported commands and so on.
 
-###  2.3. <a name='bkinit.commands'></a>BKInit.commands
+### BKInit.commands
 
-###  2.4. <a name='bkinit.urlcommands'></a>BKInit.urlCommands
+### BKInit.commandUrlAliases
 
-Configures commands that can be executed during the workspace initialization in response to certain URL query parameters. See [BKInit.urlCommands](BKInit_urlCommands.md)
+### BKInit.commandUrlAlias
 
-###  2.5. <a name='(deprecated)-bkinit.commandurlaliases'></a>(deprecated) BKInit.commandUrlAliases
+### BKInit.commandUrlGlobal
 
-###  2.6. <a name='(deprecated)-bkinit.commandurlalias'></a>(deprecated) BKInit.commandUrlAlias
-
-###  2.7. <a name='(deprecated)-bkinit.commandurlglobal'></a>(deprecated) BKInit.commandUrlGlobal
-
-###  2.8. <a name='bkinit.appdata'></a>BKInit.AppData
+### BKInit.AppData
 
 ```Javascript
 BKInit.AppData(AppName, function (data) {
@@ -202,7 +171,7 @@ Both `content` and `object` methods take as first argument the name of the memor
 
 To create a directory, use the `folder` method.
 
-###  2.9. <a name='bkinit.appinfo'></a>BKInit.AppInfo
+### BKInit.AppInfo
 
 ```Javascript
 BKInit.AppInfo(AppName, function (data) {
@@ -211,20 +180,20 @@ BKInit.AppInfo(AppName, function (data) {
 };
 ```
 
-###  2.10. <a name='bkinit.workspacename'></a>BKInit.WorkspaceName
+### BKInit.WorkspaceName
 
 ```Javascript
     BKInit.WorkspaceName("My magical set of apps");
 ```
 
-###  2.11. <a name='bkinit.workspacename-1'></a>BKInit.WorkspaceName
+### BKInit.WorkspaceName
 
 ```Javascript
     BKInit.WorkspaceName("My magical set of apps");
 ```
 Sets the workspace name, accessible through System.set/get_`workskapceName`
 
-###  2.12. <a name='bkinit.translation'></a>BKInit.Translation
+### BKInit.Translation
 
 ```Javascript
     BKInit.Translation("MyClass", function(trans) {

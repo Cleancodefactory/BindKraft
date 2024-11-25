@@ -1,2 +1,1 @@
-function IManagedInterfaceNonstrict() {}
-IManagedInterfaceNonstrict.Interface("IManagedInterfaceNonstrict", "IManagedInterface");
+function IManagedInterfaceNonstrict(){}IManagedInterfaceNonstrict.Interface("IManagedInterfaceNonstrict","IManagedInterface");

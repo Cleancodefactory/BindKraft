@@ -1,5 +1,1 @@
-function IDaemonRegister() {}
-IDaemonRegister.Interface("IDaemonRegister");
-IDaemonRegister.RequiredTypes("IRegister");
-
-//IDaemonRegister.prototype.
+function IDaemonRegister(){}IDaemonRegister.Interface("IDaemonRegister");IDaemonRegister.RequiredTypes("IRegister");

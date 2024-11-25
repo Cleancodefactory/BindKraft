@@ -4,7 +4,6 @@
 //#using "./ContentWindow.js"
 //#using "./PageSetWindow.js"
 //#using "./RibbonWindow.js"
-//#using "./SplitterWindow.js"
+//#using "./SplitterWidnow.js"
 //#using "./TabSetWindow.js"
 //#using "./TabSetWindowWithLinks.js"
-//#using "./PanesMainWindow.js"

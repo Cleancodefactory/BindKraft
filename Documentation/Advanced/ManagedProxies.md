@@ -1,19 +1,4 @@
-<!-- vscode-markdown-toc -->
-
-* 1. [Requirements](#requirements)
-* 2. [How this works and where is it used](#how-this-works-and-where-is-it-used)
-* 3. [Proxy generation](#proxy-generation)
-    * 3.1. [What are the strict and non-strict modes?](#what-are-the-strict-and-non-strict-modes?)
-
-<!-- vscode-markdown-toc-config
-	numbering=true
-	autoSave=true
-	/vscode-markdown-toc-config -->
-<!-- /vscode-markdown-toc -->
-
 # Managed proxies
-
-(This is advanced topic. Typically one only needs to know that these proxies exist).
 
 The so called `managed proxies` are intended to provide isolation between client and server locally (inside the local workspace). 
 
@@ -21,7 +6,7 @@ Despite the similarities between remote and local stubbing techniques they have 
 
 So, the local proxies can be seen as collapsed remoting and as proxy and stub combined into one and the same object. For the developer there is a more important difference - the local isolation (through the proxies) does not require all methods to return operations (to be asynchronous). This alone justifies the existence of the local proxies.
 
-##  1. <a name='requirements'></a>Requirements
+## Requirements
 
 A local (managed) proxy can wrap only interfaces extending the `IManagedInterface`:
 
@@ -37,7 +22,7 @@ The implementation of the interface is actually very simple, because:
 
 >The `GetInterface` method have to be implemented, but this is done in a very trivial manner. The server class have to implement it as simple method returning the reference to the object on which the requested (in the `iface` argument) interface is implemented. The rest of the work is again done by the internally generated proxy.
 
-##  2. <a name='how-this-works-and-where-is-it-used'></a>How this works and where is it used
+## How this works and where is it used
 
 These client-server relations can potentially exist in quite many scenarios - anywhere where isolation between client and server code is preferred/required. I.e. in general all the Javascript in the local workspace runs in the one and the same Javascript workspace context - the javascript context of the WEB page. At a very general level any two objects in the workspace may have some way one of them (the client) to request a reference to the other (the server) based on some interface known for the both parties (implemented by the server, called by the client). We ignore for the moment how and what enables the client to find the server and request the interface, but this mechanism is the one that decides to pass a direct reference or a wrapped one that will not allow the client to call on the server any methods that are not part of the requested interface, thus establishing certain level of isolation between them.
 
@@ -49,7 +34,7 @@ In BindKraftJS such relations are maintained through two mechanisms (in version 
 
 It is not prohibited to implement custom scenarios like these. So, the technique and the involved mechanisms are open for wider use if somebody deems them useful and appropriate in a custom scenario.
 
-##  3. <a name='proxy-generation'></a>Proxy generation
+## Proxy generation
 
 It is probably already obvious that the bulk of the proxy generation work will be done by the system behind the scenes, but there are cases in which the developers have to wrap references to objects themselves. Another reason to familiarize with the proxy generation is to know how, why and when to control/configure it.
 
@@ -77,7 +62,7 @@ Here the `strict` argument is optional and if omitted the new instance will just
 
 There are further considerations for the strict and non-strict mode and it is highly recommended to use non-strict mode only for development time testing and experimenting. It is also important to notice that this is better done through BindKraft core settings and not through `new DummyInterfaceProxyBuilder(strict)`. The reason is that the builder generates a new class for each proxy and the strict/non-strict mode argument will have effect only when the builder generates a proxy for that interface and server class for the first time. Just have this in mind and do not use non-strict mode in production!
 
-###  3.1. <a name='what-are-the-strict-and-non-strict-modes?'></a>What are the strict and non-strict modes?
+### What are the strict and non-strict modes?
 
 In strict mode all the requirements are either enforced or cause exceptions if they are not met. In non-strict mode one can cut some corners. This is sometimes done by the system, but is not recommended otherwise.
 

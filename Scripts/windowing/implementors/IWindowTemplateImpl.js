@@ -1,1 +1,0 @@
-// If we decide to keep the older IWindowTemplate interface we have to move the implementation here to keep it clean

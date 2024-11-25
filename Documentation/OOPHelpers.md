@@ -1,31 +1,8 @@
-<!-- vscode-markdown-toc -->
-* 1. [Common parameters used](#common-parameters-used)
-    * 1.1. [changeCallback - used by some helpers below](#changecallback---used-by-some-helpers-below)
-    * 1.2. [changeCallbackInPlace](#changecallbackinplace)
-    * 1.3. [idxChangeCallback](#idxchangecallback)
-* 2. [Helpers list](#helpers-list)
-    * 2.1. [ImplementProperty](#implementproperty)
-    * 2.2. [ImplementActiveProperty](#implementactiveproperty)
-    * 2.3. [ImplementReadProperty](#implementreadproperty)
-    * 2.4. [ImplementWriteProperty](#implementwriteproperty)
-    * 2.5. [ImplementIndexedProperty](#implementindexedproperty)
-    * 2.6. [ImplementActiveIndexedProperty](#implementactiveindexedproperty)
-    * 2.7. [ImplementIndexedReadProperty](#implementindexedreadproperty)
-    * 2.8. [ImplementIndexedWriteProperty](#implementindexedwriteproperty)
-    * 2.9. [ImplementCollectorProperty](#implementcollectorproperty)
-    * 2.10. [ImplementSmartProperty](#implementsmartproperty)
-    * 2.11. [ImplementChainSetters](#implementchainsetters)
-
-<!-- vscode-markdown-toc-config
-	numbering=true
-	autoSave=true
-	/vscode-markdown-toc-config -->
-<!-- /vscode-markdown-toc -->
 # OOP Helpers
 
 These helpers are used in the normal `class` and `implementer` declarations. They add automatically generated implementations of some common features.
 
-##  1. <a name='common-parameters-used'></a>Common parameters used
+## Common parameters used
 
 Most helpers have some common parameters. Among them is the `changeCallback` which can be specified in two ways:
 
@@ -34,7 +11,7 @@ Most helpers have some common parameters. Among them is the `changeCallback` whi
 
 Another common parameter is [changeCallbackInPlace](#changeCallbackInPlace) which is again a callback, but specified for indexed properties.
 
-###  1.1. <a name='changecallback---used-by-some-helpers-below'></a>changeCallback - used by some helpers below
+### changeCallback - used by some helpers below
 
 This one is specified as a string containing the name of the method to call whenever the property changes.
 
@@ -53,7 +30,7 @@ MyClass.prototype.MyCallback = function(propname, oldval, newval) {
 
 _Notice the force optional arguments that can configure a property to call its callback every time it is set, no matter if its value actually changes._
 
-###  1.2. <a name='changecallbackinplace'></a>changeCallbackInPlace
+### changeCallbackInPlace
 
 When the change callback is specified as in-place written function like here for instance:
 
@@ -71,7 +48,7 @@ function(oldval, newval) {
 ```
 
 
-###  1.3. <a name='idxchangecallback'></a>idxChangeCallback
+### idxChangeCallback
 
 ```Javascript
 function(value, index, store) { ... }
@@ -88,25 +65,21 @@ Notes: The property can be called with a single argument in which case the value
 
 
 
-##  2. <a name='helpers-list'></a>Helpers list
+## Helpers list
 
-###  2.1. <a name='implementproperty'></a>ImplementProperty
+### ImplementProperty
 
 ```Javascript
-MyClass.ImplementProperty("someprop", Initialize, pstore_or_force, changeCallback, force);
+MyClass.ImplementProperty("someprop", Initialize, pstore, changeCallback, force);
 ```
 
-Adds setter and getter property `set_someporp`/`get_someprop` to the prototype. The value is held in variable named `$someprop` unless explicit name is passed through the `pstore` (3-d) argument, in which case it is used as name of the backing field (as-is). All parameters except the first one are optional and can be omitted or set to null with the same effect.
+Adds setter and getter property `set_someporp`/`get_someprop` to the prototype. The value is held in variable named `$someprop` unless explicit name is passed through the `pstore` argument, in which case it is used as name of the backing field (as-is). All parameters except the first one are optional and can be omitted or set to null with the same effect.
 
 `"someprop"` is the name of the property to define.
-
 `Initialize` is an instance of an Initialize derived class that specifies initial value, description and some type information.
-
-`pstore_or_force` if string is an explicit name for the backing field (see above), if boolean acts like the `force` argument (the option added in v2.25.1).
-
+`pstore` is an explicit name for the backing field (see above)
 `changeCallback` is a callback called when the property is changed.
-
-`force` is a boolean that forces the callback to be called each time the property is set no matter if the value changes or not. (can be specified as 3-d argument if `pstore` is not needed. See above).
+`force` is a boolean that forces the callback to be called each time the property is set no matter if the value changes or not.
 
 Example:
 ```Javascript
@@ -116,72 +89,69 @@ MyClass.ImplementProperty("size", new InitializeNumericParameter("Defines the si
 ```
 Regardless of which arguments are used which are left out, this method defines two members in your class. Following the example above they will be: `get_size()` and `set_size(v)`. One can choose to override any one of them or both (which makes the statement completely pointless). Overriding is usually done in inheriting classes or temporarily for debugging.
 
-It is quite normal during the development process to start with a property implemented this way and later identify the need to implement it explicitly by removing the ImplementProperty and defining explicitly the get_xxxx and set_xxxx methods. Still the majority of the properties a class needs, especially visual components, are usually simple holders of bindable parameters and ImplementProperty is good enough way to save some coding. By using the callback custom logic can be added without the need to re-implement everything explicitly. The callback cannot stop the assignment operation and should not bypass it by setting a different value to the backing field. This is not conventional and will not be expected by other developers.
+It is quite normal during the development process to start with a property implemented this way and later identify the need to implement it explicitly by removing the ImplementProperty and defining explicitly the get_xxxx and set_xxxx methods. Still the majority of the properties a class needs, especially visual components, are usually simple holders of bindable parameters and ImplementProperty is good enough way to save some coding. By using the callback custom logic can be added without the need to reimplement everything explicitly. The callback cannot stop the assignment operation and should not bypass it by setting a different value to the backing field. This is not conventional and will not be expected by other developers.
 
 
-###  2.2. <a name='implementactiveproperty'></a>ImplementActiveProperty
+### ImplementActiveProperty
 
 ```Javascript
-//when pstore is not Boolean
 MyClass.ImplementActiveProperty(pname, Initialize, pstore, force,changeCallback);
-//when pstore is Boolean
-MyClass.ImplementActiveProperty(pname, Initialize, force, changeCallback);
-
+MyClass.ImplementActiveProperty(pname, Initialize, pstore, pstore, force, changeCallback);
 ```
 
 For the most part ImplementActiveProperty acts just like ImplementProperty, but it also defines an event (EventDispatcher) named `xxxx_changed` where xxxx is the `pname` (the property name). This event is fired each time the property changes or every time it is set (if `force` is specified as true like).
 
 These properties 
 
-###  2.3. <a name='implementreadproperty'></a>ImplementReadProperty
+### ImplementReadProperty
 
 ```Javascript
 MyClass.ImplementReadProperty(pname, Initialize, pstore);
 ```
 
-###  2.4. <a name='implementwriteproperty'></a>ImplementWriteProperty
+### ImplementWriteProperty
 
 ```Javascript
 MyClass.ImplementWriteProperty(pname, Initialize, pstore);
 ```
 
-###  2.5. <a name='implementindexedproperty'></a>ImplementIndexedProperty
+### ImplementIndexedProperty
 
 ```Javascript
 MyClass.ImplementIndexedProperty(pname, Initialize, pstore, idxChangeCallback);
 ```
 
-###  2.6. <a name='implementactiveindexedproperty'></a>ImplementActiveIndexedProperty
+### ImplementActiveIndexedProperty
 
 ```Javascript
 MyClass.ImplementActiveIndexedProperty(pname, Initialize, pstore, idxChangeCallback);
 ```
 
-###  2.7. <a name='implementindexedreadproperty'></a>ImplementIndexedReadProperty
+### ImplementIndexedReadProperty
 
 ```Javascript
 MyClass.ImplementIndexedReadProperty(pname, Initialize, pstore);
 ```
 
-###  2.8. <a name='implementindexedwriteproperty'></a>ImplementIndexedWriteProperty
+### ImplementIndexedWriteProperty
 
 ```Javascript
 MyClass.ImplementIndexedWriteProperty(pname, Initialize, pstore);
 ```
 
-###  2.9. <a name='implementcollectorproperty'></a>ImplementCollectorProperty
+### ImplementCollectorProperty
 
 ```Javascript
 MyClass.ImplementCollectorProperty(pname, pstore, changeCallback);
 ```
 
-###  2.10. <a name='implementsmartproperty'></a>ImplementSmartProperty
+### ImplementSmartProperty
 
 ```Javascript
 MyClass.ImplementSmartProperty(pname, smartPropClass, ...propClassArgs);
 ```
 
-###  2.11. <a name='implementchainsetters'></a>ImplementChainSetters
+### ImplementChainSetters
 
 ```Javascript
 MyClass.ImplementChainSetters();

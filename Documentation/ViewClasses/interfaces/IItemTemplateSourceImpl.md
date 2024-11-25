@@ -1,4 +1,0 @@
-# IItemTemplateSource
-
-
-## IItemTemplateSourceImpl Implementor

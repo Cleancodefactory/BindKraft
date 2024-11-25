@@ -6,7 +6,6 @@
 //#using "../implementors/implementors-full.dep"
 
 //#using "../base/base-full.dep"
-//#using "../livesettings/livesettings.dep"
 //#using "../windowbehaviors/windowbehaviors-full.dep"
 //#using "../BaseWindow.js"
 //#using "../MainWindow.js"

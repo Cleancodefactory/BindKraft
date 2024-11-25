@@ -1,4 +1,1 @@
-/*INTERFACE*/
-function ISupportsRuleOnUnloadImpl() { }
-ISupportsRuleOnUnloadImpl.Interface("ISupportsRuleOnUnloadImpl");
-ISupportsRuleOnUnloadImpl.prototype.executeRuleOnUnload = function () { return 0; }
+function ISupportsRuleOnUnloadImpl(){}ISupportsRuleOnUnloadImpl.Interface("ISupportsRuleOnUnloadImpl");ISupportsRuleOnUnloadImpl.prototype.executeRuleOnUnload=function(){return 0;};

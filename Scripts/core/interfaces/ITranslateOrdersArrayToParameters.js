@@ -1,6 +1,1 @@
-function ITranslateOrdersArrayToParameters() {}
-ITranslateOrdersArrayToParameters.Interface("ITranslateOrdersArrayToParameters", ITranslator);
-/**
-	@param conf {Array<Array>}  Ex: [["ordefield","orderdir"], ...]
-*/
-ITranslateOrdersArrayToParameters.prototype.configureOrderParameters = function(conf) { throw "not impl"; }
+function ITranslateOrdersArrayToParameters(){}ITranslateOrdersArrayToParameters.Interface("ITranslateOrdersArrayToParameters",ITranslator);ITranslateOrdersArrayToParameters.prototype.configureOrderParameters=function(conf){throw"not impl";};

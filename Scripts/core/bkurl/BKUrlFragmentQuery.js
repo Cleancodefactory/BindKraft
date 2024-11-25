@@ -1,4 +1,1 @@
-function BKUrlFragmentQuery() {
-	BKUrlQuery.apply(this, arguments);
-}
-BKUrlFragmentQuery.Inherit(BKUrlQuery, "BKUrlFragmentQuery");
+function BKUrlFragmentQuery(){BKUrlQuery.apply(this,arguments);}BKUrlFragmentQuery.Inherit(BKUrlQuery,"BKUrlFragmentQuery");

@@ -1,13 +1,1 @@
-
-
-
-function ISupportsURLHashImpl() { }
-ISupportsURLHashImpl.InterfaceImpl ( ISupportsURLHash, "ISupportsURLHashImpl");
-ISupportsURLHashImpl.prototype.hashKeyOfUrl = function () {
-    return null;
-};
-ISupportsURLHashImpl.RegisterOfClasses = [];
-ISupportsURLHashImpl.classInitialize = function ( cls, routingTypeName, getParentProc ) {
-	// add classes implementing this Interface
-	ISupportsURLHashImpl.RegisterOfClasses.push ( cls );
-};
+function ISupportsURLHashImpl(){}ISupportsURLHashImpl.InterfaceImpl(ISupportsURLHash,"ISupportsURLHashImpl");ISupportsURLHashImpl.prototype.hashKeyOfUrl=function(){return null;};ISupportsURLHashImpl.RegisterOfClasses=[];ISupportsURLHashImpl.classInitialize=function(cls,routingTypeName,getParentProc){ISupportsURLHashImpl.RegisterOfClasses.push(cls);};

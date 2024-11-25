@@ -1,1 +1,0 @@
-This directory contains development time notes, please ignore it.

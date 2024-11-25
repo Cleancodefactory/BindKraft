@@ -18,7 +18,6 @@
 //#using "./InitializeReadOnlyParameter.js"
 //#using "./InitializeCustomFormatter.js"
 //#using "./InitializeFetcher.js"
-//#using "./InitializeInterfaceBubble.js"
 
 //#using "./InitializeMethodCallback.js"
 

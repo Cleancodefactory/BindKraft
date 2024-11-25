@@ -24,8 +24,6 @@
 //#using "../validatorrules/CheckValidationRule.js"
 //#using "../validatorrules/WaitControlReadiness.js"
 //#using "../validatorrules/WaitValidator.js"
-//#using "../validatorrules/PassiveValidatorRule.js"
-//#using "../validatorrules/SymbolSetValidatorRule.js"
 
 
 //#using "../validatorrules/ValidatorRuleReferenceImplementation.js"

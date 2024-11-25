@@ -1,5 +1,4 @@
 //#using "./Delegate.js"
-//#using "./QueuedActionsContainer.js"
 //#using "./DelegateRev.js"
 //#using "./PropertyDelegate.js"
 //#using "./ProtoCaller.js"
@@ -14,7 +13,6 @@
 //#using "./EventAggregator.js"
 //#using "./EventConnector.js"
 //#using "./SugaryDispatcher.js"
-//#using "./SugaryChunksDispatcher.js"
 //#using "./EventDispatchLeasing.js"
 //#using "./ServiceFetcher.js"
 

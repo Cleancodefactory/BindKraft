@@ -1,6 +1,6 @@
 # Bindings
 
->For binding syntax reference - [see here](BindingSyntax/BindingSyntax.md)
+>For binding syntax reference - [see here](BindingSyntax.md)
 
 The bindings are one of the core BindKraft features - a feature that actually gives the name of the platform.
 

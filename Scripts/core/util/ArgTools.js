@@ -1,3 +1,1 @@
-var ArgTools = {
-	
-};
+var ArgTools={};

@@ -49,9 +49,6 @@
 //#using "./IServiceLocator.js"
 //#using "./IElementsLocator.js"
 //#using "./IElementsLocatorRegister.js"
-//#using "./IEquality.js"
-//#using "./IComparison.js"
-//#using "./IDataStateManipulator.js"
 
 //#using "./IOperation.js"
 //#using "./IOperationHandlingCallbacks.js"
@@ -75,8 +72,6 @@
 //#using "./ISupportsCommandContext.js"
 //#using "./IServiceHub.js"
 //#using "./IService.js"
-//#using "./ICommandRegister.js"
-//#using "./ICommandRegisterLibrary.js"
 //#using "./ICommandContext.js"
 //#using "./ICommandExecutorInterface.js"
 //#using "./IMemoryFile.js"
@@ -107,13 +102,3 @@
 
 //#using "./IRunningComponent.js"
 //#using "./IRunningComponentSuspendable.js"
-
-//#using "./IAmbientDefaultsConsumer.js"
-//#using "./IAmbientDefaults.js"
-//#using "./IExposeCommands.js"
-//#using "./IExposeCommandsEx.js"
-//#using "./IEnumerateExposedCommands.js"
-
-//#using "./IAttachedInfo.js"
-//#using "./IAppRouter.js"
-//#using "./ITreeStatesSerializer.js"

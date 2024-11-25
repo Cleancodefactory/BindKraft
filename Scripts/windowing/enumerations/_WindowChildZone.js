@@ -1,7 +1,1 @@
-
-
-/*ENUM*/ /*DEPRECATED*/
-var WindowChildZoneEnum = {
-    ZoneRight: 'ZoneRight',
-    ZoneLeft: 'ZoneLeft'
-};
+var WindowChildZoneEnum={ZoneRight:'ZoneRight',ZoneLeft:'ZoneLeft'};

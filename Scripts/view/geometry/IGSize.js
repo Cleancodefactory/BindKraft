@@ -1,7 +1,1 @@
-(function() {
-
-    function IGSize() {}
-    IGSize.Interface("IGSize");
-    
-
-})();
+(function(){function IGSize(){}IGSize.Interface("IGSize");})();

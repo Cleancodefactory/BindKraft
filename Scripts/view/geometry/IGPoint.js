@@ -1,6 +1,1 @@
-(function() {
-
-    function IGPoint() {}
-    IGPoint.Interface("IGPoint");
-
-})();
+(function(){function IGPoint(){}IGPoint.Interface("IGPoint");})();

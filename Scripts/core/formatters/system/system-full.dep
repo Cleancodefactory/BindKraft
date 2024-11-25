@@ -4,7 +4,6 @@
 //#using "./DefaultDateTimeAggregates.js"
 
 //#using "./FormatInteger.js"
-//#using "./FormatFloat.js"
 //#using "./BooleanConverter.js"
 //#using "./NullIfEmpty.js"
 //#using "./IfNullOrEmpty.js"
@@ -14,6 +13,3 @@
 //#using "./TimeElapsedSince.js"
 //#using "./AppendFormatter.js"
 //#using "./NormalizeConverter.js"
-//#using "./TranslateThrough.js"
-//#using "./DataStateIndicator.js"
-//#using "./DataStateFilter.js"

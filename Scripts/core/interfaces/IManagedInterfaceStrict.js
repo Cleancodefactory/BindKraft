@@ -1,2 +1,1 @@
-function IManagedInterfaceStrict() {}
-IManagedInterfaceStrict.Interface("IManagedInterfaceStrict", "IManagedInterface");
+function IManagedInterfaceStrict(){}IManagedInterfaceStrict.Interface("IManagedInterfaceStrict","IManagedInterface");
