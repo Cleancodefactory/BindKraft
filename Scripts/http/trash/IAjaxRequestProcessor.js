@@ -1,0 +1,1 @@
+function IAjaxRequestProcessor(){}IAjaxRequestProcessor.Interface("IAjaxRequestProcessor");IAjaxRequestProcessor.prototype.processAjaxRequest=function(req){throw"not implemented";};

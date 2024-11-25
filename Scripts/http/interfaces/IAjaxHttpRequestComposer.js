@@ -1,0 +1,1 @@
+function IAjaxHttpRequestComposer(){}IAjaxHttpRequestComposer.Interface("IAjaxHttpRequestComposer");IAjaxHttpRequestComposer.prototype.composeRequest=function(){throw"not impl";};

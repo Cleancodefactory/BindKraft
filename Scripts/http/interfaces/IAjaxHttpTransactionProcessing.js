@@ -1,0 +1,1 @@
+function IAjaxHttpTransactionProcessing(){}IAjaxHttpTransactionProcessing.Interface("IAjaxHttpTransactionProcessing");IAjaxHttpTransactionProcessing.prototype.send=function(){throw"not impl";};IAjaxHttpTransactionProcessing.prototype.onsend=function(){throw"not impl";};IAjaxHttpTransactionProcessing.prototype.onreceive=function(){throw"not impl";};

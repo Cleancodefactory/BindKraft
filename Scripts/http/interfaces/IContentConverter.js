@@ -1,0 +1,1 @@
+function IContentConverter(){}IContentConverter.Interface("IContentConverter");IContentConverter.prototype.ConvertContent=function(input){throw"IContentConverter.ConvertContent is not implemented";};

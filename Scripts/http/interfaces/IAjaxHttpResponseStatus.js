@@ -1,0 +1,1 @@
+function IAjaxHttpResponseStatus(){}IAjaxHttpResponseStatus.Interface("IAjaxHttpResponseStatus");

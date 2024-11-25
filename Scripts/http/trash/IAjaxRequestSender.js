@@ -1,0 +1,1 @@
+function IAjaxRequestSender(){}IAjaxRequestSender.Interface("IAjaxRequestSender");IAjaxRequestSender.prototype.sendRequest=function(req){throw"not implemented";}.Description("Sends/schedules the request").Returns("IAsyncResult");
