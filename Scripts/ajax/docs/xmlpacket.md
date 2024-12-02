@@ -169,3 +169,82 @@ This section is for historical information only.
 }
 
 ```
+
+
+## Valid version 0.9.1
+
+```
+<packet>
+	<status 
+		issuccessful="0|1"
+		?isprobing="0|1"
+	>
+		<?message>(text)</message>
+		<?returnurl>(text:<url>)</returnurl>
+		<?title>(text)</title>
+		<?messages>(JSON:Array<string>)</messages>
+	</status>
+	<?views>
+		<:viewname: sid="<serverpath>" cacheable="0|1">(CData: HTML)</:viewname:>*
+	</views>
+	<*data sid="<serverpath>">
+		
+	</data>
+    <!-- Optional segment -->
+	<?metadata>(JSON:<any>)</metadata>
+	<?resources>
+		<resname sid="<serverpath>">(JSON:{
+			(<reskey>:<string>)*
+		})</resname>*
+	</resources>
+	<?lookups>
+		<lookpuname>(JSON:[
+			{<any>}*
+		])</lookpuname>*
+	</lookups>
+</packet>	
+
+```
+
+Data elements can be 0 or many, with or without sid marking
+
+```Javascript
+	{
+	status {
+		issuccessful: false|true,
+		?isprobing: 0|1,
+		?message: <string>,
+		?title: <string>,
+		// TODO: What to do with accumulative messages until we come with something wise?
+		// ?messages: [<string>] // Deprecate!
+		caching: {
+			views: {
+				viewname1: {
+					sid: <view1_sid>,
+					
+				}
+			}
+		}
+	},
+	views: {
+		<viename1>: <sring>,
+		<viename2>: <sring>,
+		<viename3>: <sring>,
+	},
+	resources: {
+		<resource1>: <json>,
+		<resource2>: <json>,
+		<resource3>: <json>,
+	},
+	data: <data1: json>,
+	datas: [
+		{ sid: "<serverpath>",data: {/*...parsed data...*/}},
+		{ sid: "<serverpath>",data: {/*...parsed data...*/}} ...
+	]
+		
+}
+```
+
+**Serverpath**
+
+Module/nodeset/n1.n2.n3
