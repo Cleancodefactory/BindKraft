@@ -615,7 +615,7 @@ function jb_initFramework(globalProvider) { // The global provider is being aske
                 if (node != null && node.length > 0) {
                     for (var i = 0; i < node.length;i++) {
                         if (o.datas == null) o.datas = [];
-                        data = $(node.get[i]);
+                        data = $(node.get(i));
                         if (i == 0) {
                             o.data = jQuery.parseJSON(data.text());
                             o.datas.push({ 
