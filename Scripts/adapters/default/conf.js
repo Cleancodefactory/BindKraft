@@ -591,7 +591,7 @@ function jb_initFramework(globalProvider) { // The global provider is being aske
                 }
 
                 node = xml.find("packet>views"); // HTML views
-                var c,data;
+                var c,data,text;
                 if (node != null && node.length > 0) {
                     c = node.children();
                     if (c.length > 0) {
@@ -616,8 +616,12 @@ function jb_initFramework(globalProvider) { // The global provider is being aske
                     for (var i = 0; i < node.length;i++) {
                         if (o.datas == null) o.datas = [];
                         data = $(node.get(i));
+                        text = data.text();
+                        if (/^\s*$/.test(text)) {
+                            text = null;
+                        }
                         if (i == 0) {
-                            o.data = jQuery.parseJSON(data.text());
+                            o.data = ((text != null)?jQuery.parseJSON(text):"");
                             o.datas.push({ 
                                 sid: data.attr("sid"),
                                 data:o.data
@@ -625,7 +629,7 @@ function jb_initFramework(globalProvider) { // The global provider is being aske
                         } else {
                             o.datas.push({
                                 sid: data.attr("sid"),
-                                data: o.data = jQuery.parseJSON(data.text())
+                                data: o.data = ((text != null)?jQuery.parseJSON(text):"")
                             });
                         }
                     }
