@@ -591,7 +591,7 @@ function jb_initFramework(globalProvider) { // The global provider is being aske
                 }
 
                 node = xml.find("packet>views"); // HTML views
-                var c;
+                var c,data;
                 if (node != null && node.length > 0) {
                     c = node.children();
                     if (c.length > 0) {
@@ -613,7 +613,22 @@ function jb_initFramework(globalProvider) { // The global provider is being aske
                 }
                 node = xml.find("packet>data"); // JSON data
                 if (node != null && node.length > 0) {
-                    o.data = jQuery.parseJSON(node.text());
+                    for (var i = 0; i < node.length;i++) {
+                        if (o.datas == null) o.datas = [];
+                        data = $(node.get[i]);
+                        if (i == 0) {
+                            o.data = jQuery.parseJSON(data.text());
+                            o.datas.push({ 
+                                sid: data.attr("sid"),
+                                data:o.data
+                            });
+                        } else {
+                            o.datas.push({
+                                sid: data.attr("sid"),
+                                data: o.data = jQuery.parseJSON(data.text())
+                            });
+                        }
+                    }
                 }
                 node = xml.find("packet>metadata"); // JSON metadata
                 if (node != null && node.length > 0) {
