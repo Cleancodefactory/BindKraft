@@ -9,7 +9,7 @@
     }
     ExternalScripts.Inherit(BaseObject, "ExternalScripts");
     ExternalScripts.prototype.$loadedScripts = new InitializeObject("The loaded scripts by key");
-    ExternalScripts.prototype.loadScript = function(url) {
+    ExternalScripts.prototype.loadScript = function(url,asModule) {
         var u = new BKUrl(url);
         u.get_query().clear();
         u.get_fragment().clear();
@@ -21,6 +21,9 @@
         }
     
         var scr = document.createElement("script");
+        if (asModule) {
+            scr.type = "module";
+        }
         scr.src = url;
         this.$loadedScripts[key] = scr;
         var op = new Operation();

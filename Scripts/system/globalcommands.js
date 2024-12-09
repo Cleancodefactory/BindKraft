@@ -329,6 +329,18 @@ System.DefaultCommands = {
 		var url = api.pullNextToken();
 		return Class("ExternalScripts").Default().loadScript(url);
 	},
+	"localjavascript": function(ctx,api) {
+		var module = api.pullNextToken();
+		var script = api.pullNextToken();
+		var asModule = api.pullNextToken();
+		if (asModule == "1" || asModule == "module") {
+			asModule = true;
+		} else {
+			asModule = false;
+		}
+		var  url = IPlatformUtility.resourceUrl(module,"read","$public",script);
+		return Class("ExternalScripts").Default().loadScript(url,asModule);
+	},
 	"echo": function(ctx, api) {
 		var x;
 		x = api.pullNextToken();
@@ -420,4 +432,5 @@ System.DefaultCommands = {
 	gc.register("bootRoute", null, null,defs["bootRoute"], "bootRoute() Calls SysRouter to try to apply the route from the initial URL, should be used in the boot script only");
 	gc.register("getAppRoute", null, null,defs["getAppRoute"], "getAppRoute(app) Returns the route of the given app as string for the URL");
 	gc.register("echo", null, null,defs["echo"], "echo(...) cnsle logs arguments");
+	gc.register("localjavascript",null,null,defs["localjavascript"],"loads javascript from module's public folder")
 })();
