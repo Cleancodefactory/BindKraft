@@ -341,6 +341,10 @@ System.DefaultCommands = {
 		var  url = IPlatformUtility.resourceUrl(module,"read","$public",script);
 		return Class("ExternalScripts").Default().loadScript(url,asModule);
 	},
+	"externalcss": function(ctx,api) {
+		var url = api.pullNextToken();
+		return Class("ExternalScripts").Default().loadCSS(url);
+	},
 	"echo": function(ctx, api) {
 		var x;
 		x = api.pullNextToken();
@@ -433,4 +437,5 @@ System.DefaultCommands = {
 	gc.register("getAppRoute", null, null,defs["getAppRoute"], "getAppRoute(app) Returns the route of the given app as string for the URL");
 	gc.register("echo", null, null,defs["echo"], "echo(...) cnsle logs arguments");
 	gc.register("localjavascript",null,null,defs["localjavascript"],"loads javascript from module's public folder")
+	gc.register("externalcss",null,null,defs["externalcss"],"Loads a CSS stylesheet")
 })();
