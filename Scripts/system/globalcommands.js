@@ -143,6 +143,7 @@ System.DefaultCommands = {
 			op.whencomplete().tell(function (operation) {
 				if (!operation.isOperationSuccessful()) {
 					returnOp.CompleteOperation(false, "starting/attaching app '" + appclassname + "' failed. Shell reported: " + operation.getOperationErrorInfo());
+					return;
 				}
 				var app = operation.getOperationResult();
 				var ctx = api.getContextFrom(app);
