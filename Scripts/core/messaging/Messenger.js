@@ -28,15 +28,15 @@ Messenger.prototype.OnLoad = function () {
     this.$registerForGlobalEvents();
     this.$loadMessengers();
     this.registerWindow(this);
-	System.Default().windowunloadevent.add(new Delegate(this, this.OnUnload));
+    System.Default().windowunloadevent.add(new Delegate(this, this.OnUnload));
 };
 Messenger.prototype.OnUnLoad = function () {
     this.unregisterWindow(this);
 };
-Messenger.prototype.$registerForGlobalEvents = function() {
-	document.body.addEventListener("click",Delegate.createWrapper(this, this.$onBodyClick),true);
-	document.body.addEventListener("keyup",Delegate.createWrapper(this, this.$onBodyKeyPress),true);
-	// Sweet memories
+Messenger.prototype.$registerForGlobalEvents = function () {
+    document.body.addEventListener("click", Delegate.createWrapper(this, this.$onBodyClick), true);
+    document.body.addEventListener("keyup", Delegate.createWrapper(this, this.$onBodyKeyPress), true);
+    // Sweet memories
     // $("body").click(Delegate.createWrapper(this, this.$onBodyClick)).keypress(Delegate.createWrapper(this, this.$onBodyKeyPress));
 };
 Messenger.prototype.$onBodyKeyPress = function (e) {
@@ -59,17 +59,17 @@ Messenger.prototype.equals = function (obj) {
 Messenger.prototype.$registered = null;
 Messenger.prototype.$windows = null;
 Messenger.prototype.$loadMessengers = function () {
-    try{
+    try {
         if (this.opener != null && this.opener.Messenger != null && this.opener.Messenger.Default != null) {
-        var ms = this.opener.Messenger.Default.$windows;
-        for (var i = 0; i < ms.length; i++) {
-            try {
-                this.$windows.push(ms[i]);
-            } catch (e) {
-                /*swallow*/
+            var ms = this.opener.Messenger.Default.$windows;
+            for (var i = 0; i < ms.length; i++) {
+                try {
+                    this.$windows.push(ms[i]);
+                } catch (e) {
+                    /*swallow*/
+                }
             }
         }
-       }
     }
     catch (e) {
         //the object this.opener is dead after refresh
@@ -128,32 +128,32 @@ Messenger.prototype.unregisterWindow = function (win) {
 };
 
 //#region Last messages
-    // Last message sent of a given type sent through the messenger is recorded in order to advise new subscribers for it (if they are subscribed that way)
-    Messenger.prototype.updateLastMessage = function(msg) {
-        if (BaseObject.is(msg, "BaseObject")) {
-            var msgTypeName = Class.getTypeName(msg.classType());
-            this.$lastMessages[msgTypeName] = msg;
-        }
+// Last message sent of a given type sent through the messenger is recorded in order to advise new subscribers for it (if they are subscribed that way)
+Messenger.prototype.updateLastMessage = function (msg) {
+    if (BaseObject.is(msg, "BaseObject")) {
+        var msgTypeName = Class.getTypeName(msg.classType());
+        this.$lastMessages[msgTypeName] = msg;
     }
-    Messenger.prototype.getLastMessage = function(type) {
-        var msgTypeName = Class.getTypeName(type);
-        if (this.$lastMessages[msgTypeName] != null) return this.$lastMessages[msgTypeName];
-        return null;
+}
+Messenger.prototype.getLastMessage = function (type) {
+    var msgTypeName = Class.getTypeName(type);
+    if (this.$lastMessages[msgTypeName] != null) return this.$lastMessages[msgTypeName];
+    return null;
+}
+Messenger.prototype.clearLastMessage = function (type_inst) {
+    var typeName = null;
+    if (Class.is(type_inst, "BaseObject")) {
+        typeName = Class.getTypeName(type_inst);
+    } else if (BaseObject.is(type_inst, "BaseObject")) {
+        typeName = type_inst.classType();
     }
-    Messenger.prototype.clearLastMessage = function(type_inst) {
-        var typeName = null;
-        if (Class.is(type_inst, "BaseObject")) {
-            typeName = Class.getTypeName(type_inst);
-        } else if (BaseObject.is(type_inst, "BaseObject")) {
-            typeName = type_inst.classType();
-        }
-        if (typeName != null) {
-            this.$lastMessages[typeName] = null;
-        }
+    if (typeName != null) {
+        this.$lastMessages[typeName] = null;
     }
-    Messenger.prototype.clearLastMessages = function() {
-        this.$lastMessages = {};
-    }
+}
+Messenger.prototype.clearLastMessages = function () {
+    this.$lastMessages = {};
+}
 //#endregion
 
 /**
@@ -184,9 +184,9 @@ Messenger.prototype.subscribe = function (eventType, handler, callOnce, doNotAdv
             var lastMsg = this.getLastMessage(eventTypeName);
             if (lastMsg != null) {
                 // Do this async to avoid any problems when subscription happens during construction (quite typical)
-                this.callAsync(function() { this.$adviseHandler(handler,lastMsg); });
+                this.callAsync(function () { this.$adviseHandler(handler, lastMsg); });
             }
-            
+
         }
     }
 };
@@ -196,7 +196,7 @@ Messenger.prototype.$findHandler = function (eventType, handler) {
     arr = this.$registered[eventTypeName];
     if (arr == null) return -1;
     for (i = 0; i < arr.length; i++) {
-        if (BaseObject.equals(arr[i],handler)) return i;
+        if (BaseObject.equals(arr[i], handler)) return i;
     }
     return -1;
 };
@@ -208,12 +208,12 @@ Messenger.prototype.isSubscribed = function (eventType, handler) {
 Messenger.prototype.unsubscribe = function (eventType, handler) {
     var eventTypeName = BaseObject.is(eventType, "string") ? eventType : eventType.classType;
     var i = this.$findHandler(eventType, handler);
-	if (i >= 0) {
-		var arr = this.$registered[eventTypeName];
-		if (i >= 0 && arr != null && i < arr.length) {
-			arr.splice(i, 1);
-		}
-	}
+    if (i >= 0) {
+        var arr = this.$registered[eventTypeName];
+        if (i >= 0 && arr != null && i < arr.length) {
+            arr.splice(i, 1);
+        }
+    }
 };
 Messenger.prototype.unsubscribeAll = function (obj) {
     for (var k in this.$registered) {
@@ -238,7 +238,8 @@ Messenger.prototype.unsubscribeAll = function (obj) {
 };
 Messenger.prototype.$adviseHandler = function (handler, obj) {
     var o = handler;
-    if (BaseObject.is(obj,"ITargetedMessage")) {
+    var eventTypeName = BaseObject.is(obj, "BaseObject") ? obj.classType() : "";
+    if (BaseObject.is(obj, "ITargetedMessage")) {
         if (obj.confirmTarget(o)) {
             if (o != null) {
                 if (BaseObject.is(o, "IInvoke")) {
@@ -252,7 +253,7 @@ Messenger.prototype.$adviseHandler = function (handler, obj) {
                 }
                 if (o.CMessenger_callOnce != null && o.CMessenger_callOnce[eventTypeName]) {
                     o.CMessenger_callOnce[eventTypeName] = null;
-                    this.unsubscribe(eventTypeName,o);
+                    this.unsubscribe(eventTypeName, o);
                 }
             }
         }
@@ -280,7 +281,7 @@ Messenger.prototype.$adviseHandler = function (handler, obj) {
  * @param {EMessengerOptions} recordOptions - Optional, null/missing - do not record or clean previous, see EMessengerOptions for more information.
  */
 Messenger.prototype.$publish = function (obj, broadcastToOthers, recordOptions) {
-    if (obj == null || !BaseObject.is(obj,"BaseObject")) return; // nothing to publish
+    if (obj == null || !BaseObject.is(obj, "BaseObject")) return; // nothing to publish
     var opthelper = Enumeration("EMessengerOptions", Enumeration.helpers);
     var options = Enumeration("EMessengerOptions");
     var eventTypeName = obj.classType();
@@ -333,7 +334,7 @@ Messenger.prototype.$publish_old = function (obj, broadcastToOthers) {
                         }
                         if (o.CMessenger_callOnce != null && o.CMessenger_callOnce[eventTypeName]) {
                             o.CMessenger_callOnce[eventTypeName] = null;
-                            this.unsubscribe(eventTypeName,o);
+                            this.unsubscribe(eventTypeName, o);
                         }
                     }
                 }
@@ -423,19 +424,19 @@ Messenger.prototype.$post = function (obj, broadcastToOthers, recordOptions) {
     Ticker.Default.add(this);
     Ticker.Default.start();
 
-   if (broadcastToOthers) {
-       if (this.$windows.length > 0) {
-           for (var i = 0; i < this.$windows.length; i++) {
-               try {
-                   if (!this.$windows[i].equals(this)) {
-                       this.$windows[i].$post(obj, false, recordOptions);
-                   }
-               } catch (e) {
-                   // swallow
-               }
-           }
-       }
-   }
+    if (broadcastToOthers) {
+        if (this.$windows.length > 0) {
+            for (var i = 0; i < this.$windows.length; i++) {
+                try {
+                    if (!this.$windows[i].equals(this)) {
+                        this.$windows[i].$post(obj, false, recordOptions);
+                    }
+                } catch (e) {
+                    // swallow
+                }
+            }
+        }
+    }
 };
 /**
  * direct send 
@@ -448,10 +449,10 @@ Messenger.prototype.post = function (obj, bBroadcast, recordOptions) {
 };
 
 Messenger.Default = new Messenger(true);
-Messenger.Instance = function() { 
-	if (Messenger.Default == null) {
-		Messenger.Default = new Messenger(true);
-	}
-	return Messenger.Default;
+Messenger.Instance = function () {
+    if (Messenger.Default == null) {
+        Messenger.Default = new Messenger(true);
+    }
+    return Messenger.Default;
 }
 document.addEventListener("load", Messenger.Default.OnLoad);
