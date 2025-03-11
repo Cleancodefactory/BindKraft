@@ -353,6 +353,11 @@ System.DefaultCommands = {
 			console.log("ECHO:" + x);
 			x = api.pullNextToken();
 		}
+	},
+	"mauireportready": function(ctx, api) {
+		if (window.jsBridge) {
+			window.jsBridge.invokeAction(JSON.stringify({type:"loading",completed: true}));
+		}
 	}
 };
 
@@ -437,6 +442,7 @@ System.DefaultCommands = {
 	gc.register("bootRoute", null, null,defs["bootRoute"], "bootRoute() Calls SysRouter to try to apply the route from the initial URL, should be used in the boot script only");
 	gc.register("getAppRoute", null, null,defs["getAppRoute"], "getAppRoute(app) Returns the route of the given app as string for the URL");
 	gc.register("echo", null, null,defs["echo"], "echo(...) cnsle logs arguments");
-	gc.register("localjavascript",null,null,defs["localjavascript"],"loads javascript from module's public folder")
-	gc.register("externalcss",null,null,defs["externalcss"],"Loads a CSS stylesheet")
+	gc.register("localjavascript",null,null,defs["localjavascript"],"loads javascript from module's public folder");
+	gc.register("externalcss",null,null,defs["externalcss"],"Loads a CSS stylesheet");
+	gc.register("mauiready",null,null,defs["mauireportready"],"reports to jsBridge readiness");
 })();
