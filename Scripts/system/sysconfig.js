@@ -144,7 +144,12 @@
 		if (bootfs != null) {
 			var bootscript = bootfs.item("boot");
 			if (bootscript != null) {
-				bootscript.run(null,{});
+				bootscript.run(null,{}).then(op => {
+					if (window.__removeBootIndicator) {
+						window.__removeBootIndicator();
+						delete window.__removeBootIndicator;
+					}
+				});
 				// V:2.26.0- switching to the new way
 				// var op = Commander.RunGlobal(bootscript.get_script());
 				// op.whencomplete().tell(function(_op) {
