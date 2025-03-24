@@ -121,6 +121,10 @@ System.DefaultCommands = {
 					returnOp.CompleteOperation(false, "starting app '" + appclassname + "' failed. Shell reported: " + operation.getOperationErrorInfo());
 				}
 				var app = operation.getOperationResult();
+				if (api.contextsDisabled && api.contextsDisabled()) { // When contexts are disabled /call or .call do not push context
+					returnOp.CompleteOperation(true,app);
+					return;
+				}
 				var ctx = api.getContextFrom(app);
 				if (BaseObject.is(ctx, "ICommandContext")) {
 					api.pushContext(ctx);
@@ -135,7 +139,7 @@ System.DefaultCommands = {
 		}
 		return returnOp;
 	},
-	"inoneapp": function(ctx, api) {
+	"inoneapp": function(_ctx, api) {
 		var appclassname = api.pullNextToken();
 		var returnOp = new Operation(null, 60000); // 60000);
 		if (typeof appclassname == "string" && Class.is(appclassname,"IApp")) {
@@ -146,6 +150,10 @@ System.DefaultCommands = {
 					return;
 				}
 				var app = operation.getOperationResult();
+				if (api.contextsDisabled && api.contextsDisabled()) { // When contexts are disabled /call or .call do not push context
+					returnOp.CompleteOperation(true,app);
+					return;
+				}
 				var ctx = api.getContextFrom(app);
 				if (BaseObject.is(ctx, "ICommandContext")) {
 					api.pushContext(ctx);
@@ -375,7 +383,7 @@ System.DefaultCommands = {
 	gc.register("endcontext", "dropcontext", null,
 					defs.innewapp, "Drops the top command context (if any exists)");
 	gc.register("enterapp", "enterfirstapp", null,
-					defs.innewapp, "Finds the first app of the given class and changes to the app's command context");
+					defs.inoneapp, "Finds the first app of the given class and changes to the app's command context");
 	gc.register("stopapp", "exitapp", null,
 					defs.stopapp, "Finds the first app of the given class and stops it. If the app does not currently run, does nothing.");					
 	gc.register("inithistory", "historystart", null,

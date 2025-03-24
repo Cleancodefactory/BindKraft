@@ -111,9 +111,9 @@ Commander.RunInContext = function(cmdline, ctx) {
 	var op = commander.run(Commander.defaultTimeout);
 	op.whencomplete().tell(function(op) {
 		if (op.isOperationSuccessful()) {
-			console.log("success");
+			//console.log("success");
 		} else {
-			console.log("failure");
+			//console.log("failure");
 		}
 	});
 	return op;

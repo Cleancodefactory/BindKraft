@@ -29,7 +29,9 @@
 
         Halt: 13, // Exit program
         CallRoot: 14, // Calls a routine from the host's root context (otherwise like Call)
-        CallParent: 15 // Calls a routine from the host's parent context (otherwise like Call)
+        CallParent: 15, // Calls a routine from the host's parent context (otherwise like Call)
+        IgnoreErrors: 16,
+        NormalErrors: 17
     }
     function _DumpInstruction(instr) {
         var s = "!!!";
@@ -186,15 +188,20 @@
         state.helper = new CommandContextHelper(state.contextStack);
         // API passed to the commands (2-nd argument)
         var api = new $CLNullLangAPI(state);
-
+        noErrorMode = false;
         function processInstruction(lastOp) {
             if (BaseObject.is(lastOp,"Operation")) {
                 if (!lastOp.isOperationSuccessful()) {
-                    me.LASTERROR("CLNullLang runtime error:" + lastOp.getOperationErrorInfo(), "execute");
-                    if (!lastOp.isOperationComplete()) { // Emergency completion (should not happen actually)
-                        execOp.CompleteOperation(false, lastOp.getOperationErrorInfo());
+                    if (noErrorMode) {
+                        // Not completing the execution, the result is always null
+                        state.stack.push(null);
+                    } else {
+                        me.LASTERROR("CLNullLang runtime error:" + lastOp.getOperationErrorInfo(), "execute");
+                        if (!lastOp.isOperationComplete()) { // Emergency completion (should not happen actually)
+                            execOp.CompleteOperation(false, lastOp.getOperationErrorInfo());
+                        }
+                        return;
                     }
-                    return;
                 } else {
                     // Push the last result
                     state.stack.push(lastOp.getOperationResult());
@@ -228,6 +235,14 @@
                 }
                 // Special cases
                 if (instruction.operation == Instructions.NoOp) continue;
+                if (instruction.operation == Instructions.IgnoreErrors) {
+                    noErrorMode = true;
+                    continue;
+                }
+                if (instruction.operation == Instructions.NormalErrors) {
+                    noErrorMode = false;
+                    continue;
+                }
                 if (instruction.operation == Instructions.Halt) {
                     // Program completion
                     execOp.CompleteOperation(true, state.stack);
@@ -342,8 +357,20 @@
                 case Instructions.Call:
                 case Instructions.CallRoot:
                 case Instructions.CallParent:
-                    if (instruction.operation == Instructions.CallRoot) ctxFrom = "root";
-                    if (instruction.operation == Instructions.CallParent) ctxFrom = "parent";
+                    if (instruction.operation == Instructions.CallRoot) {
+                        api.disableContexts();
+                        op.then(function() {
+                            api.enableContexts();
+                        });
+                        ctxFrom = "root";
+                    }
+                    if (instruction.operation == Instructions.CallParent) {
+                        api.disableContexts();
+                        op.then(function() {
+                            api.enableContexts();
+                        });
+                        ctxFrom = "parent";
+                    }
                     var result = state.helper.findEx(instruction.operand, null, ctxFrom);
                     if (result != null) {
                         cmd = result.command;
@@ -534,8 +561,21 @@
     }
 
     //#endregion
+    //#region Behavior
+    $CLNullLangAPI.prototype.$disableContexts = false;
+    $CLNullLangAPI.prototype.disableContexts = function() {
+        this.$disableContexts = true;
+    }
+    $CLNullLangAPI.prototype.enableContexts = function() {
+        this.$disableContexts = false;
+    }
+    $CLNullLangAPI.prototype.contextsDisabled = function() {
+        return this.$disableContexts;
+    }
+    //#endregion
 
     $CLNullLangAPI.prototype.pushContext = function(ctx) {
+        if (this.$disableContexts) return; // Context pushing is disabled
         if (BaseObject.is(ctx, "ICommandContext")) {
             this.state.helper.pushContext(ctx);
         }

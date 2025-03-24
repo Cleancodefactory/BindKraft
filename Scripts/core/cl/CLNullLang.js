@@ -68,7 +68,7 @@
 
 
 
-    var _regex = /(\s+)|(true|false|null)|(while|if|halt)|(?:\$([a-zA-Z0-9_\.\-]+))|([/.]?[a-zA-Z_][a-zA-Z0-9_\.\-]*)|(\()|(\))|(?:\'((?:\\'|[^\'])*)\')|([\+\-]?\d+(?:\.\d*)?)|(,)|($)|(#.*?(?:\n|\r|$)+)/g;
+    var _regex = /(\s+)|(true|false|null)|(while|if|halt|noerrmode|normalmode)|(?:\$([a-zA-Z0-9_\.\-]+))|([/.]?[a-zA-Z_][a-zA-Z0-9_\.\-]*)|(\()|(\))|(?:\'((?:\\'|[^\'])*)\')|([\+\-]?\d+(?:\.\d*)?)|(,)|($)|(#.*?(?:\n|\r|$)+)/g;
 
     //#region Compiler
 
@@ -105,6 +105,12 @@
                             if (undecided != null) return runner.complete(_ReportError("Syntax error", match.index, query));
                             if (curval == "halt") {
                                 runner.add(_Instruction(Instructions.Halt));
+                                opstack.incArgs();
+                            } else if (curval == "noerrmode") {
+                                runner.add(_Instruction(Instructions.IgnoreErrors));
+                                opstack.incArgs();
+                            } else if (curval == "normalmode") {
+                                runner.add(_Instruction(Instructions.NormalErrors));
                                 opstack.incArgs();
                             } else {
                                 undecided = OpEntry(curval, Terms.keyword, match.index);

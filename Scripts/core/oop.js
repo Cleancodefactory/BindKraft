@@ -4,7 +4,7 @@
 */
 
 CompileTime.info("Starting initial compile process");
-if (JBCoreConstants.CompileTimeConsoleLog || JBCoreConstants.CompileTimeLogSize > 100) {
+if (JBCoreConstants.CompileTimeConsoleLog && JBCoreConstants.CompileTimeLogSize > 100) {
 	CompileTime.warn("If this is a production deployment take time to adjust the configuration - smaller log size and minimal console logging are recommended.");
 }
 
