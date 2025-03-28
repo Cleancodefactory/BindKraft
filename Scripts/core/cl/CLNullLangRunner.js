@@ -188,7 +188,7 @@
         state.helper = new CommandContextHelper(state.contextStack);
         // API passed to the commands (2-nd argument)
         var api = new $CLNullLangAPI(state);
-        noErrorMode = false;
+        var noErrorMode = false;
         function processInstruction(lastOp) {
             if (BaseObject.is(lastOp,"Operation")) {
                 if (!lastOp.isOperationSuccessful()) {
