@@ -224,7 +224,7 @@
                 if (instruction.argCount > 0) {
                     for (i = 0; i < instruction.argCount; i++) {
                         if (state.stack.length == 0) {
-                            me.LASTERROR("Stack underflow at pc=" + (state.pc-1));
+                            me.LASTERROR("Stack underflow at pc=" + (state.pc-1) + "\n" + me.dumpProgram());
                             execOp.CompleteOperation(false,"Stack underflow at pc=" + (state.pc-1), "execute");
                             return;
                         } else {
@@ -237,10 +237,12 @@
                 if (instruction.operation == Instructions.NoOp) continue;
                 if (instruction.operation == Instructions.IgnoreErrors) {
                     noErrorMode = true;
+                    state.stack.push(null);
                     continue;
                 }
                 if (instruction.operation == Instructions.NormalErrors) {
                     noErrorMode = false;
+                    state.stack.push(null);
                     continue;
                 }
                 if (instruction.operation == Instructions.Halt) {

@@ -144,7 +144,8 @@
 		if (bootfs != null) {
 			var bootscript = bootfs.item("boot");
 			if (bootscript != null) {
-				bootscript.run(null,{}).then(op => {
+				var bootOp = bootscript.run(null,{});
+				bootOp.whencomplete().tell(op => {
 					if (window.__removeBootIndicator) {
 						window.__removeBootIndicator();
 						delete window.__removeBootIndicator;
