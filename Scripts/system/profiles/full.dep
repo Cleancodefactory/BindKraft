@@ -38,7 +38,7 @@
 //#using "../globalcommands.js"
 
 //#using "../BkInit/bkinit-full.dep"
-
+//#using "../misc/errors.js"
 
 
 // This must be the last file to include
