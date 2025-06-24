@@ -234,7 +234,7 @@ System.DefaultCommands = {
 		var svc = UrlActionsService2.Default();
 		var url;
 		if (args.length > 0) {
-			if (BaseIbject.is(args[0], "BKUrl")) {
+			if (BaseObject.is(args[0], "BKUrl")) {
 				url = args[0];
 			} else {
 				url = new BKUrl();
