@@ -260,10 +260,10 @@
 	GRect.prototype.center = function (r) {
 		if (BaseObject.is(r, "IGRect")) {
 			if (r.w != null) {
-				r.x = this.x + this.w / 2 - r.w / 2;
+				r.x = Math.max(0, this.x + this.w / 2 - r.w / 2); // Ensure r.x is not negative
 			}
 			if (r.h != null) {
-				r.y = this.y + this.h / 2 - r.h / 2;
+				r.y = Math.max(0, this.y + this.h / 2 - r.h / 2); // Ensure r.y is not negative
 			}
 		} else if (BaseObject.is(r, "IGPoint")) {
 			r.x = this.x + this.w / 2;
