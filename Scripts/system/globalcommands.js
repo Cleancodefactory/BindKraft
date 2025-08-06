@@ -5,12 +5,12 @@
  */
 
 System.DefaultCommands = {
-	"initframework": function(ctx, api){
+	"initframework": function (ctx, api) {
 		jb_initFramework(Shell);
 	},
-	"initculture": function(ctx, api){
+	"initculture": function (ctx, api) {
 		var culture = api.pullNextToken();
-		if(typeof culture != "string"){
+		if (typeof culture != "string") {
 			throw "The culture name must be string";
 		}
 		if (culture == '' || culture == "*" || culture == "selected") {
@@ -26,9 +26,9 @@ System.DefaultCommands = {
 		Globalize.LocalMode = new Globalize(System.Default().settings.CurrentLang, false);
 		return culture;
 	},
-	"createworkspace": function(ctx, api){
+	"createworkspace": function (ctx, api) {
 		var template = api.pullNextToken();
-		if(typeof template != "string"){
+		if (typeof template != "string") {
 			throw "The template name must be string";
 		}
 		if (template != "default") {
@@ -40,24 +40,24 @@ System.DefaultCommands = {
 		WorkspaceWindow.Default().setFinalAuthority(true);
 		Messenger.OnLoad();
 	},
-	"msgbox": function(ctx, api){
+	"msgbox": function (ctx, api) {
 		var msg = api.pullNextToken();
 		alert(msg);
 	},
-	"startshell": function(ctx, api){
+	"startshell": function (ctx, api) {
 		window.Shell = new SysShell();
 		// Hard separation between creation of workspace and sysshell - we need this in order to make ws creation controlled by createworkspace command!
 		//Shell.workspaceWindow = WorkspaceWindow.Default();
-		
+
 	},
-	"customizeshell": function(ctx, api) {
+	"customizeshell": function (ctx, api) {
 		var iface = Class.getInterfaceDef(api.pullNextToken());
 		var cls = Class.getClassDef(api.pullNextToken());
 		if (iface != null && cls != null) {
 			window.Shell.addCustomizer(iface, new cls());
 		}
 	},
-	"enterapp": function(ctx, api) {
+	"enterapp": function (ctx, api) {
 		// TODO: Resolve the app management mess at least to some degree and do this
 	},
 	//#region Routing
@@ -66,55 +66,55 @@ System.DefaultCommands = {
 		var app = Shell.getAppByClassName(appclassname);
 		return app != null;
 	},
-	"getrunning":function (args, api) {
+	"getrunning": function (args, api) {
 		var appclassname = api.pullNextToken();
 		var app = Shell.getAppByClassName(appclassname);
 		return app;
-	}, 
-	"canOpenTreeState": function(args, api) {
+	},
+	"canOpenTreeState": function (args, api) {
 		var app = api.pullNextToken();
-		if (BaseObject.is(app,"IAppRouter")) {
+		if (BaseObject.is(app, "IAppRouter")) {
 			var routeObjects = api.pullNextToken();
 			return app.canOpenTreeState(routeObjects);
 		}
 	},
-	"routeTreeState": function(args, api) {
+	"routeTreeState": function (args, api) {
 		var app = api.pullNextToken();
-		if (BaseObject.is(app,"IAppRouter")) {
+		if (BaseObject.is(app, "IAppRouter")) {
 			var routeObjects = api.pullNextToken();
 			var p = app.routeTreeState(routeObjects);
 			if (window.Promise && p instanceof Promise) {
 				return Operation.FromPromise(p);
-			} else if (BaseObject.is(p,"Operation")) {
+			} else if (BaseObject.is(p, "Operation")) {
 				return p;
 			} else {
 				return Operation.From(true);
 			}
 		}
 	},
-	"applyRoute": function(args, api) {
+	"applyRoute": function (args, api) {
 		var strRoute = api.pullNextToken();
 		return Class("SysRouter").Default().applyRoute(strRoute);
 	},
-	"bootRoute": function(args, api) {
+	"bootRoute": function (args, api) {
 		var url = BKUrl.getInitialFullUrl();
 		return Class("SysRouter").Default().applyRoute(url);
 	},
-	"getAppRoute": function(args,api) {
+	"getAppRoute": function (args, api) {
 		var app = api.pullNextToken();
 		if (app != null) {
 			return Class("SysRouter").Default().getAppRoute(app);
 		}
 	},
 	//#endregion
-	"endcontext": function(ctx, api) {
+	"endcontext": function (ctx, api) {
 		var ctx = api.pullContext();
 		return api.completedOperation(true, ctx); // May be we should return something else?
 	},
-	"innewapp": function(ctx, api) {
+	"innewapp": function (ctx, api) {
 		var appclassname = api.pullNextToken();
 		var returnOp = new Operation(null, null); // 60000);
-		if (typeof appclassname == "string" && Class.is(appclassname,"IApp")) {
+		if (typeof appclassname == "string" && Class.is(appclassname, "IApp")) {
 			var op = Shell.launch(appclassname); // TODO: Complete this
 			op.whencomplete().tell(function (operation) {
 				if (!operation.isOperationSuccessful()) {
@@ -122,15 +122,15 @@ System.DefaultCommands = {
 				}
 				var app = operation.getOperationResult();
 				if (api.contextsDisabled && api.contextsDisabled()) { // When contexts are disabled /call or .call do not push context
-					returnOp.CompleteOperation(true,app);
+					returnOp.CompleteOperation(true, app);
 					return;
 				}
 				var ctx = api.getContextFrom(app);
 				if (BaseObject.is(ctx, "ICommandContext")) {
 					api.pushContext(ctx);
-					returnOp.CompleteOperation(true,app);
+					returnOp.CompleteOperation(true, app);
 				} else {
-					returnOp.CompleteOperation(false,"Failed to obtain command context from the new instance of " + appclassname);
+					returnOp.CompleteOperation(false, "Failed to obtain command context from the new instance of " + appclassname);
 				}
 
 			});
@@ -139,10 +139,10 @@ System.DefaultCommands = {
 		}
 		return returnOp;
 	},
-	"inoneapp": function(_ctx, api) {
+	"inoneapp": function (_ctx, api) {
 		var appclassname = api.pullNextToken();
 		var returnOp = new Operation(null, 60000); // 60000);
-		if (typeof appclassname == "string" && Class.is(appclassname,"IApp")) {
+		if (typeof appclassname == "string" && Class.is(appclassname, "IApp")) {
 			var op = Shell.launchOne(appclassname); // TODO: Complete this
 			op.whencomplete().tell(function (operation) {
 				if (!operation.isOperationSuccessful()) {
@@ -151,15 +151,15 @@ System.DefaultCommands = {
 				}
 				var app = operation.getOperationResult();
 				if (api.contextsDisabled && api.contextsDisabled()) { // When contexts are disabled /call or .call do not push context
-					returnOp.CompleteOperation(true,app);
+					returnOp.CompleteOperation(true, app);
 					return;
 				}
 				var ctx = api.getContextFrom(app);
 				if (BaseObject.is(ctx, "ICommandContext")) {
 					api.pushContext(ctx);
-					returnOp.CompleteOperation(true,app);
+					returnOp.CompleteOperation(true, app);
 				} else {
-					returnOp.CompleteOperation(false,"Failed to obtain command context from the instance of " + appclassname);
+					returnOp.CompleteOperation(false, "Failed to obtain command context from the instance of " + appclassname);
 				}
 
 			});
@@ -168,7 +168,7 @@ System.DefaultCommands = {
 		}
 		return returnOp;
 	},
-	"stopapp": function(ctx, api) {
+	"stopapp": function (ctx, api) {
 		var appclass = api.pullNextToken();
 		if (typeof appclass == "string" && appclass.length > 0) {
 			var app = Shell.getAppByClassName(appclass);
@@ -176,8 +176,8 @@ System.DefaultCommands = {
 				return app.ExitApp();
 			}
 		}
-	},	
-	"gcallcript": function(ctx,api) {
+	},
+	"gcallcript": function (ctx, api) {
 		var scriptname = api.pullNextToken();
 		var script = System.BootFS().readScript(scriptname);
 		if (script != null) {
@@ -189,22 +189,22 @@ System.DefaultCommands = {
 		}
 		return false;
 	},
-	"grunscript": function(ctx,api) {
+	"grunscript": function (ctx, api) {
 		Commander.RunGlobal(api.pullNextToken());
 	},
 	// +V 2.17.6
-	"set": function(ctx, api) {
+	"set": function (ctx, api) {
 		if (!BaseObject.is(ctx, "ICommandContext")) return;
 		var varname = api.pullNextToken();
 		var varval = api.pullNextToken();
 		if (typeof varname === "string") {
 			var env = ctx.get_environment();
 			if (env != null) {
-				env.setEnv(varname,varval);
+				env.setEnv(varname, varval);
 			}
 		}
 	},
-	"unset": function(ctx, api) {
+	"unset": function (ctx, api) {
 		if (!BaseObject.is(ctx, "ICommandContext")) return;
 		var varname = api.pullNextToken();
 		if (typeof varname === "string") {
@@ -215,7 +215,7 @@ System.DefaultCommands = {
 		}
 	},
 	// -V 2.17.6
-	"clean_boottime_environment": function(ctx,api) {
+	"clean_boottime_environment": function (ctx, api) {
 		var gc = CommandReg.Global();
 		gc.unregister("initframework");
 		gc.unregister("initculture");
@@ -223,13 +223,13 @@ System.DefaultCommands = {
 		gc.unregister("startshell");
 		gc.unregister("clean_boottime_environment"); // unregister itself too ;)
 	},
-	"inithistory": function(ctx, api) {
+	"inithistory": function (ctx, api) {
 		BrowserHistoryTracker.Default();
 	},
-	"inithistory2": function(ctx, api) {
+	"inithistory2": function (ctx, api) {
 		Class("BrowserHistoryTracker2").Default(true);
 	},
-	"urlcommands": function(args, api) {
+	"urlcommands": function (args, api) {
 		var UrlActionsService2 = Class("UrlActionsService2");
 		var svc = UrlActionsService2.Default();
 		var url;
@@ -250,7 +250,7 @@ System.DefaultCommands = {
 		}
 		return svc.runCommandsFromUrl(url); // Returns Operation.
 	},
-	"runurlcommands": function(ctx, api) {
+	"runurlcommands": function (ctx, api) {
 		var proc = new UrlCommandsProcessor();
 		var url = new BKUrl();
 		var surl = null;
@@ -275,9 +275,9 @@ System.DefaultCommands = {
 				}
 				function runnext(op) {
 					if (op != null) {
-							// some logging may be
+						// some logging may be
 					}
-					var scr  = arr_cmds.shift();
+					var scr = arr_cmds.shift();
 					if (scr != null) {
 						Commander.RunGlobal(scr).whencomplete().tell(runnext);
 					} else {
@@ -292,12 +292,12 @@ System.DefaultCommands = {
 				return returnOp;
 			}
 		}
-		
+
 	},
 	"loadbearertoken": System.CommandLibs.TokenStorage,
 	"loadtranslation": System.CommandLibs.LoadTranslation,
 	"loadtranslations": System.CommandLibs.LoadTranslations,
-	"syslang": function(ctx, api) {
+	"syslang": function (ctx, api) {
 		var paramname = api.pullNextToken();
 		if (paramname == "default") paramname = "culture";
 		if (window.g_ApplicationStartFullUrl != null) {
@@ -312,33 +312,33 @@ System.DefaultCommands = {
 			System.Default().settings.CurrentLang = window.g_ApplicationCulture;
 		}
 	},
-	"mediatracker": function(ctx, api) {
+	"mediatracker": function (ctx, api) {
 		var MediaQueryTracker = Class("MediaQueryTracker");
 		MediaQueryTracker.Default();
 	},
-	"mediaquery": function(ctx, api) {
+	"mediaquery": function (ctx, api) {
 		var MediaQueryTracker = Class("MediaQueryTracker");
 		var name = api.pullNextToken();
 		var query = api.pullNextToken();
 		MediaQueryTracker.Default().add(name, query);
 	},
-	"medianotify": function(ctx, api) {
+	"medianotify": function (ctx, api) {
 		var MediaQueryTracker = Class("MediaQueryTracker");
 		var name = api.pullNextToken();
 		var expression = api.pullNextToken();
 		MediaQueryTracker.Default().addNotificator(name, expression);
 	},
-	"mediamessenger": function(ctx, api) {
+	"mediamessenger": function (ctx, api) {
 		var MediaQueryTracker = Class("MediaQueryTracker");
 		var name = api.pullNextToken();
 		var expression = api.pullNextToken();
 		MediaQueryTracker.Default().addNotificator(name, expression, "MediaQueryNotificatorBroadcaster");
 	},
-	"externalscript": function(ctx, api) {
+	"externalscript": function (ctx, api) {
 		var url = api.pullNextToken();
 		return Class("ExternalScripts").Default().loadScript(url);
 	},
-	"localjavascript": function(ctx,api) {
+	"localjavascript": function (ctx, api) {
 		var module = api.pullNextToken();
 		var script = api.pullNextToken();
 		var asModule = api.pullNextToken();
@@ -347,14 +347,14 @@ System.DefaultCommands = {
 		} else {
 			asModule = false;
 		}
-		var  url = IPlatformUtility.resourceUrl(module,"read","$public",script);
-		return Class("ExternalScripts").Default().loadScript(url,asModule);
+		var url = IPlatformUtility.resourceUrl(module, "read", "$public", script);
+		return Class("ExternalScripts").Default().loadScript(url, asModule);
 	},
-	"externalcss": function(ctx,api) {
+	"externalcss": function (ctx, api) {
 		var url = api.pullNextToken();
 		return Class("ExternalScripts").Default().loadCSS(url);
 	},
-	"echo": function(ctx, api) {
+	"echo": function (ctx, api) {
 		var x;
 		x = api.pullNextToken();
 		while (x != null) {
@@ -362,9 +362,28 @@ System.DefaultCommands = {
 			x = api.pullNextToken();
 		}
 	},
-	"mauireportready": function(ctx, api) {
+	"mauireportready": function (ctx, api) {
 		if (window.jsBridge) {
-			window.jsBridge.invokeAction(JSON.stringify({type:"loading",completed: true}));
+			window.jsBridge.invokeAction(JSON.stringify({ type: "loading", completed: true }));
+		}
+	},
+	"instancesetting": function (ctx, api) {
+		var x;
+		x = api.pullNextToken();
+		if (x == null || /^\s*$/.test(x)) return null;
+		return window.JBCoreConstants?.InstanceSettings?.[x];
+	},
+	"openurl": function (ctx, api) {
+		var url;
+		url = api.pullNextToken();
+		target = api.pullNextToken();
+		if (url != null && !/^\s*$/.test(url)) {
+			if (target != null && !/^\s*$/.test(target)) {
+				window.open(url, target);
+			} else {
+				window.open(url);
+			}
+
 		}
 	}
 };
@@ -372,26 +391,26 @@ System.DefaultCommands = {
 // Register the default global commands here.
 // Additional commands are registered from outside as:
 // CommandReg.Global().register( ... command desc ...) // see above how the register method works
-(function() {
+(function () {
 	var gc = CommandReg.Global();
 	var defs = System.DefaultCommands;
-	
+
 	gc.register("innewapp", "launchapp", null,
-					defs.innewapp, "Launches new windowed app and changes to the app's command context");
+		defs.innewapp, "Launches new windowed app and changes to the app's command context");
 	gc.register("inoneapp", "launchone", null,
-					defs.inoneapp, "Launches new or uses the running instance of an windowed app and changes to the app's command context");
+		defs.inoneapp, "Launches new or uses the running instance of an windowed app and changes to the app's command context");
 	gc.register("endcontext", "dropcontext", null,
-					defs.innewapp, "Drops the top command context (if any exists)");
+		defs.innewapp, "Drops the top command context (if any exists)");
 	gc.register("enterapp", "enterfirstapp", null,
-					defs.inoneapp, "Finds the first app of the given class and changes to the app's command context");
+		defs.inoneapp, "Finds the first app of the given class and changes to the app's command context");
 	gc.register("stopapp", "exitapp", null,
-					defs.stopapp, "Finds the first app of the given class and stops it. If the app does not currently run, does nothing.");					
+		defs.stopapp, "Finds the first app of the given class and stops it. If the app does not currently run, does nothing.");
 	gc.register("inithistory", "historystart", null,
-					defs.inithistory, "Starts the history tracking");
+		defs.inithistory, "Starts the history tracking");
 	gc.register("inithistory2", "historystart2", null,
-					defs.inithistory2, "Starts the history tracking (new version)");
+		defs.inithistory2, "Starts the history tracking (new version)");
 	gc.register("alert", "msgbox", null,
-							defs.msgbox, "Shows an alert.");
+		defs.msgbox, "Shows an alert.");
 
 	//
 	gc.register("initframework", null, null, defs.initframework, "");
@@ -406,29 +425,29 @@ System.DefaultCommands = {
 	// gc.register("grunscript", "grun", null,
 	//						 defs.gcallcript, "Runs a script read from the top result - runs uncontrollably, returns immediately without waiting");
 	gc.register("gcallscript", "gcall", null,
-							 defs.gcallcript, "Runs a script read from the top result - waits it to finish");
+		defs.gcallcript, "Runs a script read from the top result - waits it to finish");
 	// this.$Global.register("crunscript", "crun", null,
-							// this.DefaultCommands.runscript, "Runs a script read from the top result - waits it to finish");
+	// this.DefaultCommands.runscript, "Runs a script read from the top result - waits it to finish");
 	// this.$Global.register("ccallscript", "ccall", null,
-							// this.DefaultCommands.runscript, "Runs a script read from the top result - waits it to finish");
+	// this.DefaultCommands.runscript, "Runs a script read from the top result - waits it to finish");
 	// this.$Global.register("setenv", null, null,
-							// this.DefaultCommands.runscript, "Runs a script read from the top result - waits it to finish");
+	// this.DefaultCommands.runscript, "Runs a script read from the top result - waits it to finish");
 	// this.$Global.register("unsetenv", null, null,
-							// this.DefaultCommands.runscript, "Runs a script read from the top result - waits it to finish");
+	// this.DefaultCommands.runscript, "Runs a script read from the top result - waits it to finish");
 	// this.$Global.register("getenv", null, null,
-							// this.DefaultCommands.runscript, "Runs a script read from the top result - waits it to finish");
+	// this.DefaultCommands.runscript, "Runs a script read from the top result - waits it to finish");
 	gc.register("clean_boottime_environment", null, null,
-							 defs.clean_boottime_environment, "Unregisters commands and environment settings no longer needed after boot, but leaves the global context otherwise intact - other settings will remain there.");
+		defs.clean_boottime_environment, "Unregisters commands and environment settings no longer needed after boot, but leaves the global context otherwise intact - other settings will remain there.");
 	gc.register("runurlcommands", null, null, defs.runurlcommands, "Inspects the initial URL's query string for command lines according to the configured prefix and registerd aliases");
 	// +V 2.17.6
 	gc.register("set", null, null, defs["set"], "Sets a variable in the current environment context: set varname varvalue");
 	gc.register("unset", null, null, defs["set"], "Unsets a variable in the current environment context: unset varname");
 	// -V 2.17.6
-	gc.register("loadbearertoken", null, null, defs["loadbearertoken"],"Registers bearer token(s) into the system token register from the specified URL. ex: registertoken '<modulename>' '<nodeset>/<node>'. Expects 2 arguments logicalurl, modulename ");
+	gc.register("loadbearertoken", null, null, defs["loadbearertoken"], "Registers bearer token(s) into the system token register from the specified URL. ex: registertoken '<modulename>' '<nodeset>/<node>'. Expects 2 arguments logicalurl, modulename ");
 	gc.register("loadtranslation", "lt", null, defs["loadtranslation"], "Loads translation for a single language. A %locale% in the second parameter will be replaced with the selected system locale. usage: loadtranslation <appClass>/<locale> <modulename>:<nodeset>[/<node1>.<node2>...]");
 	gc.register("loadtranslations", "lts", null, defs["loadtranslations"], "Loads all translations for an app. usage: loadtranslations <appClass> <modulename>:<nodeset>[/<node1>.<node2>...]");
 	gc.register("syslang", "systemlocale", null, defs["syslang"], "Sets the system language from query parameter with specified name or the built-in name if default is specified. If the parameter is missing the g_ApplicationCulture is used. If that is missing too - en is set. usage: syslang <paramname>|default");
-	
+
 	// +V 2.23.8
 	gc.register("mediatracker", null, null, defs["mediatracker"], "Ensures that the media tracker is running and registered with the LocalAPI. syntax: mediatracker");
 	gc.register("mediaquery", null, null, defs["mediaquery"], "Registers a media query. syntax: mediaquery name query");
@@ -442,15 +461,18 @@ System.DefaultCommands = {
 	// -V 2.24.0
 
 	gc.register("urlcommands", "runurlcommands2", null, defs["urlcommands"], "Runs the registered commands from the initial URL");
-	gc.register("isrunning", null, null,defs["isrunning"], "Checks if an instance of given app class is running and returns true/false");
-	gc.register("getrunning", null, null,defs["getrunning"], "Returns the instance of the first found running app of the given app class or null if none is running");
-	gc.register("canOpenTreeState", null, null,defs["canOpenTreeState"], "canOpenTreeState(app,routeObjects) asks the given app if it can safely route to the given state, returns true/false");
-	gc.register("routeTreeState", null, null,defs["routeTreeState"], "routeTreeState(app,routeObjects) cals the app to route to the given state");
-	gc.register("applyRoute", null, null,defs["applyRoute"], "applyRoute(stringRoute) Calls SysRouter to try to apply route");
-	gc.register("bootRoute", null, null,defs["bootRoute"], "bootRoute() Calls SysRouter to try to apply the route from the initial URL, should be used in the boot script only");
-	gc.register("getAppRoute", null, null,defs["getAppRoute"], "getAppRoute(app) Returns the route of the given app as string for the URL");
-	gc.register("echo", null, null,defs["echo"], "echo(...) cnsle logs arguments");
-	gc.register("localjavascript",null,null,defs["localjavascript"],"loads javascript from module's public folder");
-	gc.register("externalcss",null,null,defs["externalcss"],"Loads a CSS stylesheet");
-	gc.register("mauiready",null,null,defs["mauireportready"],"reports to jsBridge readiness");
+	gc.register("isrunning", null, null, defs["isrunning"], "Checks if an instance of given app class is running and returns true/false");
+	gc.register("getrunning", null, null, defs["getrunning"], "Returns the instance of the first found running app of the given app class or null if none is running");
+	gc.register("canOpenTreeState", null, null, defs["canOpenTreeState"], "canOpenTreeState(app,routeObjects) asks the given app if it can safely route to the given state, returns true/false");
+	gc.register("routeTreeState", null, null, defs["routeTreeState"], "routeTreeState(app,routeObjects) cals the app to route to the given state");
+	gc.register("applyRoute", null, null, defs["applyRoute"], "applyRoute(stringRoute) Calls SysRouter to try to apply route");
+	gc.register("bootRoute", null, null, defs["bootRoute"], "bootRoute() Calls SysRouter to try to apply the route from the initial URL, should be used in the boot script only");
+	gc.register("getAppRoute", null, null, defs["getAppRoute"], "getAppRoute(app) Returns the route of the given app as string for the URL");
+	gc.register("echo", null, null, defs["echo"], "echo(...) cnsle logs arguments");
+	gc.register("localjavascript", null, null, defs["localjavascript"], "loads javascript from module's public folder");
+	gc.register("externalcss", null, null, defs["externalcss"], "Loads a CSS stylesheet");
+	gc.register("mauiready", null, null, defs["mauireportready"], "reports to jsBridge readiness");
+	gc.register("instancesetting", null, null, defs["instancesetting"], "gets a setting value from bindkraftsetting.instanceSettings");
+  gc.register("openurl", null, null, defs["openurl"], "opemnurl url [target] - opens the url in new window");
+	
 })();
