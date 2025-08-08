@@ -376,7 +376,7 @@ System.DefaultCommands = {
 	"openurl": function (ctx, api) {
 		var url;
 		url = api.pullNextToken();
-		target = api.pullNextToken();
+		var target = api.pullNextToken();
 		if (url != null && !/^\s*$/.test(url)) {
 			if (target != null && !/^\s*$/.test(target)) {
 				window.open(url, target);
